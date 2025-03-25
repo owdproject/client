@@ -37,7 +37,9 @@ interface IApplicationController {
 
     restoreApplication()
 
-    openWindow(model: string, windowStoredState?: WindowStoredState)
+    openWindow(model: string, windowStoredState?: WindowStoredState, meta?: {
+        isRestoring?: boolean
+    })
 
     closeWindow(windowId: string): void
 
@@ -47,6 +49,7 @@ interface IApplicationController {
 }
 
 interface IWindowController {
+    applicationController: IApplicationController
     instanced: boolean
     model: string
 
@@ -88,15 +91,14 @@ interface IWindowController {
     get canOverflow(): WindowOverflow
 
     get actions(): {
-        // active
+        // position
         setActive(value: boolean)
+        setFocus(value: boolean)
+        bringToFront()
+        setPosition(data: WindowPosition)
 
         // size
         setSize(data: WindowSize)
-
-        // position
-        bringToFront()
-        setPosition(data: WindowPosition)
 
         // minimize
         minimize(): boolean
@@ -173,6 +175,9 @@ interface WindowState {
 
     // sizes
     size?: WindowSize
+
+    // focused
+    focused: boolean
 
     // minimize
     active?: boolean

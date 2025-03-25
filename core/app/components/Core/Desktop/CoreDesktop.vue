@@ -4,7 +4,6 @@ const props = defineProps<{
   dockBar?: DockBarConfig
 }>()
 
-const applicationManager = useApplicationManager()
 const desktop = useDesktopManager()
 
 desktop.overrideConfig({
@@ -12,13 +11,10 @@ desktop.overrideConfig({
   dockBar: toRaw(props.dockBar ?? {}),
 })
 
-// desktop preparing
-
-onBeforeMount(() => {
-  applicationManager.importApps()
-})
+applicationManager.importApps()
 
 // desktop resize
+// todo move to composable
 
 onMounted(() => window.addEventListener('resize', handleDesktopResize))
 onUnmounted(() => window.removeEventListener('resize', handleDesktopResize))

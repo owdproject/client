@@ -8,6 +8,10 @@ const classes = computed(() => {
     list.push('owd-window-nav--active')
   }
 
+  if (typeof windowController?.state.focused === 'undefined' || !!windowController?.state.focused) {
+    list.push('owd-window-nav--focused')
+  }
+
   return list
 })
 </script>

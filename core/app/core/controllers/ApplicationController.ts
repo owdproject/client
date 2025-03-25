@@ -39,14 +39,14 @@ export class ApplicationController implements IApplicationController {
             const windowStore: WindowStoredState | undefined = this.store.windows[windowId]
 
             if (windowStore) {
-                this.openWindow(windowStore.model, windowStore)
+                this.openWindow(windowStore.model, windowStore, { isRestoring: true })
             }
         })
 
         debugLog('Windows have been restored', this.windows)
     }
 
-    public openWindow(model: string, windowStoredState: WindowStoredState | undefined) {
+    public openWindow(model: string, windowStoredState: WindowStoredState | undefined, meta?: any) {
         if (!this.config.windows || !this.config.windows.hasOwnProperty(model)) {
             debugError(`Window model "${model}" not found`)
             return
@@ -63,6 +63,7 @@ export class ApplicationController implements IApplicationController {
                 state: {
                     id: windowId,
                     active: true,
+                    focused: true,
                     createdAt: +new Date(),
                 }
             }
@@ -89,7 +90,9 @@ export class ApplicationController implements IApplicationController {
             windowStoredState!
         )
 
-        windowController.actions.bringToFront()
+        if (meta && !meta.isRestoring) {
+            windowController.actions.bringToFront()
+        }
 
         this.windows.set(
             windowId,

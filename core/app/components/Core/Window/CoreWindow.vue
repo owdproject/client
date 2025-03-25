@@ -80,6 +80,10 @@ function onWindowResizeEnd(data: { left: number; top: number, width: number, hei
 const classes = computed(() => {
   const list = ['owd-window']
 
+  if (windowController?.state.focused) {
+    list.push('owd-window--focused')
+  }
+
   if (isDragging.value) {
     list.push('owd-window--dragging')
   }

@@ -19,7 +19,7 @@ class ApplicationManager implements IApplicationManager {
 
         await Promise.all(apps.map(async (appName: string) => {
             try {
-                const applicationModule = await import(`~~/modules/apps/${appName}/index.ts`)
+                const applicationModule = await import(`~~/desktop/apps/${appName}/index.ts`)
 
                 if (applicationModule.default) {
                     applicationModule.default()
@@ -85,13 +85,13 @@ class ApplicationManager implements IApplicationManager {
             return this.appsRunning.get(id);
         }
 
-        this.appsRunning.set(id, applicationController)
-
         debugLog('App is starting:', applicationController);
 
         if (typeof applicationController.config.onLaunch === 'function') {
             applicationController.config.onLaunch(applicationController)
         }
+
+        this.appsRunning.set(id, applicationController)
 
         return applicationController;
     }
@@ -125,7 +125,13 @@ class ApplicationManager implements IApplicationManager {
             windows.push(...appRunning.windows)
         }
 
-        windows.sort((a, b) => a.state.createdAt - b.state.createdAt)
+        windows.sort((a, b) => {
+            if (!a.state || !b.state) {
+                return false
+            }
+
+            return a.state.createdAt - b.state.createdAt
+        })
 
         return windows
     }

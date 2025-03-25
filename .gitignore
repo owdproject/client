@@ -1,5 +1,6 @@
-# OWD modules
-modules
+# OWD
+modules/temp
+docs
 
 # Nuxt dev/build outputs
 .output

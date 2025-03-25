@@ -1,18 +1,18 @@
 import pkg from './package.json'
 import {createResolver} from "@nuxt/kit";
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 const {resolve} = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
-    ssr: false,
+    alias: {
+        "~": resolve(__dirname, "."),
+    },
 
     css: [
         '~/app/assets/styles/core.scss'
     ],
-
-    alias: {
-        "~": resolve(__dirname, "."),
-    },
 
     modules: [
         '@pinia/nuxt',
@@ -51,6 +51,10 @@ export default defineNuxtConfig({
                 from: 'deepmerge',
                 imports: ['']
             },
+            {
+                from: join(__dirname, 'app/utils/utilsDesktop'),
+                imports: [ 'defineDesktopApp' ]
+            }
         ]
     },
 

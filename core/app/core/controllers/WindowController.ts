@@ -1,5 +1,5 @@
 export class WindowController implements IWindowController {
-    private readonly applicationController: IApplicationController
+    public readonly applicationController: IApplicationController
 
     public readonly instanced: boolean = true
     public readonly model: string
@@ -156,6 +156,31 @@ export class WindowController implements IWindowController {
         this.state.position.y = data.y
     }
 
+    private setActive(value: boolean) {
+        this.state.active = value
+    }
+
+    private setFocus(value: boolean) {
+        this.state.focused = value
+    }
+
+    private bringToFront() {
+        if (!this.state.position) {
+            this.state.position = { x: 0, y: 0, z: 0 }
+        }
+
+        // set focus false on all other windows
+        const applicationManager = useApplicationManager()
+
+        for (const [windowId, window] of applicationManager.openedWindows) {
+            window.actions.setFocus(false)
+        }
+
+        this.setFocus(true)
+
+        this.state.position.z = Math.ceil((Date.now() -  Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1)) / 100)
+    }
+
     // sizes
 
     get width() {
@@ -213,21 +238,6 @@ export class WindowController implements IWindowController {
 
         this.state.size.width = data.width
         this.state.size.height = data.height
-    }
-
-    // active
-
-    private setActive(value: boolean) {
-        this.state.active = value
-    }
-
-    // z handler
-    private bringToFront() {
-        if (!this.state.position) {
-            return
-        }
-
-        this.state.position.z = Math.ceil((Date.now() -  Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1)) / 100)
     }
 
     // minimize
@@ -334,11 +344,11 @@ export class WindowController implements IWindowController {
         return {
             // position
             setActive: this.setActive.bind(this),
-            setPosition: this.setPosition.bind(this),
+            setFocus: this.setFocus.bind(this),
             bringToFront: this.bringToFront.bind(this),
+            setPosition: this.setPosition.bind(this),
 
             // size
-
             setSize: this.setSize.bind(this),
 
             // minimize
