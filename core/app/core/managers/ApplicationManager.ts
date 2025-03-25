@@ -7,24 +7,35 @@ class ApplicationManager implements IApplicationManager {
     constructor() {
     }
 
+    /**
+     * Import applications on nuxt start
+     */
     public async importApps() {
+        // useAppConfig is a nuxt function
+        // https://nuxt.com/docs/guide/directory-structure/app-config
         const config = useAppConfig()
 
         const apps = config.owd.apps ?? []
 
         await Promise.all(apps.map(async (appName: string) => {
-            const appModule = await import(`~~/modules/apps/about`)
+            try {
+                const applicationModule = await import(`~~/modules/apps/${appName}/index.ts`)
 
-            if (appModule.default) {
-                const appController: IApplicationController = appModule.default()
-
-                if (appController.config.autoStart || appController.config.alwaysActive) {
-                    this.openApp(appName);
+                if (applicationModule.default) {
+                    applicationModule.default()
                 }
+            } catch (err) {
+                debugError(`Error while importing ${appName}`, err)
             }
         }))
     }
 
+    /**
+     * Define new application
+     *
+     * @param id
+     * @param config
+     */
     public defineApp(id: string, config: ApplicationConfig) {
         if (this.apps.has(id)) {
             return this.apps.get(id)!;
@@ -40,7 +51,13 @@ class ApplicationManager implements IApplicationManager {
 
         const applicationController: IApplicationController = new ApplicationController(this, id, applicationConfig)
 
+        // define application
         this.apps.set(id, applicationController)
+
+        // start application
+        if (applicationController.config.autoStart || applicationController.config.alwaysActive) {
+            this.openApp(id);
+        }
 
         // restore application state
         if (applicationController.restoreApplication()) {
@@ -50,6 +67,11 @@ class ApplicationManager implements IApplicationManager {
         return applicationController
     }
 
+    /**
+     * Open application
+     *
+     * @param id
+     */
     public openApp(id: string) {
         if (!this.apps.has(id)) {
             debugLog(`App "${id}" is not installed`);
@@ -74,6 +96,12 @@ class ApplicationManager implements IApplicationManager {
         return applicationController;
     }
 
+
+    /**
+     * Close application
+     *
+     * @param id
+     */
     public closeApp(id: string) {
         const applicationController = this.appsRunning.get(id);
         if (!applicationController) return;
@@ -87,6 +115,9 @@ class ApplicationManager implements IApplicationManager {
         }
     }
 
+    /**
+     * Array of opened windows for system bars, docks
+     */
     public get openedWindows() {
         const windows: Reactive<IWindowController[]> = reactive([])
 

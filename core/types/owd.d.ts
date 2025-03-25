@@ -1,11 +1,11 @@
 interface IApplicationManager {
-    apps: Map<string, ApplicationConfig>
-    openedWindows: Reactive<IWindowController>
+    apps: Map<string, IApplicationController>
+    appsRunning: Map<string, IApplicationController>
+
+    get openedWindows(): Reactive<IWindowController>
 
     defineApp(id: string, config: ApplicationConfig): IApplicationController
-
     openApp(id: string): IApplicationController | undefined
-
     closeApp(id: string): void
 }
 
