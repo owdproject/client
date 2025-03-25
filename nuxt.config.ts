@@ -1,9 +1,11 @@
+import {owdConfig} from "./owd.config";
+
 export default defineNuxtConfig({
     ssr: false,
 
     extends: [
         './core',
-        './themes/owd-theme-win95',
+        owdConfig.theme,
     ],
 
     css: [

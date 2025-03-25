@@ -39,17 +39,18 @@ Open Web Desktop instances can be extended with themes, plugins and applications
 You can find some applications available at [topics/owd-modules](https://github.com/topics/owd-modules).
 
 ### Install a new app
-You can simply install a new app with `npm install git+https://github.com/owdproject/owd-app-todo.git` or by cloning it into `/modules/apps`, then define the name of your application in `/app/app.config.ts`.
+You can simply install a new app with `npm install git+https://github.com/owdproject/owd-app-todo.git` or by cloning it into `/modules/apps`, then define the application-id in `/owd.config.ts`.
 
 ```typescript
-// app/app.config.ts
-export default defineAppConfig({
-    owd: {
-        apps: [
-            "owd-todo"
-        ]
-    }
-})
+// owd.config.ts
+export const owdConfig = {
+    theme: './themes/owd-theme-win95',
+
+    // apps to import
+    apps: [
+        'owd-todo'
+    ]
+}
 ```
 
 ## Themes
@@ -57,15 +58,16 @@ Themes allow you to customize the look and feel of your Open Web Desktop instanc
 You can find some themes available at [topics/owd-themes](https://github.com/topics/owd-themes).
 
 ### Install a new theme
-You can simply install a new theme by defining its path or package name in the `layers` array of your `nuxt.config.ts` file. For example:
+You can simply install a new theme by defining its path or package name in the `theme` property of your `owd.config.ts` file. For example:
 
 ```typescript
-// nuxt.config.ts
-export default defineNuxtConfig({
-    extends: [
-        'github:owdproject/owd-theme-win95',
-    ]
-})
+// owd.config.ts
+export const owdConfig = {
+    theme: 'github:owdproject/owd-theme-gnome',
+
+    // apps to import
+    apps: []
+}
 ```
 
 ## Contributing
@@ -124,4 +126,5 @@ Being an open-source project, Open Web Desktop relies on the generosity of its c
 Every contribution, no matter the size, makes a real difference and helps ensure the long-term health and success of Open Web Desktop. Thank you for considering supporting our work during this crucial time!
 
 ### License
+
 Open Web Desktop is licensed under the [MIT License](LICENSE).
