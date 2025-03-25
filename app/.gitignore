@@ -1,7 +1,0 @@
-# editors
-.idea
-.vscode
-
-# app
-/dist
-/node_modules/

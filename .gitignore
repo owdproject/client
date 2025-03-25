@@ -1,9 +1,27 @@
-# Editors
+# OWD modules
+modules
+
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
 .idea
 .vscode
 
-# Tests
-coverage
-
-# App
-node_modules
+# Local env files
+.env
+.env.*
+!.env.example
