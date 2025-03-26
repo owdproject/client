@@ -156,7 +156,7 @@ export class ApplicationManager implements IApplicationManager {
     /**
      * Array of opened windows for system bars, docks
      */
-    public get openedWindows() {
+    public get windowsOpened() {
         const windows: Reactive<IWindowController[]> = reactive([])
 
         for (const [appRunningId, appRunning] of this.appsRunning) {

@@ -5,7 +5,7 @@ const applicationManager = useApplicationManager()
 <template>
   <CoreApplicationWindowsRender
       v-for="[appId, app] of applicationManager.appsRunning"
-      :windows="app.openedWindows"
+      :windows="app.windowsOpened"
       :key="appId"
   />
 </template>

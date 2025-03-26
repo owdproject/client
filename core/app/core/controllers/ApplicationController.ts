@@ -121,7 +121,7 @@ export class ApplicationController implements IApplicationController {
         this.windows.clear()
     }
 
-    get openedWindows() {
+    get windowsOpened() {
         return this.windows;
     }
 

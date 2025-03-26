@@ -2,7 +2,7 @@ interface IApplicationManager {
     apps: Map<string, IApplicationController>
     appsRunning: Map<string, IApplicationController>
 
-    get openedWindows(): Reactive<IWindowController>
+    get windowsOpened(): Reactive<IWindowController>
 
     defineApp(id: string, config: ApplicationConfig): IApplicationController
     openApp(id: string): IApplicationController | undefined
@@ -50,7 +50,7 @@ interface IApplicationController {
 
     closeAllWindows(): void
 
-    get openedWindows(): Reactive<Map<string, IWindowController>>
+    get windowsOpened(): Reactive<Map<string, IWindowController>>
 }
 
 interface IWindowController {
