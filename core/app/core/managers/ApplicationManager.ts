@@ -1,7 +1,7 @@
 import type {Reactive} from "@vue/reactivity"
 import type {AppConfig} from "nuxt/schema";
 
-class ApplicationManager implements IApplicationManager {
+export class ApplicationManager implements IApplicationManager {
     public apps = reactive(new Map<string, IApplicationController>())
     public appsRunning = reactive(new Map<string, IApplicationController>())
 
@@ -18,7 +18,6 @@ class ApplicationManager implements IApplicationManager {
 
         const apps = config.owd.apps ?? []
 
-        console.log(apps)
         await Promise.all(apps.map(async (appIdentifier: string) => {
             if (!appIdentifier.startsWith('local:')) {
                 return
@@ -75,20 +74,37 @@ class ApplicationManager implements IApplicationManager {
         return applicationController
     }
 
+    public isAppDefined(id: string) {
+        if (!this.apps.has(id)) {
+            debugLog(`App "${id}" is not installed`);
+            return false
+        }
+
+        return true
+    }
+
+    public isAppRunning(id: string) {
+        if (!this.appsRunning.has(id)) {
+            debugLog(`App "${id}" is not running`);
+            return false
+        }
+
+        return true
+    }
+
     /**
      * Open application
      *
      * @param id
      */
-    public openApp(id: string) {
-        if (!this.apps.has(id)) {
-            debugLog(`App "${id}" is not installed`);
-            return
+    public async openApp(id: string) {
+        if (!this.isAppDefined(id)) {
+            throw Error(`App "${id}" is not installed`);
         }
 
         const applicationController = this.apps.get(id)!
 
-        if (applicationController.config.singleton && this.appsRunning.has(id)) {
+        if (applicationController.config.singleton && this.isAppRunning(id)) {
             debugLog(`App "${id}" is already opened`);
 
             // todo bring to front latest application window
@@ -98,15 +114,12 @@ class ApplicationManager implements IApplicationManager {
 
         debugLog('App is starting:', applicationController);
 
-        if (typeof applicationController.config.onLaunch === 'function') {
-            applicationController.config.onLaunch(applicationController)
-        }
-
         this.appsRunning.set(id, applicationController)
+
+        await applicationController.launchApplication(applicationController)
 
         return applicationController;
     }
-
 
     /**
      * Close application
@@ -147,5 +160,3 @@ class ApplicationManager implements IApplicationManager {
         return windows
     }
 }
-
-export const applicationManager = new ApplicationManager();

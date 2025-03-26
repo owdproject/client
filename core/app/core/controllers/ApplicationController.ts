@@ -19,6 +19,12 @@ export class ApplicationController implements IApplicationController {
         this.store = useApplicationState(id)
     }
 
+    public async launchApplication() {
+        if (typeof this.config.onLaunch === 'function') {
+            await this.config.onLaunch(this)
+        }
+    }
+
     public restoreApplication() {
         if (
             Object.keys(this.store.meta).length === 0

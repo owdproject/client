@@ -5,6 +5,7 @@ const props = defineProps<{
 }>()
 
 const desktop = useDesktopManager()
+const applicationManager = useApplicationManager()
 
 desktop.overrideConfig({
   systemBar: toRaw(props.systemBar ?? {}),

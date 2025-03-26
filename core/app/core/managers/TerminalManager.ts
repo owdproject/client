@@ -1,27 +1,31 @@
-class Terminal {
+export class TerminalManager {
     private commands: Map<string, CommandFn> = new Map()
     private applicationManager: IApplicationManager
-    public terminal: Terminal
 
-    constructor(applicationManager: IApplicationManager) {
-        this.applicationManager = applicationManager
-        this.terminal = new Terminal(this)
-        this.terminal.loadCommandsFromApps()
+    constructor() {
+        this.applicationManager = useApplicationManager()
+        this.loadCommandsFromApps()
     }
 
-    defineCommand(name: string, fn: CommandFn) {
-        this.commands.set(name, fn)
+    defineCommand(name: string, fn: any, app: IApplicationController) {
+        this.commands.set(name, { fn, app })
     }
 
-    execCommand(input: string) {
+    execCommand(input: string): CommandOutput | void {
         const parsed = parseInput(input)
-        if (!parsed) return
+        if (!parsed) return;
 
-        const command = this.commands.get(parsed.command)
+        const command = this.commands.get(parsed.command);
         if (command) {
-            command(parsed.args, this, this.applicationManager)
+            const result = command.fn(parsed.args, command.app);
+
+            if (typeof result === 'string') {
+                return { text: result };
+            } else if (result) {
+                return result;
+            }
         } else {
-            debugLog(`Command "${parsed.command}" not found.`)
+            return { text: `Command "${parsed.command}" not found.`, isError: true };
         }
     }
 
@@ -29,7 +33,7 @@ class Terminal {
         this.applicationManager.apps.forEach((app: IApplicationController) => {
             if (app.config.commands) {
                 Object.entries(app.config.commands).forEach(([name, fn]) => {
-                    this.defineCommand(name, fn)
+                    this.defineCommand(name, fn, app)
                 })
             }
         })

@@ -26,6 +26,9 @@ interface ApplicationConfig {
     onLaunch?(app: IApplicationController): void
 
     onClose?(app: IApplicationController): void
+
+    isAppDefined(id: string): boolean
+    isAppRunning(id: string): boolean
 }
 
 interface IApplicationController {
@@ -35,6 +38,7 @@ interface IApplicationController {
     windows: Reactive<Map<string, IWindowController>>
     commands: any
 
+    launchApplication(app: IApplicationController): void
     restoreApplication()
 
     openWindow(model: string, windowStoredState?: WindowStoredState, meta?: {
@@ -233,4 +237,16 @@ interface SystemBarConfig {
     enabled?: boolean
     position?: 'top' | 'bottom'
     startButton?: boolean
+}
+
+// TERMINAL
+
+interface CommandFn {
+    fn: (args: string[], app: IApplicationController) => string | CommandOutput | void;
+    app: IApplicationController;
+}
+
+export interface CommandOutput {
+    text: string;
+    isError?: boolean;
 }
