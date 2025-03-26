@@ -1,7 +1,6 @@
 import pkg from './package.json'
 import {createResolver} from "@nuxt/kit";
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { join } from 'path';
 
 const {resolve} = createResolver(import.meta.url);
 

@@ -1,4 +1,5 @@
 import type {Reactive} from "@vue/reactivity"
+import type {AppConfig} from "nuxt/schema";
 
 class ApplicationManager implements IApplicationManager {
     public apps = reactive(new Map<string, IApplicationController>())
@@ -13,19 +14,26 @@ class ApplicationManager implements IApplicationManager {
     public async importApps() {
         // useAppConfig is a nuxt function
         // https://nuxt.com/docs/guide/directory-structure/app-config
-        const config = useAppConfig()
+        const config: AppConfig = useAppConfig()
 
         const apps = config.owd.apps ?? []
 
-        await Promise.all(apps.map(async (appName: string) => {
+        console.log(apps)
+        await Promise.all(apps.map(async (appIdentifier: string) => {
+            if (!appIdentifier.startsWith('local:')) {
+                return
+            }
+
+            const appName = appIdentifier.split(':')[1]
+
             try {
-                const applicationModule = await import(`~~/desktop/apps/${appName}/index.ts`)
+                const applicationModule = await import(`~~/desktop/apps/${appName}/owd.config.ts`)
 
                 if (applicationModule.default) {
-                    applicationModule.default()
+                    applicationModule.default
                 }
             } catch (err) {
-                debugError(`Error while importing ${appName}`, err)
+                debugError(`Error while importing ${appIdentifier}`, err)
             }
         }))
     }
@@ -82,6 +90,9 @@ class ApplicationManager implements IApplicationManager {
 
         if (applicationController.config.singleton && this.appsRunning.has(id)) {
             debugLog(`App "${id}" is already opened`);
+
+            // todo bring to front latest application window
+
             return this.appsRunning.get(id);
         }
 

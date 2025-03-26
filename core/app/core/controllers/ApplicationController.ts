@@ -90,7 +90,7 @@ export class ApplicationController implements IApplicationController {
             windowStoredState!
         )
 
-        if (meta && !meta.isRestoring) {
+        if (!meta?.isRestoring) {
             windowController.actions.bringToFront()
         }
 
