@@ -7,6 +7,9 @@ interface IApplicationManager {
     defineApp(id: string, config: ApplicationConfig): IApplicationController
     openApp(id: string): IApplicationController | undefined
     closeApp(id: string): void
+
+    isAppDefined(id: string): boolean
+    isAppRunning(id: string): boolean
 }
 
 interface ApplicationConfig {
@@ -16,19 +19,17 @@ interface ApplicationConfig {
     description?: string
     icon?: string
     category?: string
+    provides?: string
     singleton?: boolean
     autoStart?: boolean
     permissions?: ApplicationPermission[];
     windows?: { [key: string]: WindowConfig }
-    commands: { [key: string]: function }
+    commands?: { [key: string]: function }
     alwaysActive?: boolean
 
     onLaunch?(app: IApplicationController): void
 
     onClose?(app: IApplicationController): void
-
-    isAppDefined(id: string): boolean
-    isAppRunning(id: string): boolean
 }
 
 interface IApplicationController {
@@ -242,11 +243,20 @@ interface SystemBarConfig {
 // TERMINAL
 
 interface CommandFn {
-    fn: (args: string[], app: IApplicationController) => string | CommandOutput | void;
-    app: IApplicationController;
+    fn: (app: IApplicationController, args: string[]) => string | CommandOutput | void
+    app: IApplicationController
 }
 
-export interface CommandOutput {
-    text: string;
-    isError?: boolean;
+interface CommandOutput {
+    text: string
+    isError?: boolean
+}
+
+// DEFAULT APP
+
+interface DefaultAppsConfig {
+    terminal?: string
+    browser?: string
+    editor?: string
+    [key: string]: string | undefined
 }

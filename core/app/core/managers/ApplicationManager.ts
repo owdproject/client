@@ -5,7 +5,10 @@ export class ApplicationManager implements IApplicationManager {
     public apps = reactive(new Map<string, IApplicationController>())
     public appsRunning = reactive(new Map<string, IApplicationController>())
 
+    private desktopManager: IDesktopManager
+
     constructor() {
+        this.desktopManager = useDesktopManager()
     }
 
     /**
@@ -60,6 +63,17 @@ export class ApplicationManager implements IApplicationManager {
 
         // define application
         this.apps.set(id, applicationController)
+
+        // set as default app for specific purposes
+        if (config.provides) {
+            const existingDefault = this.desktopManager.getDefaultApp(config.provides)
+            const appsForFeature = Array.from(this.apps.values()).filter(app => app.config.provides === config.provides)
+
+            if (!existingDefault && appsForFeature.length === 1) {
+                this.desktopManager.setDefaultApp(config.provides, id)
+                debugLog(`${config.name} has been set as predefined app for "${config.provides}"`)
+            }
+        }
 
         // start application
         if (applicationController.config.autoStart || applicationController.config.alwaysActive) {

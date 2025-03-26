@@ -17,7 +17,7 @@ export class TerminalManager {
 
         const command = this.commands.get(parsed.command);
         if (command) {
-            const result = command.fn(parsed.args, command.app);
+            const result = command.fn(command.app, parsed.args);
 
             if (typeof result === 'string') {
                 return { text: result };
