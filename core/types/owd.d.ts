@@ -3,6 +3,8 @@ interface IApplicationManager {
     appsRunning: Map<string, IApplicationController>
 
     get windowsOpened(): Reactive<IWindowController>
+    get appCategories(): string[]
+    get appsByCategory(): { [category: string]: IApplicationController[] }
 
     defineApp(id: string, config: ApplicationConfig): IApplicationController
     openApp(id: string): IApplicationController | undefined
@@ -115,6 +117,9 @@ interface IWindowController {
 
         // destroy
         destroy(): boolean
+
+        // workspace
+        setWorkspace(workspaceId: string)
     }
 }
 
@@ -173,7 +178,7 @@ interface WindowState {
     category?: string
     icon?: string
     pinned?: boolean
-    workspace?: number
+    workspace: string
 
     // position
     position?: WindowPosition

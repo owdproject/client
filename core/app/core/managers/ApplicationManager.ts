@@ -126,8 +126,6 @@ export class ApplicationManager implements IApplicationManager {
             return this.appsRunning.get(id);
         }
 
-        debugLog('App is starting:', applicationController);
-
         this.appsRunning.set(id, applicationController)
 
         await applicationController.launchApplication(applicationController)
@@ -157,12 +155,13 @@ export class ApplicationManager implements IApplicationManager {
      * Array of opened windows for system bars, docks
      */
     public get windowsOpened() {
-        const windows: Reactive<IWindowController[]> = reactive([])
+        const windows: Reactive<Map<string,IWindowController>[]> = reactive([])
 
         for (const [appRunningId, appRunning] of this.appsRunning) {
             windows.push(...appRunning.windows)
         }
 
+        /*
         windows.sort((a, b) => {
             if (!a.state || !b.state) {
                 return false
@@ -170,7 +169,52 @@ export class ApplicationManager implements IApplicationManager {
 
             return a.state.createdAt - b.state.createdAt
         })
+         */
 
         return windows
+    }
+
+    public getWindowOpenedId(windowId: string) {
+        const mapWindowFound: Map<string, IWindowController> = this.windowsOpened.find(window => {
+            return window[1].state.id === windowId
+        })
+
+        if (mapWindowFound) {
+            return mapWindowFound[1]
+        }
+    }
+
+    /**
+     * Gets all unique categories from the installed apps
+     */
+    public get appCategories(): string[] {
+        const categories = new Set<string>()
+        for (const app of this.apps.values()) {
+            if (app.config.category) {
+                categories.add(app.config.category)
+            }
+        }
+        return Array.from(categories).sort()
+    }
+
+    /**
+     * Gets the apps ordered by category
+     */
+    public get appsByCategory(): { [category: string]: IApplicationController[] } {
+        const categorizedApps: { [category: string]: IApplicationController[] } = {}
+
+        for (const app of this.apps.values()) {
+            const category = app.config.category || 'other'
+            if (!categorizedApps[category]) {
+                categorizedApps[category] = []
+            }
+            categorizedApps[category].push(app)
+        }
+
+        for (const category in categorizedApps) {
+            categorizedApps[category].sort((a, b) => a.config.name.localeCompare(b.config.name))
+        }
+
+        return categorizedApps
     }
 }
