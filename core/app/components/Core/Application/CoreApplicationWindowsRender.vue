@@ -1,14 +1,19 @@
 <script setup lang="ts">
 defineProps<{
+  workspaceFilter: string
   windows: IApplicationController['windows']
 }>()
 </script>
 
 <template>
-  <component
+  <template
       v-for="[windowId, window] in windows"
       :key="windowId"
-      :window="window"
-      :is="window.config.component"
-  />
+  >
+    <component
+        v-if="!workspaceFilter || (workspaceFilter && window.state.workspace === workspaceFilter)"
+        :window="window"
+        :is="window.config.component"
+    />
+  </template>
 </template>

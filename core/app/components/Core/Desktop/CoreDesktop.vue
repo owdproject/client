@@ -4,14 +4,20 @@ const props = defineProps<{
   dockBar?: DockBarConfig
 }>()
 
-const desktop = useDesktopManager()
+const desktopManager = useDesktopManager()
 const applicationManager = useApplicationManager()
+const workspaceStore = useWorkspaceStore()
 
-desktop.overrideConfig({
+// create firsts workspaces if not available
+workspaceStore.setupWorkspaces()
+
+// override desktop configurations
+desktopManager.overrideConfig({
   systemBar: toRaw(props.systemBar ?? {}),
   dockBar: toRaw(props.dockBar ?? {}),
 })
 
+// define apps and restore statuses
 applicationManager.importApps()
 
 // desktop resize

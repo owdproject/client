@@ -121,7 +121,6 @@ const classes = computed(() => {
       @resize:end="onWindowResizeEnd"
       :style="{zIndex: windowController?.state.position?.z}"
       :drag-selector="windowController?.isDraggable ? '.owd-window-nav__draggable' : '.owd-window-nav__draggable-none'"
-      @dragstart.prevent
       @pointerdown="onWindowPointerDown"
   >
 

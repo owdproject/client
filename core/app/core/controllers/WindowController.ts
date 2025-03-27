@@ -340,6 +340,11 @@ export class WindowController implements IWindowController {
         return !!this.state.overflow
     }
 
+    // workspace
+    private setWorkspace(workspaceId: string) {
+        this.state.workspace = workspaceId
+    }
+
     get actions() {
         return {
             // position
@@ -362,6 +367,9 @@ export class WindowController implements IWindowController {
 
             // destroy
             destroy: this.destroy.bind(this),
+
+            // workspace
+            setWorkspace: this.setWorkspace.bind(this),
         }
     }
 }

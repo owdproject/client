@@ -53,6 +53,8 @@ export class ApplicationController implements IApplicationController {
     }
 
     public openWindow(model: string, windowStoredState: WindowStoredState | undefined, meta?: any) {
+        const workspaceStore = useWorkspaceStore()
+
         if (!this.config.windows || !this.config.windows.hasOwnProperty(model)) {
             debugError(`Window model "${model}" not found`)
             return
@@ -71,6 +73,7 @@ export class ApplicationController implements IApplicationController {
                     active: true,
                     focused: true,
                     createdAt: +new Date(),
+                    workspace: workspaceStore.active
                 }
             }
 
