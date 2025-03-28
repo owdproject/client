@@ -1,6 +1,4 @@
-import pkg from './package.json'
 import {createResolver} from "@nuxt/kit";
-import { join } from 'path';
 
 const {resolve} = createResolver(import.meta.url);
 
@@ -9,40 +7,8 @@ export default defineNuxtConfig({
         "~": resolve(__dirname, "."),
     },
 
-    css: [
-        '~/app/assets/styles/core.scss'
-    ],
-
-    modules: [
-        '@nuxtjs/tailwindcss',
-        '@primevue/nuxt-module',
-        '@pinia/nuxt',
-        'pinia-plugin-persistedstate/nuxt',
-        '@nuxt/fonts',
-        '@vueuse/nuxt',
-        '@nuxtjs/i18n',
-        '@nuxt/icon',
-    ],
-
-    icon: {
-        clientBundle: {
-            scan: true,
-            sizeLimitKb: 256,
-        },
-    },
-
-    vite: {
-        css: {
-            preprocessorOptions: {
-                scss: {
-                    api: 'modern-compiler'
-                }
-            }
-        },
-    },
-
     imports: {
-        dirs: ['api', 'composables', 'core/controllers', 'core/managers', 'models', 'stores', 'utils'],
+        dirs: ['composables', 'core/controllers', 'core/managers', 'stores', 'utils'],
         presets: [
             {
                 from: 'nanoid',
@@ -50,19 +16,9 @@ export default defineNuxtConfig({
             },
             {
                 from: 'deepmerge',
-                imports: ['']
+                imports: ['merge']
             },
-            {
-                from: join(__dirname, 'app/utils/utilsDesktop'),
-                imports: [ 'defineDesktopApp' ]
-            }
         ]
-    },
-
-    runtimeConfig: {
-        public: {
-            coreVersion: pkg.version,
-        }
     },
 
     future: {
