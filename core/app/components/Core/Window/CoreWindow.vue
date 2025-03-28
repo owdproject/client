@@ -146,6 +146,7 @@ const classes = computed(() => {
   &--overflow-hidden {
     :deep(.owd-window__content) {
       overflow: hidden;
+      height: 100%;
     }
   }
 }
