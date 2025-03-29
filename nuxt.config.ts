@@ -1,4 +1,4 @@
-import {join} from "path";
+import {owdConfig} from "./owd.config";
 
 export default defineNuxtConfig({
     ssr: false,
@@ -8,8 +8,14 @@ export default defineNuxtConfig({
         // import owd core
         './core',
 
+        // import owd modules
+        ...owdConfig.extends.modules,
+
         // import owd theme
-        'github:owdproject/owd-theme-win95',
+        owdConfig.extends.theme,
+
+        // import owd apps
+        ...owdConfig.extends.apps,
 
     ],
 

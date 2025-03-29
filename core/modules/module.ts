@@ -4,8 +4,7 @@ import path from "path";
 
 export default defineNuxtModule({
     meta: {
-        name: 'core',
-        configKey: 'core'
+        name: 'owd-core',
     },
     async setup(options, nuxt) {
         const {resolve} = createResolver(import.meta.url);
