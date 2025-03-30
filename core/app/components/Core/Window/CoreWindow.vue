@@ -149,5 +149,12 @@ const classes = computed(() => {
       height: 100%;
     }
   }
+
+  &:not(&--overflow-hidden) {
+    :deep(.owd-window__content) {
+      overflow: auto;
+      height: 100%;
+    }
+  }
 }
 </style>

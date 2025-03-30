@@ -1,5 +1,5 @@
 const applicationManager = new ApplicationManager()
 
-export function useApplicationManager() {
+export function useApplicationManager(): IApplicationManager {
     return applicationManager
 }

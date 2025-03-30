@@ -14,7 +14,7 @@ export class ApplicationManager implements IApplicationManager {
      * Import applications on nuxt start
      */
     public async importApps() {
-        const { owdConfig } = await import(`~~/owd.config`)
+        const {owdConfig} = await import(`~~/owd.config`)
 
         if (owdConfig && typeof owdConfig.loader === 'function') {
             owdConfig.loader()
@@ -40,12 +40,10 @@ export class ApplicationManager implements IApplicationManager {
             ...config
         })
 
-        const applicationController: IApplicationController = new ApplicationController(this, id, applicationConfig)
-
-        // define application
-        this.apps.set(id, applicationController)
+        const applicationController: IApplicationController = new ApplicationController(id, applicationConfig)
 
         // set as default app for specific purposes
+        // todo improve this and move it in a store
         if (config.provides) {
             const existingDefault = this.desktopManager.getDefaultApp(config.provides)
             const appsForFeature = Array.from(this.apps.values()).filter(app => app.config.provides === config.provides)
@@ -56,15 +54,8 @@ export class ApplicationManager implements IApplicationManager {
             }
         }
 
-        // start application
-        if (applicationController.config.autoStart || applicationController.config.alwaysActive) {
-            this.openApp(id);
-        }
-
-        // restore application state
-        if (applicationController.restoreApplication()) {
-            this.appsRunning.set(id, applicationController)
-        }
+        // define application
+        this.apps.set(id, applicationController)
 
         return applicationController
     }
@@ -99,17 +90,15 @@ export class ApplicationManager implements IApplicationManager {
 
         const applicationController = this.apps.get(id)!
 
+        await applicationController.launchApplication()
+
+        // todo bring to front latest application window
         if (applicationController.config.singleton && this.isAppRunning(id)) {
             debugLog(`App "${id}" is already opened`);
-
-            // todo bring to front latest application window
-
             return this.appsRunning.get(id);
         }
 
         this.appsRunning.set(id, applicationController)
-
-        await applicationController.launchApplication(applicationController)
 
         return applicationController;
     }
@@ -125,18 +114,14 @@ export class ApplicationManager implements IApplicationManager {
 
         applicationController.closeAllWindows();
 
-        if (!applicationController.config.alwaysActive) {
-            this.appsRunning.delete(id);
-        } else {
-            debugLog(`App "${id}" always stay in background`);
-        }
+        this.appsRunning.delete(id);
     }
 
     /**
      * Array of opened windows for system bars, docks
      */
     public get windowsOpened() {
-        const windows: Reactive<Map<string,IWindowController>[]> = reactive([])
+        const windows: Reactive<Map<string, IWindowController>[]> = reactive([])
 
         for (const [appRunningId, appRunning] of this.appsRunning) {
             windows.push(...appRunning.windows)

@@ -5,6 +5,8 @@ export class WindowController implements IWindowController {
     public readonly model: string
 
     public config: WindowConfig = {
+        title: '',
+        category: '',
         name: '',
 
         component: undefined,
@@ -18,8 +20,8 @@ export class WindowController implements IWindowController {
 
         // sizes
         size: {
-            width: 600,
-            height: 400,
+            width: undefined,
+            height: undefined,
         },
 
         // minimize
@@ -41,6 +43,8 @@ export class WindowController implements IWindowController {
         // overflow
         overflow: false,
     }
+
+    public override: WindowOverride = {}
 
     public meta: any = {}
     private storedState: WindowStoredState
@@ -70,6 +74,7 @@ export class WindowController implements IWindowController {
 
         // title
         if (config.title) this.config.title = config.title
+        if (config.icon) this.config.icon = config.icon
         if (config.name) this.config.name = config.name
 
         // position
@@ -127,8 +132,6 @@ export class WindowController implements IWindowController {
     }
 
     private restoreState() {
-        if (!this.state.title) this.state.title = this.config.title
-        if (!this.state.icon) this.state.icon = this.config.icon
         if (!this.state.pinned) this.state.pinned = this.config.pinned
         if (!this.state.position) this.state.position = deepClone(this.config.position)
 
@@ -137,8 +140,6 @@ export class WindowController implements IWindowController {
         if (!this.state.destroyable) this.state.destroyable = this.config.destroyable
         if (!this.state.draggable) this.state.draggable = this.config.draggable
         if (!this.state.resizable) this.state.resizable = this.config.resizable
-        if (!this.state.overflow) this.state.overflow = this.config.overflow
-
 
         if (!this.state.size) {
             this.state.size = deepClone(this.config.size)
@@ -181,6 +182,24 @@ export class WindowController implements IWindowController {
         this.state.position.z = Math.ceil((Date.now() -  Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1)) / 100)
     }
 
+    // common
+
+    get title() {
+        if (typeof this.override.title !== 'undefined') {
+            return this.override.title
+        }
+
+        return this.config.title
+    }
+
+    get icon() {
+        if (typeof this.override.icon !== 'undefined') {
+            return this.override.icon
+        }
+
+        return this.config.icon
+    }
+
     // sizes
 
     get width() {
@@ -193,7 +212,7 @@ export class WindowController implements IWindowController {
 
     get maxWidth() {
         if (typeof this.state.size?.maxWidth === 'undefined') {
-            return this.config.size.maxWidth ?? 600
+            return this.config.size.maxWidth
         }
 
         return this.state.size.maxWidth
@@ -201,7 +220,7 @@ export class WindowController implements IWindowController {
 
     get minWidth() {
         if (typeof this.state.size?.minWidth === 'undefined') {
-            return this.config.size.minWidth ?? 400
+            return this.config.size.minWidth
         }
 
         return this.state.size.minWidth
@@ -225,7 +244,7 @@ export class WindowController implements IWindowController {
 
     get minHeight() {
         if (typeof this.state.size?.minHeight === 'undefined') {
-            return this.config.size.minHeight ?? 400
+            return this.config.size.minHeight
         }
 
         return this.state.size.minHeight
@@ -233,7 +252,7 @@ export class WindowController implements IWindowController {
 
     private setSize(data: { width: number, height: number}) {
         if (!this.state.size) {
-            this.state.size = { width: 600, height: 400 }
+            this.state.size = { width: undefined, height: undefined }
         }
 
         this.state.size.width = data.width
@@ -337,12 +356,22 @@ export class WindowController implements IWindowController {
 
     // overflow
     get canOverflow() {
-        return !!this.state.overflow
+        return !!this.config.overflow
     }
 
     // workspace
     private setWorkspace(workspaceId: string) {
         this.state.workspace = workspaceId
+    }
+
+    // override
+
+    setTitleOverride(value: string) {
+        this.override.title = value
+    }
+
+    resetTitleOverride() {
+        this.override.title = undefined
     }
 
     get actions() {
@@ -370,6 +399,10 @@ export class WindowController implements IWindowController {
 
             // workspace
             setWorkspace: this.setWorkspace.bind(this),
+
+            // override
+            setTitleOverride: this.setTitleOverride.bind(this),
+            resetTitleOverride: this.resetTitleOverride.bind(this),
         }
     }
 }

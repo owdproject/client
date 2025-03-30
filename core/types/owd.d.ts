@@ -7,12 +7,14 @@ interface IApplicationManager {
     get appsByCategory(): { [category: string]: IApplicationController[] }
 
     defineApp(id: string, config: ApplicationConfig): IApplicationController
-    openApp(id: string): IApplicationController | undefined
+    openApp(id: string): Promise<IApplicationController | undefined>
     closeApp(id: string): void
 
     isAppDefined(id: string): boolean
     isAppRunning(id: string): boolean
 }
+
+type CommandFunction = (app: IApplicationController, args: any) => void;
 
 interface ApplicationConfig {
     id: string
@@ -23,26 +25,28 @@ interface ApplicationConfig {
     category?: string
     provides?: string
     singleton?: boolean
-    autoStart?: boolean
+    defaultMeta?: IApplicationMeta
     permissions?: ApplicationPermission[];
     windows?: { [key: string]: WindowConfig }
-    commands?: { [key: string]: function }
-    alwaysActive?: boolean
+    commands?: { [key: string]: CommandFunction }
 
-    onLaunch?(app: IApplicationController): void
-
-    onClose?(app: IApplicationController): void
+    onReady?(app: IApplicationController): void | Promise<void>
+    onLaunch?(app: IApplicationController): void | Promise<void>
+    onRestore?(app: IApplicationController): void | Promise<void>
+    onClose?(app: IApplicationController): void | Promise<void>
 }
+
+type IApplicationMeta = { [key: string]: any }
 
 interface IApplicationController {
     id: string
     config: ApplicationConfig
-    meta: { [key: string]: any }
+    get meta(): { [key: string]: any }
     windows: Reactive<Map<string, IWindowController>>
     commands: any
 
-    launchApplication(app: IApplicationController): void
-    restoreApplication()
+    launchApplication(): Promise<boolean>
+    restoreApplication(): Promise<boolean>
 
     openWindow(model: string, windowStoredState?: WindowStoredState, meta?: {
         isRestoring?: boolean
@@ -61,21 +65,25 @@ interface IWindowController {
     model: string
 
     config: WindowConfig
-
+    override: WindowOverride
     get state(): WindowState
 
+    // common
+    get title(): string
+    get icon(): string|undefined
+
     // sizes
-    get width(): number
+    get width(): WindowSizeValue
 
-    get maxWidth(): number
+    get maxWidth(): WindowSizeValue
 
-    get minWidth(): number
+    get minWidth(): WindowSizeValue
 
-    get height(): number
+    get height(): WindowSizeValue
 
-    get maxHeight(): number
+    get maxHeight(): WindowSizeValue
 
-    get minHeight(): number
+    get minHeight(): WindowSizeValue
 
     // minimize
     get isMinimizable(): boolean
@@ -120,13 +128,16 @@ interface IWindowController {
 
         // workspace
         setWorkspace(workspaceId: string)
+
+        // override
+        setTitleOverride(title: string): void
     }
 }
 
 interface WindowConfig {
-    name?: string
-    title?: string
-    category?: string
+    name: string
+    title: string
+    category: string
     icon?: string
     pinned?: boolean
 
@@ -170,13 +181,16 @@ interface WindowStoredState {
     state: WindowState
 }
 
+interface WindowOverride {
+    title?: string
+    icon?: string
+}
+
 interface WindowState {
     id: string
     createdAt: number
 
-    title?: string
     category?: string
-    icon?: string
     pinned?: boolean
     workspace: string
 
@@ -205,18 +219,15 @@ interface WindowState {
 
     // draggable
     resizable?: boolean
-
-    // overflow
-    overflow?: boolean
 }
 
 interface WindowSize {
-    width: number
-    height: number
-    minWidth?: number
-    minHeight?: number
-    maxWidth?: number
-    maxHeight?: number
+    width: WindowSizeValue
+    height: WindowSizeValue
+    minWidth?: WindowSizeValue
+    minHeight?: WindowSizeValue
+    maxWidth?: WindowSizeValue
+    maxHeight?: WindowSizeValue
 }
 
 interface WindowPosition {
@@ -225,7 +236,13 @@ interface WindowPosition {
     z?: number
 }
 
+type WindowSizeValue = number|string|undefined
+
 // DESKTOP
+
+interface IDesktopManager {
+
+}
 
 interface DesktopConfig {
     name: string
