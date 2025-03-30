@@ -1,8 +1,13 @@
 {
-  "name": "owd-client",
+  "name": "@owd-client/core",
   "version": "3.0.0-alpha.0",
-  "private": true,
-  "description": "Open Web Desktop client",
+  "description": "Open Web Desktop core",
+  "keywords": [
+    "web",
+    "desktop",
+    "vue",
+    "web desktop"
+  ],
   "homepage": "https://github.com/owdproject/owd-client#readme",
   "bugs": {
     "url": "https://github.com/owdproject/owd-client/issues"
@@ -16,17 +21,7 @@
     "name": "dxlliv",
     "url": "https://github.com/dxlliv"
   },
-  "scripts": {
-    "build": "nuxt generate",
-    "dev": "nuxt dev --host",
-    "docs:build": "vitepress build docs",
-    "docs:dev": "vitepress dev docs",
-    "docs:preview": "vitepress preview docs",
-    "generate": "nuxt generate --dev",
-    "postinstall": "nuxt prepare",
-    "preview": "nuxt preview"
-  },
-  "devDependencies": {
+  "dependencies": {
     "@nuxt/fonts": "^0.11.0",
     "@nuxt/icon": "^1.11.0",
     "@nuxtjs/i18n": "^9.4.0",
@@ -49,7 +44,6 @@
     "sanitize.css": "^13.0.0",
     "sass": "^1.86.0",
     "swiper": "^11.2.6",
-    "vitepress": "^1.6.3",
     "vue-resizable": "^2.1.7",
     "vue-slicksort": "^2.0.5"
   }

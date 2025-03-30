@@ -1,35 +1,19 @@
 # Open Web Desktop - Client
 
 <p style="text-align: center;">
-    <img src="https://i.imgur.com/TqD0gwI.png" alt="Open Web Desktop 2.0.0-beta with Vue 3 and TypeScript" />
-</p>
-
-<p style="text-align: center;">
-    <a href="https://npmjs.com/package/@owd-client/core"><img src="https://img.shields.io/npm/v/@owd-client/core.svg?color=1895b1" /></a>
-    <a href="https://github.com/owdproject/owd-client"><img src="https://img.shields.io/badge/owd-client-blue" /></a>
-    <a href="https://github.com/topics/owd-modules"><img src="https://img.shields.io/badge/owd-modules-777" /></a>
-    <a href="https://discord.gg/3KFVP8b"><img src="https://img.shields.io/discord/759699532896010261?color=7289da" /></a>
-    <a href="https://github.com/owdproject/owd-client"><img src="https://img.shields.io/github/stars/owdproject/owd-client?style=social" /></a>
+    <img src="https://i.imgur.com/TqD0gwI.png" alt="Open Web Desktop" />
 </p>
 
 ## Overview
-Open Web Desktop is a project that aims to provide a simple environment to create your own web desktop, extendable through a series of modules and integrations. OWD Client is based on Vue.js 3 and TypeScript.
+Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with TypeScript and leverages the extensible architecture of Nuxt.js.
 
-[Check the demo](https://demo.owdproject.org) of the `owd-client` base repository, decked out with some modules.
+[Check out the demo](https://owdproject.github.io/demo) of the `owd-client` base repository, showcasing a few base modules.
 
 ## Features
-- Open-source web desktop client based on Vue.js 3
-- Fully extendable through app and desktop modules
-- Fully extendable through pages and Vue components
-- Notifications, terminal commands, multiple themes
-- Vuex, Vue Router and Vue i18n implemented by default
-- Vuetify.js and Moment.js implemented by default
-- TypeScript and Vite support
-
-## About this project
-Open Web Desktop is divided in two main repositories:
-- [owd-client](https://github.com/owdproject/owd-client): Open Web Desktop client, made with Vue.js 3
-- [owd-server](https://github.com/owdproject/owd-server): Open Web Desktop server, made with Nest.js (TBA)
+- Open-source web desktop environment built with Nuxt.js
+- Fully extendable with themes, apps, and desktop modules
+- Decked with popular libs like VueUse, Swiper, Slicksort
+- Leverage the entire Nuxt.js ecosystem effortlessly
 
 ## Getting started
 Required software:
@@ -41,102 +25,131 @@ When you are ready, bootstrap a new instance by running:
 ```
 npx create-owd-app <app-name>
 ```
-Once the process is complete, you can start with the client development:
+Once the process is complete, you can start to develop:
 ```
-# Run the dev server
-npm run serve
+# Run the dev server with hot-reload
+npm run dev
 
 # Build for production
-npm run build
+npm run generate
 ```
 
 ## Modules
-OWD modules can extend your Open Web Desktop instance.  
-You can find some modules available for all at [topics/owd-modules](https://github.com/topics/owd-modules).
+Open Web Desktop instances can be extended with themes, plugins and applications.
+You can find some applications available at [topics/owd-modules](https://github.com/topics/owd-modules).
 
-### Install a new module directly
-You can simply install a new module with `npm install <git-link>`, unless you want to customize it.
+### Install a new app
+You can simply install a new app with `npm install git+https://github.com/owdproject/owd-app-todo.git` or by cloning it into `/modules/apps`, then define the application-id in `/owd.config.ts`.
 
-#### Install and customize a new module
-If you are planning to customize a module, clone it into `src/modules/app/<module-name>`.  
-Always check the `README.md`, you may have to move some folders (for example "config" or "public").
+```typescript
+// owd.config.ts
+export const owdConfig = {
+    theme: 'github:owdproject/owd-theme-gnome',
 
-Also take a look at the `package.json`, there may be additional dependencies to install, or other OWD modules.
-For each dependency you find listed, install it by running `npm install <dependency>` in the root folder of your instance.
-
-#### Define the installed module
-To load an installed module, define it under `my-owd-client/client.extensions.ts`.  
-Be sure to add every module in the `app.modules` array like the default ones:
-
-```js
-import AboutModule from "@owd-client/core/src/modules/app/about";
-import DebugModule from "@owd-client/core/src/modules/app/debug";
-
-// installed modules
-import CustomModuleSource from "./src/modules/app/custom-module/client";
-import CustomModuleInstalled from "owd-custom-module/client";
-
-export default {
-  app: {
-    modules: [
-      AboutModule,
-      DebugModule,
-      CustomModuleSource,
-      CustomModuleInstalled
+    // apps to import
+    apps: [
+        'owd-app-todo'
     ]
-  },
-  ...
+}
 ```
+
+## Themes
+Themes allow you to customize the look and feel of your Open Web Desktop instance.
+You can find some themes available at [topics/owd-themes](https://github.com/topics/owd-modules).
+
+### Install a new theme
+You can install and apply a new theme by defining its location in the `theme` property of your `owd.config.ts` file. Open Web Desktop supports loading themes from local paths or directly from GitHub repositories.
+
+**1. Using a local theme:**
+
+To use a theme located within your project (e.g., in a `themes` directory), specify the path to the theme directory.
+
+For example, if your theme is located in `./themes/owd-theme-win95`:
+
+```typescript
+// owd.config.ts
+export const owdConfig = {
+    theme: './themes/owd-theme-win95',
+    
+    // ... other OWD configurations
+}
+```
+
+**2. Using a theme from GitHub:**
+
+To use a theme directly from a GitHub repository, specify the repository URL in the format `github:<username>/<repository>`.
+
+For example, to use the `owd-theme-gnome` theme from the `owdproject` organization on GitHub:
+
+```typescript
+// owd.config.ts
+export const owdConfig = {
+    theme: 'github:owdproject/owd-theme-gnome',
+    
+    // ... other OWD configurations
+}
+```
+
+**Key takeaways:**
+
+* Themes are now configured using the `theme` property within your `owd.config.ts` file.
+* You can specify themes using either a local path or a GitHub repository URL.
 
 ## Contributing
 
-### Local development
-OWD Client repository is a Yarn workspaces monorepo that includes the client boilerplate, the client core, and in the future also something else like the docs, just to keep everything in a single place.
+We welcome contributions to Open Web Desktop! This project is built with Nuxt and follows a modular architecture, making it relatively easy to extend and contribute to various parts of the codebase.
 
-### Setting up your environment
+### Local Development Setup
 
-Required software:
+If you'd like to contribute, here's how to set up your local development environment:
 
-- [Git](https://git-scm.com)
-- [Node](https://nodejs.org)
-- [Yarn](https://classic.yarnpkg.com)
+**Prerequisites:**
 
-Once you have everything installed, clone the repository:
+Make sure you have the following software installed on your system:
 
-```
+- [Git](https://git-scm.com): For version control.
+- [Node.js](https://nodejs.org): JavaScript runtime environment.
+
+**Cloning the Repository:**
+
+You can clone the Open Web Desktop client repository using either HTTPS or SSH:
+
+```bash
 # Using HTTPS
-git clone https://github.com/owdproject/owd-client.git
+git clone [https://github.com/owdproject/owd-client.git](https://github.com/owdproject/owd-client.git)
 
 # Using SSH
 git clone git@github.com:owdproject/owd-client.git
 ```
 
-Then install all the dependencies, and run Open Web Desktop in development mode.
-```
-# Navigate to the owd-client folder
+Installing Dependencies and Starting the Development Server:
+
+Once you have cloned the repository, navigate to the project folder and install the necessary dependencies, then start the development server:
+
+```bash
 cd owd-client
-
-# Install dependencies using yarn
-yarn install
-
-# Run OWD in development mode
-yarn serve
+npm install
+npm run dev
 ```
-This will bootstrap the Yarn workspaces, allowing you to run and edit both client and core packages.   
-If you intend to contribute to the project, please join our [community chat](https://discord.gg/3KFVP8b).
 
-## Supporters
+This will launch Open Web Desktop in development mode, allowing you to test your changes and see them reflected in real-time.
 
-Your support is essential to keep this project active.  
-If you find Open Web Desktop useful, please consider donating.
+## Getting Involved
 
-<a href="https://www.patreon.com/hacklover">
-    <img alt="Open Web Desktop Patreon" src="https://img.shields.io/badge/dynamic/json?color=%23e85b46&label=patreon&query=data.attributes.patron_count&suffix=%20patrons&url=https://www.patreon.com/api/campaigns/1208485" />
-</a>
-&nbsp;
-<a href="https://www.liberapay.com/hacklover">
-    <img alt="Open Web Desktop Liberapay" src="https://img.shields.io/liberapay/receives/hacklover?label=liberapay" />
-</a>
+Open Web Desktop is a community-driven project with a codebase that has been recently rewritten and is now under active development. Your support is incredibly valuable in fueling this renewed effort and ensuring its continued growth. If you find Open Web Desktop useful and appreciate the dedication behind this significant update, please consider making a donation. Your contribution directly supports the time and effort invested in maintaining the project, developing new features, and providing community support during this exciting phase.
 
-## License
-This project is released under the [GNU GPL3 License](LICENSE)
+**Why Support?**
+
+Being an open-source project, Open Web Desktop relies on the generosity of its community to thrive. Your support allows us to:
+
+* **Dedicate focused time to development and bug fixes, ensuring the stability of the codebase.**
+* **Explore and implement new features based on community feedback, shaping the future of the project.**
+* **Provide timely support and guidance to users as the project evolves.**
+
+**How to Support:**
+
+Every contribution, no matter the size, makes a real difference and helps ensure the long-term health and success of Open Web Desktop. Thank you for considering supporting our work during this crucial time!
+
+### License
+
+Open Web Desktop is licensed under the [MIT License](LICENSE).
