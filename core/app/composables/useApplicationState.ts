@@ -1,5 +1,5 @@
 export const useApplicationState = (appId: string) => {
-    return defineStore(`application/${appId}`, () => {
+    return defineStore(`owd/application/${appId}`, () => {
         const meta: Ref<any> = ref({})
 
         const windows: Ref<{[windowId: string]: WindowStoredState}> = ref({})
@@ -9,8 +9,8 @@ export const useApplicationState = (appId: string) => {
             meta,
         }
     }, {
-        persist: {
-            storage: window.localStorage
+        persistedState: {
+            persist: true
         },
     })()
 }

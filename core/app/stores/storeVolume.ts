@@ -9,7 +9,7 @@ export const useVolumeStore = defineStore('owd/volume', () => {
         master
     }
 }, {
-    persist: {
-        storage: window.localStorage,
-    }
+    persistedState: {
+        persist: true
+    },
 })

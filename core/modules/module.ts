@@ -37,9 +37,8 @@ export default defineNuxtModule({
 
             // install pinia
 
-            nuxt.options.modules.push('@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt')
+            nuxt.options.modules.push('@pinia/nuxt')
             await installModule("@pinia/nuxt")
-            await installModule("pinia-plugin-persistedstate/nuxt")
 
         }
 

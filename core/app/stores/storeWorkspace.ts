@@ -5,8 +5,6 @@ export const useWorkspaceStore = defineStore('owd/workspaces', () => {
     const overview = ref(false)
 
     function setupWorkspaces() {
-        const applicationManager = useApplicationManager()
-
         if (list.value.length === 0) {
             createWorkspace()
             active.value = list.value[0]
@@ -43,7 +41,7 @@ export const useWorkspaceStore = defineStore('owd/workspaces', () => {
         setWorkspace,
     }
 }, {
-    persist: {
-        storage: window.localStorage,
-    }
+    persistedState: {
+        persist: true
+    },
 })
