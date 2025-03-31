@@ -1,6 +1,8 @@
 interface IApplicationManager {
     apps: Map<string, IApplicationController>
-    appsRunning: Map<string, IApplicationController>
+    appsRunning: Reactive<IApplicationController>
+
+    importApps()
 
     get windowsOpened(): Reactive<IWindowController>
     get appCategories(): string[]
@@ -42,8 +44,12 @@ interface IApplicationController {
     id: string
     config: ApplicationConfig
     get meta(): { [key: string]: any }
+    store: Pinia
     windows: Reactive<Map<string, IWindowController>>
     commands: any
+
+    isRunning: boolean
+    setRunning(value: boolean): void
 
     launchApplication(): Promise<boolean>
     restoreApplication(): Promise<boolean>
@@ -130,7 +136,8 @@ interface IWindowController {
         setWorkspace(workspaceId: string)
 
         // override
-        setTitleOverride(title: string): void
+        setTitleOverride(title: string|undefined): void
+        resetTitleOverride(): void
     }
 }
 
@@ -182,8 +189,8 @@ interface WindowStoredState {
 }
 
 interface WindowOverride {
-    title?: string
-    icon?: string
+    title?: undefined|string
+    icon?: undefined|string
 }
 
 interface WindowState {
@@ -247,6 +254,7 @@ interface IDesktopManager {
 interface DesktopConfig {
     name: string
     compatibility: string
+    features?: string[]
     systemBar?: SystemBarConfig
     dockBar?: DockBarConfig
 }

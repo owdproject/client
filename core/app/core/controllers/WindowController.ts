@@ -166,20 +166,22 @@ export class WindowController implements IWindowController {
     }
 
     private bringToFront() {
+        const applicationManager = useApplicationManager()
+        const desktopWindowStore = useDesktopWindowStore()
+
         if (!this.state.position) {
             this.state.position = { x: 0, y: 0, z: 0 }
         }
 
         // set focus false on all other windows
-        const applicationManager = useApplicationManager()
-
         for (const [windowId, window] of applicationManager.windowsOpened) {
             window.actions.setFocus(false)
         }
 
         this.setFocus(true)
 
-        this.state.position.z = Math.ceil((Date.now() -  Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1)) / 100)
+        desktopWindowStore.incrementPositionZ()
+        this.state.position.z = desktopWindowStore.positionZ
     }
 
     // common
@@ -366,7 +368,7 @@ export class WindowController implements IWindowController {
 
     // override
 
-    setTitleOverride(value: string) {
+    setTitleOverride(value: undefined|string) {
         this.override.title = value
     }
 

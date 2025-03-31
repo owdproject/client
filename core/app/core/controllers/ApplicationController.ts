@@ -1,34 +1,39 @@
 export class ApplicationController implements IApplicationController {
     private readonly applicationManager: IApplicationManager
-    private readonly desktopManager: IDesktopManager
     public readonly id
     public readonly config
-    private readonly store
+    public readonly store
     public windows = reactive(new Map<string, IWindowController>())
     public commands = reactive([])
+
+    isRunning: boolean = false
 
     constructor(
         id: string,
         config: ApplicationConfig
     ) {
         this.applicationManager = useApplicationManager()
-        this.desktopManager = useDesktopManager()
 
         this.id = id
         this.config = config
         this.store = useApplicationState(id)
 
-        this.store.$persistedState.isReady().then(() => {
+        // finalize application setup
+        this.initApplicationStore()
+    }
 
-            // once app is defined, always run "onReady"
-            if (typeof this.config.onReady === 'function') {
-                this.config.onReady(this)
-            }
+    private async initApplicationStore(): Promise<void> {
+        if (this.store.$persistedState) {
+            await this.store.$persistedState.isReady()
+        }
 
-            // restore application state
-            this.restoreApplication()
+        // once app is defined, always run "onReady"
+        if (typeof this.config.onReady === 'function') {
+            this.config.onReady(this)
+        }
 
-        })
+        // restore application state
+        await this.restoreApplication()
     }
 
     /**
@@ -55,13 +60,13 @@ export class ApplicationController implements IApplicationController {
             await this.config.onRestore(this)
         }
 
-        if (Object.keys(this.store.windows).length === 0) {
+        if (!this.store.windows || Object.keys(this.store.windows).length === 0) {
             return false
         }
 
         this.restoreWindows()
 
-        this.applicationManager.appsRunning.set(this.id, this)
+        this.setRunning(true)
 
         return true
     }
@@ -71,7 +76,7 @@ export class ApplicationController implements IApplicationController {
             const windowStore: WindowStoredState | undefined = this.store.windows[windowId]
 
             if (windowStore) {
-                this.openWindow(windowStore.model, windowStore, { isRestoring: true })
+                this.openWindow(windowStore.model, windowStore, {isRestoring: true})
             }
         })
 
@@ -79,7 +84,7 @@ export class ApplicationController implements IApplicationController {
     }
 
     public openWindow(model: string, windowStoredState: WindowStoredState | undefined, meta?: any) {
-        const workspaceStore = useWorkspaceStore()
+        const desktopWorkspaceStore = useDesktopWorkspaceStore()
 
         if (!this.config.windows || !this.config.windows.hasOwnProperty(model)) {
             debugError(`Window model "${model}" not found`)
@@ -99,7 +104,7 @@ export class ApplicationController implements IApplicationController {
                     active: true,
                     focused: true,
                     createdAt: +new Date(),
-                    workspace: workspaceStore.active
+                    workspace: desktopWorkspaceStore.active
                 }
             }
 
@@ -146,6 +151,10 @@ export class ApplicationController implements IApplicationController {
 
     get windowsOpened() {
         return this.windows;
+    }
+
+    public setRunning(value: boolean): void {
+        this.isRunning = value
     }
 
     // meta

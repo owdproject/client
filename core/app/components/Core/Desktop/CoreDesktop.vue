@@ -8,10 +8,11 @@ const desktopManager = useDesktopManager()
 const applicationManager = useApplicationManager()
 
 // create firsts workspaces if not available
-const workspaceStore = useWorkspaceStore()
+const desktopStore = useDesktopStore()
+const desktopWorkspaceStore = useDesktopWorkspaceStore()
 
-workspaceStore.$persistedState.isReady().then(() => {
-  workspaceStore.setupWorkspaces()
+desktopStore.$persistedState.isReady().then(() => {
+  desktopWorkspaceStore.setupWorkspaces()
 })
 
 // override desktop configurations

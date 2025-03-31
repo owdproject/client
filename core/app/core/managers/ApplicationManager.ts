@@ -2,7 +2,6 @@ import type {Reactive} from "@vue/reactivity"
 
 export class ApplicationManager implements IApplicationManager {
     public apps = reactive(new Map<string, IApplicationController>())
-    public appsRunning = reactive(new Map<string, IApplicationController>())
 
     private desktopManager: IDesktopManager
 
@@ -69,7 +68,14 @@ export class ApplicationManager implements IApplicationManager {
     }
 
     public isAppRunning(id: string) {
-        if (!this.appsRunning.has(id)) {
+        const applicationController = this.apps.get(id)
+
+        if (!applicationController) {
+            debugLog(`App "${id}" is not defined`);
+            return false
+        }
+
+        if (!applicationController.isRunning) {
             debugLog(`App "${id}" is not running`);
             return false
         }
@@ -94,10 +100,10 @@ export class ApplicationManager implements IApplicationManager {
         // todo bring to front latest application window
         if (applicationController.config.singleton && this.isAppRunning(id)) {
             debugLog(`App "${id}" is already opened`);
-            return this.appsRunning.get(id);
+            return this.apps.get(id);
         }
 
-        this.appsRunning.set(id, applicationController)
+        applicationController.setRunning(true)
 
         return applicationController;
     }
@@ -108,12 +114,14 @@ export class ApplicationManager implements IApplicationManager {
      * @param id
      */
     public closeApp(id: string) {
-        const applicationController = this.appsRunning.get(id);
-        if (!applicationController) return;
+        const applicationController = this.apps.get(id)
 
-        applicationController.closeAllWindows();
+        if (!applicationController) {
+            return
+        }
 
-        this.appsRunning.delete(id);
+        applicationController.closeAllWindows()
+        applicationController.setRunning(false)
     }
 
     /**
@@ -122,11 +130,28 @@ export class ApplicationManager implements IApplicationManager {
     public get windowsOpened() {
         const windows: Reactive<Map<string, IWindowController>[]> = reactive([])
 
-        for (const [appRunningId, appRunning] of this.appsRunning) {
-            windows.push(...appRunning.windows)
+        for (const [appId, applicationController] of this.apps) {
+            if (applicationController.isRunning) {
+                windows.push(...applicationController.windows)
+            }
         }
 
         return windows
+    }
+
+    /**
+     * Array of opened windows for system bars, docks
+     */
+    public get appsRunning() {
+        const applications: Reactive<IApplicationController[]> = reactive([])
+
+        for (const [appId, applicationController] of this.apps) {
+            if (applicationController.isRunning) {
+                applications.push(applicationController)
+            }
+        }
+
+        return applications
     }
 
     public getWindowOpenedId(windowId: string) {
