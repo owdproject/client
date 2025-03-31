@@ -46,9 +46,8 @@ export class ApplicationManager implements IApplicationManager {
         // todo improve this and move it in a store
         if (config.provides) {
             const existingDefault = this.desktopManager.getDefaultApp(config.provides)
-            const appsForFeature = Array.from(this.apps.values()).filter(app => app.config.provides === config.provides)
 
-            if (!existingDefault && appsForFeature.length === 1) {
+            if (!existingDefault) {
                 this.desktopManager.setDefaultApp(config.provides, id)
                 debugLog(`${config.name} has been set as predefined app for "${config.provides}"`)
             }
