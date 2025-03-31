@@ -6,10 +6,13 @@ const props = defineProps<{
 
 const desktopManager = useDesktopManager()
 const applicationManager = useApplicationManager()
-const workspaceStore = useWorkspaceStore()
 
 // create firsts workspaces if not available
-workspaceStore.setupWorkspaces()
+const workspaceStore = useWorkspaceStore()
+
+workspaceStore.$persistedState.isReady().then(() => {
+  workspaceStore.setupWorkspaces()
+})
 
 // override desktop configurations
 desktopManager.overrideConfig({
