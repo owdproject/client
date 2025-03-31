@@ -19,6 +19,7 @@ export default defineNuxtModule({
 
             nuxt.options.modules.push('@nuxtjs/tailwindcss')
             await installModule("@nuxtjs/tailwindcss", {
+                viewer: false,
                 //configPath: resolve(runtimeDir, "tailwind.config"),
             })
 
