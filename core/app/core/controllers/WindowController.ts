@@ -173,6 +173,11 @@ export class WindowController implements IWindowController {
             this.state.position = { x: 0, y: 0, z: 0 }
         }
 
+        // already focused
+        if (this.state.focused) {
+            return
+        }
+
         // set focus false on all other windows
         for (const [windowId, window] of applicationManager.windowsOpened) {
             window.actions.setFocus(false)
