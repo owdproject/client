@@ -5,6 +5,8 @@ export const useDesktopWindowStore = defineStore('owd/desktop/window', () => {
 
     function incrementPositionZ() {
         desktopStore.state.window.positionZ++
+
+        return desktopStore.state.window.positionZ
     }
 
     return {

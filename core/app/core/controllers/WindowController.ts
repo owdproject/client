@@ -185,8 +185,7 @@ export class WindowController implements IWindowController {
 
         this.setFocus(true)
 
-        desktopWindowStore.incrementPositionZ()
-        this.state.position.z = desktopWindowStore.positionZ
+        this.state.position.z = desktopWindowStore.incrementPositionZ()
     }
 
     // common

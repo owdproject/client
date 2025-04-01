@@ -102,7 +102,7 @@ export class ApplicationController implements IApplicationController {
                 state: {
                     id: windowId,
                     active: true,
-                    focused: true,
+                    focused: false,
                     createdAt: +new Date(),
                     workspace: desktopWorkspaceStore.active
                 }
