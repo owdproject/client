@@ -21,6 +21,12 @@ export default defineNuxtConfig({
         ]
     },
 
+    i18n: {
+        bundle: {
+            optimizeTranslationDirective: false,
+        },
+    },
+
     future: {
         compatibilityVersion: 4,
     },

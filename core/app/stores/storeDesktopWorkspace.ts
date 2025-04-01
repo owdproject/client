@@ -16,7 +16,7 @@ export const useDesktopWorkspaceStore = defineStore('owd/desktop/workspace', () 
     function setupWorkspaces() {
         if (desktopStore.state.workspace.list.length === 0) {
             createWorkspace()
-            desktopStore.state.workspace.active = desktopStore.state.workspace.list[0]
+            desktopStore.state.workspace.active = desktopStore.state.workspace.list[0] as string
         }
 
         if (desktopStore.state.workspace.list.length === 1) {

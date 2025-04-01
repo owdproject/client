@@ -27,7 +27,7 @@ interface ApplicationConfig {
     category?: string
     provides?: string
     singleton?: boolean
-    defaultMeta?: IApplicationMeta
+    meta?: IApplicationMeta
     permissions?: ApplicationPermission[];
     windows?: { [key: string]: WindowConfig }
     commands?: { [key: string]: CommandFunction }
@@ -51,6 +51,7 @@ interface IApplicationController {
     isRunning: boolean
     setRunning(value: boolean): void
 
+    initApplication(): Promise<void>
     launchApplication(): Promise<boolean>
     restoreApplication(): Promise<boolean>
 
@@ -175,13 +176,6 @@ interface WindowConfig {
     // overflow
     overflow?: boolean
 }
-
-/*
-interface ApplicationStoredState {
-  meta: any
-  windows: WindowStoredState[]
-}
- */
 
 interface WindowStoredState {
     model: string,

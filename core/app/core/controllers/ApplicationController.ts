@@ -17,12 +17,9 @@ export class ApplicationController implements IApplicationController {
         this.id = id
         this.config = config
         this.store = useApplicationState(id)
-
-        // finalize application setup
-        this.initApplicationStore()
     }
 
-    private async initApplicationStore(): Promise<void> {
+    public async initApplication(): Promise<void> {
         if (this.store.$persistedState) {
             await this.store.$persistedState.isReady()
         }
@@ -42,7 +39,7 @@ export class ApplicationController implements IApplicationController {
      */
     public async launchApplication() {
         // set default meta values
-        this.store.meta = this.config.defaultMeta ?? undefined
+        this.store.meta = this.config.meta ?? undefined
 
         if (typeof this.config.onLaunch === 'function') {
             await this.config.onLaunch(this)

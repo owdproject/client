@@ -26,7 +26,7 @@ export class ApplicationManager implements IApplicationManager {
      * @param id
      * @param config
      */
-    public defineApp(id: string, config: ApplicationConfig) {
+    public async defineApp(id: string, config: ApplicationConfig) {
         if (this.apps.has(id)) {
             return this.apps.get(id)!;
         }
@@ -40,6 +40,9 @@ export class ApplicationManager implements IApplicationManager {
         })
 
         const applicationController: IApplicationController = new ApplicationController(id, applicationConfig)
+
+        // finalize application setup doing async things
+        await applicationController.initApplication()
 
         // set as default app for specific purposes
         // todo improve this and move it in a store
