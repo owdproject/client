@@ -18,9 +18,13 @@ const applicationManager = useApplicationManager()
 const desktopStore = useDesktopStore()
 const desktopWorkspaceStore = useDesktopWorkspaceStore()
 
-desktopStore.$persistedState.isReady().then(() => {
+if (desktopStore.$persistedState) {
+  desktopStore.$persistedState.isReady().then(() => {
+    desktopWorkspaceStore.setupWorkspaces()
+  })
+} else {
   desktopWorkspaceStore.setupWorkspaces()
-})
+}
 
 // override desktop configurations
 desktopManager.overrideConfig({
@@ -41,10 +45,18 @@ onUnmounted(() => window.removeEventListener('resize', handleDesktopResize))
 function handleDesktopResize() {
   //store.dispatch('core/window/windowsAdjustPosition')
 }
+
+const classes = computed(() => {
+  const list = ['owd-desktop']
+
+  list.push(`owd-desktop--${desktopManager.config.name}`)
+
+  return list
+})
 </script>
 
 <template>
-  <div class="owd-desktop">
+  <div :class="classes">
     <slot/>
   </div>
 </template>

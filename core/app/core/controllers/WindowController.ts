@@ -39,9 +39,6 @@ export class WindowController implements IWindowController {
 
         // resizable
         resizable: true,
-
-        // overflow
-        overflow: false,
     }
 
     public override: WindowOverride = {}
@@ -117,11 +114,6 @@ export class WindowController implements IWindowController {
         // destroy
         if (typeof config.destroyable !== 'undefined') {
             this.config.destroyable = config.destroyable
-        }
-
-        // overflow
-        if (typeof config.overflow !== 'undefined') {
-            this.config.overflow = config.overflow
         }
     }
 
@@ -358,11 +350,6 @@ export class WindowController implements IWindowController {
     // resizable
     get isResizable() {
         return !!this.state.resizable
-    }
-
-    // overflow
-    get canOverflow() {
-        return !!this.config.overflow
     }
 
     // workspace

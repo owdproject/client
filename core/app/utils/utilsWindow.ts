@@ -1,8 +1,14 @@
 // support for controller-less windows
-// (for ez demos, etc)
-export function handleWindowControllerProps(props: any) {
-    return props.window ? props.window : {
-        config: props.config,
-        state: props.config,
+// (for example: dummy windows in docs)
+export function handleWindowControllerProps(windowController: any) {
+    if (windowController.instanced) {
+        return windowController
+    }
+
+    return {
+        ...windowController,
+        state: {
+            ...windowController.config,
+        },
     }
 }

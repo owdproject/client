@@ -1,4 +1,9 @@
 <script setup lang="ts">
+const props = defineProps<{
+  window?: IWindowController
+  content?: WindowContent
+}>()
+
 const emit = defineEmits([
   'resize:start',
   'resize:move',
@@ -17,7 +22,11 @@ const emit = defineEmits([
   'toggle-maximize'
 ])
 
-const windowController = inject<IWindowController>('windowController')
+const desktopManager = useDesktopManager() // used in <style v-bind>
+const windowController: IWindowController = handleWindowControllerProps(props.window)
+
+provide<IWindowController>('windowController', windowController)
+provide<WindowContent>('windowContent', props.content ?? {})
 
 const isDragging = ref(false)
 const isResizing = ref(false)
@@ -92,10 +101,6 @@ const classes = computed(() => {
     list.push('owd-window--resizing')
   }
 
-  if (!windowController?.state.overflow) {
-    list.push(`owd-window--overflow-hidden`)
-  }
-
   return list
 })
 </script>
@@ -104,8 +109,8 @@ const classes = computed(() => {
   <vue-resizable
       ref="windowResizableController"
       :class="classes"
-      :width="windowController?.state.size.width"
-      :height="windowController?.state.size.height"
+      :width="windowController?.state.size?.width"
+      :height="windowController?.state.size?.height"
       :min-width="windowController?.state.size?.minWidth"
       :min-height="windowController?.state.size?.minHeight"
       :max-width="windowController?.state.size?.maxWidth"

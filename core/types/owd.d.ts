@@ -109,9 +109,6 @@ interface IWindowController {
     // resizable
     get isResizable(): boolean
 
-    // overflow
-    get canOverflow(): WindowOverflow
-
     get actions(): {
         // position
         setActive(value: boolean)
@@ -140,6 +137,11 @@ interface IWindowController {
         setTitleOverride(title: string|undefined): void
         resetTitleOverride(): void
     }
+}
+
+interface WindowContent {
+    padded?: boolean
+    centered?: boolean
 }
 
 interface WindowConfig {
@@ -172,9 +174,6 @@ interface WindowConfig {
 
     // draggable
     resizable?: boolean
-
-    // overflow
-    overflow?: boolean
 }
 
 interface WindowStoredState {
@@ -223,8 +222,8 @@ interface WindowState {
 }
 
 interface WindowSize {
-    width: WindowSizeValue
-    height: WindowSizeValue
+    width?: WindowSizeValue
+    height?: WindowSizeValue
     minWidth?: WindowSizeValue
     minHeight?: WindowSizeValue
     maxWidth?: WindowSizeValue
@@ -249,16 +248,20 @@ interface DesktopConfig {
     name: string
     compatibility: string
     features?: string[]
-    systemBar?: SystemBarConfig
-    dockBar?: DockBarConfig
+    systemBar?: DesktopSystemBarConfig
+    dockBar?: DesktopDockBarConfig
 }
 
-interface DockBarConfig {
+interface DesktopWindowsConfig {
+    position: 'relative' | 'absolute' | 'fixed'
+}
+
+interface DesktopDockBarConfig {
     enabled?: boolean
     position?: 'top' | 'bottom'
 }
 
-interface SystemBarConfig {
+interface DesktopSystemBarConfig {
     enabled?: boolean
     position?: 'top' | 'bottom'
     startButton?: boolean

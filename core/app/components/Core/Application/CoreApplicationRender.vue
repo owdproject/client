@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  workspaceFilter: string
+  workspaceFilter?: string
 }>()
 
 const applicationManager = useApplicationManager()
@@ -8,9 +8,8 @@ const applicationManager = useApplicationManager()
 
 <template>
   <CoreApplicationWindowsRender
-      v-for="[appId, app] of applicationManager.appsRunning"
+      v-for="app of applicationManager.appsRunning"
       :workspace-filter="workspaceFilter"
       :windows="app.windowsOpened"
-      :key="appId"
   />
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  workspaceFilter: string
-  windows: IApplicationController['windows']
+  workspaceFilter?: string
+  windows: Map<string, IApplicationController['windows']>
 }>()
 </script>
 
