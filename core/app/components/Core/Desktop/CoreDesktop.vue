@@ -1,8 +1,15 @@
 <script setup lang="ts">
-const props = defineProps<{
-  systemBar?: SystemBarConfig
-  dockBar?: DockBarConfig
-}>()
+const props = withDefaults(defineProps<{
+  windows?: DesktopWindowsConfig
+  systemBar?: DesktopSystemBarConfig
+  dockBar?: DesktopDockBarConfig
+}>(), {
+  windows: {
+    position: 'fixed',
+  },
+  systemBar: {},
+  dockBar: {},
+})
 
 const desktopManager = useDesktopManager()
 const applicationManager = useApplicationManager()
@@ -17,8 +24,9 @@ desktopStore.$persistedState.isReady().then(() => {
 
 // override desktop configurations
 desktopManager.overrideConfig({
-  systemBar: toRaw(props.systemBar ?? {}),
-  dockBar: toRaw(props.dockBar ?? {}),
+  windows: toRaw(props.windows),
+  systemBar: toRaw(props.systemBar),
+  dockBar: toRaw(props.dockBar),
 })
 
 // define apps and restore statuses

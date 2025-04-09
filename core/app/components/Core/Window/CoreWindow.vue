@@ -131,11 +131,7 @@ const classes = computed(() => {
 
 <style scoped lang="scss">
 .owd-window {
-  position: absolute;
-
-  &.resizable-component {
-    position: absolute;
-  }
+  position: v-bind('desktopManager.config.windows.position');
 
   &--dragging, &--resizing {
     :deep(.owd-window__content) {
@@ -143,18 +139,9 @@ const classes = computed(() => {
     }
   }
 
-  &--overflow-hidden {
-    :deep(.owd-window__content) {
-      overflow: hidden;
-      height: 100%;
-    }
-  }
-
-  &:not(&--overflow-hidden) {
-    :deep(.owd-window__content) {
-      overflow: auto;
-      height: 100%;
-    }
+  :deep(.owd-window__content) {
+    overflow-y: auto;
+    height: 100%;
   }
 }
 </style>

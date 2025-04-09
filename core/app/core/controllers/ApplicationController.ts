@@ -94,12 +94,23 @@ export class ApplicationController implements IApplicationController {
 
             windowId = `${model}-${nanoid(6)}`
 
+            const windowConfig: WindowConfig = this.config.windows[model] as WindowConfig
+            const screenHeight = window.innerHeight
+            const centerY = (screenHeight - Number(windowConfig.size.height)) / 2
+            const positionY = windowConfig.position?.y !== undefined
+                ? window.scrollY + windowConfig.position.y
+                : window.scrollY + centerY
+
             this.store.windows[windowId] = {
                 model,
                 state: {
                     id: windowId,
                     active: true,
                     focused: false,
+                    position: {
+                        x: windowConfig.position?.x,
+                        y: positionY,
+                    },
                     createdAt: +new Date(),
                     workspace: desktopWorkspaceStore.active
                 }
