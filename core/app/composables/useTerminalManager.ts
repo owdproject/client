@@ -1,5 +1,3 @@
-const terminalManager = new TerminalManager()
-
 export function useTerminalManager() {
-    return terminalManager
+    // todo reimplement index of applications cmds
 }

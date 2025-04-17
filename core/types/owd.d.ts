@@ -4,38 +4,46 @@ interface IApplicationManager {
 
     importApps()
 
+    get appsEntries(): Reactive<ApplicationEntry[]>
     get windowsOpened(): Reactive<IWindowController>
     get appCategories(): string[]
     get appsByCategory(): { [category: string]: IApplicationController[] }
 
-    defineApp(id: string, config: ApplicationConfig): IApplicationController
-    openApp(id: string): Promise<IApplicationController | undefined>
+    defineApp(appId: string, config: ApplicationConfig): Promise<IApplicationController>
     closeApp(id: string): void
+
+    execAppCommand(appId: string, command: string): Promise<IApplicationController | undefined>
 
     isAppDefined(id: string): boolean
     isAppRunning(id: string): boolean
 }
 
-type CommandFunction = (app: IApplicationController, args: any) => void;
+type ApplicationCommand = (app: IApplicationController, args: any) => void;
 
 interface ApplicationConfig {
     id: string
-    name: string
-    version?: string
-    description?: string
+    title: string
     icon?: string
     category?: string
-    provides?: string
+    version?: string
+    description?: string
+    provides?: ApplicationConfigProvide
     singleton?: boolean
     meta?: IApplicationMeta
     permissions?: ApplicationPermission[];
     windows?: { [key: string]: WindowConfig }
-    commands?: { [key: string]: CommandFunction }
+    entries: { [key: string]: ApplicationEntry }
+    commands?: { [key: string]: ApplicationCommand }
 
     onReady?(app: IApplicationController): void | Promise<void>
     onLaunch?(app: IApplicationController): void | Promise<void>
     onRestore?(app: IApplicationController): void | Promise<void>
     onClose?(app: IApplicationController): void | Promise<void>
+}
+
+interface ApplicationConfigProvide {
+    name: string
+    entry: string
 }
 
 type IApplicationMeta = { [key: string]: any }
@@ -46,13 +54,11 @@ interface IApplicationController {
     get meta(): { [key: string]: any }
     store: Pinia
     windows: Reactive<Map<string, IWindowController>>
-    commands: any
 
     isRunning: boolean
     setRunning(value: boolean): void
 
     initApplication(): Promise<void>
-    launchApplication(): Promise<boolean>
     restoreApplication(): Promise<boolean>
 
     openWindow(model: string, windowStoredState?: WindowStoredState, meta?: {
@@ -60,14 +66,13 @@ interface IApplicationController {
     })
 
     closeWindow(windowId: string): void
-
     closeAllWindows(): void
 
     get windowsOpened(): Reactive<Map<string, IWindowController>>
 }
 
 interface IWindowController {
-    applicationController: IApplicationController
+    application: IApplicationController
     instanced: boolean
     model: string
 
@@ -145,9 +150,8 @@ interface WindowContent {
 }
 
 interface WindowConfig {
-    name: string
-    title: string
-    category: string
+    title?: string
+    category?: string
     icon?: string
     pinned?: boolean
 
@@ -238,15 +242,30 @@ interface WindowPosition {
 
 type WindowSizeValue = number|string|undefined
 
+interface ApplicationEntry {
+    title?: string
+    icon?: string
+    category?: string
+    command: string | any
+}
+
+interface ApplicationEntryWithInherited extends ApplicationEntry {
+    application: IApplicationController
+}
+
 // DESKTOP
 
 interface IDesktopManager {
+    defaultApps: DefaultAppsConfig
 
+    getDefaultApp(feature: string)
+    setDefaultApp(feature: string, application: IApplicationController, entry: ApplicationEntry)
 }
 
 interface DesktopConfig {
     name: string
     compatibility: string
+    defaultApps?: DefaultAppsConfig
     features?: string[]
     systemBar?: DesktopSystemBarConfig
     dockBar?: DesktopDockBarConfig
@@ -282,8 +301,13 @@ interface CommandOutput {
 // DEFAULT APP
 
 interface DefaultAppsConfig {
-    terminal?: string
-    browser?: string
-    editor?: string
-    [key: string]: string | undefined
+    terminal?: DefaultAppConfig
+    browser?: DefaultAppConfig
+    editor?: DefaultAppConfig
+    [key: string]: DefaultAppConfig
+}
+
+interface DefaultAppConfig {
+    application: IApplicationController
+    entry: ApplicationEntry
 }

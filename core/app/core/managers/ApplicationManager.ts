@@ -1,12 +1,11 @@
 import type {Reactive} from "@vue/reactivity"
 
 export class ApplicationManager implements IApplicationManager {
-    public apps = reactive(new Map<string, IApplicationController>())
-
-    private desktopManager: IDesktopManager
+    public apps = reactive(
+        new Map<string, IApplicationController>()
+    )
 
     constructor() {
-        this.desktopManager = useDesktopManager()
     }
 
     /**
@@ -27,7 +26,8 @@ export class ApplicationManager implements IApplicationManager {
      * @param config
      */
     public async defineApp(id: string, config: ApplicationConfig) {
-        if (this.apps.has(id)) {
+        if (this.isAppDefined(id)) {
+            debugLog(`App "${id}" is already defined`);
             return this.apps.get(id)!;
         }
 
@@ -35,25 +35,12 @@ export class ApplicationManager implements IApplicationManager {
         if (!config.description) config.description = ''
         if (!config.category) config.category = 'other'
 
-        const applicationConfig = markRaw({
-            ...config
-        })
+        const applicationConfig = markRaw(config)
 
         const applicationController: IApplicationController = new ApplicationController(id, applicationConfig)
 
-        // finalize application setup doing async things
+        // finalize application setup doing other async operations
         await applicationController.initApplication()
-
-        // set as default app for specific purposes
-        // todo improve this and move it in a store
-        if (config.provides) {
-            const existingDefault = this.desktopManager.getDefaultApp(config.provides)
-
-            if (!existingDefault) {
-                this.desktopManager.setDefaultApp(config.provides, id)
-                debugLog(`${config.name} has been set as predefined app for "${config.provides}"`)
-            }
-        }
 
         // define application
         this.apps.set(id, applicationController)
@@ -61,25 +48,28 @@ export class ApplicationManager implements IApplicationManager {
         return applicationController
     }
 
+    /**
+     * Check if app has been defned
+     *
+     * @param id
+     */
     public isAppDefined(id: string) {
-        if (!this.apps.has(id)) {
-            debugLog(`App "${id}" is not installed`);
-            return false
-        }
-
-        return true
+        return this.apps.has(id)
     }
 
+    /**
+     * Check if app is running
+     *
+     * @param id
+     */
     public isAppRunning(id: string) {
-        const applicationController = this.apps.get(id)
-
-        if (!applicationController) {
-            debugLog(`App "${id}" is not defined`);
-            return false
+        if (!this.isAppDefined(id)) {
+            throw Error(`App "${id}" is not defined`);
         }
 
+        const applicationController: IApplicationController = this.apps.get(id)!
+
         if (!applicationController.isRunning) {
-            debugLog(`App "${id}" is not running`);
             return false
         }
 
@@ -87,24 +77,53 @@ export class ApplicationManager implements IApplicationManager {
     }
 
     /**
-     * Open application
+     * Launch app rntry
      *
      * @param id
+     * @param entryKey
      */
-    public async openApp(id: string) {
+    public async launchAppEntry(id: string, entryKey: string) {
         if (!this.isAppDefined(id)) {
-            throw Error(`App "${id}" is not installed`);
+            throw Error(`App "${id}" is not defined`);
         }
 
-        const applicationController = this.apps.get(id)!
+        const applicationController: IApplicationController = this.apps.get(id)!
 
-        await applicationController.launchApplication()
-
-        // todo bring to front latest application window
-        if (applicationController.config.singleton && this.isAppRunning(id)) {
-            debugLog(`App "${id}" is already opened`);
-            return this.apps.get(id);
+        if (applicationController.config.entries && !applicationController.config.entries.hasOwnProperty(entryKey)) {
+            throw Error(`App entry "${entryKey}" is not defined in ${id} application`);
         }
+
+        const entry: ApplicationEntry = applicationController.config.entries[entryKey]!
+
+        console.log('dio cane', entry)
+
+        await this.execAppCommand(applicationController.id, entry.command)
+    }
+
+    /**
+     * Run app command
+     *
+     * @param id
+     * @param command
+     */
+    public async execAppCommand(id: string, command: string) {
+        if (!this.isAppDefined(id)) {
+            throw Error(`App "${id}" is not defined`);
+        }
+
+        const applicationController: IApplicationController = this.apps.get(id)!
+
+        if (applicationController.config.commands && !applicationController.config.commands.hasOwnProperty(command)) {
+            throw Error(`App command "${command}" is not defined in ${id} application`);
+        }
+
+        const commandSplit: string[] = command.split(" ")
+
+        const commandFn: any = applicationController.config.commands![
+            commandSplit[0] as keyof typeof applicationController.config.commands
+            ]
+
+        commandFn(applicationController, commandSplit.shift())
 
         applicationController.setRunning(true)
 
@@ -117,14 +136,41 @@ export class ApplicationManager implements IApplicationManager {
      * @param id
      */
     public closeApp(id: string) {
-        const applicationController = this.apps.get(id)
-
-        if (!applicationController) {
-            return
+        if (!this.isAppDefined(id)) {
+            throw Error(`App "${id}" is not defined`);
         }
+
+        const applicationController: IApplicationController = this.apps.get(id)!
 
         applicationController.closeAllWindows()
         applicationController.setRunning(false)
+    }
+
+    /**
+     * Array of available menu entries for system bars, docks
+     */
+    public get appsEntries() {
+        const entries: Reactive<ApplicationEntryWithInherited[]> = reactive([])
+
+        for (const applicationController of this.apps.values()) {
+            if (!applicationController.config.entries) {
+                continue
+            }
+
+            for (const entryKey of Object.keys(applicationController.config.entries)) {
+                const entry: ApplicationEntry = applicationController.config.entries[entryKey]!
+
+                entries.push({
+                    application: applicationController,
+                    title: entry.title !== undefined ? entry.title : applicationController.config.title,
+                    icon: entry.icon !== undefined ? entry.icon : applicationController.config.icon,
+                    category: entry.category !== undefined ? entry.category : applicationController.config.category,
+                    command: entry.command
+                })
+            }
+        }
+
+        return entries
     }
 
     /**
@@ -133,7 +179,7 @@ export class ApplicationManager implements IApplicationManager {
     public get windowsOpened() {
         const windows: Reactive<Map<string, IWindowController>[]> = reactive([])
 
-        for (const [appId, applicationController] of this.apps) {
+        for (const applicationController of this.apps.values()) {
             if (applicationController.isRunning) {
                 windows.push(...applicationController.windows)
             }
@@ -148,7 +194,7 @@ export class ApplicationManager implements IApplicationManager {
     public get appsRunning() {
         const applications: Reactive<IApplicationController[]> = reactive([])
 
-        for (const [appId, applicationController] of this.apps) {
+        for (const applicationController of this.apps.values()) {
             if (applicationController.isRunning) {
                 applications.push(applicationController)
             }
@@ -158,12 +204,13 @@ export class ApplicationManager implements IApplicationManager {
     }
 
     public getWindowOpenedId(windowId: string) {
-        const mapWindowFound: Map<string, IWindowController> = this.windowsOpened.find(window => {
+        const mapWindowFound: Map<string, IWindowController> | undefined = this.windowsOpened.find((window: any) => {
             return window[1].state.id === windowId
         })
 
         if (mapWindowFound) {
-            return mapWindowFound[1]
+            // @ts-ignore
+            return mapWindowFound[1] as IWindowController
         }
     }
 
@@ -172,9 +219,10 @@ export class ApplicationManager implements IApplicationManager {
      */
     public get appCategories(): string[] {
         const categories = new Set<string>()
-        for (const app of this.apps.values()) {
-            if (app.config.category) {
-                categories.add(app.config.category)
+
+        for (const applicationController of this.apps.values()) {
+            if (applicationController.config.category) {
+                categories.add(applicationController.config.category)
             }
         }
         return Array.from(categories).sort()
@@ -186,16 +234,18 @@ export class ApplicationManager implements IApplicationManager {
     public get appsByCategory(): { [category: string]: IApplicationController[] } {
         const categorizedApps: { [category: string]: IApplicationController[] } = {}
 
-        for (const app of this.apps.values()) {
-            const category = app.config.category || 'other'
+        for (const applicationController of this.apps.values()) {
+            const category = applicationController.config.category || 'other'
             if (!categorizedApps[category]) {
                 categorizedApps[category] = []
             }
-            categorizedApps[category].push(app)
+            categorizedApps[category].push(applicationController)
         }
 
         for (const category in categorizedApps) {
-            categorizedApps[category].sort((a, b) => a.config.name.localeCompare(b.config.name))
+            categorizedApps[category]!.sort(
+                (a, b) => a.config.title.localeCompare(b.config.title)
+            )
         }
 
         return categorizedApps

@@ -1,5 +1,5 @@
 export class WindowController implements IWindowController {
-    public readonly applicationController: IApplicationController
+    public readonly application: IApplicationController
 
     public readonly instanced: boolean = true
     public readonly model: string
@@ -7,7 +7,6 @@ export class WindowController implements IWindowController {
     public config: WindowConfig = {
         title: '',
         category: '',
-        name: '',
 
         component: undefined,
 
@@ -47,12 +46,12 @@ export class WindowController implements IWindowController {
     private storedState: WindowStoredState
 
     constructor(
-        applicationController: IApplicationController,
+        application: IApplicationController,
         model: string,
         windowConfig: WindowConfig,
         windowStoredState: WindowStoredState,
     ) {
-        this.applicationController = applicationController
+        this.application = application
         this.model = model
         this.storedState = windowStoredState
 
@@ -72,7 +71,6 @@ export class WindowController implements IWindowController {
         // title
         if (config.title) this.config.title = config.title
         if (config.icon) this.config.icon = config.icon
-        if (config.name) this.config.name = config.name
 
         // position
         if (!this.config.position) this.config.position = { x: 0, y: 0, z: 0 }
@@ -182,12 +180,16 @@ export class WindowController implements IWindowController {
 
     // common
 
-    get title() {
+    get title(): string {
         if (typeof this.override.title !== 'undefined') {
             return this.override.title
         }
 
-        return this.config.title
+        if (this.config.title) {
+            return this.config.title
+        }
+
+        return this.application.config.title
     }
 
     get icon() {
@@ -195,7 +197,11 @@ export class WindowController implements IWindowController {
             return this.override.icon
         }
 
-        return this.config.icon
+        if (this.config.icon) {
+            return this.config.icon
+        }
+
+        return this.application.config.icon
     }
 
     // sizes
@@ -337,7 +343,7 @@ export class WindowController implements IWindowController {
             return false
         }
 
-        this.applicationController.closeWindow(this.state.id)
+        this.application.closeWindow(this.state.id)
 
         return true
     }

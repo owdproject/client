@@ -20,12 +20,15 @@ export class DesktopManager {
         this.loadDefaultAppsFromConfig()
     }
 
-    public setDefaultApp(feature: string, appId: string) {
-        this.defaultApps[feature] = appId
+    public setDefaultApp(feature: string, application: ApplicationController, entry: ApplicationEntry) {
+        this.defaultApps[feature] = {
+            application,
+            entry
+        }
     }
 
-    public getDefaultApp(feature: string): string | undefined {
-        return this.defaultApps[feature]
+    public getDefaultApp(feature: string): DefaultAppConfig {
+        return this.defaultApps[feature] as DefaultAppConfig
     }
 
     private loadDefaultAppsFromConfig() {

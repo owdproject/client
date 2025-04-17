@@ -1,18 +1,21 @@
 export class ApplicationController implements IApplicationController {
     private readonly applicationManager: IApplicationManager
+    private readonly desktopManager: IDesktopManager
+
     public readonly id
     public readonly config
     public readonly store
-    public windows = reactive(new Map<string, IWindowController>())
-    public commands = reactive([])
 
-    isRunning: boolean = false
+    public windows = reactive(new Map<string, IWindowController>())
+
+    public isRunning: boolean = false
 
     constructor(
         id: string,
         config: ApplicationConfig
     ) {
         this.applicationManager = useApplicationManager()
+        this.desktopManager = useDesktopManager()
 
         this.id = id
         this.config = config
@@ -20,9 +23,28 @@ export class ApplicationController implements IApplicationController {
     }
 
     public async initApplication(): Promise<void> {
+        // set as default app for specific purposes
+        // todo improve this and move it in a store
+        if (this.config.provides) {
+            const existingDefault = this.desktopManager.getDefaultApp(this.config.provides.name)
+
+            if (!existingDefault) {
+                this.desktopManager.setDefaultApp(
+                    this.config.provides.name,
+                    this,
+                    this.config.entries[this.config.provides.entry] as ApplicationEntry
+                )
+
+                debugLog(`${this.config.title} has been set as predefined app for "${this.config.provides}"`)
+            }
+        }
+
         if (this.store.$persistedState) {
             await this.store.$persistedState.isReady()
         }
+
+        // set default meta values
+        this.store.meta = this.config.meta ?? undefined
 
         // once app is defined, always run "onReady"
         if (typeof this.config.onReady === 'function') {
@@ -31,21 +53,6 @@ export class ApplicationController implements IApplicationController {
 
         // restore application state
         await this.restoreApplication()
-    }
-
-    /**
-     * App has been launched from ApplicationManager
-     * perhaps from a desktop application menu
-     */
-    public async launchApplication() {
-        // set default meta values
-        this.store.meta = this.config.meta ?? undefined
-
-        if (typeof this.config.onLaunch === 'function') {
-            await this.config.onLaunch(this)
-        }
-
-        return true
     }
 
     /**
@@ -143,6 +150,8 @@ export class ApplicationController implements IApplicationController {
             windowController,
         )
 
+        this.setRunning(true)
+
         return windowController
     }
 
@@ -150,10 +159,13 @@ export class ApplicationController implements IApplicationController {
         delete this.store.windows[windowId];
         this.windows.delete(windowId);
 
-        this.applicationManager.closeApp(this.id)
+        if (this.windows.size === 0) {
+            this.applicationManager.closeApp(this.id)
+        }
     }
 
     public closeAllWindows() {
+        this.store.windows = {}
         this.windows.clear()
     }
 
@@ -168,6 +180,7 @@ export class ApplicationController implements IApplicationController {
     // meta
 
     get meta() {
+        console.log('META', this.id, this.store.meta)
         return this.store.meta
     }
 
@@ -177,5 +190,11 @@ export class ApplicationController implements IApplicationController {
 
     setMeta(key: string, value: any) {
         this.meta[key] = value
+    }
+
+    // commands
+
+    async execCommand(input: string): Promise<CommandOutput | void> {
+        await this.applicationManager.execAppCommand(this.id, input)
     }
 }

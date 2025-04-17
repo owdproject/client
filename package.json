@@ -3,13 +3,13 @@
   "version": "3.0.0-alpha.0",
   "private": true,
   "description": "Open Web Desktop client",
-  "homepage": "https://github.com/owdproject/owd-client#readme",
+  "homepage": "https://github.com/owdproject/client#readme",
   "bugs": {
-    "url": "https://github.com/owdproject/owd-client/issues"
+    "url": "https://github.com/owdproject/client/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/owdproject/owd-client.git"
+    "url": "git+https://github.com/owdproject/client.git"
   },
   "license": "GPL-3.0-or-later",
   "author": {
@@ -19,9 +19,6 @@
   "scripts": {
     "build": "nuxt generate",
     "dev": "nuxt dev --host",
-    "docs:build": "vitepress build docs",
-    "docs:dev": "vitepress dev docs",
-    "docs:preview": "vitepress preview docs",
     "generate": "nuxt generate --dev",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview"
