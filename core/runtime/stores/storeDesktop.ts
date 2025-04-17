@@ -32,6 +32,7 @@ export const useDesktopStore = defineStore('owd/desktop', () => {
         state
     }
 }, {
+    // @ts-expect-error
     persistedState: {
         persist: true
     },

@@ -117,26 +117,6 @@ export default defineNuxtModule({
 
         {
 
-            // define local apps in appConfig.owd
-
-            const allLayers = nuxt.options._layers;
-
-            const desktopAppsLayers = allLayers
-                .filter(
-                    layer => layer.config.rootDir.includes('/desktop/apps/')
-                )
-                .map(
-                    layer => 'local:' + path.basename(layer.config.rootDir)
-                )
-
-            nuxt.options.appConfig.owd = {
-                apps: desktopAppsLayers
-            }
-
-        }
-
-        {
-
             // add runtime components
 
             addComponentsDir({

@@ -21,6 +21,7 @@ export function deepMerge<T>(target: T, source: Partial<T>): T {
             const sourceValue = (source as any)[key]
 
             if (isObject(sourceValue) && isObject(targetValue)) {
+                // @ts-ignore
                 result[key] = deepMerge(targetValue, sourceValue)
             } else {
                 result[key] = sourceValue
