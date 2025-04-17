@@ -6,7 +6,9 @@
     "web",
     "desktop",
     "vue",
-    "web desktop"
+    "nuxt",
+    "web-desktop",
+    "web-os"
   ],
   "homepage": "https://github.com/owdproject/client#readme",
   "bugs": {

@@ -7,7 +7,7 @@
 </h3>
 
 ## Overview
-Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with TypeScript and leverages the extensible architecture of Nuxt.js.
+Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with TypeScript on top of the Nuxt.js framework.
 
 [Check out the demo](https://owdproject.github.io/docs) of the `client` base repository, decked with essential modules.
 
@@ -39,10 +39,10 @@ npm run generate
 ```
 
 ## Modules
-Open Web Desktop projects can be extended with themes, plugins, and desktop apps — whether contributed by the community or created custom for your needs. Explore available modules at [topics/owd-modules](https://github.com/topics/owd-modules).
+Open Web Desktop projects can be extended with themes, plugins, and desktop apps.
 
 ### Install a new app
-You can simply install a new app with `npm install git+https://github.com/owdproject/app-todo.git` or by cloning it into `./desktop/apps/app-todo`. Then, define the application in your project configuration.
+You can simply install a new application and define it this way.
 
 ```typescript
 // owd.config.ts
@@ -64,10 +64,9 @@ export const owdConfig = {
 
 ## Themes
 Themes allow you to customize the look and feel of your Open Web Desktop instance.
-You can explore available themes, ranging from popular OS designs to fully custom creations, at [topics/owd-themes](https://github.com/topics/owd-modules).
 
 ### Install a new theme
-You can install a new theme by defining its location in the `theme` property of your `owd.config.ts` file.  
+Install a new theme by defining its location in the `theme` property of your configuration file.  
 Themes can be loaded from local paths or directly from GitHub repositories.
 
 **1. Using a local theme:**
@@ -94,7 +93,7 @@ export const owdConfig = {
 
 ## Contributing
 
-**Any contribution is welcome!** Open Web Desktop is built with Nuxt and follows a modular architecture, making it easy to contribute to the core codebase or create new modules, themes and desktop apps.
+**Any contribution is welcome!** Open Web Desktop is built with Nuxt and follows a modular architecture, making it easy to contribute to the core codebase or create new modules.
 
 ### Local Development Setup
 
@@ -130,11 +129,11 @@ npm run dev
 ```
 
 This will launch Open Web Desktop in development mode, allowing you to test your changes and see them reflected in real-time.
-The dev server will be available at http://localhost:3000 by default.
+The dev server will be available at http://localhost:3000.
 
 ## Getting Involved
 
-Open Web Desktop is a vast project. The code has been totally rewritten and is now actively being developed, but your support is what makes it all possible. If you're enjoying it and want to see more, consider donating. Your contribution helps keep the project alive, add new features, and build a stronger community.
+Open Web Desktop is a vast project. The code has been totally rewritten and is now actively being developed, but your support is what makes it all possible. If you're enjoying it and want to see more, consider donating. Your contribution helps keep the project alive and awesome.
 
 ### License
 
