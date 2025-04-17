@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     extends: [
 
         // import layers: owd theme
+        // @ts-ignore
         owdConfig.theme,
 
         // import layers: owd apps

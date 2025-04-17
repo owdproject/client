@@ -1,6 +1,6 @@
 {
   "name": "owd-client",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Open Web Desktop client",
   "homepage": "https://github.com/owdproject/client#readme",
@@ -24,9 +24,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@owdproject/core": "3.0.0-alpha.22",
-    "owd-app-about": "github:owdproject/app-about",
-    "owd-app-todo": "github:owdproject/app-todo",
-    "owd-app-wasmboy": "github:owdproject/app-wasmboy"
+    "@owdproject/core": "3.0.0-alpha.1",
+    "owd-app-about": "github:owdproject/app-about"
   }
 }
