@@ -1,0 +1,30 @@
+{
+  "name": "owd-client",
+  "version": "3.0.0-alpha.0",
+  "private": true,
+  "description": "Open Web Desktop client",
+  "homepage": "https://github.com/owdproject/client#readme",
+  "bugs": {
+    "url": "https://github.com/owdproject/client/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owdproject/client.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": {
+    "name": "dxlliv",
+    "url": "https://github.com/dxlliv"
+  },
+  "scripts": {
+    "build": "nuxt generate",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate --dev",
+    "postinstall": "nuxt prepare",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@owdproject/core": "3.0.0-alpha.0",
+    "owd-app-about": "github:owdproject/app-about"
+  }
+}
