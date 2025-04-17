@@ -15,7 +15,7 @@ export class ApplicationManager implements IApplicationManager {
         const {owdConfig} = await import(`~~/owd.config`)
 
         if (owdConfig && typeof owdConfig.loader === 'function') {
-            owdConfig.loader()
+            await owdConfig.loader()
         }
     }
 

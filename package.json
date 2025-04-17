@@ -48,5 +48,8 @@
     "vitepress": "^1.6.3",
     "vue-resizable": "^2.1.7",
     "vue-slicksort": "^2.0.5"
+  },
+  "dependencies": {
+    "owd-app-about": "github:owdproject/app-about"
   }
 }

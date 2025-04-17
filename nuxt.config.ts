@@ -5,17 +5,14 @@ export default defineNuxtConfig({
 
     extends: [
 
-        // import owd core
+        // import layers: owd core
         './core',
 
-        // import owd modules
-        ...owdConfig.extends.modules,
+        // import layers: owd theme
+        owdConfig.theme,
 
-        // import owd theme
-        owdConfig.extends.theme,
-
-        // import owd apps
-        ...owdConfig.extends.apps,
+        // import layers: owd apps
+        ...owdConfig.apps,
 
     ],
 
