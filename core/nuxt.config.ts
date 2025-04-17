@@ -7,6 +7,16 @@ export default defineNuxtConfig({
         "~": resolve(__dirname, "."),
     },
 
+    primevue: {
+        options: {
+            theme: {
+                options: {
+                    cssLayer: false
+                }
+            }
+        }
+    },
+
     imports: {
         dirs: ['composables', 'core/controllers', 'core/managers', 'stores', 'utils'],
         presets: [
