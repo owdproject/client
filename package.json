@@ -42,7 +42,6 @@
     "nanoid": "^5.1.5",
     "nuxt": "^3.16.1",
     "pinia": "^3.0.1",
-    "pinia-plugin-persistedstate-2": "^2.0.30",
     "sanitize.css": "^13.0.0",
     "sass": "^1.86.0",
     "swiper": "^11.2.6",
