@@ -25,6 +25,17 @@ export default defineNuxtConfig({
         strategy: 'no_prefix',
     },
 
+    imports: {
+        presets: [
+            {
+                from: '@owdproject/core',
+                imports: [
+                    'defineDesktopApp'
+                ]
+            }
+        ]
+    },
+
     future: {
         compatibilityVersion: 4,
     },
