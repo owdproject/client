@@ -42,22 +42,22 @@ npm run generate
 Open Web Desktop projects can be extended with themes, plugins, and desktop apps — whether contributed by the community or created custom for your needs. Explore available modules at [topics/owd-modules](https://github.com/topics/owd-modules).
 
 ### Install a new app
-You can simply install a new app with `npm install git+https://github.com/owdproject/owd-app-todo.git` or by cloning it into `/modules/apps`, then define the application-id in `/owd.config.ts`.
+You can simply install a new app with `npm install git+https://github.com/owdproject/app-todo.git` or by cloning it into `./desktop/apps`. Then, define the application in the `/owd.config.ts` file.
 
 ```typescript
 // owd.config.ts
-import AppAbout from 'owd-app-about/owd.config'
+import AppTodo from 'owd-app-todo/owd.config'
 
 export const owdConfig = {
     theme: ['github:owdproject/theme-win95', { install: true }],
 
     // apps to import
     apps: [
-       './node_modules/owd-app-about',
+       './node_modules/owd-app-todo',
     ],
 
     loader: async () => {
-        await defineDesktopApp(AppAbout)
+        await defineDesktopApp(AppTodo)
     }
 }
 ```
