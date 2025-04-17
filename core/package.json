@@ -1,5 +1,5 @@
 {
-  "name": "@owd-client/core",
+  "name": "@owdproject/core",
   "version": "3.0.0-alpha.0",
   "description": "Open Web Desktop core",
   "keywords": [
@@ -34,7 +34,6 @@
     "@vueuse/core": "^13.0.0",
     "@vueuse/nuxt": "^13.0.0",
     "deepmerge": "^4.3.1",
-    "localforage": "^1.10.0",
     "memfs": "^4.17.0",
     "mitt": "^3.0.1",
     "nanoid": "^5.1.5",
