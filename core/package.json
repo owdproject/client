@@ -8,13 +8,13 @@
     "vue",
     "web desktop"
   ],
-  "homepage": "https://github.com/owdproject/owd-client#readme",
+  "homepage": "https://github.com/owdproject/client#readme",
   "bugs": {
-    "url": "https://github.com/owdproject/owd-client/issues"
+    "url": "https://github.com/owdproject/client/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/owdproject/owd-client.git"
+    "url": "git+https://github.com/owdproject/client.git"
   },
   "license": "GPL-3.0-or-later",
   "author": {
@@ -40,8 +40,6 @@
     "pinia": "^3.0.1",
     "sanitize.css": "^13.0.0",
     "sass": "^1.86.0",
-    "swiper": "^11.2.6",
-    "vue-resizable": "^2.1.7",
-    "vue-slicksort": "^2.0.5"
+    "vue-resizable": "^2.1.7"
   }
 }

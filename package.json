@@ -35,7 +35,6 @@
     "@vueuse/components": "^13.0.0",
     "@vueuse/core": "^13.0.0",
     "@vueuse/nuxt": "^13.0.0",
-    "deepmerge": "^4.3.1",
     "memfs": "^4.17.0",
     "mitt": "^3.0.1",
     "nanoid": "^5.1.5",
@@ -43,10 +42,7 @@
     "pinia": "^3.0.1",
     "sanitize.css": "^13.0.0",
     "sass": "^1.86.0",
-    "swiper": "^11.2.6",
-    "vitepress": "^1.6.3",
-    "vue-resizable": "^2.1.7",
-    "vue-slicksort": "^2.0.5"
+    "vue-resizable": "^2.1.7"
   },
   "dependencies": {
     "owd-app-about": "github:owdproject/app-about"
