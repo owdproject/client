@@ -131,8 +131,6 @@ export default defineNuxtModule({
 
             nuxt.options.plugins.push(
                 resolve('../runtime/plugins/resize.client.ts'),
-                resolve('../runtime/plugins/slicksort.client.ts'),
-                resolve('../runtime/plugins/swiper.client.ts'),
             )
 
             addImportsDir(resolve('../runtime/composables'))
