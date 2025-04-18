@@ -34,18 +34,12 @@ export class ApplicationManager implements IApplicationManager {
             return this.apps.get(id)!;
         }
 
-        if (!config.version) config.version = 'unknown'
-        if (!config.description) config.description = ''
-        if (!config.category) config.category = 'other'
-
-        const applicationConfig = markRaw(config)
+        const normalizedConfig = normalizeApplicationConfig(config)
+        const applicationConfig = markRaw(normalizedConfig)
 
         const applicationController: IApplicationController = new ApplicationController(id, applicationConfig)
-
-        // finalize application setup doing other async operations
         await applicationController.initApplication()
 
-        // define application
         this.apps.set(id, applicationController)
 
         return applicationController
@@ -165,6 +159,7 @@ export class ApplicationManager implements IApplicationManager {
                     title: entry.title !== undefined ? entry.title : applicationController.config.title,
                     icon: entry.icon !== undefined ? entry.icon : applicationController.config.icon,
                     category: entry.category !== undefined ? entry.category : applicationController.config.category,
+                    visibility: entry.visibility,
                     command: entry.command
                 })
             }

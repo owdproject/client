@@ -1,20 +1,26 @@
 interface IApplicationManager {
     apps: Map<string, IApplicationController>
-    appsRunning: Reactive<IApplicationController>
 
     importApps()
 
     get appsEntries(): Reactive<ApplicationEntry[]>
-    get windowsOpened(): Reactive<IWindowController>
+
+    get appsRunning(): Reactive<IApplicationController[]>
+
+    get windowsOpened(): Reactive<IWindowController[]>
+
     get appCategories(): string[]
+
     get appsByCategory(): { [category: string]: IApplicationController[] }
 
     defineApp(appId: string, config: ApplicationConfig): Promise<IApplicationController>
+
     closeApp(id: string): void
 
     execAppCommand(appId: string, command: string): Promise<IApplicationController | undefined>
 
     isAppDefined(id: string): boolean
+
     isAppRunning(id: string): boolean
 }
 
@@ -36,8 +42,11 @@ interface ApplicationConfig {
     commands?: { [key: string]: ApplicationCommand }
 
     onReady?(app: IApplicationController): void | Promise<void>
+
     onLaunch?(app: IApplicationController): void | Promise<void>
+
     onRestore?(app: IApplicationController): void | Promise<void>
+
     onClose?(app: IApplicationController): void | Promise<void>
 }
 
@@ -48,17 +57,21 @@ interface ApplicationConfigProvide {
 
 type IApplicationMeta = { [key: string]: any }
 
-interface IApplicationController {
+interface sIApplicationController {
     id: string
     config: ApplicationConfig
+
     get meta(): { [key: string]: any }
+
     store: Pinia
     windows: Reactive<Map<string, IWindowController>>
 
     isRunning: boolean
+
     setRunning(value: boolean): void
 
     initApplication(): Promise<void>
+
     restoreApplication(): Promise<boolean>
 
     openWindow(model: string, windowStoredState?: WindowStoredState, meta?: {
@@ -66,7 +79,10 @@ interface IApplicationController {
     })
 
     closeWindow(windowId: string): void
+
     closeAllWindows(): void
+
+    execCommand(command: string)
 
     get windowsOpened(): Reactive<Map<string, IWindowController>>
 }
@@ -78,11 +94,13 @@ interface IWindowController {
 
     config: WindowConfig
     override: WindowOverride
+
     get state(): WindowState
 
     // common
     get title(): string
-    get icon(): string|undefined
+
+    get icon(): string | undefined
 
     // sizes
     get width(): WindowSizeValue
@@ -139,7 +157,7 @@ interface IWindowController {
         setWorkspace(workspaceId: string)
 
         // override
-        setTitleOverride(title: string|undefined): void
+        setTitleOverride(title: string | undefined): void
         resetTitleOverride(): void
     }
 }
@@ -186,8 +204,8 @@ interface WindowStoredState {
 }
 
 interface WindowOverride {
-    title?: undefined|string
-    icon?: undefined|string
+    title?: undefined | string
+    icon?: undefined | string
 }
 
 interface WindowState {
@@ -240,18 +258,23 @@ interface WindowPosition {
     z?: number
 }
 
-type WindowSizeValue = number|string|undefined
+type WindowSizeValue = number | string | undefined
 
 interface ApplicationEntry {
     title?: string
     icon?: string
     category?: string
+    visibility?: ApplicationEntryVisibility
     command: string | any
 }
 
+
 interface ApplicationEntryWithInherited extends ApplicationEntry {
     application: IApplicationController
+    visibility: ApplicationEntryVisibility
 }
+
+type ApplicationEntryVisibility = 'primary' | 'secondary' | 'hidden'
 
 // DESKTOP
 
@@ -259,6 +282,7 @@ interface IDesktopManager {
     defaultApps: DefaultAppsConfig
 
     getDefaultApp(feature: string)
+
     setDefaultApp(feature: string, application: IApplicationController, entry: ApplicationEntry)
 }
 
@@ -304,6 +328,7 @@ interface DefaultAppsConfig {
     terminal?: DefaultAppConfig
     browser?: DefaultAppConfig
     editor?: DefaultAppConfig
+
     [key: string]: DefaultAppConfig
 }
 

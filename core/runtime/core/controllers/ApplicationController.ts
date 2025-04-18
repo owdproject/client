@@ -189,7 +189,6 @@ export class ApplicationController implements IApplicationController {
     // meta
 
     get meta() {
-        console.log('META', this.id, this.store.meta)
         return this.store.meta
     }
 
@@ -203,7 +202,7 @@ export class ApplicationController implements IApplicationController {
 
     // commands
 
-    async execCommand(input: string): Promise<CommandOutput | void> {
-        await this.applicationManager.execAppCommand(this.id, input)
+    async execCommand(command: string): Promise<CommandOutput | void> {
+        await this.applicationManager.execAppCommand(this.id, command)
     }
 }
