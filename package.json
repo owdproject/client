@@ -1,6 +1,6 @@
 {
   "name": "owd-client",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "private": true,
   "description": "Open Web Desktop client",
   "homepage": "https://github.com/owdproject/client#readme",
@@ -45,6 +45,7 @@
     "vue-resizable": "^2.1.7"
   },
   "dependencies": {
-    "owd-app-about": "github:owdproject/app-about"
+    "owd-app-about": "github:owdproject/app-about",
+    "wasmboy": "^0.7.1"
   }
 }
