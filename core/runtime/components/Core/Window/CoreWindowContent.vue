@@ -12,7 +12,7 @@ const classes = computed(() => {
   }
 
   if (windowContent?.padded) {
-    list.push('p-2')
+    list.push('owd-window__content--padded')
   }
 
   return list
