@@ -17,6 +17,7 @@ interface IApplicationManager {
 
     closeApp(id: string): void
 
+    launchAppEntry(appId: string, entry: string): Promise<IApplicationController | undefined>
     execAppCommand(appId: string, command: string): Promise<IApplicationController | undefined>
 
     isAppDefined(id: string): boolean
