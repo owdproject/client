@@ -1,29 +1,34 @@
 import {useApplicationManager} from './useApplicationManager'
 import {computed} from "@vue/reactivity"
 
+type SortBy = 'title' | 'category' | ((a: ApplicationEntryWithInherited, b: ApplicationEntryWithInherited) => number)
+type Visibility = 'primary' | 'all' | ((entry: ApplicationEntryWithInherited) => boolean)
+
 export function useAppEntries() {
     const applicationManager = useApplicationManager()
 
     const sortedAppEntries = function(
-        sortBy: 'title' | 'category',
-        visibility: 'primary' | 'all' = 'primary'
+        sortBy: SortBy = 'title',
+        visibility: Visibility = 'primary'
     ): Ref<ApplicationEntryWithInherited[]> {
         return computed(() => {
             const currentEntries = [...applicationManager.appsEntries]
 
-            // filter by
-            const filtered = visibility === 'primary'
-                ? currentEntries.filter(e => e.visibility !== 'secondary')
-                : currentEntries
+            // filtering
+            const filtered = typeof visibility === 'function'
+                ? currentEntries.filter(visibility)
+                : visibility === 'primary'
+                    ? currentEntries.filter(e => e.visibility !== 'secondary')
+                    : currentEntries
 
-            // order by
-            if (sortBy === 'title') {
-                filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''))
-            } else if (sortBy === 'category') {
-                filtered.sort((a, b) => (a.category || '').localeCompare(b.category || ''))
-            }
+            // sorting
+            const sorted = typeof sortBy === 'function'
+                ? filtered.sort(sortBy)
+                : sortBy === 'title'
+                    ? filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''))
+                    : filtered.sort((a, b) => (a.category || '').localeCompare(b.category || ''))
 
-            return filtered
+            return sorted
         })
     }
 
