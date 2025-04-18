@@ -12,6 +12,7 @@ export const useDesktopVolumeStore = defineStore('owd/desktop/volume', () => {
     }
 
     return {
-        master
+        master,
+        setMasterVolume
     }
 })
