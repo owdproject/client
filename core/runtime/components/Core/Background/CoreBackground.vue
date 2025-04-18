@@ -12,6 +12,5 @@
   right: 0;
   bottom: 0;
   background-color: var(--owd-background-color);
-  z-index: -1;
 }
 </style>
