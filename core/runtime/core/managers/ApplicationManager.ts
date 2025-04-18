@@ -98,8 +98,6 @@ export class ApplicationManager implements IApplicationManager {
 
         const entry: ApplicationEntry = applicationController.config.entries[entryKey]!
 
-        console.log('dio cane', entry)
-
         await this.execAppCommand(applicationController.id, entry.command)
     }
 
@@ -116,17 +114,16 @@ export class ApplicationManager implements IApplicationManager {
 
         const applicationController: IApplicationController = this.apps.get(id)!
 
-        if (applicationController.config.commands && !applicationController.config.commands.hasOwnProperty(command)) {
+        const commandSplit: string[] = command.split(" ")
+        const baseCommand = commandSplit[0] as keyof typeof applicationController.config.commands
+
+        if (applicationController.config.commands && !applicationController.config.commands.hasOwnProperty(baseCommand)) {
             throw Error(`App command "${command}" is not defined in ${id} application`);
         }
 
-        const commandSplit: string[] = command.split(" ")
+        const commandFn: any = applicationController.config.commands![baseCommand]
 
-        const commandFn: any = applicationController.config.commands![
-            commandSplit[0] as keyof typeof applicationController.config.commands
-            ]
-
-        commandFn(applicationController, commandSplit.shift())
+        commandFn(applicationController, commandSplit.slice(1))
 
         applicationController.setRunning(true)
 
