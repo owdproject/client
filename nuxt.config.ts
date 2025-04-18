@@ -1,7 +1,14 @@
+import {createResolver} from "@nuxt/kit";
 import {owdConfig} from "./owd.config";
+
+const {resolve} = createResolver(import.meta.url)
 
 export default defineNuxtConfig({
     ssr: false,
+
+    alias: {
+        '@owdproject/core': resolve(__dirname, './core')
+    },
 
     modules: [
         './core/module',
