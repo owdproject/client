@@ -34,14 +34,11 @@ if (desktopStore.$persistedState) {
 }
 
 // override desktop configurations
-desktopManager.overrideConfig({
+desktopManager.setConfig({
   windows: toRaw(props.windows),
-  systemBar: toRaw(props.systemBar),
+  systemBar: toRaw( props.systemBar),
   dockBar: toRaw(props.dockBar),
 })
-
-// define apps and restore statuses
-applicationManager.importApps()
 
 // desktop resize
 // todo move to composable

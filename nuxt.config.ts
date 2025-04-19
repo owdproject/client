@@ -1,5 +1,4 @@
 import {createResolver} from "@nuxt/kit";
-import {owdConfig} from "./owd.config";
 
 const {resolve} = createResolver(import.meta.url)
 
@@ -15,14 +14,10 @@ export default defineNuxtConfig({
     ],
 
     extends: [
-
-        // import layers: owd theme
-        // @ts-ignore
-        owdConfig.theme,
-
-        // import layers: owd apps
-        ...owdConfig.apps,
-
+        [
+            'github:owdproject/theme-win95',
+            { install: true }
+        ]
     ],
 
     css: [

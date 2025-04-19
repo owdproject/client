@@ -1,12 +1,16 @@
 import {defineNuxtModule, createResolver, addComponentsDir, addImportsDir, installModule} from '@nuxt/kit'
-import pkg from '../package.json'
+import {useDesktopManager} from './runtime/composables/useDesktopManager'
+import pkg from './package.json'
 
 export default defineNuxtModule({
     meta: {
         name: 'owd-core',
     },
     async setup(options, nuxt) {
-        const {resolve} = createResolver(import.meta.url);
+        const {resolve} = createResolver(import.meta.url)
+        const desktopManager = useDesktopManager()
+
+        await import(nuxt.options.rootDir + '/owd.config.ts')
 
         // set core version to runtime variables
 
@@ -20,9 +24,20 @@ export default defineNuxtModule({
 
         {
 
+            // install open web desktop apps
+
+            if (desktopManager.config.apps) {
+                for (const appPath of desktopManager.config.apps) {
+                    await installModule(appPath)
+                }
+            }
+
+        }
+
+        {
+
             // install tailwind
 
-            nuxt.options.modules.push('@nuxtjs/tailwindcss')
             await installModule("@nuxtjs/tailwindcss", {
                 viewer: false,
             })
@@ -112,7 +127,7 @@ export default defineNuxtModule({
 
         {
 
-            // add runtime components
+            // add components
 
             addComponentsDir({
                 path: resolve("./runtime/components"),
@@ -124,6 +139,8 @@ export default defineNuxtModule({
 
         {
 
+            // install plugins
+
             nuxt.options.plugins.push(
                 resolve('./runtime/plugins/resize.client.ts'),
             )
@@ -134,10 +151,10 @@ export default defineNuxtModule({
             addImportsDir(resolve('./runtime/utils'))
 
         }
-
     }
 })
 
+/*
 export * from './runtime/composables/useAppEntries'
 export * from './runtime/composables/useApplicationManager'
 export * from './runtime/composables/useApplicationState'
@@ -153,3 +170,4 @@ export * from './runtime/stores/storeDesktop'
 export * from './runtime/stores/storeDesktopVolume'
 export * from './runtime/stores/storeDesktopWindow'
 export * from './runtime/stores/storeDesktopWorkspace'
+ */

@@ -1,8 +1,6 @@
 interface IApplicationManager {
     apps: Map<string, IApplicationController>
 
-    importApps()
-
     get appsEntries(): Reactive<ApplicationEntry[]>
 
     get appsRunning(): Reactive<IApplicationController[]>
@@ -288,8 +286,9 @@ interface IDesktopManager {
 }
 
 interface DesktopConfig {
-    name: string
-    compatibility: string
+    name?: string
+    compatibility?: string
+    apps?: string[]
     defaultApps?: DefaultAppsConfig
     features?: string[]
     systemBar?: DesktopSystemBarConfig

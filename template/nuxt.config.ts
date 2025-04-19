@@ -1,21 +1,15 @@
-import {owdConfig} from "./owd.config";
-
 export default defineNuxtConfig({
     ssr: false,
 
     modules: [
-        '@owdproject/core'
+        '@owdproject/core',
     ],
 
     extends: [
-
-        // import layers: owd theme
-        // @ts-ignore
-        owdConfig.theme,
-
-        // import layers: owd apps
-        ...owdConfig.apps,
-
+        [
+            'github:owdproject/theme-win95',
+            { install: true }
+        ]
     ],
 
     css: [
@@ -31,7 +25,8 @@ export default defineNuxtConfig({
             {
                 from: '@owdproject/core',
                 imports: [
-                    'defineDesktopApp'
+                    'defineDesktopApp',
+                    'defineDesktopConfig',
                 ]
             }
         ]

@@ -13,17 +13,6 @@ export class ApplicationManager implements IApplicationManager {
     }
 
     /**
-     * Import applications on nuxt start
-     */
-    public async importApps() {
-        const {owdConfig} = await import(`~~/owd.config`)
-
-        if (owdConfig && typeof owdConfig.loader === 'function') {
-            await owdConfig.loader()
-        }
-    }
-
-    /**
      * Define new application
      *
      * @param id

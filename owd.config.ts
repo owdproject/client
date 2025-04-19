@@ -1,13 +1,7 @@
-import AppAbout from 'owd-app-about/owd.config'
+import {defineDesktopConfig} from "./core/runtime/utils/utilsDesktop"
 
-export const owdConfig = {
-    theme: ['github:owdproject/theme-win95', { install: true }],
-
+export default defineDesktopConfig({
     apps: [
-       './node_modules/owd-app-about',
-    ],
-
-    loader: async () => {
-        await defineDesktopApp(AppAbout)
-    }
-}
+        '@owdproject/app-about',
+    ]
+})

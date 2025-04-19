@@ -44,7 +44,7 @@ export class ApplicationController implements IApplicationController {
                     this.config.entries[this.config.provides.entry] as ApplicationEntry
                 )
 
-                debugLog(`${this.config.title} has been set as predefined app for "${this.config.provides}"`)
+                debugLog(`${this.config.title} has been set as predefined app for "${this.config.provides.name}"`)
             }
         }
 

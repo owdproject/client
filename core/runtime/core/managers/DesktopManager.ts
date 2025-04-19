@@ -13,11 +13,6 @@ export class DesktopManager {
     }
 
     public setConfig(config: DesktopConfig) {
-        this.config = config
-        this.loadDefaultAppsFromConfig()
-    }
-
-    public overrideConfig(config: Partial<DesktopConfig>) {
         this.config = deepMerge(this.config, config) as DesktopConfig
         this.loadDefaultAppsFromConfig()
     }
