@@ -26,11 +26,11 @@ Required software:
 - [Node](https://nodejs.org)
 
 When you are ready, bootstrap a new project by running:
-```
+```bash
 npm create owd
 ```
 Once the process is complete, you can start to develop:
-```
+```bash
 # Run the dev server with hot-reload
 npm run dev
 
