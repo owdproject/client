@@ -107,8 +107,7 @@ If you'd like to contribute, here's how to set up your local development environ
 
 **Cloning the Repository:**
 
-To contribute, start by forking the Open Web Desktop client repository on GitHub.
-
+To contribute, start by forking the Open Web Desktop client repository on GitHub.  
 Then, clone your fork using HTTPS or SSH:
 
 ```bash
