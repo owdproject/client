@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     },
 
     modules: [
-        './core/module',
+        './core',
     ],
 
     extends: [
