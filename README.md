@@ -1,9 +1,9 @@
 <p align="center">
-  <img width="160" height="160" alt="Motion logo" src="https://avatars.githubusercontent.com/u/65117737?s=160&v=4" />
+  <img width="160" height="160" src="https://avatars.githubusercontent.com/u/65117737?s=160&v=4" />
 </p>
 <h1 align="center">Open Web Desktop</h1>
 <h3 align="center">
-  A framework for building web-based desktop experiences.
+  A framework for building web-based desktop experiences
 </h3>
 
 ## Overview
@@ -137,4 +137,4 @@ Open Web Desktop is a vast project. The code has been totally rewritten and is n
 
 ### License
 
-Open Web Desktop is licensed under the [GNU General Public License v3](LICENSE).
+Open Web Desktop is released under the [GNU General Public License v3](LICENSE).
