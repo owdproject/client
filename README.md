@@ -82,6 +82,7 @@ export default defineNuxtConfig({
     extends: [
         "./desktop/theme/theme-win95"
     ],
+    
     ...
 ```
 
@@ -100,6 +101,7 @@ export default defineNuxtConfig({
         "github:owdproject/theme-gnome",
         { install: true }
     ],
+    
     ...
 ```
 
