@@ -1,9 +1,9 @@
 <p align="center">
-  <img width="160" height="160" alt="Open Web Desktop logo" src="https://avatars.githubusercontent.com/u/65117737?s=160&v=4" />
+  <img width="160" height="160" src="https://avatars.githubusercontent.com/u/65117737?s=160&v=4" />
 </p>
 <h1 align="center">Open Web Desktop</h1>
 <h3 align="center">
-  A framework for building web-based desktop experiences
+  A framework for building web-based desktop experiences.
 </h3>
 
 ## Overview
@@ -26,11 +26,11 @@ Required software:
 - [Node](https://nodejs.org)
 
 When you are ready, bootstrap a new project by running:
-```
+```bash
 npm create owd
 ```
 Once the process is complete, you can start to develop:
-```
+```bash
 # Run the dev server with hot-reload
 npm run dev
 
@@ -42,54 +42,65 @@ npm run generate
 Open Web Desktop projects can be extended with themes, plugins, and desktop apps — whether contributed by the community or created custom for your needs. Explore available modules at [topics/owd-modules](https://github.com/topics/owd-modules).
 
 ### Install a new app
-You can simply install a new app with `npm install git+https://github.com/owdproject/app-todo.git` or by cloning it into `./desktop/apps/app-todo`. Then, define the application in your project configuration.
+You can simply install a new app with `npm install @owdproject/app-todo` or by cloning it into `./desktop/apps/app-todo`. Then, define the application in your project configuration.
 
 ```typescript
 // owd.config.ts
-import AppTodo from 'owd-app-todo/owd.config'
-
-export const owdConfig = {
-    theme: ['github:owdproject/theme-win95', { install: true }],
-
-    // apps to import
+export default defineDesktopConfig({
     apps: [
-       './node_modules/owd-app-todo',
-    ],
-
-    loader: async () => {
-        await defineDesktopApp(AppTodo)
-    }
-}
+        "@owdproject/app-about",
+        "@owdproject/app-todo",
+    ]
+})
 ```
 
 ## Themes
 Themes allow you to customize the look and feel of your Open Web Desktop instance.
-You can explore available themes, ranging from popular OS designs to fully custom creations, at [topics/owd-themes](https://github.com/topics/owd-modules).
+You can explore available themes, ranging from popular OS designs to fully custom creations, at [topics/owd-themes](https://github.com/topics/owd-themes).
 
 ### Install a new theme
-You can install a new theme by defining its location in the `theme` property of your `owd.config.ts` file.  
-Themes can be loaded from local paths or directly from GitHub repositories.
+You can install a new theme by defining it as a Nuxt.js layer in `nuxt.config.ts`.  
+Themes can be loaded from a local path or directly from a GitHub repository.
 
 **1. Using a local theme:**
 
-To use a theme from a local folder, specify the path like this:
+Clone it first in a folder of your project like `./desktop/theme/theme-win95`.
+
+```bash
+git clone git@github.com:owdproject/theme-win95.git ./desktop/theme/theme-win95
+```
+
+Then specify the path theme in the `nuxt.config.ts` configuration:
 
 ```typescript
-// owd.config.ts
-export const owdConfig = {
-    theme: './desktop/themes/owd-theme-win95',
-}
+// nuxt.config.ts
+export default defineNuxtConfig({
+    modules: [
+        "@owdproject/core",
+    ],
+
+    extends: [
+        "./desktop/theme/theme-win95"
+    ],
+    ...
 ```
 
 **2. Using a theme from GitHub:**
 
-To use a theme directly from a GitHub repository, specify it in this format: `github:<username>/<repository>`:
+To use a theme directly specifying  a GitHub repository, use this format: `github:<username>/<repository>`:
 
 ```typescript
-// owd.config.ts
-export const owdConfig = {
-    theme: ['github:owdproject/theme-win95', { install: true }],
-}
+// nuxt.config.ts
+export default defineNuxtConfig({
+    modules: [
+        "@owdproject/core",
+    ],
+
+    extends: [
+        "github:owdproject/theme-gnome",
+        { install: true }
+    ],
+    ...
 ```
 
 ## Contributing
@@ -107,16 +118,15 @@ If you'd like to contribute, here's how to set up your local development environ
 
 **Cloning the Repository:**
 
-To contribute, start by forking the Open Web Desktop client repository on GitHub.
-
+To contribute, start by forking the Open Web Desktop client repository on GitHub.  
 Then, clone your fork using HTTPS or SSH:
 
 ```bash
 # Clone using HTTPS
-git clone https://github.com/<your-username>/owd-client.git
+git clone https://github.com/<your-username>/client.git
 
 # Clone using SSH
-git clone git@github.com:<your-username>/owd-client.git
+git clone git@github.com:<your-username>/client.git
 ```
 
 Once you have cloned the repository, navigate to the project folder.  

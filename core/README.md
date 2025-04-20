@@ -3,7 +3,7 @@
 </p>
 <h1 align="center">Open Web Desktop</h1>
 <h3 align="center">
-  A framework for building web-based desktop experiences
+  A framework for building web-based desktop experiences.
 </h3>
 
 ## Overview
@@ -26,11 +26,11 @@ Required software:
 - [Node](https://nodejs.org)
 
 When you are ready, bootstrap a new project by running:
-```
+```bash
 npm create owd
 ```
 Once the process is complete, you can start to develop:
-```
+```bash
 # Run the dev server with hot-reload
 npm run dev
 
@@ -46,49 +46,60 @@ You can simply install a new application and define it this way.
 
 ```typescript
 // owd.config.ts
-import AppTodo from 'owd-app-todo/owd.config'
-
-export const owdConfig = {
-    theme: ['github:owdproject/theme-win95', { install: true }],
-
-    // apps to import
+export default defineDesktopConfig({
     apps: [
-       './node_modules/owd-app-todo',
-    ],
-
-    loader: async () => {
-        await defineDesktopApp(AppTodo)
-    }
-}
+        "@owdproject/app-about",
+        "@owdproject/app-todo",
+    ]
+})
 ```
 
 ## Themes
 Themes allow you to customize the look and feel of your Open Web Desktop instance.
 
 ### Install a new theme
-Install a new theme by defining its location in the `theme` property of your configuration file.  
-Themes can be loaded from local paths or directly from GitHub repositories.
+You can install a new theme by defining it as a Nuxt.js layer in `nuxt.config.ts`.  
+Themes can be loaded from a local path or directly from a GitHub repository.
 
 **1. Using a local theme:**
 
-To use a theme from a local folder, specify the path like this:
+Clone it first in a folder of your project like `./desktop/theme/theme-win95`.
+
+```bash
+git clone git@github.com:owdproject/theme-win95.git ./desktop/theme/theme-win95
+```
+
+Then specify the path theme in the `nuxt.config.ts` configuration:
 
 ```typescript
-// owd.config.ts
-export const owdConfig = {
-    theme: './desktop/themes/owd-theme-win95',
-}
+// nuxt.config.ts
+export default defineNuxtConfig({
+    modules: [
+        "@owdproject/core",
+    ],
+
+    extends: [
+        "./desktop/theme/theme-win95"
+    ],
+    ...
 ```
 
 **2. Using a theme from GitHub:**
 
-To use a theme directly from a GitHub repository, specify it in this format: `github:<username>/<repository>`:
+To use a theme directly specifying  a GitHub repository, use this format: `github:<username>/<repository>`:
 
 ```typescript
-// owd.config.ts
-export const owdConfig = {
-    theme: ['github:owdproject/theme-win95', { install: true }],
-}
+// nuxt.config.ts
+export default defineNuxtConfig({
+    modules: [
+        "@owdproject/core",
+    ],
+
+    extends: [
+        "github:owdproject/theme-gnome",
+        { install: true }
+    ],
+    ...
 ```
 
 ## Contributing
@@ -111,10 +122,10 @@ Then, clone your fork using HTTPS or SSH:
 
 ```bash
 # Clone using HTTPS
-git clone https://github.com/<your-username>/owd-client.git
+git clone https://github.com/<your-username>/client.git
 
 # Clone using SSH
-git clone git@github.com:<your-username>/owd-client.git
+git clone git@github.com:<your-username>/client.git
 ```
 
 Once you have cloned the repository, navigate to the project folder.  
