@@ -1,3 +1,5 @@
+import type {Nuxt} from "@nuxt/schema";
+
 export function normalizeApplicationConfig(config: ApplicationConfig): ApplicationConfig {
     const normalizedEntries: Record<string, ApplicationEntry> = {}
 
@@ -20,12 +22,12 @@ export function normalizeApplicationConfig(config: ApplicationConfig): Applicati
     }
 }
 
-export function registerTailwindPath(nuxt, path: string) {
-    nuxt.options.appConfig = nuxt.options.appConfig || {}
-    nuxt.options.appConfig.owd = nuxt.options.appConfig.owd || {}
-    nuxt.options.appConfig.owd.tailwindPaths = nuxt.options.appConfig.owd.tailwindPaths || []
+export function registerTailwindPath(nuxt: Nuxt, path: string) {
+    nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || {}
+    nuxt.options.runtimeConfig.owd = nuxt.options.runtimeConfig.owd || {}
+    nuxt.options.runtimeConfig.owd.tailwindPaths = nuxt.options.runtimeConfig.owd.tailwindPaths || []
 
-    if (!nuxt.options.appConfig.owd.tailwindPaths.includes(path)) {
-        nuxt.options.appConfig.owd.tailwindPaths.push(path)
+    if (!nuxt.options.runtimeConfig.owd.tailwindPaths.includes(path)) {
+        nuxt.options.runtimeConfig.owd.tailwindPaths.push(path)
     }
 }

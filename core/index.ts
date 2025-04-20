@@ -45,11 +45,12 @@ export default defineNuxtModule({
 
             // install tailwind
 
-            const tailwindPaths = nuxt.options.appConfig?.owd?.tailwindPaths || []
+            const tailwindPaths = nuxt.options.runtimeConfig?.owd?.tailwindPaths || []
             tailwindPaths.push('./runtime/components/**/*.{vue,mjs,ts}')  // Aggiungi sempre questo al core
 
             nuxt.options.tailwindcss = nuxt.options.tailwindcss || {}
             nuxt.options.tailwindcss.config = nuxt.options.tailwindcss.config || {}
+            // @ts-ignore
             nuxt.options.tailwindcss.config.content = tailwindPaths
 
             await installModule('@nuxtjs/tailwindcss', {
