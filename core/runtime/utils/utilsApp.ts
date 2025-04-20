@@ -19,3 +19,13 @@ export function normalizeApplicationConfig(config: ApplicationConfig): Applicati
         entries: normalizedEntries,
     }
 }
+
+export function registerTailwindPath(nuxt, path: string) {
+    nuxt.options.appConfig = nuxt.options.appConfig || {}
+    nuxt.options.appConfig.owd = nuxt.options.appConfig.owd || {}
+    nuxt.options.appConfig.owd.tailwindPaths = nuxt.options.appConfig.owd.tailwindPaths || []
+
+    if (!nuxt.options.appConfig.owd.tailwindPaths.includes(path)) {
+        nuxt.options.appConfig.owd.tailwindPaths.push(path)
+    }
+}

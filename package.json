@@ -44,6 +44,6 @@
     "vue-resizable": "^2.1.7"
   },
   "dependencies": {
-    "@owdproject/app-about": "0.0.1"
+    "@owdproject/app-about": "0.0.3"
   }
 }

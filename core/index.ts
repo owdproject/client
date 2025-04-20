@@ -1,10 +1,11 @@
-import {defineNuxtModule, createResolver, addComponentsDir, addImportsDir, installModule} from '@nuxt/kit'
+import {defineNuxtModule, createResolver, addComponentsDir, addImportsDir, installModule, addPlugin} from '@nuxt/kit'
 import {useDesktopManager} from './runtime/composables/useDesktopManager'
 import pkg from './package.json'
 
 export default defineNuxtModule({
     meta: {
         name: 'owd-core',
+        priority: 9999,
     },
     async setup(options, nuxt) {
         const {resolve} = createResolver(import.meta.url)
@@ -15,12 +16,6 @@ export default defineNuxtModule({
         // set core version to runtime variables
 
         nuxt.options.runtimeConfig.public.coreVersion = pkg.version
-
-        // configure nuxt plugins
-
-        nuxt.options.primevue = nuxt.options.primevue || {};
-        nuxt.options.primevue.options = nuxt.options.primevue.options || {};
-        nuxt.options.primevue.options.theme = nuxt.options.primevue.options.theme || {};
 
         {
 
@@ -36,9 +31,28 @@ export default defineNuxtModule({
 
         {
 
+            // install primevue
+
+            nuxt.options.primevue = nuxt.options.primevue || {};
+            nuxt.options.primevue.options = nuxt.options.primevue.options || {};
+            nuxt.options.primevue.options.theme = nuxt.options.primevue.options.theme || {};
+
+            await installModule("@primevue/nuxt-module")
+
+        }
+
+        {
+
             // install tailwind
 
-            await installModule("@nuxtjs/tailwindcss", {
+            const tailwindPaths = nuxt.options.appConfig?.owd?.tailwindPaths || []
+            tailwindPaths.push('./runtime/components/**/*.{vue,mjs,ts}')  // Aggiungi sempre questo al core
+
+            nuxt.options.tailwindcss = nuxt.options.tailwindcss || {}
+            nuxt.options.tailwindcss.config = nuxt.options.tailwindcss.config || {}
+            nuxt.options.tailwindcss.config.content = tailwindPaths
+
+            await installModule('@nuxtjs/tailwindcss', {
                 viewer: false,
             })
 
@@ -46,18 +60,8 @@ export default defineNuxtModule({
 
         {
 
-            // install primevue
-
-            nuxt.options.modules.push('@primevue/nuxt-module')
-            await installModule("@primevue/nuxt-module")
-
-        }
-
-        {
-
             // install pinia
 
-            nuxt.options.modules.push('@pinia/nuxt')
             await installModule("@pinia/nuxt")
 
         }
@@ -66,7 +70,6 @@ export default defineNuxtModule({
 
             // install @nuxt/fonts
 
-            nuxt.options.modules.push('@nuxt/fonts')
             await installModule("@nuxt/fonts")
 
         }
@@ -75,7 +78,6 @@ export default defineNuxtModule({
 
             // install @nuxt/icon
 
-            nuxt.options.modules.push('@nuxt/icon')
             await installModule("@nuxt/icon", {
                 clientBundle: {
                     scan: true,
@@ -89,7 +91,6 @@ export default defineNuxtModule({
 
             // install @vueuse/nuxt
 
-            nuxt.options.modules.push('@vueuse/nuxt')
             await installModule("@vueuse/nuxt")
 
         }
@@ -98,7 +99,6 @@ export default defineNuxtModule({
 
             // install @nuxtjs/i18n
 
-            nuxt.options.modules.push('@nuxtjs/i18n')
             await installModule("@nuxtjs/i18n")
 
         }
@@ -141,9 +141,9 @@ export default defineNuxtModule({
 
             // install plugins
 
-            nuxt.options.plugins.push(
-                resolve('./runtime/plugins/resize.client.ts'),
-            )
+            addPlugin(resolve('./runtime/plugins/resize.client.ts'))
+
+            // add other files
 
             addImportsDir(resolve('./runtime/composables'))
             addImportsDir(resolve('./runtime/core'))
@@ -154,7 +154,6 @@ export default defineNuxtModule({
     }
 })
 
-/*
 export * from './runtime/composables/useAppEntries'
 export * from './runtime/composables/useApplicationManager'
 export * from './runtime/composables/useApplicationState'
@@ -170,4 +169,3 @@ export * from './runtime/stores/storeDesktop'
 export * from './runtime/stores/storeDesktopVolume'
 export * from './runtime/stores/storeDesktopWindow'
 export * from './runtime/stores/storeDesktopWorkspace'
- */

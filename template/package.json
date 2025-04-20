@@ -23,7 +23,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@owdproject/core": "3.0.0-alpha.4",
-    "@owdproject/app-about": "0.0.1"
+    "@owdproject/core": "3.0.0-alpha.6",
+    "@owdproject/app-about": "0.0.3"
   }
 }
