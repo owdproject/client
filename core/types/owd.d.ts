@@ -11,12 +11,12 @@ interface IApplicationManager {
 
     get appsByCategory(): { [category: string]: IApplicationController[] }
 
-    defineApp(appId: string, config: ApplicationConfig): Promise<IApplicationController>
+    defineApp(id: string, config: ApplicationConfig): Promise<IApplicationController>
 
     closeApp(id: string): void
 
-    launchAppEntry(appId: string, entry: string): Promise<IApplicationController | undefined>
-    execAppCommand(appId: string, command: string): Promise<IApplicationController | undefined>
+    launchAppEntry(id: string, entry: string): Promise<IApplicationController | undefined | void>
+    execAppCommand(id: string, command: string): Promise<CommandOutput | void>
 
     isAppDefined(id: string): boolean
 
@@ -56,7 +56,7 @@ interface ApplicationConfigProvide {
 
 type IApplicationMeta = { [key: string]: any }
 
-interface sIApplicationController {
+interface IApplicationController {
     id: string
     config: ApplicationConfig
 
@@ -81,7 +81,7 @@ interface sIApplicationController {
 
     closeAllWindows(): void
 
-    execCommand(command: string)
+    execCommand(command: string): Promise<CommandOutput | void>
 
     get windowsOpened(): Reactive<Map<string, IWindowController>>
 }
@@ -312,9 +312,9 @@ interface DesktopSystemBarConfig {
 
 // TERMINAL
 
-interface CommandFn {
-    fn: (app: IApplicationController, args: string[]) => string | CommandOutput | void
-    app: IApplicationController
+type TerminalCommand = {
+    name: string
+    applicationId: string
 }
 
 interface CommandOutput {

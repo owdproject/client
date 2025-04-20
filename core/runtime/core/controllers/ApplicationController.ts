@@ -2,6 +2,7 @@ import {nanoid} from "nanoid";
 import {WindowController} from "./WindowController";
 import {useApplicationManager} from "../../composables/useApplicationManager"
 import {useApplicationState} from "../../composables/useApplicationState"
+import {useTerminalManager} from "../../composables/useTerminalManager"
 import {useDesktopManager} from "../../composables/useDesktopManager"
 import {debugLog, debugError} from "../../utils/utilsDebug"
 import {useDesktopWorkspaceStore} from "../../stores/storeDesktopWorkspace"
@@ -10,6 +11,7 @@ import {reactive} from '@vue/reactivity'
 export class ApplicationController implements IApplicationController {
     private readonly applicationManager: IApplicationManager
     private readonly desktopManager: IDesktopManager
+    private readonly terminalManager: ITerminalManager
 
     public readonly id
     public readonly config
@@ -24,6 +26,7 @@ export class ApplicationController implements IApplicationController {
         config: ApplicationConfig
     ) {
         this.applicationManager = useApplicationManager()
+        this.terminalManager = useTerminalManager()
         this.desktopManager = useDesktopManager()
 
         this.id = id
@@ -32,6 +35,9 @@ export class ApplicationController implements IApplicationController {
     }
 
     public async initApplication(): Promise<void> {
+
+        // provides
+
         // set as default app for specific purposes
         // todo improve this and move it in a store
         if (this.config.provides) {
@@ -47,6 +53,19 @@ export class ApplicationController implements IApplicationController {
                 debugLog(`${this.config.title} has been set as predefined app for "${this.config.provides.name}"`)
             }
         }
+
+        // terminal
+
+        if (this.config.commands) {
+            for (const commandKey of Object.keys(this.config.commands)) {
+                this.terminalManager.addCommand({
+                    applicationId: this.id,
+                    name: commandKey
+                })
+            }
+        }
+
+        // store
 
         if (this.store.$persistedState) {
             await this.store.$persistedState.isReady()
@@ -203,6 +222,6 @@ export class ApplicationController implements IApplicationController {
     // commands
 
     async execCommand(command: string): Promise<CommandOutput | void> {
-        await this.applicationManager.execAppCommand(this.id, command)
+        return this.applicationManager.execAppCommand(this.id, command)
     }
 }

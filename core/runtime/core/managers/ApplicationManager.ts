@@ -69,7 +69,7 @@ export class ApplicationManager implements IApplicationManager {
      * @param id
      * @param entryKey
      */
-    public async launchAppEntry(id: string, entryKey: string) {
+    public async launchAppEntry(id: string, entryKey: string): Promise<IApplicationController | undefined | void> {
         if (!this.isAppDefined(id)) {
             throw Error(`App "${id}" is not defined`);
         }
@@ -91,7 +91,7 @@ export class ApplicationManager implements IApplicationManager {
      * @param id
      * @param command
      */
-    public async execAppCommand(id: string, command: string) {
+    public async execAppCommand(id: string, command: string): Promise<CommandOutput> {
         if (!this.isAppDefined(id)) {
             throw Error(`App "${id}" is not defined`);
         }
@@ -106,12 +106,11 @@ export class ApplicationManager implements IApplicationManager {
         }
 
         const commandFn: any = applicationController.config.commands![baseCommand]
-
-        commandFn(applicationController, commandSplit.slice(1))
+        const commandOutput = await commandFn(applicationController, commandSplit.slice(1))
 
         applicationController.setRunning(true)
 
-        return applicationController;
+        return commandOutput;
     }
 
     /**
@@ -149,7 +148,7 @@ export class ApplicationManager implements IApplicationManager {
                     title: entry.title !== undefined ? entry.title : applicationController.config.title,
                     icon: entry.icon !== undefined ? entry.icon : applicationController.config.icon,
                     category: entry.category !== undefined ? entry.category : applicationController.config.category,
-                    visibility: entry.visibility,
+                    visibility: entry.visibility ?? 'primary',
                     command: entry.command
                 })
             }

@@ -1,3 +1,7 @@
+import {TerminalManager} from "../core/managers/TerminalManager";
+
+const terminalManager = new TerminalManager()
+
 export function useTerminalManager() {
-    // todo reimplement index of applications cmds
+    return terminalManager
 }
