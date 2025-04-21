@@ -170,7 +170,6 @@ interface WindowConfig {
     title?: string
     category?: string
     icon?: string
-    pinned?: boolean
 
     component?: Raw<Component>
 
@@ -195,6 +194,8 @@ interface WindowConfig {
 
     // draggable
     resizable?: boolean
+
+    overridable?: Partial<Record<'position' | 'size' | 'maximized' | 'draggable' | 'resizable' | 'destroyable' | 'minimizable', boolean>>
 }
 
 interface WindowStoredState {
@@ -212,7 +213,6 @@ interface WindowState {
     createdAt: number
 
     category?: string
-    pinned?: boolean
     workspace: string
 
     // position

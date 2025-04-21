@@ -59,6 +59,7 @@ export class WindowController implements IWindowController {
     ) {
         this.application = application
         this.model = model
+
         this.storedState = windowStoredState
 
         this.setConfig(windowConfig)
@@ -119,6 +120,26 @@ export class WindowController implements IWindowController {
         if (typeof config.destroyable !== 'undefined') {
             this.config.destroyable = config.destroyable
         }
+
+        const DEFAULT_OVERRIDABLE = {
+            draggable: true,
+            resizable: false,
+            position: false,
+            size: false,
+            maximized: false,
+            destroyable: false,
+            minimizable: false,
+            maximizable: false,
+        }
+
+        DEFAULT_OVERRIDABLE.position = DEFAULT_OVERRIDABLE.draggable
+        DEFAULT_OVERRIDABLE.size = DEFAULT_OVERRIDABLE.resizable
+        DEFAULT_OVERRIDABLE.maximized = DEFAULT_OVERRIDABLE.maximizable
+
+        this.config.overridable = {
+            ...DEFAULT_OVERRIDABLE,
+            ...(config.overridable || {})
+        }
     }
 
     // state
@@ -128,17 +149,20 @@ export class WindowController implements IWindowController {
     }
 
     private restoreState() {
-        if (!this.state.pinned) this.state.pinned = this.config.pinned
-        if (!this.state.position) this.state.position = deepClone(this.config.position)
+        const overridable = this.config.overridable || {}
 
-        if (!this.state.minimizable) this.state.minimizable = this.config.minimizable
-        if (!this.state.maximized) this.state.maximized = this.config.maximized
-        if (!this.state.destroyable) this.state.destroyable = this.config.destroyable
-        if (!this.state.draggable) this.state.draggable = this.config.draggable
-        if (!this.state.resizable) this.state.resizable = this.config.resizable
+        for (const key in overridable) {
+            if (overridable[key as keyof typeof overridable]) {
+                const stateKey = key as keyof WindowState
 
-        if (!this.state.size) {
-            this.state.size = deepClone(this.config.size)
+                if (typeof this.state[stateKey] === 'undefined') {
+                    if (typeof this.config[stateKey] === 'object') {
+                        this.state[stateKey] = deepClone(this.config[stateKey])
+                    } else {
+                        this.state[stateKey] = !!this.config[stateKey]
+                    }
+                }
+            }
         }
     }
 
@@ -210,6 +234,16 @@ export class WindowController implements IWindowController {
         return this.application.config.icon
     }
 
+    // position
+
+    get position() {
+        if (typeof this.state.position === 'undefined') {
+            return this.config.position
+        }
+
+        return this.state.position
+    }
+
     // sizes
 
     get width() {
@@ -272,11 +306,11 @@ export class WindowController implements IWindowController {
     // minimize
 
     get isMinimizable() {
-        if (typeof this.state.minimizable === 'undefined') {
-            return !!this.config.minimizable
+        if (this.config.overridable?.minimizable) {
+            return !!this.state.minimizable
         }
 
-        return this.state.minimizable
+        return !!this.config.minimizable
     }
 
     private minimize() {
@@ -304,11 +338,11 @@ export class WindowController implements IWindowController {
     }
 
     get isMaximized() {
-        if (typeof this.state.maximized === 'undefined') {
-            return !!this.config.maximized
+        if (this.config.overridable?.maximized) {
+            return !!this.state.maximized
         }
 
-        return this.state.maximized
+        return !!this.config.maximized
     }
 
     private toggleMaximize() {
@@ -341,7 +375,11 @@ export class WindowController implements IWindowController {
     // destroy
 
     get isDestroyable() {
-        return !!this.state.destroyable
+        if (this.config.overridable?.destroyable) {
+            return !!this.state.destroyable
+        }
+
+        return !!this.config.destroyable
     }
 
     private destroy() {
@@ -356,12 +394,20 @@ export class WindowController implements IWindowController {
 
     // draggable
     get isDraggable() {
-        return !!this.state.draggable
+        if (this.config.overridable?.draggable) {
+            return !!this.state.draggable
+        }
+
+        return !!this.config.draggable
     }
 
     // resizable
     get isResizable() {
-        return !!this.state.resizable
+        if (this.config.overridable?.resizable) {
+            return !!this.state.resizable
+        }
+
+        return !!this.config.resizable
     }
 
     // workspace

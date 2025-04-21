@@ -72,15 +72,16 @@ export class ApplicationController implements IApplicationController {
         }
 
         // set default meta values
-        this.store.meta = this.config.meta ?? undefined
-
-        // once app is defined, always run "onReady"
-        if (typeof this.config.onReady === 'function') {
-            this.config.onReady(this)
-        }
+        this.store.meta = this.config.meta ?? {}
 
         // restore application state
         await this.restoreApplication()
+
+        // once app is defined, always run "onReady"
+        if (typeof this.config.onReady === 'function') {
+            // todo transform in hook
+            this.config.onReady(this)
+        }
     }
 
     /**
@@ -89,6 +90,7 @@ export class ApplicationController implements IApplicationController {
      */
     public async restoreApplication() {
         if (typeof this.config.onRestore === 'function') {
+            // todo transform in hook
             await this.config.onRestore(this)
         }
 
