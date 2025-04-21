@@ -119,7 +119,7 @@ const classes = computed(() => {
       :min-height="windowController?.minHeight"
       :max-width="windowController?.maxWidth"
       :max-height="windowController?.maxHeight"
-      :left="windowController?.position.x"
+      :left="windowController?.position?.x"
       :top="windowController?.position?.y"
       :active="windowController?.isResizable ? undefined : []"
       @drag:start="onWindowDragStart"
@@ -128,7 +128,7 @@ const classes = computed(() => {
       @resize:start="onWindowResizeStart"
       @resize:move="onWindowResizeMove"
       @resize:end="onWindowResizeEnd"
-      :style="{zIndex: windowController?.state.position?.z}"
+      :style="{zIndex: windowController?.position?.z}"
       :drag-selector="windowController?.isDraggable ? '.owd-window-nav__draggable' : '.owd-window-nav__draggable-none'"
       @pointerdown="onWindowPointerDown"
   >
