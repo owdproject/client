@@ -102,17 +102,7 @@ interface IWindowController {
     get icon(): string | undefined
 
     // sizes
-    get width(): WindowSizeValue
-
-    get maxWidth(): WindowSizeValue
-
-    get minWidth(): WindowSizeValue
-
-    get height(): WindowSizeValue
-
-    get maxHeight(): WindowSizeValue
-
-    get minHeight(): WindowSizeValue
+    get size(): WindowSize
 
     // minimize
     get isMinimizable(): boolean

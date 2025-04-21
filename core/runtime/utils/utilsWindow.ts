@@ -7,6 +7,7 @@ export function handleWindowControllerProps(windowController: any) {
 
     return {
         ...windowController,
+        ...windowController.config,
         state: {
             ...windowController.config,
         },

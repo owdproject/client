@@ -246,52 +246,18 @@ export class WindowController implements IWindowController {
 
     // sizes
 
-    get width() {
-        if (typeof this.state.size?.width === 'undefined') {
-            return this.config.size.width
+    get size() {
+        const stateSize = this.state.size || {}
+        const configSize = this.config.size || {}
+
+        return {
+            width: typeof stateSize.width !== 'undefined' ? stateSize.width : configSize.width,
+            height: typeof stateSize.height !== 'undefined' ? stateSize.height : configSize.height,
+            minWidth: typeof stateSize.minWidth !== 'undefined' ? stateSize.minWidth : configSize.minWidth,
+            maxWidth: typeof stateSize.maxWidth !== 'undefined' ? stateSize.maxWidth : configSize.maxWidth,
+            minHeight: typeof stateSize.minHeight !== 'undefined' ? stateSize.minHeight : configSize.minHeight,
+            maxHeight: typeof stateSize.maxHeight !== 'undefined' ? stateSize.maxHeight : (configSize.maxHeight ?? 600),
         }
-
-        return this.state.size.width
-    }
-
-    get maxWidth() {
-        if (typeof this.state.size?.maxWidth === 'undefined') {
-            return this.config.size.maxWidth
-        }
-
-        return this.state.size.maxWidth
-    }
-
-    get minWidth() {
-        if (typeof this.state.size?.minWidth === 'undefined') {
-            return this.config.size.minWidth
-        }
-
-        return this.state.size.minWidth
-    }
-
-    get height() {
-        if (typeof this.state.size?.height === 'undefined') {
-            return this.config.size.height
-        }
-
-        return this.state.size.height
-    }
-
-    get maxHeight() {
-        if (typeof this.state.size?.maxHeight === 'undefined') {
-            return this.config.size.maxHeight ?? 600
-        }
-
-        return this.state.size.maxHeight
-    }
-
-    get minHeight() {
-        if (typeof this.state.size?.minHeight === 'undefined') {
-            return this.config.size.minHeight
-        }
-
-        return this.state.size.minHeight
     }
 
     private setSize(data: { width: number, height: number}) {
