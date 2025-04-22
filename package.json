@@ -45,5 +45,8 @@
   },
   "dependencies": {
     "@owdproject/app-about": "0.0.3"
+  },
+  "resolutions": {
+    "vite": "^6.3.2"
   }
 }
