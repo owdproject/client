@@ -19,6 +19,20 @@ export default defineNuxtModule({
 
         {
 
+            // install open web desktop theme
+
+            if (desktopManager.config.theme) {
+                await installModule(desktopManager.config.theme)
+            }
+
+            // install open web desktop modules
+
+            if (desktopManager.config.modules) {
+                for (const modulePath of desktopManager.config.modules) {
+                    await installModule(modulePath)
+                }
+            }
+
             // install open web desktop apps
 
             if (desktopManager.config.apps) {

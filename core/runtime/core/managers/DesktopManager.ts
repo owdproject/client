@@ -2,6 +2,7 @@ import {deepMerge} from "../../utils/utilsCommon"
 
 export class DesktopManager {
     public config: DesktopConfig = {} as DesktopConfig
+
     private defaultApps: DefaultAppsConfig = {}
 
     constructor() {
