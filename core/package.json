@@ -43,5 +43,8 @@
     "sanitize.css": "^13.0.0",
     "sass": "^1.86.0",
     "vue-resizable": "^2.1.7"
+  },
+  "resolutions": {
+    "vite": "^6.3.2"
   }
 }
