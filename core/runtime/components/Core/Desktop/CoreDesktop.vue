@@ -10,16 +10,21 @@ const props = withDefaults(defineProps<{
   windows?: DesktopWindowsConfig
   systemBar?: DesktopSystemBarConfig
   dockBar?: DesktopDockBarConfig
+  workspaces?: DesktopWorkspacesConfig
 }>(), {
   windows: {
     position: 'fixed',
   },
   systemBar: {},
   dockBar: {},
+  workspaces: {},
 })
+
+// todo move to owd initialization
 
 const desktopManager = useDesktopManager()
 const applicationManager = useApplicationManager()
+const runtimeConfig = useRuntimeConfig()
 
 // create firsts workspaces if not available
 const desktopStore = useDesktopStore()
@@ -33,11 +38,14 @@ if (desktopStore.$persistedState) {
   desktopWorkspaceStore.setupWorkspaces()
 }
 
+desktopManager.setConfig(runtimeConfig.public.desktop)
+
 // override desktop configurations
 desktopManager.setConfig({
   windows: toRaw(props.windows),
-  systemBar: toRaw( props.systemBar),
+  systemBar: toRaw(props.systemBar),
   dockBar: toRaw(props.dockBar),
+  workspaces: toRaw(props.workspaces),
 })
 
 // desktop resize

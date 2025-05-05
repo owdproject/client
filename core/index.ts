@@ -1,5 +1,5 @@
 import {defineNuxtModule, createResolver, addComponentsDir, addImportsDir, installModule, addPlugin} from '@nuxt/kit'
-import {useDesktopManager} from './runtime/composables/useDesktopManager'
+import {deepMerge} from '@owdproject/core/runtime/utils/utilsCommon'
 import pkg from './package.json'
 
 export default defineNuxtModule({
@@ -9,11 +9,10 @@ export default defineNuxtModule({
     },
     async setup(options, nuxt) {
         const {resolve} = createResolver(import.meta.url)
-        const desktopManager = useDesktopManager()
 
-        await import(nuxt.options.rootDir + '/owd.config.ts')
+        const desktopConfig = (await import(nuxt.options.rootDir + '/owd.config.ts')).default
 
-        // set core version to runtime variables
+        // set core version to runtime config
 
         nuxt.options.runtimeConfig.public.coreVersion = pkg.version
 
@@ -21,25 +20,31 @@ export default defineNuxtModule({
 
             // install open web desktop theme
 
-            if (desktopManager.config.theme) {
-                await installModule(desktopManager.config.theme)
+            if (desktopConfig.theme) {
+                await installModule(desktopConfig.theme)
             }
 
             // install open web desktop modules
 
-            if (desktopManager.config.modules) {
-                for (const modulePath of desktopManager.config.modules) {
+            if (desktopConfig.modules) {
+                for (const modulePath of desktopConfig.modules) {
                     await installModule(modulePath)
                 }
             }
 
             // install open web desktop apps
 
-            if (desktopManager.config.apps) {
-                for (const appPath of desktopManager.config.apps) {
+            if (desktopConfig.apps) {
+                for (const appPath of desktopConfig.apps) {
                     await installModule(appPath)
                 }
             }
+
+            // assign open web desktop config to runtime config
+            nuxt.options.runtimeConfig.public.desktop = deepMerge(
+                nuxt.options.runtimeConfig.public.desktop,
+                desktopConfig
+            )
 
         }
 

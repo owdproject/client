@@ -31,7 +31,7 @@ export class DesktopManager {
 
     private loadDefaultAppsFromConfig() {
         if (this.config.defaultApps) {
-            this.defaultApps = { ...this.config.defaultApps }
+            this.defaultApps = {...this.config.defaultApps}
         }
     }
 }

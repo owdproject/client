@@ -283,8 +283,10 @@ interface DesktopConfig {
     name?: string
     defaultApps?: DefaultAppsConfig
     features?: string[]
+
     systemBar?: DesktopSystemBarConfig
     dockBar?: DesktopDockBarConfig
+    workspaces?: DesktopWorkspacesConfig
 }
 
 interface DesktopWindowsConfig {
@@ -300,6 +302,10 @@ interface DesktopSystemBarConfig {
     enabled?: boolean
     position?: 'top' | 'bottom'
     startButton?: boolean
+}
+
+interface DesktopWorkspacesConfig {
+    enabled?: boolean
 }
 
 // TERMINAL
