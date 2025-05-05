@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {onMounted, onUnmounted} from "vue"
+import {useRuntimeConfig} from "nuxt/app"
 import {computed, toRaw} from "@vue/reactivity"
 import {useDesktopManager} from "../../../composables/useDesktopManager"
 import {useApplicationManager} from "../../../composables/useApplicationManager"
