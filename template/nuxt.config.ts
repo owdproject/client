@@ -5,13 +5,6 @@ export default defineNuxtConfig({
         '@owdproject/core',
     ],
 
-    extends: [
-        [
-            'github:owdproject/theme-win95',
-            { install: true }
-        ]
-    ],
-
     css: [
         './app/assets/styles/index.scss',
     ],
