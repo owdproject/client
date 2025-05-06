@@ -276,13 +276,17 @@ interface IDesktopManager {
 }
 
 interface DesktopConfig {
-    name?: string
-    compatibility?: string
+    theme?: string
+    modules?: string[]
     apps?: string[]
+
+    name?: string
     defaultApps?: DefaultAppsConfig
     features?: string[]
+
     systemBar?: DesktopSystemBarConfig
     dockBar?: DesktopDockBarConfig
+    workspaces?: DesktopWorkspacesConfig
 }
 
 interface DesktopWindowsConfig {
@@ -298,6 +302,10 @@ interface DesktopSystemBarConfig {
     enabled?: boolean
     position?: 'top' | 'bottom'
     startButton?: boolean
+}
+
+interface DesktopWorkspacesConfig {
+    enabled?: boolean
 }
 
 // TERMINAL
