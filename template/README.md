@@ -7,7 +7,7 @@
 </h3>
 
 ## Overview
-Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with TypeScript and leverages the extensible architecture of Nuxt.js.
+Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with Vue.js & TypeScript, and it leverages the extensible Nuxt.js architecture.
 
 [Check out the demo](https://owdproject.github.io/docs) of the `client` base repository, decked with a couple of modules.
 
@@ -47,9 +47,10 @@ You can simply install a new app with `npm install @owdproject/app-todo` or by c
 ```typescript
 // owd.config.ts
 export default defineDesktopConfig({
+    theme: '@owdproject/theme-win95',
     apps: [
         "@owdproject/app-about",
-        "@owdproject/app-todo",
+        "@owdproject/app-todo", // define here the app you just installed
     ]
 })
 ```
@@ -59,50 +60,45 @@ Themes allow you to customize the look and feel of your Open Web Desktop instanc
 You can explore available themes, ranging from popular OS designs to fully custom creations, at [topics/owd-themes](https://github.com/topics/owd-themes).
 
 ### Install a new theme
-You can install a new theme by defining it as a Nuxt.js layer in `nuxt.config.ts`.  
+You can install a new theme by defining it in the `owd.config.ts` configuration.  
 Themes can be loaded from a local path or directly from a GitHub repository.
 
-**1. Using a local theme:**
+#### Using a local theme
 
-Clone it first in a folder of your project like `./desktop/theme/theme-win95`.
+Clone it first in a folder of your project like `./desktop/theme/theme-gnome`.
 
 ```bash
-git clone git@github.com:owdproject/theme-win95.git ./desktop/theme/theme-win95
+git clone git@github.com:owdproject/theme-gnome.git ./desktop/theme/theme-gnome
 ```
 
-Then specify the path theme in the `nuxt.config.ts` configuration:
+Then specify the path theme in `owd.config.ts`:
 
 ```typescript
-// nuxt.config.ts
-export default defineNuxtConfig({
-    modules: [
-        "@owdproject/core",
-    ],
-
-    extends: [
-        "./desktop/theme/theme-win95"
-    ],
-
-    ...
+// owd.config.ts
+export default defineDesktopConfig({
+    theme: './dev/themes/theme-gnome', // define here the theme you just cloned
+    apps: [
+        ...
 ```
 
-**2. Using a theme from GitHub:**
+#### Using a theme package
 
-To use a theme directly specifying  a GitHub repository, use this format: `github:<username>/<repository>`:
+Use npm to install the theme package as a dependency of your Open Web Desktop client:
+
+```bash
+npm install @owdproject/theme-gnome
+```
+
+Then specify the path theme in `owd.config.ts`:
 
 ```typescript
-// nuxt.config.ts
-export default defineNuxtConfig({
-    modules: [
-        "@owdproject/core",
-    ],
+// owd.config.ts
+import {defineDesktopConfig} from "@owdproject/core/runtime/utils/utilsDesktop"
 
-    extends: [
-        "github:owdproject/theme-gnome",
-        { install: true }
-    ],
-
-    ...
+export default defineDesktopConfig({
+    theme: '@owdproject/theme-gnome', // define here the theme you just installed
+    apps: [
+        ...
 ```
 
 ## Contributing
@@ -144,10 +140,10 @@ npm run dev
 This will launch Open Web Desktop in development mode, allowing you to test your changes and see them reflected in real-time.
 The dev server will be available at http://localhost:3000 by default.
 
-## Getting Involved
+## Sponsoring
 
 Open Web Desktop is a vast project. The code has been totally rewritten and is now actively being developed, but your support is what makes it all possible. If you're enjoying it and want to see more, consider donating. Your contribution helps keep the project alive, add new features, and build a stronger community.
 
-### License
+## License
 
 Open Web Desktop is released under the [GNU General Public License v3](LICENSE).

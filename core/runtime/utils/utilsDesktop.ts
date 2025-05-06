@@ -7,7 +7,5 @@ export function defineDesktopApp(config: ApplicationConfig) {
 }
 
 export function defineDesktopConfig(config: DesktopConfig) {
-    const desktopManager = useDesktopManager()
-    desktopManager.setConfig(config)
-    return true
+    return config
 }
