@@ -1,4 +1,4 @@
-import {deepMerge} from "../../utils/utilsCommon"
+import {deepMerge} from "@owdproject/core/runtime/utils/utilCommon"
 
 export class DesktopManager {
     public config: DesktopConfig = {} as DesktopConfig

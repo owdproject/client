@@ -1,4 +1,4 @@
-import {defineDesktopConfig} from "./core/runtime/utils/utilsDesktop"
+import {defineDesktopConfig} from "./core/runtime/utils/utilDesktop"
 
 export default defineDesktopConfig({
     theme: '@owdproject/theme-win95',

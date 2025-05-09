@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {ref,provide} from 'vue'
 import {computed} from "@vue/reactivity"
-import {useDesktopManager} from "../../../composables/useDesktopManager"
-import {handleWindowControllerProps} from "../../../utils/utilsWindow"
+import {useDesktopManager} from "@owdproject/core/runtime/composables/useDesktopManager"
+import {handleWindowControllerProps} from "@owdproject/core/runtime/utils/utilWindow"
 
 const props = defineProps<{
   window?: IWindowController

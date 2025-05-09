@@ -4,7 +4,7 @@ import {useApplicationManager} from "../../composables/useApplicationManager"
 import {useApplicationState} from "../../composables/useApplicationState"
 import {useTerminalManager} from "../../composables/useTerminalManager"
 import {useDesktopManager} from "../../composables/useDesktopManager"
-import {debugLog, debugError} from "../../utils/utilsDebug"
+import {debugLog, debugError} from "../../utils/utilDebug"
 import {useDesktopWorkspaceStore} from "../../stores/storeDesktopWorkspace"
 import {reactive} from '@vue/reactivity'
 
