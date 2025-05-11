@@ -1,7 +1,8 @@
 import {nanoid} from "nanoid";
 import {WindowController} from "./WindowController";
 import {useApplicationManager} from "../../composables/useApplicationManager"
-import {useApplicationState} from "../../composables/useApplicationState"
+import {useApplicationWindowsStore} from "../../stores/storeApplicationWindows"
+import {useApplicationMetaStore} from "../../stores/storeApplicationMeta"
 import {useTerminalManager} from "../../composables/useTerminalManager"
 import {useDesktopManager} from "../../composables/useDesktopManager"
 import {debugLog, debugError} from "../../utils/utilDebug"
@@ -31,7 +32,8 @@ export class ApplicationController implements IApplicationController {
 
         this.id = id
         this.config = config
-        this.store = useApplicationState(id)
+        this.storeWindows = useApplicationWindowsStore(id)
+        this.storeMeta = useApplicationMetaStore(id)
     }
 
     public async initApplication(): Promise<void> {
@@ -67,12 +69,16 @@ export class ApplicationController implements IApplicationController {
 
         // store
 
-        if (this.store.$persistedState) {
-            await this.store.$persistedState.isReady()
+        if (this.storeWindows.$persistedState) {
+            await this.storeWindows.$persistedState.isReady()
+        }
+
+        if (this.storeMeta.$persistedState) {
+            await this.storeMeta.$persistedState.isReady()
         }
 
         // set default meta values
-        this.store.meta = this.config.meta ?? {}
+        // this.storeMeta.meta = this.config.meta ?? {}
 
         // restore application state
         await this.restoreApplication()
@@ -94,7 +100,7 @@ export class ApplicationController implements IApplicationController {
             await this.config.onRestore(this)
         }
 
-        if (!this.store.windows || Object.keys(this.store.windows).length === 0) {
+        if (!this.storeWindows.windows || Object.keys(this.storeWindows.windows).length === 0) {
             return false
         }
 
@@ -106,8 +112,8 @@ export class ApplicationController implements IApplicationController {
     }
 
     private restoreWindows() {
-        Object.keys(this.store.windows).map(windowId => {
-            const windowStore: WindowStoredState | undefined = this.store.windows[windowId]
+        Object.keys(this.storeWindows.windows).map(windowId => {
+            const windowStore: WindowStoredState | undefined = this.storeWindows.windows[windowId]
 
             if (windowStore) {
                 this.openWindow(windowStore.model, windowStore, {isRestoring: true})
@@ -138,7 +144,7 @@ export class ApplicationController implements IApplicationController {
                 ? window.scrollY + windowConfig.position.y
                 : window.scrollY + centerY
 
-            this.store.windows[windowId] = {
+            this.storeWindows.windows[windowId] = {
                 model,
                 state: {
                     id: windowId,
@@ -153,7 +159,7 @@ export class ApplicationController implements IApplicationController {
                 }
             }
 
-            windowStoredState = this.store.windows[windowId]
+            windowStoredState = this.storeWindows.windows[windowId]
 
         } else {
 
@@ -186,7 +192,7 @@ export class ApplicationController implements IApplicationController {
     }
 
     public closeWindow(windowId: string) {
-        delete this.store.windows[windowId];
+        delete this.storeWindows.windows[windowId];
         this.windows.delete(windowId);
 
         if (this.windows.size === 0) {
@@ -195,7 +201,7 @@ export class ApplicationController implements IApplicationController {
     }
 
     public closeAllWindows() {
-        this.store.windows = {}
+        this.storeWindows.windows = {}
         this.windows.clear()
     }
 
@@ -210,7 +216,7 @@ export class ApplicationController implements IApplicationController {
     // meta
 
     get meta() {
-        return this.store.meta
+        return this.storeMeta.meta
     }
 
     getMeta(key: string) {
