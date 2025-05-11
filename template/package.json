@@ -23,8 +23,8 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@owdproject/core": "3.0.0-alpha.8",
+    "@owdproject/core": "3.0.0-alpha.9",
     "@owdproject/theme-win95": "^0.0.1",
-    "@owdproject/app-about": "0.0.3"
+    "@owdproject/app-about": "0.0.4"
   }
 }

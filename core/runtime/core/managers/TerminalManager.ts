@@ -1,5 +1,5 @@
 import {useApplicationManager} from "../../composables/useApplicationManager"
-import {debugLog} from "../../utils/utilsDebug"
+import {debugLog} from "../../utils/utilDebug"
 
 export class TerminalManager {
     private commands: Map<string, TerminalCommand> = new Map()

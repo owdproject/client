@@ -93,7 +93,7 @@ Then specify the path theme in `owd.config.ts`:
 
 ```typescript
 // owd.config.ts
-import {defineDesktopConfig} from "@owdproject/core/runtime/utils/utilsDesktop"
+import {defineDesktopConfig} from "@owdproject/core/runtime/utils/utilDesktop"
 
 export default defineDesktopConfig({
     theme: '@owdproject/theme-gnome', // define here the theme you just installed

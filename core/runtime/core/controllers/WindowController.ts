@@ -1,6 +1,6 @@
-import {useApplicationManager} from '../../composables/useApplicationManager'
-import {useDesktopWindowStore} from '../../stores/storeDesktopWindow'
-import {deepClone} from '../../utils/utilsCommon'
+import {useApplicationManager} from '@owdproject/core/runtime/composables/useApplicationManager'
+import {useDesktopWindowStore} from '@owdproject/core/runtime/stores/storeDesktopWindow'
+import {deepClone} from '@owdproject/core/runtime/utils/utilCommon'
 import {markRaw} from '@vue/reactivity'
 import {defineAsyncComponent} from "vue"
 

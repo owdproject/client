@@ -1,8 +1,8 @@
 import type {Reactive} from "@vue/reactivity"
 import {reactive, markRaw} from "@vue/reactivity"
 import {ApplicationController} from "../controllers/ApplicationController";
-import {normalizeApplicationConfig} from "../../utils/utilsApp"
-import {debugLog} from "../../utils/utilsDebug"
+import {normalizeApplicationConfig} from "../../utils/utilApp"
+import {debugLog} from "../../utils/utilDebug"
 
 export class ApplicationManager implements IApplicationManager {
     public apps = reactive(
