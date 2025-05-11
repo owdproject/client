@@ -44,8 +44,8 @@
     "vue-resizable": "^2.1.7"
   },
   "dependencies": {
-    "@owdproject/theme-win95": "^0.0.1",
-    "@owdproject/app-about": "^0.0.3"
+    "@owdproject/theme-win95": "^0.0.2",
+    "@owdproject/app-about": "^0.0.4"
   },
   "resolutions": {
     "vite": "^6.3.2"
