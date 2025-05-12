@@ -12,8 +12,8 @@
   },
   "license": "GPL-3.0-or-later",
   "author": {
-    "name": "dxlliv",
-    "url": "https://github.com/dxlliv"
+    "name": "Open Web Desktop Team",
+    "url": "https://github.com/owdproject"
   },
   "scripts": {
     "build": "nuxt generate",
