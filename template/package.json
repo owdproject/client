@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@owdproject/core": "3.0.0-alpha.9",
-    "@owdproject/theme-win95": "^0.0.1",
+    "@owdproject/theme-win95": "0.0.2",
     "@owdproject/app-about": "0.0.4"
   }
 }
