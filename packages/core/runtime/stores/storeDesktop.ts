@@ -21,7 +21,7 @@ export const useDesktopStore = defineStore('owd/desktop', () => {
             master: 100,
         },
         window: {
-            positionZ: 10
+            positionZ: 0
         }
     })
 
