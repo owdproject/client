@@ -1,0 +1,13 @@
+{
+  "name": "@owdproject/client",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "desktop"
+  },
+  "dependencies": {
+    "@owdproject/core": "^3.1.0-alpha.0",
+    "@owdproject/theme-win95": "^0.0.2",
+    "@owdproject/app-about": "^0.1.0"
+  }
+}

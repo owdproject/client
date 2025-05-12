@@ -1,3 +1,19 @@
 {
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./desktop"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./themes/theme-win95"
+    },
+    {
+      "path": "./apps/app-about"
+    }
+  ]
 }
