@@ -9,11 +9,5 @@
     {
       "path": "./packages/core"
     },
-    {
-      "path": "./themes/theme-win95"
-    },
-    {
-      "path": "./apps/app-about"
-    }
   ]
 }
