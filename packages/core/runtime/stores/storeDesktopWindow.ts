@@ -1,4 +1,6 @@
 import {defineStore} from "pinia"
+import {computed} from "vue"
+import {useDesktopStore} from "./storeDesktop"
 
 export const useDesktopWindowStore = defineStore('owd/desktop/window', () => {
     const desktopStore = useDesktopStore()

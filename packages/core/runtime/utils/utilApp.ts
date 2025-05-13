@@ -23,11 +23,10 @@ export function normalizeApplicationConfig(config: ApplicationConfig): Applicati
 }
 
 export function registerTailwindPath(nuxt: Nuxt, path: string) {
-    nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || {}
-    nuxt.options.runtimeConfig.owd = nuxt.options.runtimeConfig.owd || {}
-    nuxt.options.runtimeConfig.owd.tailwindPaths = nuxt.options.runtimeConfig.owd.tailwindPaths || []
+    nuxt.options.runtimeConfig.app.owd = nuxt.options.runtimeConfig.app.owd || {}
+    nuxt.options.runtimeConfig.app.owd.tailwindPaths = nuxt.options.runtimeConfig.app.owd.tailwindPaths || []
 
-    if (!nuxt.options.runtimeConfig.owd.tailwindPaths.includes(path)) {
-        nuxt.options.runtimeConfig.owd.tailwindPaths.push(path)
+    if (!nuxt.options.runtimeConfig.app.owd.tailwindPaths.includes(path)) {
+        nuxt.options.runtimeConfig.app.owd.tailwindPaths.push(path)
     }
 }

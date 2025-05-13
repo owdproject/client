@@ -5,11 +5,6 @@ import pkg from './package.json'
 export default defineNuxtModule({
   meta: {
     name: 'owd-core',
-    configKey: 'desktop',
-  },
-  defaults: {
-    theme: '@owdproject/theme-win95',
-    apps: [],
   },
   async setup(_options, _nuxt) {
     const {resolve} = createResolver(import.meta.url)
@@ -70,7 +65,7 @@ export default defineNuxtModule({
 
       // install tailwind
 
-      const tailwindPaths = _nuxt.options.runtimeConfig?.owd?.tailwindPaths || []
+      const tailwindPaths = _nuxt.options.runtimeConfig.app.owd?.tailwindPaths || []
       tailwindPaths.push('./runtime/components/**/*.{vue,mjs,ts}')  // Aggiungi sempre questo al core
 
       _nuxt.options.tailwindcss = _nuxt.options.tailwindcss || {}
