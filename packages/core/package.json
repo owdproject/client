@@ -23,6 +23,7 @@
     "url": "https://github.com/owdproject"
   },
   "type": "module",
+  "types": "types/index.d.ts",
   "dependencies": {
     "@nuxt/kit": "^3.17.2",
     "@nuxt/fonts": "^0.11.3",

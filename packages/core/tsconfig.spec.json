@@ -19,15 +19,15 @@
     "vite.config.mts",
     "vitest.config.ts",
     "vitest.config.mts",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.tsx",
-    "src/**/*.spec.tsx",
-    "src/**/*.test.js",
-    "src/**/*.spec.js",
-    "src/**/*.test.jsx",
-    "src/**/*.spec.jsx",
-    "src/**/*.d.ts"
+    "runtime/**/*.test.ts",
+    "runtime/**/*.spec.ts",
+    "runtime/**/*.test.tsx",
+    "runtime/**/*.spec.tsx",
+    "runtime/**/*.test.js",
+    "runtime/**/*.spec.js",
+    "runtime/**/*.test.jsx",
+    "runtime/**/*.spec.jsx",
+    "runtime/**/*.d.ts"
   ],
   "references": [
     {

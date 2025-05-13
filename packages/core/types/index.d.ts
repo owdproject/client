@@ -1,3 +1,11 @@
+declare module 'nuxt/schema' {
+  interface PublicRuntimeConfig {
+    owd: {
+      tailwindPaths: []
+    };
+  }
+}
+
 interface IApplicationManager {
     apps: Map<string, IApplicationController>
 
@@ -334,3 +342,5 @@ interface DefaultAppConfig {
     application: IApplicationController
     entry: ApplicationEntry
 }
+
+export {}
