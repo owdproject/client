@@ -3,7 +3,9 @@ import { defineNuxtConfig } from 'nuxt/config';
 
 export default defineNuxtConfig({
   workspaceDir: '../../',
-  srcDir: 'app',
+  devServer: {
+    host: "127.0.0.1",
+  },
   modules: [
     "@owdproject/core"
   ],
