@@ -8,23 +8,11 @@ export default defineNuxtConfig({
     ],
 
     css: [
-        './app/assets/styles/index.scss',
+        './desktop/assets/styles/index.scss',
     ],
 
     i18n: {
         strategy: 'no_prefix',
-    },
-
-    imports: {
-        presets: [
-            {
-                from: '@owdproject/core',
-                imports: [
-                    'defineDesktopApp',
-                    'defineDesktopConfig',
-                ]
-            }
-        ]
     },
 
     future: {
