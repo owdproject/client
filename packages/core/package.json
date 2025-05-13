@@ -1,0 +1,52 @@
+{
+  "name": "@owdproject/core",
+  "version": "3.1.0",
+  "keywords": [
+    "web",
+    "desktop",
+    "vue",
+    "nuxt",
+    "web-desktop",
+    "web-os"
+  ],
+  "homepage": "https://github.com/owdproject/client#readme",
+  "bugs": {
+    "url": "https://github.com/owdproject/client/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owdproject/client.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": {
+    "name": "Open Web Desktop Team",
+    "url": "https://github.com/owdproject"
+  },
+  "type": "module",
+  "types": "types/index.d.ts",
+  "dependencies": {
+    "@nuxt/kit": "^3.17.2",
+    "@nuxt/fonts": "^0.11.3",
+    "@nuxt/icon": "^1.12.0",
+    "@nuxtjs/i18n": "^9.5.4",
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@pinia/nuxt": "^0.11.0",
+    "@primeuix/themes": "^1.1.1",
+    "@primevue/forms": "^4.3.4",
+    "@primevue/nuxt-module": "^4.3.4",
+    "@vueuse/components": "^13.1.0",
+    "@vueuse/core": "^13.1.0",
+    "@vueuse/nuxt": "^13.1.0",
+    "memfs": "^4.17.1",
+    "mitt": "^3.0.1",
+    "nanoid": "^5.1.5",
+    "nuxt": "^3.17.2",
+    "pinia": "^3.0.2",
+    "sanitize.css": "^13.0.0",
+    "sass": "^1.88.0",
+    "vue-resizable": "^2.1.7"
+  },
+  "resolutions": {
+    "vite": "^6.3.2"
+  }
+}

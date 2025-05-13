@@ -1,0 +1,28 @@
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { defineNuxtConfig } from 'nuxt/config';
+
+export default defineNuxtConfig({
+  workspaceDir: '../../',
+  devServer: {
+    host: "127.0.0.1",
+  },
+  modules: [
+    "@owdproject/core"
+  ],
+  typescript: {
+    typeCheck: true,
+    tsConfig: {
+      extends: '../tsconfig.app.json',
+    },
+  },
+  imports: {
+    autoImport: true,
+  },
+  future: {
+    compatibilityVersion: 4
+  },
+  compatibilityDate: '2025-05-13',
+  vite: {
+    plugins: [nxViteTsPaths()],
+  },
+});

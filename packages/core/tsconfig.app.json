@@ -1,0 +1,31 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "resolveJsonModule": true,
+    "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
+  },
+  "include": [".nuxt/nuxt.d.ts", "runtime/**/*", "types/index.d.ts"],
+  "exclude": [
+    "out-tsc",
+    "dist",
+    "vite.config.ts",
+    "vite.config.mts",
+    "vitest.config.ts",
+    "vitest.config.mts",
+    "runtime/**/*.test.ts",
+    "runtime/**/*.spec.ts",
+    "runtime/**/*.test.tsx",
+    "runtime/**/*.spec.tsx",
+    "runtime/**/*.test.js",
+    "runtime/**/*.spec.js",
+    "runtime/**/*.test.jsx",
+    "runtime/**/*.spec.jsx",
+    "eslint.config.js",
+    "eslint.config.cjs",
+    "eslint.config.mjs"
+  ]
+}
