@@ -1,6 +1,8 @@
 export default defineNuxtConfig({
     ssr: false,
 
+    srcDir: 'desktop',
+
     modules: [
         '@owdproject/core',
     ],
