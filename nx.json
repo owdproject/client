@@ -61,5 +61,8 @@
     "test": {
       "dependsOn": ["^build"]
     }
+  },
+  "release": {
+    "projectsRelationship": "independent"
   }
 }
