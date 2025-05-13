@@ -15,7 +15,9 @@
     "name": "Open Web Desktop Team",
     "url": "https://github.com/owdproject"
   },
-  "scripts": {},
+  "scripts": {
+    "dev": "nx run desktop:serve"
+  },
   "dependencies": {},
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
