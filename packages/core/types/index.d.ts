@@ -1,3 +1,6 @@
+import type { Nuxt } from '@nuxt/schema';
+import { useApplicationManager } from '../runtime/composables/useApplicationManager';
+
 declare module 'nuxt/schema' {
   interface PublicRuntimeConfig {
     owd: {
@@ -342,5 +345,9 @@ interface DefaultAppConfig {
     application: IApplicationController
     entry: ApplicationEntry
 }
+
+export function defineDesktopApp(config: ApplicationConfig)
+export function defineDesktopConfig(config: DesktopConfig)
+export function registerTailwindPath(nuxt: Nuxt, path: string): void;
 
 export {}

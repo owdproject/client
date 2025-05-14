@@ -1,5 +1,4 @@
 import {useApplicationManager} from "../composables/useApplicationManager";
-import {useDesktopManager} from "../composables/useDesktopManager";
 
 export function defineDesktopApp(config: ApplicationConfig) {
     const applicationManager = useApplicationManager()
