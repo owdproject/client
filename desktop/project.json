@@ -1,0 +1,14 @@
+{
+  "name": "desktop",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm install && pnpm run dev"
+        ],
+        "cwd": "desktop"
+      }
+    }
+  }
+}
