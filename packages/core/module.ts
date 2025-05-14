@@ -9,9 +9,16 @@ export default defineNuxtModule({
   async setup(_options, _nuxt) {
     const {resolve} = createResolver(import.meta.url)
 
-    // set core version to runtime config
+    // get open web desktop config
 
     const desktopConfig = (await import(_nuxt.options.rootDir + '/owd.config.ts')).default
+
+    // extend nuxt.config.ts with owd.config.ts
+
+    _nuxt.options = {
+      ..._nuxt.options,
+      ...desktopConfig,
+    }
 
     // set core version to runtime config
 
@@ -159,8 +166,6 @@ export default defineNuxtModule({
     }
 
     {
-
-      // install plugins
 
       addPlugin(resolve('./runtime/plugins/resize.client.ts'))
 
