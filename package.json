@@ -10,13 +10,14 @@
     "type": "git",
     "url": "git+https://github.com/owdproject/client.git"
   },
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "author": {
     "name": "Open Web Desktop Team",
     "url": "https://github.com/owdproject"
   },
   "scripts": {
-    "dev": "nx run desktop:serve"
+    "dev": "nx run desktop:serve",
+    "generate": "nx run desktop:generate"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
