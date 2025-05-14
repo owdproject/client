@@ -9,6 +9,15 @@
         ],
         "cwd": "desktop"
       }
+    },
+    "generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm install && pnpm run generate"
+        ],
+        "cwd": "desktop"
+      }
     }
   }
 }
