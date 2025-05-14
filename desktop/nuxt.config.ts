@@ -12,6 +12,8 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
   },
 
+  compatibilityDate: '2025-05-15',
+
   future: {
     compatibilityVersion: 4,
   },
