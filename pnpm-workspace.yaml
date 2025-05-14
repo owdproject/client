@@ -1,0 +1,5 @@
+packages:
+  - 'desktop'
+  - 'apps/*'
+  - 'packages/*'
+  - 'themes/*'

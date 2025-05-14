@@ -63,5 +63,8 @@
     "desktop/*",
     "packages/*",
     "themes/*"
-  ]
+  ],
+  "resolutions": {
+    "vite": "^6.3.2"
+  }
 }
