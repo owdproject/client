@@ -10,7 +10,7 @@
 
 Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with Vue.js & TypeScript, and it leverages the extensible Nuxt.js architecture.
 
-[Demo](https://atproto-os.pages.dev/) · [Documentation](https://owdproject.org/)
+[Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA) · [Documentation](https://owdproject.org/)
 
 ## Features
 
