@@ -67,7 +67,7 @@ You can discover new modules by searching for the [owd-modules](https://github.c
 For example, to install the session persistence module:
 
 ```bash
-nx run desktop:install-app --name=@owdproject/module-pinia-localforage
+nx run desktop:install-module --name=@owdproject/module-pinia-localforage
 ```
 
 ### 🖥️ Themes
