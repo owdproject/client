@@ -27,7 +27,7 @@ interface IApplicationManager {
     closeApp(id: string): void
 
     launchAppEntry(id: string, entry: string): Promise<IApplicationController | undefined | void>
-    execAppCommand(id: string, command: string): Promise<CommandOutput | void>
+    execAppCommand(id: string, command: string, meta: undefined | any): Promise<CommandOutput | void>
 
     isAppDefined(id: string): boolean
 
@@ -84,7 +84,11 @@ interface IApplicationController {
 
     restoreApplication(): Promise<boolean>
 
-    openWindow(model: string, windowStoredState?: WindowStoredState, meta?: {
+    getWindowsByModel(model: string): IWindowController[]
+
+    getFirstWindowByModel(model: string): IWindowController | undefined
+
+    openWindow(model: string, windowStoredState?: WindowStoredState, options?: {
         isRestoring?: boolean
     })
 
@@ -94,6 +98,7 @@ interface IApplicationController {
 
     execCommand(command: string): Promise<CommandOutput | void>
 
+    // deprecated
     get windowsOpened(): Reactive<Map<string, IWindowController>>
 }
 
@@ -202,6 +207,7 @@ interface WindowConfig {
 interface WindowStoredState {
     model: string,
     state: WindowState
+    meta: any
 }
 
 interface WindowOverride {
