@@ -10,7 +10,7 @@
 
 Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with Vue.js & TypeScript, and it leverages the extensible Nuxt.js architecture.
 
-[Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA) · [Documentation](https://owdproject.org/) · [Applications](https://github.com/topics/owd-apps) · [Modules](https://github.com/topics/owd-modules) · [Themes](https://github.com/topics/owd-themes)
+[Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA)
 
 ## Features
 
@@ -44,80 +44,42 @@ pnpm run generate
 
 ## Extend your desktop
 
-Open Web Desktop can be extended with themes, modules and applications.
+Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and ensure a consistent look across all apps. Each theme defines its own style, making your desktop both cohesive and uniquely yours.
+
+[Documentation](https://owdproject.org/) · [Applications](https://github.com/topics/owd-apps) · [Modules](https://github.com/topics/owd-modules) · [Themes](https://github.com/topics/owd-themes)
 
 ### Install an application
 
-You can install a new [application](https://github.com/topics/owd-apps) with:
+You can discover new apps by searching for the [owd-apps](https://github.com/topics/owd-apps) tag on GitHub.
+
+For example, to install the To-do app:
 
 ```bash
-pnpm install @owdproject/app-todo
+nx run desktop:install-app --name=@owdproject/app-todo
 ```
 
-Then, define it in the desktop configuration:
-
-```typescript
-// desktop/owd.config.ts
-export default defineDesktopConfig({
-    theme: "@owdproject/theme-win95",
-    apps: [
-        "@owdproject/app-about",
-        "@owdproject/app-todo", // define here the app you just installed
-    ],
-    modules: []
-})
-```
+This will install the package and automatically register it in your desktop configuration.
 
 ### Install a module
 
-You can install a new [module](https://github.com/topics/owd-modules) with:
+You can discover new modules by searching for the [owd-modules](https://github.com/topics/owd-modules) tag on GitHub.
+
+For example, to install the session persistence module:
 
 ```bash
-pnpm install @owdproject/module-pinia-localforage
-```
-
-Then, define it in the desktop configuration:
-
-```typescript
-// desktop/owd.config.ts
-export default defineDesktopConfig({
-    theme: "@owdproject/theme-win95",
-    apps: [
-        "@owdproject/app-about",
-        "@owdproject/app-todo",
-    ],
-    modules: [
-        "@owdproject/module-pinia-localforage", // define here the module you just installed
-    ]
-})
+nx run desktop:install-app --name=@owdproject/module-pinia-localforage
 ```
 
 ## Themes
-You can install a new [theme](https://github.com/topics/owd-themes) in the same way.
+You can discover new themes by searching for the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
 
 ```bash
-pnpm install @owdproject/theme-gnome
-```
-
-Define the theme in `owd.config.ts`:
-
-```typescript
-// desktop/owd.config.ts
-export default defineDesktopConfig({
-    theme: "@owdproject/theme-gnome", // define here the theme you just installed
-    apps: [
-        "@owdproject/app-about",
-        "@owdproject/app-todo",
-    ],
-    modules: [
-        "@owdproject/module-pinia-localforage"
-    ]
-})
+nx run desktop:install-theme --name=@owdproject/theme-gnome
 ```
 
 ## Sponsors
 
-Make this project sustainable, your support is crucial to keep it moving forward.
+Be the first to support this project and help us keep it growing!
 
 ## License
 
