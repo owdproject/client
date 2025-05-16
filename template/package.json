@@ -32,6 +32,7 @@
     "@nx/vite": "21.0.3",
     "@nx/web": "21.0.3",
     "@nx/workspace": "21.0.3",
+    "@owdproject/nx": "0.0.1",
     "@swc-node/register": "~1.10.10",
     "@swc/core": "~1.11.24",
     "@swc/helpers": "~0.5.17",

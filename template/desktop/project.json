@@ -1,0 +1,32 @@
+{
+  "name": "desktopx",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm install && pnpm run dev"
+        ],
+        "cwd": "desktop"
+      }
+    },
+    "generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm install && pnpm run generate"
+        ],
+        "cwd": "desktop"
+      }
+    },
+    "install-app": {
+      "executor": "@owdproject/nx:install-app"
+    },
+    "install-module": {
+      "executor": "@owdproject/nx:install-module"
+    },
+    "install-theme": {
+      "executor": "@owdproject/nx:install-theme"
+    }
+  }
+}

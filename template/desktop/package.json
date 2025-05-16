@@ -4,6 +4,13 @@
   "nx": {
     "name": "desktop"
   },
+  "scripts": {
+    "build": "nuxt generate",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate --dev",
+    "postinstall": "nuxt prepare",
+    "preview": "nuxt preview"
+  },
   "dependencies": {
     "@owdproject/core": "^3.1.0",
     "@owdproject/theme-win95": "^0.1.0",
