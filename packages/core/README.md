@@ -55,7 +55,7 @@ You can discover new apps by searching for the [owd-apps](https://github.com/top
 For example, to install the To-do app:
 
 ```bash
-nx run desktop:install-app --name=@owdproject/app-todo
+owd install-app @owdproject/app-todo
 ```
 
 This will install the package and automatically register it in your desktop configuration.
@@ -67,7 +67,7 @@ You can discover new modules by searching for the [owd-modules](https://github.c
 For example, to install the session persistence module:
 
 ```bash
-nx run desktop:install-module --name=@owdproject/module-pinia-localforage
+owd install-module @owdproject/module-pinia-localforage
 ```
 
 ### 🖥️ Themes
@@ -78,7 +78,7 @@ Each theme provides a unique look and feel while maintaining consistent function
 You can discover new themes by searching for the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
 
 ```bash
-nx run desktop:install-theme --name=@owdproject/theme-gnome
+owd install-theme @owdproject/theme-gnome
 ```
 
 ## Sponsors
