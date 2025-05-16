@@ -48,7 +48,7 @@ Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and e
 
 [Documentation](https://owdproject.org/) · [Applications](https://github.com/topics/owd-apps) · [Modules](https://github.com/topics/owd-modules) · [Themes](https://github.com/topics/owd-themes)
 
-### Install an application
+### 🧩 Install an application
 
 You can discover new apps by searching for the [owd-apps](https://github.com/topics/owd-apps) tag on GitHub.
 
@@ -60,7 +60,7 @@ nx run desktop:install-app --name=@owdproject/app-todo
 
 This will install the package and automatically register it in your desktop configuration.
 
-### Install a module
+### 🧩 Install a module
 
 You can discover new modules by searching for the [owd-modules](https://github.com/topics/owd-modules) tag on GitHub.
 
@@ -70,7 +70,11 @@ For example, to install the session persistence module:
 nx run desktop:install-app --name=@owdproject/module-pinia-localforage
 ```
 
-## Themes
+### 🖥️ Themes
+
+Themes are full desktop environments that style all UI components independently using [PrimeVue](https://primevue.org/).  
+Each theme provides a unique look and feel while maintaining consistent functionality across all applications.
+
 You can discover new themes by searching for the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
 
 ```bash
@@ -79,7 +83,7 @@ nx run desktop:install-theme --name=@owdproject/theme-gnome
 
 ## Sponsors
 
-Be the first to support this project and help us keep it growing!
+Be the first to support this project and help us keep it growing! [Sponsor the project](https://github.com/sponsors/owdproject)
 
 ## License
 
