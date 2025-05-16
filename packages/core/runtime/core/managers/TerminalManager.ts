@@ -32,11 +32,13 @@ export class TerminalManager {
         }
 
         if (!this.commands.has(name)) {
-            throw new Error(`Command "${name}" not found`)
+            return {
+              message: `Command "${name}" not found`
+            }
         }
 
-        const cmd = this.commands.get(name)!
+        const application = this.commands.get(name)!
 
-        return applicationManager.execAppCommand(cmd.applicationId, input)
+        return applicationManager.execAppCommand(application.applicationId, input)
     }
 }
