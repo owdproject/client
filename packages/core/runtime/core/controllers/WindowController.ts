@@ -1,8 +1,8 @@
-import {useApplicationManager} from '../../composables/useApplicationManager'
-import {useDesktopWindowStore} from '../../stores/storeDesktopWindow'
-import {deepClone} from '../../utils/utilCommon'
-import {markRaw} from '@vue/reactivity'
-import {defineAsyncComponent} from "vue"
+import { useApplicationManager } from '../../composables/useApplicationManager'
+import { useDesktopWindowStore } from '../../stores/storeDesktopWindow'
+import { deepClone } from '../../utils/utilCommon'
+import { markRaw } from '@vue/reactivity'
+import { defineAsyncComponent } from 'vue'
 
 export class WindowController implements IWindowController {
     public readonly application: IApplicationController
@@ -70,7 +70,7 @@ export class WindowController implements IWindowController {
         // component
         if (config.component) {
             this.config.component = markRaw(
-                defineAsyncComponent(config.component)
+                defineAsyncComponent(config.component),
             )
         }
 
@@ -87,10 +87,14 @@ export class WindowController implements IWindowController {
         // sizes
         if (config.size?.width) this.config.size.width = config.size.width
         if (config.size?.height) this.config.size.height = config.size.height
-        if (config.size?.minWidth) this.config.size.minWidth = config.size.minWidth
-        if (config.size?.minHeight) this.config.size.minHeight = config.size.minHeight
-        if (config.size?.maxWidth) this.config.size.maxWidth = config.size.maxWidth
-        if (config.size?.maxHeight) this.config.size.maxHeight = config.size.maxHeight
+        if (config.size?.minWidth)
+            this.config.size.minWidth = config.size.minWidth
+        if (config.size?.minHeight)
+            this.config.size.minHeight = config.size.minHeight
+        if (config.size?.maxWidth)
+            this.config.size.maxWidth = config.size.maxWidth
+        if (config.size?.maxHeight)
+            this.config.size.maxHeight = config.size.maxHeight
 
         // minimize
         if (typeof config.minimizable !== 'undefined') {
@@ -137,7 +141,7 @@ export class WindowController implements IWindowController {
 
         this.config.overridable = {
             ...DEFAULT_OVERRIDABLE,
-            ...(config.overridable || {})
+            ...(config.overridable || {}),
         }
     }
 
@@ -173,24 +177,24 @@ export class WindowController implements IWindowController {
 
     // position
 
-    private setPosition(data: { x: number, y: number}) {
+    public setPosition(data: { x: number; y: number }) {
         if (!this.state.position) {
-            this.state.position = { x: 0, y: 0}
+            this.state.position = { x: 0, y: 0 }
         }
 
         this.state.position.x = data.x
         this.state.position.y = data.y
     }
 
-    private setActive(value: boolean) {
+    public setActive(value: boolean) {
         this.state.active = value
     }
 
-    private setFocus(value: boolean) {
+    public setFocus(value: boolean) {
         this.state.focused = value
     }
 
-    private bringToFront() {
+    public focus() {
         const applicationManager = useApplicationManager()
         const desktopWindowStore = useDesktopWindowStore()
 
@@ -256,16 +260,34 @@ export class WindowController implements IWindowController {
         const configSize = this.config.size || {}
 
         return {
-            width: typeof stateSize.width !== 'undefined' ? stateSize.width : configSize.width,
-            height: typeof stateSize.height !== 'undefined' ? stateSize.height : configSize.height,
-            minWidth: typeof stateSize.minWidth !== 'undefined' ? stateSize.minWidth : configSize.minWidth,
-            maxWidth: typeof stateSize.maxWidth !== 'undefined' ? stateSize.maxWidth : configSize.maxWidth,
-            minHeight: typeof stateSize.minHeight !== 'undefined' ? stateSize.minHeight : configSize.minHeight,
-            maxHeight: typeof stateSize.maxHeight !== 'undefined' ? stateSize.maxHeight : (configSize.maxHeight ?? 600),
+            width:
+                typeof stateSize.width !== 'undefined'
+                    ? stateSize.width
+                    : configSize.width,
+            height:
+                typeof stateSize.height !== 'undefined'
+                    ? stateSize.height
+                    : configSize.height,
+            minWidth:
+                typeof stateSize.minWidth !== 'undefined'
+                    ? stateSize.minWidth
+                    : configSize.minWidth,
+            maxWidth:
+                typeof stateSize.maxWidth !== 'undefined'
+                    ? stateSize.maxWidth
+                    : configSize.maxWidth,
+            minHeight:
+                typeof stateSize.minHeight !== 'undefined'
+                    ? stateSize.minHeight
+                    : configSize.minHeight,
+            maxHeight:
+                typeof stateSize.maxHeight !== 'undefined'
+                    ? stateSize.maxHeight
+                    : (configSize.maxHeight ?? 600),
         }
     }
 
-    private setSize(data: { width: number, height: number}) {
+    public setSize(data: { width: number; height: number }) {
         if (!this.state.size) {
             this.state.size = { width: undefined, height: undefined }
         }
@@ -284,7 +306,7 @@ export class WindowController implements IWindowController {
         return !!this.config.minimizable
     }
 
-    private minimize() {
+    public minimize() {
         if (!this.isMinimizable) {
             return false
         }
@@ -293,9 +315,14 @@ export class WindowController implements IWindowController {
         return true
     }
 
-    private toggleMinimize() {
+    public unminimize() {
+        this.state.active = true
+        return true
+    }
+
+    public toggleMinimize() {
         this.state.active = !this.state.active
-        this.bringToFront()
+        this.focus()
     }
 
     // maximize
@@ -316,7 +343,7 @@ export class WindowController implements IWindowController {
         return !!this.config.maximized
     }
 
-    private toggleMaximize() {
+    public toggleMaximize() {
         if (!this.isMaximizable) {
             return false
         }
@@ -325,7 +352,7 @@ export class WindowController implements IWindowController {
         return true
     }
 
-    private maximize() {
+    public maximize() {
         if (!this.isMaximizable) {
             return false
         }
@@ -334,7 +361,7 @@ export class WindowController implements IWindowController {
         return true
     }
 
-    private unmaximize() {
+    public unmaximize() {
         if (!this.isMaximizable) {
             return false
         }
@@ -353,7 +380,7 @@ export class WindowController implements IWindowController {
         return !!this.config.destroyable
     }
 
-    private destroy() {
+    public destroy() {
         if (!this.isDestroyable) {
             return false
         }
@@ -382,26 +409,28 @@ export class WindowController implements IWindowController {
     }
 
     // workspace
-    private setWorkspace(workspaceId: string) {
+    public setWorkspace(workspaceId: string) {
         this.state.workspace = workspaceId
     }
 
     // override
 
-    setTitleOverride(value: undefined|string) {
+    public setTitleOverride(value: undefined | string) {
         this.override.title = value
     }
 
-    resetTitleOverride() {
+    public resetTitleOverride() {
         this.override.title = undefined
     }
 
+    // deprecated ?
     get actions() {
         return {
             // position
             setActive: this.setActive.bind(this),
             setFocus: this.setFocus.bind(this),
-            bringToFront: this.bringToFront.bind(this),
+            bringToFront: this.focus.bind(this),
+            focus: this.focus.bind(this),
             setPosition: this.setPosition.bind(this),
 
             // size
