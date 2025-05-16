@@ -210,6 +210,14 @@ export class ApplicationController implements IApplicationController {
         return this.windows;
     }
 
+    public getWindowsByModel(model: string): IWindowController[] {
+      return Array.from(this.windows.values()).filter(w => w.model === model)
+    }
+
+    public getFirstWindowByModel(model: string): IWindowController | undefined {
+        return Array.from(this.windows.values()).find(w => w.model === model)
+    }
+
     public setRunning(value: boolean): void {
         this.isRunning = value
     }
