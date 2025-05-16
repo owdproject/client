@@ -48,7 +48,6 @@ export class WindowController implements IWindowController {
 
     public override: WindowOverride = {}
 
-    public meta: any = {}
     private storedState: WindowStoredState
 
     constructor(
@@ -164,6 +163,12 @@ export class WindowController implements IWindowController {
                 }
             }
         }
+    }
+
+    // meta
+
+    get meta() {
+        return this.storedState.meta
     }
 
     // position

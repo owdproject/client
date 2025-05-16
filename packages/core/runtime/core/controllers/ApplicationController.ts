@@ -156,7 +156,8 @@ export class ApplicationController implements IApplicationController {
                     },
                     createdAt: +new Date(),
                     workspace: desktopWorkspaceStore.active
-                }
+                },
+                meta
             }
 
             windowStoredState = this.storeWindows.windows[windowId]
