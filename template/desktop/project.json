@@ -1,5 +1,5 @@
 {
-  "name": "desktopx",
+  "name": "desktop",
   "targets": {
     "serve": {
       "executor": "nx:run-commands",
