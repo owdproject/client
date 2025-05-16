@@ -18,6 +18,15 @@
         ],
         "cwd": "desktop"
       }
+    },
+    "install-app": {
+      "executor": "@owdproject/nx:install-app"
+    },
+    "install-module": {
+      "executor": "@owdproject/nx:install-module"
+    },
+    "install-theme": {
+      "executor": "@owdproject/nx:install-theme"
     }
   }
 }
