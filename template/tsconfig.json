@@ -1,10 +1,5 @@
 {
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
-  "files": [],
-  "references": [
-    {
-      "path": "./packages/core"
-    }
-  ]
+  "files": []
 }

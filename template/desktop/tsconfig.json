@@ -1,24 +1,5 @@
 {
   "files": [],
-  "references": [
-    {
-      "path": "../../apps/app-about"
-    },
-    {
-      "path": "../../themes/theme-win95"
-    },
-    {
-      "path": "../../packages/core"
-    },
-    {
-      "path": ".."
-    },
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ],
+  "references": [],
   "extends": "../tsconfig.base.json"
 }
