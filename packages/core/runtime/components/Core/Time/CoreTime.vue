@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import {ref, onMounted, onUnmounted} from 'vue'
-import {computed} from "@vue/reactivity"
-import {useI18n} from "vue-i18n"
+import { ref, onMounted, onUnmounted } from 'vue'
+import { computed } from '@vue/reactivity'
+import { useI18n } from 'vue-i18n'
 
 const date: Ref<Date> = ref(new Date())
-const {locale} = useI18n()
+const { locale } = useI18n()
 
 let minuteTimeout: any
 
 onMounted(() => {
   function scheduleNextMinute() {
     const now = new Date()
-    const millisecondsToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
+    const millisecondsToNextMinute =
+      (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
     minuteTimeout = setTimeout(() => {
       date.value = new Date()
       scheduleNextMinute()
@@ -44,7 +45,9 @@ const time = computed(() => {
 
   if (minutes.length === 1) minutes = `0${minutes}`
 
-  return locale.value === 'it' ? `${hours}:${minutes}` : `${hours}:${minutes} ${period}`
+  return locale.value === 'it'
+    ? `${hours}:${minutes}`
+    : `${hours}:${minutes} ${period}`
 })
 </script>
 

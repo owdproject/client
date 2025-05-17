@@ -1,12 +1,13 @@
 export default defineNuxtConfig({
   workspaceDir: '../../',
+
+  ssr: false,
+
   devServer: {
-    host: "127.0.0.1",
+    host: '127.0.0.1',
   },
 
-  modules: [
-    '@owdproject/core',
-  ],
+  modules: ['@owdproject/core'],
 
   i18n: {
     strategy: 'no_prefix',
@@ -20,5 +21,5 @@ export default defineNuxtConfig({
 
   devtools: {
     enabled: false,
-  }
+  },
 })

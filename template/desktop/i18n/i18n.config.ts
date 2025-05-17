@@ -3,8 +3,8 @@ export default defineI18nConfig(() => {
         locale: 'en',
         messages: {
             en: {
-                title: 'Open Web Desktop'
-            }
+                title: 'Open Web Desktop',
+            },
         },
     }
 })

@@ -1,25 +1,28 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted} from "vue"
-import {useRuntimeConfig} from "nuxt/app"
-import {computed, toRaw} from "@vue/reactivity"
-import {useDesktopManager} from "../../../composables/useDesktopManager"
-import {useApplicationManager} from "../../../composables/useApplicationManager"
-import {useDesktopStore} from "../../../stores/storeDesktop"
-import {useDesktopWorkspaceStore} from "../../../stores/storeDesktopWorkspace"
+import { onMounted, onUnmounted } from 'vue'
+import { useRuntimeConfig } from 'nuxt/app'
+import { computed, toRaw } from '@vue/reactivity'
+import { useDesktopManager } from '../../../composables/useDesktopManager'
+import { useApplicationManager } from '../../../composables/useApplicationManager'
+import { useDesktopStore } from '../../../stores/storeDesktop'
+import { useDesktopWorkspaceStore } from '../../../stores/storeDesktopWorkspace'
 
-const props = withDefaults(defineProps<{
-  windows?: DesktopWindowsConfig
-  systemBar?: DesktopSystemBarConfig
-  dockBar?: DesktopDockBarConfig
-  workspaces?: DesktopWorkspacesConfig
-}>(), {
-  windows: {
-    position: 'fixed',
+const props = withDefaults(
+  defineProps<{
+    windows?: DesktopWindowsConfig
+    systemBar?: DesktopSystemBarConfig
+    dockBar?: DesktopDockBarConfig
+    workspaces?: DesktopWorkspacesConfig
+  }>(),
+  {
+    windows: {
+      position: 'fixed',
+    },
+    systemBar: {},
+    dockBar: {},
+    workspaces: {},
   },
-  systemBar: {},
-  dockBar: {},
-  workspaces: {},
-})
+)
 
 // todo move to owd initialization
 
@@ -70,7 +73,7 @@ const classes = computed(() => {
 
 <template>
   <div :class="classes">
-    <slot/>
+    <slot />
   </div>
 </template>
 

@@ -6,6 +6,5 @@
 
 <style scoped lang="scss">
 .owd-explorer-folder {
-
 }
 </style>

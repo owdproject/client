@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {ref,provide} from 'vue'
-import {computed} from "@vue/reactivity"
-import {useDesktopManager} from "@owdproject/core/runtime/composables/useDesktopManager"
-import {handleWindowControllerProps} from "@owdproject/core/runtime/utils/utilWindow"
+import { ref, provide } from 'vue'
+import { computed } from '@vue/reactivity'
+import { useDesktopManager } from '@owdproject/core/runtime/composables/useDesktopManager'
+import { handleWindowControllerProps } from '@owdproject/core/runtime/utils/utilWindow'
 
 const props = defineProps<{
   window?: IWindowController
@@ -24,11 +24,13 @@ const emit = defineEmits([
   'restore',
   'maximize',
   'unmaximize',
-  'toggle-maximize'
+  'toggle-maximize',
 ])
 
 const desktopManager = useDesktopManager() // used in <style v-bind>
-const windowController: IWindowController = handleWindowControllerProps(props.window)
+const windowController: IWindowController = handleWindowControllerProps(
+  props.window,
+)
 
 provide<IWindowController>('windowController', windowController)
 provide<WindowContent>('windowContent', props.content ?? {})
@@ -54,7 +56,7 @@ function onWindowDragMove(data: any) {
 function onWindowDragEnd(data: { left: number; top: number }) {
   windowController?.actions?.setPosition({
     x: data.left,
-    y: data.top
+    y: data.top,
   })
 
   isDragging.value = false
@@ -75,17 +77,22 @@ function onWindowResizeMove(data: any) {
 /**
  * Window end resize event
  */
-function onWindowResizeEnd(data: { left: number; top: number, width: number, height: number }) {
+function onWindowResizeEnd(data: {
+  left: number
+  top: number
+  width: number
+  height: number
+}) {
   isResizing.value = false
 
   windowController?.actions?.setPosition({
     x: data.left,
-    y: data.top
+    y: data.top,
   })
 
   windowController?.actions?.setSize({
     width: data.width,
-    height: data.height
+    height: data.height,
   })
 
   emit('resize:end', data)
@@ -112,30 +119,32 @@ const classes = computed(() => {
 
 <template>
   <vue-resizable
-      ref="windowResizableController"
-      :class="classes"
-      :width="windowController?.size.width"
-      :height="windowController?.size.height"
-      :min-height="windowController?.size.minHeight"
-      :max-width="windowController?.size.maxWidth"
-      :max-height="windowController?.size.maxHeight"
-      :left="windowController?.position?.x"
-      :top="windowController?.position?.y"
-      :active="windowController?.isResizable ? undefined : []"
-      fit-parent
-      @drag:start="onWindowDragStart"
-      @drag:move="onWindowDragMove"
-      @drag:end="onWindowDragEnd"
-      @resize:start="onWindowResizeStart"
-      @resize:move="onWindowResizeMove"
-      @resize:end="onWindowResizeEnd"
-      :style="{zIndex: windowController?.position?.z}"
-      :drag-selector="windowController?.isDraggable ? '.owd-window-nav__draggable' : '.owd-window-nav__draggable-none'"
-      @pointerdown="onWindowPointerDown"
+    ref="windowResizableController"
+    :class="classes"
+    :width="windowController?.size.width"
+    :height="windowController?.size.height"
+    :min-height="windowController?.size.minHeight"
+    :max-width="windowController?.size.maxWidth"
+    :max-height="windowController?.size.maxHeight"
+    :left="windowController?.position?.x"
+    :top="windowController?.position?.y"
+    :active="windowController?.isResizable ? undefined : []"
+    fit-parent
+    @drag:start="onWindowDragStart"
+    @drag:move="onWindowDragMove"
+    @drag:end="onWindowDragEnd"
+    @resize:start="onWindowResizeStart"
+    @resize:move="onWindowResizeMove"
+    @resize:end="onWindowResizeEnd"
+    :style="{ zIndex: windowController?.position?.z }"
+    :drag-selector="
+      windowController?.isDraggable
+        ? '.owd-window-nav__draggable'
+        : '.owd-window-nav__draggable-none'
+    "
+    @pointerdown="onWindowPointerDown"
   >
-
-    <slot/>
-
+    <slot />
   </vue-resizable>
 </template>
 
@@ -143,7 +152,8 @@ const classes = computed(() => {
 .owd-window {
   position: v-bind('desktopManager.config.windows.position');
 
-  &--dragging, &--resizing {
+  &--dragging,
+  &--resizing {
     :deep(.owd-window__content) {
       pointer-events: none;
     }

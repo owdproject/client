@@ -4,18 +4,14 @@
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "pnpm install && pnpm run dev"
-        ],
+        "commands": ["pnpm install && pnpm run dev"],
         "cwd": "desktop"
       }
     },
     "generate": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "pnpm install && pnpm run generate"
-        ],
+        "commands": ["pnpm install && pnpm run generate"],
         "cwd": "desktop"
       }
     },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useApplicationManager} from "../../../composables/useApplicationManager"
+import { useApplicationManager } from '../../../composables/useApplicationManager'
 
 defineProps<{
   workspaceFilter?: string
@@ -10,8 +10,8 @@ const applicationManager = useApplicationManager()
 
 <template>
   <CoreApplicationWindowsRender
-      v-for="app of applicationManager.appsRunning"
-      :workspace-filter="workspaceFilter"
-      :windows="app.windowsOpened"
+    v-for="app of applicationManager.appsRunning"
+    :workspace-filter="workspaceFilter"
+    :windows="app.windowsOpened"
   />
 </template>

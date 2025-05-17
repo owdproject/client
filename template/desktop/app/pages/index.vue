@@ -1,3 +1,3 @@
 <template>
-  <Desktop />
+    <Desktop />
 </template>

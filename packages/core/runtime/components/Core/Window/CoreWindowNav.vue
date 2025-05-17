@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import {inject} from "vue"
-import {computed} from "@vue/reactivity"
+import { inject } from 'vue'
+import { computed } from '@vue/reactivity'
 
 const windowController = inject<IWindowController>('windowController')
 
 const classes = computed(() => {
   const list = ['owd-window-nav']
 
-  if (typeof windowController?.state.active === 'undefined' || !!windowController?.state.active) {
+  if (
+    typeof windowController?.state.active === 'undefined' ||
+    !!windowController?.state.active
+  ) {
     list.push('owd-window-nav--active')
   }
 
-  if (typeof windowController?.state.focused === 'undefined' || !!windowController?.state.focused) {
+  if (
+    typeof windowController?.state.focused === 'undefined' ||
+    !!windowController?.state.focused
+  ) {
     list.push('owd-window-nav--focused')
   }
 
@@ -21,10 +27,9 @@ const classes = computed(() => {
 
 <template>
   <div :class="classes">
-    <div class="owd-window-nav__draggable"/>
+    <div class="owd-window-nav__draggable" />
 
-    <slot/>
-
+    <slot />
   </div>
 </template>
 

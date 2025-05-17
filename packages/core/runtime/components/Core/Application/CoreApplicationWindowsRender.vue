@@ -6,14 +6,14 @@ defineProps<{
 </script>
 
 <template>
-  <template
-      v-for="[windowId, window] in windows"
-      :key="windowId"
-  >
+  <template v-for="[windowId, window] in windows" :key="windowId">
     <component
-        v-if="!workspaceFilter || (workspaceFilter && window.state.workspace === workspaceFilter)"
-        :window="window"
-        :is="window.config.component"
+      v-if="
+        !workspaceFilter ||
+        (workspaceFilter && window.state.workspace === workspaceFilter)
+      "
+      :window="window"
+      :is="window.config.component"
     />
   </template>
 </template>

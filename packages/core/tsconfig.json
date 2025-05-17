@@ -6,7 +6,7 @@
     },
     {
       "path": "./tsconfig.spec.json"
-    },
+    }
   ],
   "extends": "../../tsconfig.base.json"
 }
