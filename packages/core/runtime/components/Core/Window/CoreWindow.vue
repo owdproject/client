@@ -122,6 +122,7 @@ const classes = computed(() => {
       :left="windowController?.position?.x"
       :top="windowController?.position?.y"
       :active="windowController?.isResizable ? undefined : []"
+      fit-parent
       @drag:start="onWindowDragStart"
       @drag:move="onWindowDragMove"
       @drag:end="onWindowDragEnd"
