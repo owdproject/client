@@ -21,8 +21,6 @@ export default [
       indent: ['error', 4, { SwitchCase: 1 }],
       semi: ['error', 'never'],
       quotes: ['error', 'single'],
-      // altre regole Vue
     },
   },
-  // ... altre configurazioni
 ]
