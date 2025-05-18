@@ -16,9 +16,11 @@ export default defineNuxtModule({
   async setup(_options, _nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
+      _nuxt.options.runtimeConfig.public.desktop = {}
+
     // get open web desktop config
 
-    const desktopConfig = (
+    const clientConfig = (
       await import(_nuxt.options.rootDir + '/owd.config.ts')
     ).default
 
@@ -26,7 +28,7 @@ export default defineNuxtModule({
 
     _nuxt.options = {
       ..._nuxt.options,
-      ...desktopConfig,
+      ...clientConfig,
     }
 
     // set core version to runtime config
@@ -36,22 +38,22 @@ export default defineNuxtModule({
     {
       // install open web desktop theme
 
-      if (desktopConfig.theme) {
-        await installModule(desktopConfig.theme)
+      if (clientConfig.theme) {
+        await installModule(clientConfig.theme)
       }
 
       // install open web desktop modules
 
-      if (desktopConfig.modules) {
-        for (const modulePath of desktopConfig.modules) {
+      if (clientConfig.modules) {
+        for (const modulePath of clientConfig.modules) {
           await installModule(modulePath)
         }
       }
 
       // install open web desktop apps
 
-      if (desktopConfig.apps) {
-        for (const appPath of desktopConfig.apps) {
+      if (clientConfig.apps) {
+        for (const appPath of clientConfig.apps) {
           await installModule(appPath)
         }
       }
@@ -59,7 +61,7 @@ export default defineNuxtModule({
       // assign open web desktop config to runtime config
       _nuxt.options.runtimeConfig.public.desktop = deepMerge(
         _nuxt.options.runtimeConfig.public.desktop,
-        desktopConfig,
+          clientConfig,
       )
     }
 
