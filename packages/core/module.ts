@@ -11,7 +11,13 @@ import pkg from './package.json'
 
 export default defineNuxtModule({
   meta: {
-    name: 'owd-core'
+    name: 'owd-core',
+    configKey: 'owd'
+  },
+  defaults: {
+    theme: '@owdproject/theme-win95',
+    apps: [],
+    modules: [],
   },
   async setup(_options, _nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -20,9 +26,22 @@ export default defineNuxtModule({
 
     // get open web desktop config
 
-    const clientConfig = (
-      await import(_nuxt.options.rootDir + '/owd.config.ts')
-    ).default
+    let clientConfig
+
+    try {
+
+      clientConfig = (
+        await import(_nuxt.options.rootDir + '/owd.config.ts')
+      ).default
+
+    } catch (e) {
+      console.error('/desktop/owd.config.ts not found or invalid')
+      return
+    }
+
+    if (!clientConfig.theme) {
+      clientConfig.theme = '@owdproject/theme-win95'
+    }
 
     // extend nuxt.config.ts with owd.config.ts
 
