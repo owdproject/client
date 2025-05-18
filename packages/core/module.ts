@@ -4,19 +4,19 @@ import {
   addComponentsDir,
   addImportsDir,
   installModule,
-  addPlugin,
+  addPlugin
 } from '@nuxt/kit'
 import { deepMerge } from './runtime/utils/utilCommon'
 import pkg from './package.json'
 
 export default defineNuxtModule({
   meta: {
-    name: 'owd-core',
+    name: 'owd-core'
   },
   async setup(_options, _nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
-      _nuxt.options.runtimeConfig.public.desktop = {}
+    _nuxt.options.runtimeConfig.public.desktop = {}
 
     // get open web desktop config
 
@@ -28,7 +28,7 @@ export default defineNuxtModule({
 
     _nuxt.options = {
       ..._nuxt.options,
-      ...clientConfig,
+      ...clientConfig
     }
 
     // set core version to runtime config
@@ -44,7 +44,7 @@ export default defineNuxtModule({
 
       // install open web desktop modules
 
-      if (clientConfig.modules) {
+      if (clientConfig.modules && Array.isArray(clientConfig.modules)) {
         for (const modulePath of clientConfig.modules) {
           await installModule(modulePath)
         }
@@ -52,7 +52,7 @@ export default defineNuxtModule({
 
       // install open web desktop apps
 
-      if (clientConfig.apps) {
+      if (clientConfig.apps && Array.isArray(clientConfig.apps)) {
         for (const appPath of clientConfig.apps) {
           await installModule(appPath)
         }
@@ -61,7 +61,7 @@ export default defineNuxtModule({
       // assign open web desktop config to runtime config
       _nuxt.options.runtimeConfig.public.desktop = deepMerge(
         _nuxt.options.runtimeConfig.public.desktop,
-          clientConfig,
+        clientConfig
       )
     }
 
@@ -89,7 +89,7 @@ export default defineNuxtModule({
       _nuxt.options.tailwindcss.config.content = tailwindPaths
 
       await installModule('@nuxtjs/tailwindcss', {
-        viewer: false,
+        viewer: false
       })
     }
 
@@ -111,8 +111,8 @@ export default defineNuxtModule({
       await installModule('@nuxt/icon', {
         clientBundle: {
           scan: true,
-          sizeLimitKb: 256,
-        },
+          sizeLimitKb: 256
+        }
       })
     }
 
@@ -136,7 +136,7 @@ export default defineNuxtModule({
         viteConfig.css.preprocessorOptions =
           viteConfig.css.preprocessorOptions || {}
         viteConfig.css.preprocessorOptions.scss = {
-          api: 'modern-compiler',
+          api: 'modern-compiler'
         }
       })
     }
@@ -153,7 +153,7 @@ export default defineNuxtModule({
       addComponentsDir({
         path: resolve('./runtime/components'),
         prefix: '',
-        global: true,
+        global: true
       })
     }
 
@@ -167,5 +167,5 @@ export default defineNuxtModule({
       addImportsDir(resolve('./runtime/stores'))
       addImportsDir(resolve('./runtime/utils'))
     }
-  },
+  }
 })
