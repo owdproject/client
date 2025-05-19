@@ -16,7 +16,8 @@ export class ApplicationController implements IApplicationController {
 
   public readonly id
   public readonly config
-  public readonly store
+  public readonly storeWindows
+  public readonly storeMeta
 
   public windows = reactive(new Map<string, IWindowController>())
 
@@ -214,6 +215,10 @@ export class ApplicationController implements IApplicationController {
 
   get windowsOpened() {
     return this.windows
+  }
+
+  public getWindowById(id: string): IWindowController[] {
+    return this.windows.get(id)
   }
 
   public getWindowsByModel(model: string): IWindowController[] {

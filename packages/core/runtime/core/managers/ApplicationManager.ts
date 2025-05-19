@@ -18,14 +18,13 @@ export class ApplicationManager implements IApplicationManager {
   public async defineApp(id: string, config: ApplicationConfig) {
     if (this.isAppDefined(id)) {
       debugLog(`App "${id}" is already defined`)
-      return this.apps.get(id)!
+      return this.getAppById(id)!
     }
 
     const normalizedConfig = normalizeApplicationConfig(config)
     const applicationConfig = markRaw(normalizedConfig)
 
-    const applicationController: IApplicationController =
-      new ApplicationController(id, applicationConfig)
+    const applicationController: IApplicationController = new ApplicationController(id, applicationConfig)
     await applicationController.initApplication()
 
     this.apps.set(id, applicationController)
@@ -36,23 +35,32 @@ export class ApplicationManager implements IApplicationManager {
   /**
    * Check if app has been defned
    *
-   * @param id
+   * @param {string} id
    */
   public isAppDefined(id: string) {
-    return this.apps.has(id)
+    return this.getAppById(id)
+  }
+
+  /**
+   * Retrieves an app instance by its unique identifier
+   *
+   * @param {string} id
+   */
+  public getAppById(id: string) {
+    return this.apps.get(id)
   }
 
   /**
    * Check if app is running
    *
-   * @param id
+   * @param {string} id
    */
   public isAppRunning(id: string) {
     if (!this.isAppDefined(id)) {
       throw Error(`App "${id}" is not defined`)
     }
 
-    const applicationController: IApplicationController = this.apps.get(id)!
+    const applicationController: IApplicationController = this.getAppById(id)!
 
     if (!applicationController.isRunning) {
       return false
@@ -62,7 +70,7 @@ export class ApplicationManager implements IApplicationManager {
   }
 
   /**
-   * Launch app rntry
+   * Launch app entry
    *
    * @param id
    * @param entryKey
@@ -75,7 +83,7 @@ export class ApplicationManager implements IApplicationManager {
       throw Error(`App "${id}" is not defined`)
     }
 
-    const applicationController: IApplicationController = this.apps.get(id)!
+    const applicationController: IApplicationController = this.getAppById(id)!
 
     if (
       applicationController.config.entries &&
@@ -84,8 +92,7 @@ export class ApplicationManager implements IApplicationManager {
       throw Error(`App entry "${entryKey}" is not defined in ${id} application`)
     }
 
-    const entry: ApplicationEntry =
-      applicationController.config.entries[entryKey]!
+    const entry: ApplicationEntry = applicationController.config.entries[entryKey]!
 
     await this.execAppCommand(applicationController.id, entry.command)
   }
@@ -104,7 +111,7 @@ export class ApplicationManager implements IApplicationManager {
       throw Error(`App "${id}" is not defined`)
     }
 
-    const applicationController: IApplicationController = this.apps.get(id)!
+    const applicationController: IApplicationController = this.getAppById(id)!
 
     const commandSplit: string[] = command.split(' ')
     const baseCommand =
@@ -140,7 +147,7 @@ export class ApplicationManager implements IApplicationManager {
       throw Error(`App "${id}" is not defined`)
     }
 
-    const applicationController: IApplicationController = this.apps.get(id)!
+    const applicationController: IApplicationController = this.getAppById(id)!
 
     applicationController.closeAllWindows()
     applicationController.setRunning(false)

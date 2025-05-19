@@ -165,6 +165,10 @@ export class WindowController implements IWindowController {
     }
   }
 
+  private setState(state: WindowState) {
+    this.storedState.state = state
+  }
+
   // meta
 
   get meta() {

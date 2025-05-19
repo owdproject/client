@@ -12,7 +12,13 @@ export class DesktopManager {
   }
 
   public setConfig(config: DesktopConfig) {
-    this.config = deepMerge(this.config, config) as DesktopConfig
+    const runtimeConfig = useRuntimeConfig()
+
+    runtimeConfig.public.desktop = deepMerge(
+      runtimeConfig.public.desktop,
+      config
+    ) as DesktopConfig
+
     this.loadDefaultAppsFromConfig()
   }
 
