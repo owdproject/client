@@ -1,18 +1,26 @@
-import { deepMerge } from '../../utils/utilCommon'
-
 export class DesktopManager {
-  public config: DesktopConfig = {} as DesktopConfig
-
   private defaultApps: DefaultAppsConfig = {}
 
   constructor() {}
+
+  get config(): DesktopConfig {
+    const runtimeConfig = useRuntimeConfig()
+
+    return runtimeConfig.public.desktop
+  }
 
   public hasFeature(featureName: string) {
     return this.config.features?.indexOf(featureName) !== -1
   }
 
   public setConfig(config: DesktopConfig) {
-    this.config = deepMerge(this.config, config) as DesktopConfig
+    const runtimeConfig = useRuntimeConfig()
+
+    runtimeConfig.public.desktop = deepMerge(
+      runtimeConfig.public.desktop,
+      config
+    ) as DesktopConfig
+
     this.loadDefaultAppsFromConfig()
   }
 

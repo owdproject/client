@@ -13,7 +13,7 @@ type Visibility =
   | 'all'
   | ((entry: ApplicationEntryWithInherited) => boolean)
 
-export function useAppEntries() {
+export function useApplicationEntries() {
   const applicationManager = useApplicationManager()
 
   const sortedAppEntries = function (
