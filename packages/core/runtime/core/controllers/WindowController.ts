@@ -423,6 +423,14 @@ export class WindowController implements IWindowController {
     this.override.title = undefined
   }
 
+  // menu
+
+  public menu: any[] = []
+
+  public setMenu(menu: any[]) {
+    this.menu = menu
+  }
+
   // deprecated ?
   get actions() {
     return {
