@@ -18,7 +18,7 @@ export default [
       vue: vuePlugin,
     },
     rules: {
-      indent: ['error', 4, { SwitchCase: 1 }],
+      indent: ['error', 2, { SwitchCase: 1 }],
       semi: ['error', 'never'],
       quotes: ['error', 'single'],
     },
