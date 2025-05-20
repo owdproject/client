@@ -27,11 +27,11 @@ export class DesktopManager {
   public setDefaultApp(
     feature: string,
     application: IApplicationController,
-    entry: ApplicationEntry,
+    command: string,
   ) {
     this.defaultApps[feature] = {
       application,
-      entry,
+      command,
     }
   }
 

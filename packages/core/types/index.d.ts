@@ -72,7 +72,7 @@ interface ApplicationConfig {
 
 interface ApplicationConfigProvide {
   name: string
-  entry: string
+  command: string
 }
 
 type IApplicationMeta = { [key: string]: any }
@@ -316,7 +316,7 @@ interface IDesktopManager {
   setDefaultApp(
     feature: string,
     application: IApplicationController,
-    entry: ApplicationEntry,
+    command: ApplicationCommand,
   )
 }
 
@@ -325,7 +325,7 @@ interface DesktopConfig {
   modules?: string[]
   apps?: string[]
 
-  name?: string
+  name?: stringThis
   defaultApps?: DefaultAppsConfig
   features?: string[]
 

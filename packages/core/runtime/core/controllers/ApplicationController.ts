@@ -48,7 +48,7 @@ export class ApplicationController implements IApplicationController {
         this.desktopManager.setDefaultApp(
           this.config.provides.name,
           this,
-          this.config.entries[this.config.provides.entry] as ApplicationEntry,
+          this.config.provides.command,
         )
 
         debugLog(
