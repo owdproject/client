@@ -123,6 +123,7 @@ const classes = computed(() => {
     :class="classes"
     :width="windowController?.size.width"
     :height="windowController?.size.height"
+    :min-width="windowController?.size.minWidth"
     :min-height="windowController?.size.minHeight"
     :max-width="windowController?.size.maxWidth"
     :max-height="windowController?.size.maxHeight"
