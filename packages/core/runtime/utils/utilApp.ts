@@ -5,13 +5,15 @@ export function normalizeApplicationConfig(
 ): ApplicationConfig {
   const normalizedEntries: Record<string, ApplicationEntry> = {}
 
-  for (const [key, entry] of Object.entries(config.entries)) {
-    normalizedEntries[key] = {
-      ...entry,
-      title: entry.title ?? config.title,
-      icon: entry.icon ?? config.icon,
-      category: entry.category ?? config.category,
-      visibility: entry.visibility ?? 'primary',
+  if (config.entries) {
+    for (const [key, entry] of Object.entries(config.entries)) {
+      normalizedEntries[key] = {
+        ...entry,
+        title: entry.title ?? config.title,
+        icon: entry.icon ?? config.icon,
+        category: entry.category ?? config.category,
+        visibility: entry.visibility ?? 'primary',
+      }
     }
   }
 
