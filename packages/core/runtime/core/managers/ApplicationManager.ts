@@ -3,6 +3,8 @@ import { reactive, markRaw } from '@vue/reactivity'
 import { ApplicationController } from '../controllers/ApplicationController'
 import { normalizeApplicationConfig } from '../../utils/utilApp'
 import { debugLog } from '../../utils/utilDebug'
+import * as shellwords from 'shellwords'
+import yargsParser from 'yargs-parser'
 
 export class ApplicationManager implements IApplicationManager {
   public apps = reactive(new Map<string, IApplicationController>())
@@ -101,11 +103,11 @@ export class ApplicationManager implements IApplicationManager {
    * Run app command
    *
    * @param id
-   * @param command
+   * @param rawCommand
    */
   public async execAppCommand(
     id: string,
-    command: string,
+    rawCommand: string,
   ): Promise<CommandOutput> {
     if (!this.isAppDefined(id)) {
       throw Error(`App "${id}" is not defined`)
@@ -113,23 +115,24 @@ export class ApplicationManager implements IApplicationManager {
 
     const applicationController: IApplicationController = this.getAppById(id)!
 
-    const commandSplit: string[] = command.split(' ')
-    const baseCommand =
-      commandSplit[0] as keyof typeof applicationController.config.commands
+    const args = shellwords.split(rawCommand)
+    const parsed = yargsParser(args)
+    const command: string = parsed._[0]
 
     if (
       applicationController.config.commands &&
-      !applicationController.config.commands.hasOwnProperty(baseCommand)
+      !applicationController.config.commands.hasOwnProperty(command)
     ) {
       throw Error(
         `App command "${command}" is not defined in ${id} application`,
       )
     }
 
-    const commandFn: any = applicationController.config.commands![baseCommand]
+    const commandFn: any = applicationController.config.commands![command]
+
     const commandOutput = await commandFn(
       applicationController,
-      commandSplit.slice(1),
+      parsed,
     )
 
     applicationController.setRunning(true)
