@@ -11,6 +11,7 @@ const applicationManager = useApplicationManager()
 <template>
   <CoreApplicationWindowsRender
     v-for="app of applicationManager.appsRunning"
+    :key="app.id"
     :workspace-filter="workspaceFilter"
     :windows="app.windowsOpened"
   />
