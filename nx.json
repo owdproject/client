@@ -73,21 +73,12 @@
   "release": {
     "projectsRelationship": "independent",
     "changelog": {
-      "automaticFromRef": true,
       "projectChangelogs": {
         "renderOptions": {
-          "authors": true,
+          "authors": false,
+          "applyUsernameToAuthors": false,
           "commitReferences": true,
-          "versionTitleDate": true,
-          "applyUsernameToAuthors": true
-        }
-      },
-      "workspaceChangelog": {
-        "renderOptions": {
-          "authors": true,
-          "commitReferences": true,
-          "versionTitleDate": true,
-          "applyUsernameToAuthors": true
+          "versionTitleDate": true
         }
       }
     }
