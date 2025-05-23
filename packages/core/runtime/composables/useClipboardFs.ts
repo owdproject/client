@@ -2,22 +2,22 @@ import { ref } from 'vue'
 
 type ClipboardOperation = 'copy' | 'cut'
 
-const clipboardPath = ref<string | null>(null)
+const clipboardFiles = ref<string[]>([])
 const clipboardType = ref<ClipboardOperation | null>(null)
 
 export function useClipboardFs() {
-  function setClipboard(path: string, type: ClipboardOperation) {
-    clipboardPath.value = path
+  function setClipboard(paths: string[], type: ClipboardOperation) {
+    clipboardFiles.value = paths
     clipboardType.value = type
   }
 
   function clearClipboard() {
-    clipboardPath.value = null
+    clipboardFiles.value = []
     clipboardType.value = null
   }
 
   return {
-    clipboardPath,
+    clipboardFiles,
     clipboardType,
     setClipboard,
     clearClipboard,
