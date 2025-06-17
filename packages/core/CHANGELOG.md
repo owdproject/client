@@ -23,7 +23,3 @@
 - Minor improvements ([7f79208](https://github.com/owdproject/client/commit/7f79208))
 - Fix imports ([44740cd](https://github.com/owdproject/client/commit/44740cd))
 - Set window starting positionZ to 0 ([b99352e](https://github.com/owdproject/client/commit/b99352e))
-
-### ❤️ Thank You
-
-- dxlliv @dxlliv

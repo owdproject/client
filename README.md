@@ -14,8 +14,7 @@ Open Web Desktop (OWD) is a framework designed to provide a simple environment f
 
 ## Features
 
-- Open-source web desktop environment built with Nuxt.js
-- Fully extendable through themes, apps, and modules
+- Fully extendable through apps, modules and themes
 - Bundled with popular Vue.js libraries like Pinia and VueUse
 - Designed to make the most of the Nuxt.js ecosystem
 - Styled with PrimeVue and Tailwind for a consistent UI
@@ -48,9 +47,9 @@ Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and e
 
 [Applications](https://github.com/topics/owd-apps) · [Modules](https://github.com/topics/owd-modules) · [Themes](https://github.com/topics/owd-themes)
 
-### 🧩 Install an application
+### 🧩 Install an app
 
-You can discover new apps by searching for the [owd-apps](https://github.com/topics/owd-apps) tag on GitHub.
+Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) tag on GitHub.
 
 For example, to install the To-do app:
 
@@ -62,7 +61,7 @@ This will install the package and automatically register it in your desktop conf
 
 ### 🧩 Install a module
 
-You can discover new modules by searching for the [owd-modules](https://github.com/topics/owd-modules) tag on GitHub.
+Discover modules by searching the [owd-modules](https://github.com/topics/owd-modules) tag on GitHub.
 
 For example, to install the session persistence module:
 
@@ -70,12 +69,12 @@ For example, to install the session persistence module:
 owd install-module @owdproject/module-pinia-localforage
 ```
 
-### 🖥️ Themes
+### 🖥️ Install a theme
 
-Themes are full desktop environments that style all UI components independently using [PrimeVue](https://primevue.org/).  
-Each theme provides a unique look and feel while maintaining consistent functionality across all applications.
+Themes are full desktop environments that style all UI components independently, using [PrimeVue](https://primevue.org/).  
+Each theme provides a unique look and feel while maintaining consistent functionality across applications.
 
-You can discover new themes by searching for the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
+Discover themes by searching the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
 
 ```bash
 owd install-theme @owdproject/theme-gnome
