@@ -21,7 +21,7 @@ export function useApplicationEntries() {
     visibility: Visibility = 'primary',
   ): Ref<ApplicationEntryWithInherited[]> {
     return computed(() => {
-      const currentEntries = [...applicationManager.appsEntries]
+      const currentEntries = [...applicationManager.appsEntries.value]
 
       // filtering
       const filtered =

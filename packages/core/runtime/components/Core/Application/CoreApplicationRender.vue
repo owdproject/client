@@ -10,7 +10,7 @@ const applicationManager = useApplicationManager()
 
 <template>
   <CoreApplicationWindowsRender
-    v-for="app of applicationManager.appsRunning"
+    v-for="app of applicationManager.appsRunning.value"
     :key="app.id"
     :workspace-filter="workspaceFilter"
     :windows="app.windowsOpened"
