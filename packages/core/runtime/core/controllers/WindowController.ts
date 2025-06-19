@@ -283,7 +283,7 @@ export class WindowController implements IWindowController {
       maxHeight:
         typeof stateSize.maxHeight !== 'undefined'
           ? stateSize.maxHeight
-          : (configSize.maxHeight ?? 600),
+          : configSize.maxHeight,
     }
   }
 
