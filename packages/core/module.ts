@@ -35,7 +35,7 @@ export default defineNuxtModule({
       ).default
 
     } catch (e) {
-      console.error('/desktop/owd.config.ts not found or invalid')
+      console.error('/desktop/owd.config.ts not found or invalid', e)
       return
     }
 
@@ -59,6 +59,7 @@ export default defineNuxtModule({
 
       if (clientConfig.theme) {
         await installModule(clientConfig.theme)
+        console.log('dai co sto temak', clientConfig.theme)
       }
 
       // install open web desktop modules
