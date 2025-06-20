@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@owdproject/app-about": "0.1.1",
-    "@owdproject/core": "^3.1.3",
+    "@owdproject/core": "^3.1.4",
     "@owdproject/theme-win95": "0.1.1"
   }
 }

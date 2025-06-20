@@ -25,7 +25,7 @@
   "type": "module",
   "types": "types/index.d.ts",
   "bin": {
-    "owd": "./bin/owd.js"
+    "owd": "bin/owd.js"
   },
   "dependencies": {
     "@nuxt/fonts": "^0.11.3",
