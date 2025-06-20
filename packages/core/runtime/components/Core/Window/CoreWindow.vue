@@ -151,7 +151,7 @@ const classes = computed(() => {
 
 <style scoped lang="scss">
 .owd-window {
-  position: v-bind('desktopManager.config.windows.position');
+  position: v-bind('appConfig.desktop.windows.position');
 
   &--dragging,
   &--resizing {

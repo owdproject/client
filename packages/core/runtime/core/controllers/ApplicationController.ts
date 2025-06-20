@@ -4,14 +4,13 @@ import { useApplicationManager } from '../../composables/useApplicationManager'
 import { useApplicationWindowsStore } from '../../stores/storeApplicationWindows'
 import { useApplicationMetaStore } from '../../stores/storeApplicationMeta'
 import { useTerminalManager } from '../../composables/useTerminalManager'
-import { useDesktopManager } from '../../composables/useDesktopManager'
 import { debugLog, debugError } from '../../utils/utilDebug'
+import { useDesktopDefaultAppsStore } from '../../stores/storeDesktopDefaultApps'
 import { useDesktopWorkspaceStore } from '../../stores/storeDesktopWorkspace'
 import { reactive } from '@vue/reactivity'
 
 export class ApplicationController implements IApplicationController {
   private readonly applicationManager: IApplicationManager
-  private readonly desktopManager: IDesktopManager
   private readonly terminalManager: ITerminalManager
 
   public readonly id
@@ -26,7 +25,6 @@ export class ApplicationController implements IApplicationController {
   constructor(id: string, config: ApplicationConfig) {
     this.applicationManager = useApplicationManager()
     this.terminalManager = useTerminalManager()
-    this.desktopManager = useDesktopManager()
 
     this.id = id
     this.config = config
@@ -35,17 +33,19 @@ export class ApplicationController implements IApplicationController {
   }
 
   public async initApplication(): Promise<void> {
+    const desktopDefaultAppsStore = useDesktopDefaultAppsStore()
+
     // provides
 
     // set as default app for specific purposes
     // todo improve this and move it in a store
     if (this.config.provides) {
-      const existingDefault = this.desktopManager.getDefaultApp(
+      const existingDefault = desktopDefaultAppsStore.getDefaultApp(
         this.config.provides.name,
       )
 
       if (!existingDefault) {
-        this.desktopManager.setDefaultApp(
+        desktopDefaultAppsStore.setDefaultApp(
           this.config.provides.name,
           this,
           this.config.provides.command,

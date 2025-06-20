@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
-import { useRuntimeConfig } from 'nuxt/app'
-import { computed, toRaw } from '@vue/reactivity'
-import { useDesktopManager } from '../../../composables/useDesktopManager'
+import { onBeforeMount, onMounted, onUnmounted } from 'vue'
+import { useAppConfig, useRuntimeConfig } from 'nuxt/app'
+import { ref, computed, toRaw } from '@vue/reactivity'
 import { useApplicationManager } from '../../../composables/useApplicationManager'
+import { useDesktopManager } from '../../../composables/useDesktopManager'
 import { useDesktopStore } from '../../../stores/storeDesktop'
+import { useDesktopDefaultAppsStore } from '../../../stores/storeDesktopDefaultApps'
 import { useDesktopWorkspaceStore } from '../../../stores/storeDesktopWorkspace'
 
 const props = withDefaults(
@@ -26,6 +27,9 @@ const props = withDefaults(
 
 // todo move to owd initialization
 
+const ready = ref(false)
+
+const appConfig = useAppConfig()
 const desktopManager = useDesktopManager()
 const applicationManager = useApplicationManager()
 const runtimeConfig = useRuntimeConfig()
@@ -41,8 +45,6 @@ if (desktopStore.$persistedState) {
 } else {
   desktopWorkspaceStore.setupWorkspaces()
 }
-
-desktopManager.setConfig(runtimeConfig.public.desktop)
 
 // override desktop configurations
 desktopManager.setConfig({
@@ -65,9 +67,14 @@ function handleDesktopResize() {
 const classes = computed(() => {
   const list = ['owd-desktop']
 
-  list.push(`owd-desktop--${desktopManager.config.name}`)
+  list.push(`owd-desktop--${appConfig.desktop.name}`)
 
   return list
+})
+
+onBeforeMount(() => {
+  useDesktopDefaultAppsStore().loadDefaultAppsFromConfig()
+  ready.value = true
 })
 </script>
 

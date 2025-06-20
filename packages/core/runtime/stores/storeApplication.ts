@@ -8,7 +8,7 @@ import { useApplicationManager } from '../composables/useApplicationManager'
 import { useApplicationWindowsStore } from './storeApplicationWindows'
 import { useApplicationMetaStore } from './storeApplicationMeta'
 import { useTerminalManager } from '../composables/useTerminalManager'
-import { useDesktopManager } from '../composables/useDesktopManager'
+import { useDesktopDefaultAppsStore } from './storeDesktopDefaultApps'
 import { useDesktopWorkspaceStore } from './storeDesktopWorkspace'
 import { debugLog, debugError } from '../utils/utilDebug'
 
@@ -27,7 +27,7 @@ export const useApplicationStore = function(applicationId: string, applicationCo
     // composables and external stores
     const applicationManager = useApplicationManager()
     const terminalManager = useTerminalManager()
-    const desktopManager = useDesktopManager()
+    const desktopDefaultAppsStore = useDesktopDefaultAppsStore()
     const desktopWorkspaceStore = useDesktopWorkspaceStore()
 
     let storeWindows: ReturnType<typeof useApplicationWindowsStore>
@@ -40,11 +40,11 @@ export const useApplicationStore = function(applicationId: string, applicationCo
 
       // set default app
       if (applicationConfig.provides) {
-        const existingDefault = desktopManager.getDefaultApp(
+        const existingDefault = desktopDefaultAppsStore.getDefaultApp(
           applicationConfig.provides.name,
         )
         if (!existingDefault) {
-          desktopManager.setDefaultApp(
+          desktopDefaultAppsStore.setDefaultApp(
             applicationConfig.provides.name,
             store, // store o qualcosa che rappresenta questa app?
             applicationConfig.entries![applicationConfig.provides.entry]!,

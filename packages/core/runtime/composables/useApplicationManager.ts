@@ -17,7 +17,7 @@ export function useApplicationManager() {
    * @param id
    * @param config
    */
-  const defineApp = async (id: string, config: ApplicationConfig) => {
+  async function defineApp(id: string, config: ApplicationConfig) {
     if (isAppDefined(id)) {
       debugLog(`App "${id}" is already defined`)
       return getAppById(id)!
@@ -39,7 +39,7 @@ export function useApplicationManager() {
    *
    * @param {string} id
    */
-  const isAppDefined = (id: string) => {
+  function isAppDefined(id: string) {
     return getAppById(id)
   }
 
@@ -48,7 +48,7 @@ export function useApplicationManager() {
    *
    * @param {string} id
    */
-  const getAppById = (id: string) => {
+  function getAppById(id: string) {
     return apps.get(id)
   }
 
@@ -57,7 +57,7 @@ export function useApplicationManager() {
    *
    * @param {string} id
    */
-  const isAppRunning = (id: string) => {
+  function isAppRunning(id: string) {
     if (!isAppDefined(id)) {
       throw Error(`App "${id}" is not defined`)
     }
@@ -72,10 +72,10 @@ export function useApplicationManager() {
    * @param id
    * @param entryKey
    */
-  const launchAppEntry = async (
+  async function launchAppEntry (
     id: string,
     entryKey: string,
-  ): Promise<IApplicationController | undefined | void> => {
+  ): Promise<IApplicationController | undefined | void> {
     if (!isAppDefined(id)) {
       throw Error(`App "${id}" is not defined`)
     }
@@ -100,10 +100,10 @@ export function useApplicationManager() {
    * @param id
    * @param rawCommand
    */
-  const execAppCommand = async (
+  async function execAppCommand(
     id: string,
     rawCommand: string,
-  ): Promise<CommandOutput> => {
+  ): Promise<CommandOutput> {
     if (!isAppDefined(id)) {
       throw Error(`App "${id}" is not defined`)
     }
@@ -137,7 +137,7 @@ export function useApplicationManager() {
    *
    * @param id
    */
-  const closeApp = (id: string) => {
+  function closeApp(id: string) {
     if (!isAppDefined(id)) {
       throw Error(`App "${id}" is not defined`)
     }
@@ -206,7 +206,7 @@ export function useApplicationManager() {
     return runningApps
   })
 
-  const getWindowOpenedId = (windowId: string) => {
+  function getWindowOpenedId(windowId: string) {
     const mapWindowFound = windowsOpened.value.find((window: any) => {
       return window[1].state.id === windowId
     })

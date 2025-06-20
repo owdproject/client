@@ -16,6 +16,7 @@ export const useDesktopStore = defineStore(
       window: {
         positionZ: number
       }
+      defaultApps: {[key: string]: string}
     }>({
       workspace: {
         overview: false,
@@ -28,6 +29,7 @@ export const useDesktopStore = defineStore(
       window: {
         positionZ: 0,
       },
+      defaultApps: {}
     })
 
     return {

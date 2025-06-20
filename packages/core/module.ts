@@ -54,12 +54,19 @@ export default defineNuxtModule({
 
     _nuxt.options.runtimeConfig.public.coreVersion = pkg.version
 
+    _nuxt.options.runtimeConfig.public.desktop = {}
+
+    // assign open web desktop config to runtime config
+    _nuxt.options.runtimeConfig.public.desktop = deepMerge(
+      _nuxt.options.runtimeConfig.public.desktop,
+      clientConfig
+    )
+
     {
       // install open web desktop theme
 
       if (clientConfig.theme) {
         await installModule(clientConfig.theme)
-        console.log('dai co sto temak', clientConfig.theme)
       }
 
       // install open web desktop modules
@@ -78,12 +85,12 @@ export default defineNuxtModule({
         }
       }
 
-      // assign open web desktop config to runtime config
-      _nuxt.options.runtimeConfig.public.desktop = deepMerge(
-        _nuxt.options.runtimeConfig.public.desktop,
-        clientConfig
-      )
     }
+
+    // assign runtimeConfig desktop prop to appConfig
+    // to make it overwritable by components later
+    // via useDesktopManager
+    _nuxt.options.appConfig.desktop = _nuxt.options.runtimeConfig.public.desktop
 
     {
       // install primevue
