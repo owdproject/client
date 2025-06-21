@@ -48,6 +48,6 @@
     "sass": "^1.89.2",
     "shellwords": "^1.0.1",
     "vue-resizable": "^2.1.7",
-    "yargs-parser": "^22.0.0"
+    "getopts": "^2.3.0"
   }
 }

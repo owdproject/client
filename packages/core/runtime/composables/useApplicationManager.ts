@@ -3,7 +3,7 @@ import { ApplicationController } from '../core/controllers/ApplicationController
 import { normalizeApplicationConfig } from '../utils/utilApp'
 import { debugLog } from '../utils/utilDebug'
 import * as shellwords from 'shellwords'
-import yargsParser from 'yargs-parser'
+import getopts from "getopts"
 
 const apps = reactive(new Map<string, IApplicationController>())
 
@@ -115,7 +115,7 @@ export function useApplicationManager() {
     const applicationController = getAppById(id)!
 
     const args = shellwords.split(rawCommand)
-    const parsed = yargsParser(args)
+    const parsed = getopts(args)
     const command: string = parsed._[0]
 
     if (
