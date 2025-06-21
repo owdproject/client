@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, onMounted, onUnmounted } from 'vue'
 import { useAppConfig, useRuntimeConfig } from 'nuxt/app'
-import { ref, computed, toRaw } from '@vue/reactivity'
-import { useApplicationManager } from '../../../composables/useApplicationManager'
+import { computed, toRaw } from '@vue/reactivity'
 import { useDesktopManager } from '../../../composables/useDesktopManager'
 import { useDesktopStore } from '../../../stores/storeDesktop'
 import { useDesktopDefaultAppsStore } from '../../../stores/storeDesktopDefaultApps'
@@ -26,12 +25,11 @@ const props = withDefaults(
 )
 
 // todo move to owd initialization
-
-const ready = ref(false)
+// perhaps in a plugin
 
 const appConfig = useAppConfig()
 const desktopManager = useDesktopManager()
-const applicationManager = useApplicationManager()
+const desktopDefaultAppsStore = useDesktopDefaultAppsStore()
 const runtimeConfig = useRuntimeConfig()
 
 // create firsts workspaces if not available
@@ -73,8 +71,7 @@ const classes = computed(() => {
 })
 
 onBeforeMount(() => {
-  useDesktopDefaultAppsStore().loadDefaultAppsFromConfig()
-  ready.value = true
+  desktopDefaultAppsStore.loadDefaultAppsFromConfig(runtimeConfig)
 })
 </script>
 
