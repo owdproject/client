@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { useAppConfig } from 'nuxt/app'
 import { useDesktopStore } from './storeDesktop'
 
 export const useDesktopDefaultAppsStore = defineStore(
@@ -13,15 +12,15 @@ export const useDesktopDefaultAppsStore = defineStore(
     function setDefaultApp(
       feature: string,
       application: IApplicationController,
-      command: string,
+      entry: string,
     ) {
-      if (desktopStore.state.hasOwnProperty('defaultApps')) {
+      if (!desktopStore.state.hasOwnProperty('defaultApps')) {
         desktopStore.state.defaultApps = {}
       }
 
       desktopStore.state.defaultApps[feature] = {
         application,
-        command,
+        entry,
       }
     }
 
@@ -29,7 +28,7 @@ export const useDesktopDefaultAppsStore = defineStore(
      * Gets the default app config for a given feature
      */
     function getDefaultApp(feature: string): DefaultAppConfig {
-      if (desktopStore.state.hasOwnProperty('defaultApps')) {
+      if (!desktopStore.state.hasOwnProperty('defaultApps')) {
         desktopStore.state.defaultApps = {}
       }
 
@@ -39,11 +38,9 @@ export const useDesktopDefaultAppsStore = defineStore(
     /**
      * Loads default apps from current config
      */
-    function loadDefaultAppsFromConfig() {
-      const appConfig = useAppConfig()
-
-      if (appConfig.desktop.defaultApps) {
-        desktopStore.state.defaultApps = appConfig.desktop.defaultApps
+    function loadDefaultAppsFromConfig(runtimeConfig) {
+      if (runtimeConfig.public.desktop.defaultApps) {
+        desktopStore.state.defaultApps = runtimeConfig.public.desktop.defaultApps
       }
     }
 

@@ -48,7 +48,7 @@ export class ApplicationController implements IApplicationController {
         desktopDefaultAppsStore.setDefaultApp(
           this.config.provides.name,
           this,
-          this.config.provides.command,
+          this.config.provides.entry,
         )
 
         debugLog(

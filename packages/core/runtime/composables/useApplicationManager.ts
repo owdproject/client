@@ -71,10 +71,12 @@ export function useApplicationManager() {
    *
    * @param id
    * @param entryKey
+   * @param argument
    */
-  async function launchAppEntry (
+  async function launchAppEntry(
     id: string,
     entryKey: string,
+    argument: string = ''
   ): Promise<IApplicationController | undefined | void> {
     if (!isAppDefined(id)) {
       throw Error(`App "${id}" is not defined`)
@@ -91,7 +93,9 @@ export function useApplicationManager() {
 
     const entry: ApplicationEntry = applicationController.config.entries[entryKey]!
 
-    await execAppCommand(applicationController.id, entry.command)
+    if (argument) argument = ` ${argument}`
+
+    await execAppCommand(applicationController.id, entry.command + argument)
   }
 
   /**
