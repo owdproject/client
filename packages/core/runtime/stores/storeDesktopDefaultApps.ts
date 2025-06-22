@@ -19,7 +19,7 @@ export const useDesktopDefaultAppsStore = defineStore(
       }
 
       desktopStore.state.defaultApps[feature] = {
-        application,
+        applicationId: application.id,
         entry,
       }
     }
