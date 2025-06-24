@@ -50,11 +50,11 @@ export default defineNuxtModule({
       ...clientConfig
     }
 
-    // set core version to runtime config
+    // init desktop runtime config and define core version
 
-    _nuxt.options.runtimeConfig.public.coreVersion = pkg.version
-
-    _nuxt.options.runtimeConfig.public.desktop = {}
+    _nuxt.options.runtimeConfig.public.desktop = {
+      coreVersion: pkg.version
+    }
 
     // assign open web desktop config to runtime config
     _nuxt.options.runtimeConfig.public.desktop = deepMerge(
