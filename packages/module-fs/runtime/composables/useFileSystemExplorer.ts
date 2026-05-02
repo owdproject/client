@@ -10,7 +10,7 @@ import { useFileSystemClipboard } from '@owdproject/module-fs/runtime/composable
 import { useFileSystemDirectoryNavigation } from '@owdproject/module-fs/runtime/composables/useFileSystemDirectoryNavigation'
 import { useFileSystemKeyboardActions } from '@owdproject/module-fs/runtime/composables/useFileSystemKeyboardActions'
 
-import { useConfirm } from 'primevue/useconfirm'
+import { useOwdDialogs } from '@owdproject/core/runtime/composables/useOwdDialogs'
 
 const TRASH_PATH = '/tmp'
 
@@ -47,7 +47,7 @@ export function useFileSystemExplorer(
   )
   const fsDirectoryNavigation = useFileSystemDirectoryNavigation(basePath.value)
 
-  const confirm = useConfirm()
+  const dialogs = useOwdDialogs()
 
   // update window meta path when basePath change
   // due to folderUp or folder navigation
@@ -257,19 +257,11 @@ export function useFileSystemExplorer(
         .catch(() => false)
 
       if (exists) {
-        const shouldOverwrite = await new Promise<boolean>((resolve) => {
-          confirm.require({
-            header: t('dialog.shortcutOverride.confirm.title'),
-            message: t('dialog.shortcutOverride.confirm.message', { name: fileName }),
-            acceptProps: {
-              label: t('apps.explorer.action.ok'),
-            },
-            rejectProps: {
-              label: t('apps.explorer.action.cancel'),
-            },
-            accept: () => resolve(true),
-            reject: () => resolve(false),
-          })
+        const shouldOverwrite = await dialogs.confirm({
+          title: t('dialog.shortcutOverride.confirm.title'),
+          message: t('dialog.shortcutOverride.confirm.message', { name: fileName }),
+          acceptLabel: t('apps.explorer.action.ok'),
+          rejectLabel: t('apps.explorer.action.cancel'),
         })
 
         if (!shouldOverwrite) continue
@@ -315,15 +307,15 @@ export function useFileSystemExplorer(
   }
 
   function operationUndo() {
-    window.alert('This should be implemented')
+    void dialogs.alert('This should be implemented')
   }
 
   function fileProperties() {
-    window.alert('This should be implemented')
+    void dialogs.alert('This should be implemented')
   }
 
   async function createNewDirectory() {
-    const folderName = window.prompt('Type a name for the new folder')
+    const folderName = await dialogs.prompt('Type a name for the new folder')
     if (!folderName) return
 
     const newFolderPath =
@@ -340,12 +332,12 @@ export function useFileSystemExplorer(
   }
 
   async function createSymbolicLink() {
-    const targetPath = window.prompt(
+    const targetPath = await dialogs.prompt(
       'Write a path for the symbolic link destination',
     )
     if (!targetPath) return
 
-    const linkName = window.prompt('Write a name for the symbolic link')
+    const linkName = await dialogs.prompt('Write a name for the symbolic link')
     if (!linkName) return
 
     const linkPath =
@@ -370,7 +362,6 @@ export function useFileSystemExplorer(
     fsDirectoryNavigation,
 
     initialize,
-    confirm,
     basePath,
     selectedFiles,
     refreshDirectory,

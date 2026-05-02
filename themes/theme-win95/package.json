@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "@owdproject/app-classic-audioplayer": "0.0.4",
-    "@owdproject/app-classic-videoplayer": "0.0.4"
+    "@owdproject/app-classic-videoplayer": "0.0.4",
+    "@owdproject/kit-fs": "workspace:*"
   },
   "peerDependencies": {
     "@owdproject/core": "^3.1.5"

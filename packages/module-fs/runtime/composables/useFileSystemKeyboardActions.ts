@@ -20,18 +20,18 @@ export function useFileSystemKeyboardActions(
       }
 
       // copy
-      if (keys.v.value && keys.ctrl.value) {
-        actions.onCopy()
+      if (keys.c.value && keys.ctrl.value) {
+        actions.onCopy?.()
       }
 
       // cut
       if (keys.x.value && keys.ctrl.value) {
-        actions.onCopy()
+        actions.onCut?.()
       }
 
       // paste
       if (keys.v.value && keys.ctrl.value) {
-        actions.onPaste()
+        actions.onPaste?.()
       }
     }
   })

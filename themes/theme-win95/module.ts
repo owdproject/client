@@ -3,7 +3,8 @@ import {
   createResolver,
   addComponentsDir,
   installModule,
-  addImportsDir
+  addImportsDir,
+  addPlugin,
 } from '@nuxt/kit'
 import { registerTailwindPath } from '@owdproject/core/runtime/utils/utilApp'
 import deepMerge from 'deepmerge'
@@ -72,7 +73,15 @@ export default defineNuxtModule({
     }
 
     {
+      addPlugin({
+        src: resolve('./runtime/plugins/50.owd-theme-win95-dialogs.client.ts'),
+        mode: 'client',
+      })
+    }
+
+    {
       if (nuxt.options.modules.includes('@owdproject/module-fs')) {
+        await installModule('@owdproject/kit-fs')
         await installModule(resolve('./apps/app-explorer'))
         await installModule('@owdproject/app-classic-audioplayer')
         await installModule('@owdproject/app-classic-videoplayer')

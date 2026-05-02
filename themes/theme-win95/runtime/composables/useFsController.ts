@@ -1,35 +1,7 @@
-/**
- * Helper function to show a confirmation dialog and return a Promise<boolean>
- * that resolves to true if user accepts, false if rejects.
- *
- * @param confirm - the PrimeVue confirm instance (from useConfirm())
- * @param options - dialog options: header, message, acceptLabel, rejectLabel
- */
-export function confirmDialog(
-  confirm: ReturnType<typeof useConfirm>,
-  options: {
-    header: string
-    message: string
-    acceptLabel?: string
-    rejectLabel?: string
-  },
-  additionalProps: any = {}
-): Promise<boolean> {
-  return new Promise((resolve) => {
-    confirm.require({
-      group: 'delete',
-      header: options.header,
-      message: options.message,
-      acceptProps: { label: options.acceptLabel ?? 'OK', width: 120 },
-      rejectProps: { label: options.rejectLabel ?? 'Cancel', width: 120 },
-      accept: () => resolve(true),
-      reject: () => resolve(false),
-      ...additionalProps
-    })
-  })
-}
+import { useOwdDialogs } from '@owdproject/core/runtime/composables/useOwdDialogs'
 
 export default function useFsController(fsExplorer, t) {
+  const dialogs = useOwdDialogs()
   /**
    * Handles pasting files that have been copied or cut into the current directory.
    * For each file in the clipboard:
@@ -54,8 +26,8 @@ export default function useFsController(fsExplorer, t) {
       const exists = await fsExplorer.pathExists(targetPath)
 
       if (exists) {
-        const confirmed = await confirmDialog(fsExplorer.confirm, {
-          header: t('apps.explorer.dialog.fileOverride.confirm.title'),
+        const confirmed = await dialogs.confirm({
+          title: t('apps.explorer.dialog.fileOverride.confirm.title'),
           message: t('apps.explorer.dialog.fileOverride.confirm.message', {
             name: fileName,
           }),
@@ -89,32 +61,29 @@ export default function useFsController(fsExplorer, t) {
     const count = fsExplorer.selectedFiles.value.length
     const isSingle = count === 1
 
-    const confirmed = await confirmDialog(
-      fsExplorer.confirm,
-      {
-        header: t(
-          (isSingle
-            ? 'apps.explorer.dialog.deleteFile.confirm.title'
-            : 'apps.explorer.dialog.deleteFiles.confirm.title')
-        ),
-        message: t(
-          toTrash
-            ? (isSingle
-              ? 'apps.explorer.dialog.deleteFile.confirm.message.toTrash'
-              : 'apps.explorer.dialog.deleteFiles.confirm.message.toTrash')
-            : (isSingle
-              ? 'apps.explorer.dialog.deleteFile.confirm.message.toVoid'
-              : 'apps.explorer.dialog.deleteFiles.confirm.message.toVoid'),
-          {
-            count,
-            fileName: fsExplorer.selectedFiles.value[0].split('/').pop()
-          }
-        ),
-        acceptLabel: t('apps.explorer.action.yes'),
-        rejectLabel: t('apps.explorer.action.no'),
-      },
-      { toTrash }
-    )
+    const confirmed = await dialogs.confirm({
+      title: t(
+        isSingle
+          ? 'apps.explorer.dialog.deleteFile.confirm.title'
+          : 'apps.explorer.dialog.deleteFiles.confirm.title',
+      ),
+      message: t(
+        toTrash
+          ? isSingle
+            ? 'apps.explorer.dialog.deleteFile.confirm.message.toTrash'
+            : 'apps.explorer.dialog.deleteFiles.confirm.message.toTrash'
+          : isSingle
+            ? 'apps.explorer.dialog.deleteFile.confirm.message.toVoid'
+            : 'apps.explorer.dialog.deleteFiles.confirm.message.toVoid',
+        {
+          count,
+          fileName: fsExplorer.selectedFiles.value[0].split('/').pop(),
+        },
+      ),
+      acceptLabel: t('apps.explorer.action.yes'),
+      rejectLabel: t('apps.explorer.action.no'),
+      extras: { toTrash },
+    })
 
     if (!confirmed) return
 

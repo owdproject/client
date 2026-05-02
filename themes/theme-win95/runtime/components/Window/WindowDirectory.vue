@@ -64,7 +64,7 @@ props.window.fsExplorer.initialize()
       <div class="flex-1 overflow-auto">
         <DataTable class="h-full">
 
-          <SelectableArea
+          <KitFsExplorerSelectableArea
             v-if="!window.meta.path.startsWith('http')"
             :fs-explorer="fsExplorer"
           >
@@ -79,7 +79,7 @@ props.window.fsExplorer.initialize()
               :cutted="fsExplorer.fsClipboard.clipboardFiles.value.includes(`${fsExplorer.basePath.value}/${fileName}`) && fsExplorer.fsClipboard.clipboardType.value === 'cut'"
               :window="window"
             />
-          </SelectableArea>
+          </KitFsExplorerSelectableArea>
           <iframe
             v-else
             :src="window.meta.path"

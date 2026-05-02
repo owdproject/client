@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, createResolver, addComponentsDir } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
 import { deepMerge } from '@owdproject/core/runtime/utils/utilCommon'
 
 export default defineNuxtModule({
@@ -29,10 +29,6 @@ export default defineNuxtModule({
         '/.trash': 'InMemory',
       }
     }, _options)
-
-    addComponentsDir({
-      path: resolve('./runtime/components'),
-    })
 
     addPlugin({
       src: resolve('./runtime/plugin'),

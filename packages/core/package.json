@@ -24,6 +24,16 @@
   },
   "type": "module",
   "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./index.ts"
+    },
+    "./module": "./module.ts",
+    "./nuxt": "./module.ts",
+    "./package.json": "./package.json",
+    "./runtime/*": "./runtime/*"
+  },
   "bin": {
     "owd": "bin/owd.js"
   },

@@ -19,7 +19,7 @@ Documento di mappatura per separare **VFS / integrazione** da **UI tema** e per 
 - Montaggio ZenFS e **config** (`mounts`, `fileAssociations`).
 - Composable “motore” che lavora su `fs` + clipboard FS + navigazione history + tastiera (generica).
 - Utilità path/associazioni: `utilFileSystem.ts`, `utilFileSystemImage.ts`.
-- Componente generico `SelectableArea.vue` (se ancora usato dal tema).
+- ~~`SelectableArea.vue`~~ — spostato in `@owdproject/kit-fs` come `ExplorerSelectableArea` (`KitFsExplorerSelectableArea` in template).
 
 ### Nel tema oggi (Win95) — non nel modulo
 
@@ -54,7 +54,7 @@ Per `kit-fs` ha senso estrarre:
 | `useFileSystemKeyboardActions.ts` | Scorciatoie quando la finestra è in focus |
 | `runtime/utils/utilFileSystem.ts` | Associazioni estensione → app id |
 | `runtime/utils/utilFileSystemImage.ts` | Helper immagini |
-| `runtime/components/SelectableArea.vue` | UI riutilizzabile minima |
+| ~~`runtime/components/SelectableArea.vue`~~ | Spostato in `@owdproject/kit-fs` (`ExplorerSelectableArea`) |
 
 ## 4. Issue note (non bloccanti per l’audit)
 

@@ -190,6 +190,7 @@ export default defineNuxtModule({
 
     {
       addPlugin(resolve('./runtime/plugins/resize.client.ts'))
+      addPlugin(resolve('./runtime/plugins/01.owd-dialogs-fallback.ts'))
 
       // add other files
 
