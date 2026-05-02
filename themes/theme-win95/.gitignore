@@ -25,3 +25,6 @@ logs
 .env
 .env.*
 !.env.example
+
+# macOS resource forks (break Git pack files if stored next to real paths)
+._*
