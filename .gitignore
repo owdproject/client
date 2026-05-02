@@ -39,8 +39,10 @@ testem.log
 .DS_Store
 Thumbs.db
 
+.nx/
 .nx/cache
 .nx/workspace-data
+._*
 
 # Nuxt dev/build outputs
 .output

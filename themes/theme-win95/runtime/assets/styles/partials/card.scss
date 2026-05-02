@@ -1,0 +1,21 @@
+:root {
+}
+
+.p-card {
+  background: var(--p-surface-900);
+  color: var(--p-card-color);
+  border-color: var(--p-card-border-color);
+  box-shadow: var(--p-card-box-shadow);
+
+  &--border {
+    box-shadow: var(--owd-border-color);
+  }
+
+  &--inset {
+    box-shadow: none;
+    border: var(--owd-border-width) solid;
+    border-color: rgb(var(--owd-theme-color-dark))
+      rgb(var(--owd-theme-color-white)) rgb(var(--owd-theme-color-white))
+      rgb(var(--owd-theme-color-dark));
+  }
+}

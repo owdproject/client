@@ -1,0 +1,11 @@
+.p-datatable {
+  background: white;
+  border: 2px solid;
+  border-color: var(--p-input-border-color);
+  box-shadow: var(--p-table-box-shadow);
+
+  .p-datatable-table {
+    display: none;
+    border: 0 !important;
+  }
+}

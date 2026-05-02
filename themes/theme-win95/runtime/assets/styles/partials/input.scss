@@ -1,0 +1,23 @@
+:root {
+  --p-inputtext-padding-x: var(--owd-input-padding-x);
+  --p-inputtext-padding-y: var(--owd-input-padding-y);
+
+  --p-inputtext-color: var(--p-input-color);
+  --p-inputtext-background: var(--p-input-backgorund);
+
+  --p-inputtext-border-color: var(--p-input-border-color);
+  --p-inputtext-hover-border-color: var(--p-input-border-color);
+  --p-inputtext-focus-border-color: var(--p-input-border-color);
+
+  --p-inputtext-shadow: var(--p-input-box-shadow);
+  --p-inputtext-hover-ring-shadow: var(--p-input-box-shadow);
+  --p-inputtext-focus-ring-shadow: var(--p-input-box-shadow);
+}
+
+.p-inputtext {
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--p-inputtext-border-color);
+  padding: 4px;
+  font-size: var(--p-font-size);
+}

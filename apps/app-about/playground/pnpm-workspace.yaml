@@ -3,11 +3,7 @@ packages:
   - apps/*
   - packages/*
   - themes/*
-  - plugins/*
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
-  - '@swc/core'
   - esbuild
-  - nx
-  - unrs-resolver

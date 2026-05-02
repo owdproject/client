@@ -1,0 +1,121 @@
+import { useAppConfig } from 'nuxt/app'
+import { useApplicationManager } from '@owdproject/core/runtime/composables/useApplicationManager'
+import { useApplicationEntries } from '@owdproject/core/runtime/composables/useApplicationEntries'
+import { useDesktopDefaultAppsStore } from '@owdproject/core/runtime/stores/storeDesktopDefaultApps'
+import { useSystemLifecycle } from '../composables/useSystemLifecycle'
+import { ref, computed } from '@vue/reactivity'
+
+export function useSystemBar() {
+  const appConfig = useAppConfig()
+  const applicationManager = useApplicationManager()
+  const desktopDefaultAppsStore = useDesktopDefaultAppsStore()
+
+  const systemLifecycle = useSystemLifecycle()
+
+  const enabled = computed(() => {
+    return appConfig.desktop?.systemBar?.enabled
+  })
+
+  const position = computed(() => {
+    return appConfig.desktop?.systemBar?.position
+  })
+
+  const startButton = computed(() => {
+    return appConfig.desktop?.systemBar?.startButton
+  })
+
+  const opened = ref<boolean>(false)
+
+  const appEntries = useApplicationEntries()
+  const appEntriesSortedByTitle = appEntries.sortedAppEntries('title')
+
+  const menu = computed(() => {
+    const defaultTerminalApp = desktopDefaultAppsStore.getDefaultApp('terminal')
+    const defaultAuthApp = desktopDefaultAppsStore.getDefaultApp('auth')
+
+    const systemBarMenu: any = [
+      {
+        label: 'Programs',
+        image:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAAH2U1dRAAAACXBIWXMAAAsSAAALEgHS3X78AAAAMFBMVEUAAAAAAAAAAIAAAP8AgAAA/wAA//+AAACAAICAgACAgIDAwMD/AAD/AP///wD////KhcoRAAAAAXRSTlMAQObYZgAAAQlJREFUKM91kD1OwzAYhl8GlizAFXyFHsADcI4egQNQwVqJBcZshY1ESgVLEZbasYdgYWXAqAoFiQhePn9x3IDgGaxHr/39JABQeRRE9i4K/4gXYvsIpSsmqK4MUU1JQI+Auy/kmffn8MY08GQ8UNsHIFjWva184ClIoYiULiAyPaE9aHCdS2utR5I9BYkdfsThzkmXCdBol5sfohMuRW6NMVLeXsld4xah8yrI8s0erjZJnkcBFvs1n1VS0km3T9YOT2Rfc6GX6Bd07IZg3uPiv6D9J3FbDUyLTI3Bpm0KlqzJ12EKZqc8G3M94B8lW9Kp5NqSlqMQBEoOhhzf8fM4Bb0SDfqL/eYb+jIu+mJvVH0AAAAASUVORK5CYII=',
+        items: appEntriesSortedByTitle.value.map((appEntry) => {
+          return {
+            label: appEntry.title,
+            icon: appEntry.icon,
+            command: () => {
+              appEntry.application.execCommand(appEntry.command)
+            }
+          }
+        }),
+      },
+      {
+        label: 'Documents',
+        image:
+          'data:image/png;base64,AAABAAEAICAQAAEABADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgzMzMzMzMzMzMzMzMwAAAIt7e3t7e3t7e3t7e3MAAACHt7e3t7e3t7e3t7ezAAAIe3t7e3t7e3t7e3t7cAAACLe3t7e3t7e3t7e3t3AAAAh7e3t7e3t7e3t7e3uAAAAIt7e3t7e3t7e3t7e3gAAAi3t7e3t7e3t7e3t7ewAAAIe3t7e3t7e3t7e3t7cDAACLe3t7e3t7e3t7e3t4AAAAh7e3t7e3t7e3t7e3uAcACHt7e3t7e3t7e3t7e3CPcAi3t7e3t7e3t7e3t7eA//cIe3t7e3t7e3t7e3t3gP9wCP///////////////w/3AACId3d3d3d3d3d3d3d/cAAAAI+P//j3bMLGYsD/9wMAAACPeP//j3LMIiJP/3CzAAAAj7eP/4f3YiJmD/cLsAAAAI97eP/4f8IiIP9wiIAAAAAI97eP/4jyaI/3AAAAAAAAAI//+P//iI//cAAAAAAAAAAIiIiP////9wAAAAAAAAAAAAAACP///3AAAAAAAAAAAAAAAACP//cAAAAAAAAAAAAAAAAACP9wAAAAAAAAAAAAAAAAAACHAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////AAAAfgAAAD4AAAA+AAAAPAAAADwAAAA8AAAAPAAAADgAAAA4AAAAOAAAADgAAAAwAAAAEAAAAAAAAAAQAAAAOAAAAD4AAAA+AAAAPgAAAD4AAAD/AAAP/4AAH//AAD///wB///+A////wf///+P////3///////w==',
+        command: function () {
+          applicationManager.launchAppEntry(
+            'org.owdproject.explorer',
+            'explorer',
+            '/'
+          )
+        },
+      },
+      {
+        label: 'Find',
+        image:
+          'data:image/png;base64,AAABAAMAICACAAEAAQAwAQAANgAAACAgEAABAAQA6AIAAGYBAAAQEBAAAQAEACgBAABOBAAAKAAAACAAAABAAAAAAQABAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAA4AAAAeAAf/vvAH/33wB/778Af99/AHA+HwB/ff8AcHgfAH23/wADwB8B+d//Bv6AHw7jf/8O/wAfHuC//x7/gB8e4L//Hv+AHx7/v/8O/3//Dv9//wb+A/8B+f+AAAf/vgB//7wAf/+4AH//sAB//6AAf/+AAAAAAD///x////4P/wAAAH8AAAB/AAAAfwAAAH8AAAB/AAAAfwAAAH8AAAB/AAAAfgAAAHgAAABwAAAAYAAAAGAAAABAAAAAQAAAAEAAAABAAAAAQAAAAGAAAABgAAAAcAAAAHgAAAB+AAAA/wAAAf8AAAP/AAAH/wAAD/8AAB//AAA/ygAAAAgAAAAQAAAAAEABAAAAAAAgAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEzsAAAAAAAAAAAAAAAAAATO7AAAAAAAAAeIiIiIiIhM7swIiIAAAAAH///////0zuzAf/+AAAAAB///////TO7MB///gAAAAAf/////9M7swH///4AAAAAH//iIiEzuzAeI//+AAAAAB/////TO7MB/////gAAAAAf/+Ih87swHiIj//4AAAAAH///3j+zAf/////+AAAAAAAAAePh8B4iIiP//gAAAAGZmZgCHcH///////4AAB46Ojo5mBweIiIiI//+AAHjviOh3dmB/////////gAB+/o6Ojo5geIiIiIj//4AH7++I6Hd3dgf///////+AB/7+jo6OjoYHiIiIiP//gAfv74jod3d2B////////4AH/v+Ojo6OhgeIiIiI//+AB+/viOjo6OYH////////gAB+/46Ojo6AeP///////4AAf++P6OjoYH////////+AAAf+jv6OhgeIiI//////gAAAd4/v7wB//////3AAAAAAAAB3d3B4//////9//4cAAAAAB///////////f/hwAAAAAAf//////////3+HAAAAAAAH//////////94cAAAAAAAB///////////dwAAAAAAAAf//////////3AAAAAAAAAHd3d3d3d3d3dwAAAAD///x////4P/wAAAH8AAAB/AAAAfwAAAH8AAAB/AAAAfwAAAH8AAAB/AAAAfgAAAHgAAABwAAAAYAAAAGAAAABAAAAAQAAAAEAAAABAAAAAQAAAAGAAAABgAAAAcAAAAHgAAAB+AAAA/wAAAf8AAAP/AAAH/wAAD/8AAB//AAA/ygAAAAQAAAAIAAAAAEABAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAABOwAAAAAAABOzAAAAHiIhOzIgAAAf/9OzI+AAABwB4zI/4AAB46Ad4//gAB/6OgI//+AAH7+jgj//4AAf+/oCP//gAAH/vCP//+AAAB3CP///4AAAH////8AAAAAf////49wAAB/////hwAAAHd3d3dwAAD/zwAA/4cAAMADAADAAwAAwAMAAMADAACAAwAAAAMAAAADAAAAAwAAgAMAAMADAADAAwAAwAcAAMAPAADAHwAA',
+      },
+    ]
+
+    if (defaultTerminalApp) {
+      systemBarMenu.push({
+        label: 'Run',
+        image:
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAAEEfUpiAAAACXBIWXMAAAsSAAALEgHS3X78AAACPklEQVRYhb2Xa5KsIAyFPyz31dmZp3cWVpb7Q6HBRltneu6poqTEPAjJCc4AkoIW0WACyDnXxblMns/n+mIvPwMsyzJWGBExt/JVRFJIC/BacLfetYG2l5+SOEVEhLvHaK36cK4CBSJAASraogpKGjooKabtS1JKQ92zu2/79uEHk5kl2MV3pyGgD+/bNutepDdH5mYxJBACXYguIO0srAfo2/yjPO7OrPWgQaKVERBxfkDuziRI5s4Sgblj7iB9FC6YiqYWV/bfKZCUSum4+2XrFe4eJWXdPS5kZ+PuVinuHgF1UIL7AV0e3PN7p8DMeJhBQEq6KK4+kVIEMC4bd8PM6omZWe8BgOcMOF1GdUq8m5tZr+DxeFx0/cWYs7Zou1lneLmRCzEan1CIadKW9xGBu99KY9hS+TeYSh2klOrR3K6FTSiO+PU0BvBKYzM75N8jzJKipdxC4leDWROpWC6CIwYeYYKV0xvBS5YrAiqR7PjgEub9C0lRjvOv8VaM/aKvTQqoj4vhKReMPX2086Lr0IHVbonkvdRqI3g0Lzh0YHWwNHx1j884/7CNxmkEjq4kv0V7+5xUMncr7xKmRYKU3sbdSv+EWZCQwnKuHSHnTN61D1iT8EdEd4IhHd9pTV91IOfM8/kk51wz9n9xArCSULkmsTHcxvSX28TVVlL0TjsHUntrLy322+feoruamVk9/1Kr7l6bxdGvxK8d2BsfQdKf5MNbFex/dwZG05cHcHA3OxhfxfQDpV914h9JEV2g7g1TEQAAAABJRU5ErkJggg==',
+        command: function () {
+          applicationManager.launchAppEntry(
+            defaultTerminalApp.applicationId,
+            defaultTerminalApp.entry,
+          )
+        },
+      })
+    }
+
+    systemBarMenu.push({
+      separator: true,
+    })
+
+    if (defaultAuthApp) {
+      systemBarMenu.push({
+        label: 'Log-in',
+        image:
+          'data:image/png;base64,AAABAAIAICAQAAEABADoAgAAJgAAABAQEAABAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAh3cAAAAAAAAAAAAAAAAHAIeHAzMzMzMzMzOAAAAId3AAhwu7u7u7u7u3gwAACHhwB4cLu7u7u7u7tzgAAAAIePeHB3d3d3d3d7eDAAAAeHCHhwu7u7u7u7u3OAAAj3hwAIcHd3d3d3d3t4MAAAh4cAiHC7u7u7u7u7c4AAAACHj3hwd3d3d3d3e3gwAAAIh494cLu7u7u7u7tzgAAI94cIeHB3d3d3d3d7eDAACPeHCHiAu7u7u7u7u3OAAACHh49/gHd3d3d3d3t4MAAAh4j3d3cLu7u7u7u7c4AACPePd/f3gLu7u7u7v3gwAI94939/d3gP//////dzgAj3ePd39/d4CDg4ODg4ODCPd/j3fwB/eAODg4OAA4OAj3d493CAB3gAODg4NzA4MI93+PdwiAd4ADMzMzcwMwCPdwiPdwB3gDAAAAA3MAAAj3cIiP//CAswAAAANzAAAAj3cAeIiAg7MAAAADcwAAAAj//3gAAAOzAAAAA3MAAAAAiIiIAIADswAAAANzAAAAAAAIAAgAA7cwAAA7cwAAAAAAAAAAAAA7cwAAdzAAAAAAAAAAAAAAA7szN7MAAAAAAAAAAAAAAAAzu7sAAAAAAAAAAAAAAAAAADMzAAAAAA/+/////H///9gAAD+IAAAfBAAADwAAAA+AAAAPAAAADgQAAA8AAAAPgAAADwAAAA4AAAAOAAAADwAAAA8AAAAOAAAADAAAAAgAAAAAAAAAAAEAABAAAAAwAAPw8AAD8PgAA/D8A0Pw/gZD8P+cweD/weAB///wA///+Af///4f8oAAAAEAAAACAAAAABAAQAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAMzMzMzMwAAA/u7u7uzAAAD8zMzM3MAAAP7u7u7swAAA/MzMzNzAAAD+7u7u7MAAAP/////8wAAADMzMzMzAAAAAwMzMwMAAAADAAADAAAAAAMAAAMAAAAAA3AAMwAAAAAANwAwAAAAAAADMzAAAA//8AAMAHAADAAwAAwAMAAMADAADAAwAAwAMAAMADAADAAwAA4AMAAPAHAADzzwAA888AAPGPAAD4HwAA/D8AAA==',
+        command: function () {
+          applicationManager.execAppCommand(
+            defaultAuthApp.applicationId,
+            defaultAuthApp.command,
+          )
+        },
+      })
+    }
+
+    systemBarMenu.push({
+      label: 'Shut Down...',
+      image:
+        'data:image/png;base64,AAABAAIAICAQAAEABADoAgAAJgAAABAQEAABAAQAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHiAAAAAAAAAAAAAAAAAAHd4iIAAAAAAAAAAAAAAAHd3eIiIgAAAAAAAAAAAAHd3d3iIiIiAAAAAAAAAAHd3d3f3eIiIiIAAAAAAAHd3d3f/eId4iIiAAAAAAHd3d3f/dwAIh3iIgAAACPcid3f/dwB4gAiHeIAAAAj3qnf/dwB3eIiAiIdwAAAI93f/dwB3eHiIgIiIgAAACPf/dwB3eIR4iIAIgAAAAAj/dwB3eIREeIiAgAAAAAAIdwB3eIRMxHiIgIgAAAAAAIB3eIRMzMR4iICIgAAAAACHiIRMzMzEeIiAiIgAAAAAj3BMzs7MxHiIgIiIAAAAAI9wzM7MzMR4iICIiAAAAACPcM7L7MzEeIiAiIgAAAAAj3DM787MxHiIgIiIAAAAAI9wzs7M7ER4iICIiAAAAACPcMzOzESIeIiAiIgAAAAAj3DMzESId3iIgIiIAAAAAI9wzESId/93eICIiAAAAACPcESId/93d3dweIgAAAAAj3CId/93d3d4h3d4AAAAAI93d/93d3d4h3d4gAAAAACP//93d3d4h3d4gAAAAAAACId3d3d4iIiIgAAAAAAAAAAIh3d4gAAAAAAAAAAAAAAAAAiIgAAAAAAAAAAAAA////////j////gP///gA///gAD//gAAP/gAAB/gAAAfgAAAHwAAAB8AAAAfAAAAHwAAAD8AAAD/AAAA/4AAAH+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAf4AAAP+AAAP/wAAP//AP///8P//8oAAAAEAAAACAAAAABAAQAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAB4gAAAAAAAd3iIgAAAAHd/93iIAAh3f/cAh3gACH/3AHgAhwAI9wB3eICAAACAd8x4gAAAAIfMzHiAgAAAh8zseICIAACHzsR4gIgAAIfESPeAiAAAh4j/d3B3AACH/3d3eHgAAAiHd3iIgAAAAAiIgAAAAA/j93d/gPAIHgAwCggAO8AAADvAAAAwcAAAcAAIAP//+ABwD4gAMHB4ADBweAAwcHgAMHB4AHBwfADwcH8P8HBw==',
+      command: function () {
+        systemLifecycle.shutdownSystem()
+      },
+    })
+
+    return systemBarMenu
+  })
+
+  return {
+    enabled,
+    position,
+    startButton,
+    opened,
+    menu,
+  }
+}
