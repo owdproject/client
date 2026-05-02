@@ -16,7 +16,7 @@ export const useDesktopStore = defineStore(
       window: {
         positionZ: number
       }
-      defaultApps: {[key: string]: string}
+      defaultApps: Record<string, { applicationId: string; entry: string }>
     }>({
       workspace: {
         overview: false,

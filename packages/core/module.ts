@@ -7,6 +7,7 @@ import {
   addPlugin
 } from '@nuxt/kit'
 import { deepMerge } from './runtime/utils/utilCommon'
+import { assertValidOwdUserConfig } from './runtime/utils/validateOwdUserConfig'
 import pkg from './package.json'
 
 export default defineNuxtModule({
@@ -28,16 +29,19 @@ export default defineNuxtModule({
 
     let clientConfig
 
+    const owdConfigPath = `${_nuxt.options.rootDir}/owd.config.ts`
+
     try {
-
-      clientConfig = (
-        await import(_nuxt.options.rootDir + '/owd.config.ts')
-      ).default
-
+      clientConfig = (await import(owdConfigPath)).default
     } catch (e) {
-      console.error('/desktop/owd.config.ts not found or invalid', e)
-      return
+      const hint =
+        'Create owd.config.ts next to your Nuxt root (e.g. desktop/owd.config.ts), export default defineDesktopConfig({ theme, apps, modules }).'
+      throw new Error(`[@owdproject/core] Cannot load ${owdConfigPath}. ${hint}`, {
+        cause: e,
+      })
     }
+
+    assertValidOwdUserConfig(clientConfig)
 
     if (!clientConfig.theme) {
       clientConfig.theme = '@owdproject/theme-win95'

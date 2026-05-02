@@ -32,6 +32,7 @@ Un’unica app Nuxt (`desktop/`) carica **`@owdproject/core`**, che legge **`owd
 client/
 ├── desktop/                 # Applicazione Nuxt “shell” del desktop (entry utente)
 ├── packages/core/           # Motore OWD — modulo Nuxt `@owdproject/core`
+├── packages/module-fs/      # Modulo opzionale FS (ZenFS) — non è nel core
 ├── apps/                    # App desktop pubblicabili come pacchetti npm (moduli Nuxt)
 ├── themes/                  # Temi (look & feel / “desktop environment” UI)
 ├── plugins/                 # Slot workspace per plugin Nuxt futuri (cartella opzionale)
@@ -48,6 +49,12 @@ client/
 - **`owd.config.ts`**: **config dichiarativa** del desktop (`defineDesktopConfig`): `theme`, `modules`, `apps` (nomi pacchetto risolti da pnpm).
 - **`app/app.vue`**: radice minimale; monta il componente tema (es. `<Desktop />` dal tema attivo).
 - Non contiene la logica finestra/app: delega a **core + tema + app caricate**.
+
+### `packages/module-fs/` — `@owdproject/module-fs`
+
+- Modulo Nuxt **opzionale**: monta ZenFS e fornisce composable/componenti per explorer (clipboard, navigazione, ecc.).
+- Attivalo in **`owd.config.ts` → `modules`** se il desktop deve avere VFS; i temi possono integrare un explorer (es. in `themes/theme-win95/apps/app-explorer`).
+- Futuro **`kit-fs`** (da aggiungere sotto `packages/`): UI neutra riusabile tra temi; non sostituisce questo modulo.
 
 ### `packages/core/` — `@owdproject/core`
 
@@ -149,6 +156,8 @@ Dopo modifiche al **sorgente** di un’app modulo, rigenera la `dist` (o stub) c
 ## Documentazione umana
 
 Il **`README.md`** in root descrive installazione app/temi/moduli via CLI, community e link esterni (`owdproject.org`). Questo **`AGENTS.md`** è orientato a **contesto architetturale** e convenzioni nel repo.
+
+La documentazione pubblica di prodotto sta in **`owd-docs`** (repo sorella / cartella accanto al client): sito **Docus** + Nuxt Content + Nuxt UI. **Lingua: solo inglese** (pagine utente in `content/`). Path utili in dev: **`/getting-started/introduction`**, **`/architecture/overview`**, **`/architecture/docs-module`**, **`/apps/overview`**, **`/themes/overview`**, **`/setup/owd-cli`**, **`/internals/boot-sequence`**, **`/reference/glossary`**. Aggiornare `owd-docs` in parallelo al codice.
 
 ---
 

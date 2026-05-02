@@ -2,7 +2,6 @@
 import { ref, provide } from 'vue'
 import { computed } from '@vue/reactivity'
 import { useAppConfig } from 'nuxt/app'
-import { useDesktopManager } from '@owdproject/core/runtime/composables/useDesktopManager'
 import { handleWindowControllerProps } from '@owdproject/core/runtime/utils/utilWindow'
 
 const props = defineProps<{
@@ -29,7 +28,6 @@ const emit = defineEmits([
 ])
 
 const appConfig = useAppConfig()
-const desktopManager = useDesktopManager() // used in <style v-bind>
 const windowController: IWindowController = handleWindowControllerProps(
   props.window,
 )

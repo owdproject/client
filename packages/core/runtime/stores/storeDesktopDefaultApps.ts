@@ -27,12 +27,12 @@ export const useDesktopDefaultAppsStore = defineStore(
     /**
      * Gets the default app config for a given feature
      */
-    function getDefaultApp(feature: string): DefaultAppConfig {
+    function getDefaultApp(feature: string): DefaultAppConfig | undefined {
       if (!desktopStore.state.hasOwnProperty('defaultApps')) {
         desktopStore.state.defaultApps = {}
       }
 
-      return desktopStore.state.defaultApps[feature] as DefaultAppConfig
+      return desktopStore.state.defaultApps[feature]
     }
 
     /**

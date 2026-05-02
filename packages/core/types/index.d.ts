@@ -309,15 +309,15 @@ type ApplicationEntryVisibility = 'primary' | 'secondary' | 'hidden'
 // DESKTOP
 
 interface IDesktopManager {
-  defaultApps: DefaultAppsConfig
+  defaultApps: import('vue').ComputedRef<Record<string, DefaultAppConfig>>
 
-  getDefaultApp(feature: string)
+  getDefaultApp(feature: string): DefaultAppConfig | undefined
 
   setDefaultApp(
     feature: string,
     application: IApplicationController,
-    command: ApplicationCommand,
-  )
+    entry: string,
+  ): void
 }
 
 interface DesktopConfig {
@@ -325,7 +325,7 @@ interface DesktopConfig {
   modules?: string[]
   apps?: string[]
 
-  name?: stringThis
+  name?: string
   defaultApps?: DefaultAppsConfig
   features?: string[]
 
@@ -375,9 +375,10 @@ interface DefaultAppsConfig {
   [key: string]: DefaultAppConfig
 }
 
+/** Stored default for a feature: which app and which entry key to use. */
 interface DefaultAppConfig {
-  application: IApplicationController
-  entry: ApplicationEntry
+  applicationId: string
+  entry: string
 }
 
 export function defineDesktopApp(config: ApplicationConfig)
