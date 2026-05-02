@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useSystemBar } from '../composables/useSystemBar'
-import { useSystemLifecycle } from '../composables/useSystemLifecycle'
+import { useDesktopSession } from '@owdproject/kit-theme/runtime/composables/useDesktopSession'
 import { isDebugMode } from '@owdproject/core/runtime/utils/utilDebug'
 
 const systemBar = useSystemBar()
-const systemLifecycle = useSystemLifecycle()
+const { shuttingDown } = useDesktopSession()
 
 onMounted(() => {
   document.addEventListener("contextmenu", (event) => {
@@ -35,7 +35,7 @@ onMounted(() => {
     />
 
     <DesktopShutdown
-      :active="systemLifecycle?.isShuttingDown.value"
+      :active="shuttingDown"
     />
   </CoreDesktop>
 </template>

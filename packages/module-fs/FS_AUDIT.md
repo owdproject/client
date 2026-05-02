@@ -24,7 +24,7 @@ Documento di mappatura per separare **VFS / integrazione** da **UI tema** e per 
 ### Nel tema oggi (Win95) — non nel modulo
 
 - **`themes/theme-win95/runtime/composables/useFsController.ts`**: conferme **PrimeVue** (`useConfirm`), copy/paste con dialoghi, delete con testi i18n. È **accoppiato al look/dialog stack del tema**.
-- **`themes/theme-win95/apps/app-explorer`**: shell finestra (menu, toolbar, layout “directory”), `WindowExplorer.vue`, registrazione app desktop via `defineDesktopApp`.
+- **`apps/app-explorer`** (pacchetto `@owdproject/app-explorer`): shell finestra (menu, toolbar, layout “directory”), `WindowExplorer.vue`, registrazione app desktop via `defineDesktopApp`.
 
 Il binding avviene in `WindowDirectory.vue`: importa `useFileSystemExplorer` da `@owdproject/module-fs` e inietta **`useFsController`** dal tema come factory (`useFileSystemExplorer(window, useFsController, t)`).
 
@@ -72,7 +72,7 @@ Per `kit-fs` ha senso estrarre:
 
 ## 6. Riferimento integrazione tema Win95
 
-- App explorer: `themes/theme-win95/apps/app-explorer/`
+- App explorer: `apps/app-explorer/`
 - Finestra directory: `themes/theme-win95/runtime/components/Window/WindowDirectory.vue`
 - Controller dialoghi: `themes/theme-win95/runtime/composables/useFsController.ts`
 

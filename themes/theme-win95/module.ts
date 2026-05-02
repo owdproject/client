@@ -25,6 +25,8 @@ export default defineNuxtModule({
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
+    await installModule('@owdproject/kit-theme')
+
     // assign open web desktop theme base config to runtime config
     nuxt.options.runtimeConfig.public.desktop = deepMerge(
       nuxt.options.runtimeConfig.public.desktop,
@@ -82,7 +84,7 @@ export default defineNuxtModule({
     {
       if (nuxt.options.modules.includes('@owdproject/module-fs')) {
         await installModule('@owdproject/kit-fs')
-        await installModule(resolve('./apps/app-explorer'))
+        await installModule('@owdproject/app-explorer')
         await installModule('@owdproject/app-classic-audioplayer')
         await installModule('@owdproject/app-classic-videoplayer')
       }

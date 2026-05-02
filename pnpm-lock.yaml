@@ -193,6 +193,15 @@ importers:
         specifier: ^3.1.4
         version: link:../../packages/core
 
+  apps/app-explorer:
+    dependencies:
+      '@nuxt/kit':
+        specifier: ^4.4.4
+        version: 4.4.4(magicast@0.5.2)
+      '@owdproject/core':
+        specifier: ^3.1.5
+        version: link:../../packages/core
+
   apps/app-soundcloud:
     dependencies:
       '@owdproject/core':
@@ -307,6 +316,21 @@ importers:
         specifier: ^1.12.3
         version: 1.12.3
 
+  packages/kit-theme:
+    dependencies:
+      '@nuxt/kit':
+        specifier: ^4.4.4
+        version: 4.4.4(magicast@0.5.2)
+      '@owdproject/core':
+        specifier: ^3.1.5
+        version: link:../core
+      nuxt:
+        specifier: ^4.0.0
+        version: 4.4.4(@babel/core@7.29.0)(@babel/plugin-proposal-decorators@7.28.0(@babel/core@7.29.0))(@babel/plugin-syntax-jsx@7.27.1(@babel/core@7.29.0))(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.33)(cac@6.7.14)(db0@0.3.4)(eslint@10.3.0(jiti@2.6.1))(ioredis@5.10.1)(lightningcss@1.32.0)(magicast@0.5.2)(optionator@0.9.4)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.33(typescript@6.0.3)))(rolldown@1.0.0-rc.17)(rollup-plugin-visualizer@7.0.1(rolldown@1.0.0-rc.17)(rollup@4.60.2))(rollup@4.60.2)(sass@1.99.0)(terser@5.44.0)(typescript@6.0.3)(vite@8.0.10(@types/node@25.6.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.99.0)(terser@5.44.0)(yaml@2.8.2))(vue-tsc@3.2.7(typescript@6.0.3))(yaml@2.8.2)
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.33(typescript@6.0.3)
+
   packages/module-fs:
     dependencies:
       '@owdproject/core':
@@ -339,9 +363,18 @@ importers:
 
   themes/theme-win11:
     dependencies:
+      '@owdproject/app-explorer':
+        specifier: workspace:*
+        version: link:../../apps/app-explorer
       '@owdproject/core':
-        specifier: ^3.1.4
+        specifier: ^3.1.5
         version: link:../../packages/core
+      '@owdproject/kit-fs':
+        specifier: workspace:*
+        version: link:../../packages/kit-fs
+      '@owdproject/kit-theme':
+        specifier: workspace:*
+        version: link:../../packages/kit-theme
 
   themes/theme-win95:
     dependencies:
@@ -351,12 +384,18 @@ importers:
       '@owdproject/app-classic-videoplayer':
         specifier: 0.0.4
         version: link:../../apps/app-classic-videoplayer
+      '@owdproject/app-explorer':
+        specifier: workspace:*
+        version: link:../../apps/app-explorer
       '@owdproject/core':
         specifier: ^3.1.5
         version: link:../../packages/core
       '@owdproject/kit-fs':
         specifier: workspace:*
         version: link:../../packages/kit-fs
+      '@owdproject/kit-theme':
+        specifier: workspace:*
+        version: link:../../packages/kit-theme
 
 packages:
 

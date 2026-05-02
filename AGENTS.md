@@ -33,7 +33,9 @@ client/
 ├── desktop/                 # Applicazione Nuxt “shell” del desktop (entry utente)
 ├── packages/core/           # Motore OWD — modulo Nuxt `@owdproject/core`
 ├── packages/module-fs/      # Modulo opzionale FS (ZenFS) — non è nel core
-├── apps/                    # App desktop pubblicabili come pacchetti npm (moduli Nuxt)
+├── packages/kit-fs/         # UI neutra explorer (selezione, …) — opzionale
+├── packages/kit-theme/      # Composable / pattern shell condivisi tra temi — opzionale
+├── apps/                    # App desktop (es. `app-about`, `app-explorer`, …)
 ├── themes/                  # Temi (look & feel / “desktop environment” UI)
 ├── plugins/                 # Slot workspace per plugin Nuxt futuri (cartella opzionale)
 ├── template/                # Blueprint per `npm create owd` / progetti generati
@@ -55,8 +57,9 @@ client/
 ### `packages/module-fs/` — `@owdproject/module-fs`
 
 - Modulo Nuxt **opzionale**: monta ZenFS e fornisce composable/componenti per explorer (clipboard, navigazione, ecc.).
-- Attivalo in **`owd.config.ts` → `modules`** se il desktop deve avere VFS; i temi possono integrare un explorer (es. in `themes/theme-win95/apps/app-explorer`).
-- Futuro **`kit-fs`** (da aggiungere sotto `packages/`): UI neutra riusabile tra temi; non sostituisce questo modulo.
+- Attivalo in **`owd.config.ts` → `modules`** se il desktop deve avere VFS; l’app Explorer è il pacchetto **`@owdproject/app-explorer`** sotto `apps/app-explorer` (i temi la caricano se `module-fs` è attivo).
+- **`kit-fs`** sotto `packages/`: componenti UI neutri per l’explorer; non sostituisce `module-fs`.
+- **`kit-theme`** sotto `packages/`: composable con nomi neutri (`useDesktopSession`, `useDesktopShellOptions`, …) per non duplicare la logica tra temi.
 
 ### `packages/core/` — `@owdproject/core`
 

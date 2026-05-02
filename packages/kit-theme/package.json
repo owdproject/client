@@ -1,0 +1,20 @@
+{
+  "name": "@owdproject/kit-theme",
+  "version": "0.0.1",
+  "description": "Optional shared shell patterns for OWD themes (neutral composables, no visual chrome).",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./module.ts",
+    "./module": "./module.ts",
+    "./runtime/*": "./runtime/*"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^4.4.4"
+  },
+  "peerDependencies": {
+    "@owdproject/core": "^3.1.5",
+    "nuxt": "^4.0.0",
+    "vue": "^3.5.0"
+  }
+}
