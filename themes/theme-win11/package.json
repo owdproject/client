@@ -21,7 +21,8 @@
   "dependencies": {
     "@owdproject/app-explorer": "workspace:*",
     "@owdproject/kit-fs": "workspace:*",
-    "@owdproject/kit-theme": "workspace:*"
+    "@owdproject/kit-theme": "workspace:*",
+    "deepmerge": "^4.3.1"
   },
   "peerDependencies": {
     "@owdproject/core": "^3.1.5"

@@ -6,6 +6,8 @@ Thin **optional layer** for OWD themes: neutral composable names and repeated sh
 
 - **`useDesktopSession`** — end-of-session flow (e.g. navigate back to the theme’s powered-off / start route).
 - **`useDesktopShellOptions`** — read `runtimeConfig` / `appConfig` for `desktop.systemBar` (enabled, position, start button).
+- **`useBlockNonInputContextMenu`** — disable right-click on non-input elements (shell-style).
+- **`createPrimeVueOwdDialogs`** — implement `OwdDialogProvider` with PrimeVue `useConfirm` (shared by Win95, Win11, any Fluent-style theme using the same groups).
 
 ## What stays in each theme
 

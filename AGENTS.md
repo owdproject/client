@@ -33,6 +33,8 @@ client/
 ├── desktop/                 # Applicazione Nuxt “shell” del desktop (entry utente)
 ├── packages/core/           # Motore OWD — modulo Nuxt `@owdproject/core`
 ├── packages/module-fs/      # Modulo opzionale FS (ZenFS) — non è nel core
+├── packages/kit-theme/      # Pattern shell neutri (sessione desktop, dialog PrimeVue, guard UI…)
+├── packages/kit-fs/         # UI explorer neutra (`KitFs*`), da usare con `module-fs`
 ├── packages/kit-fs/         # UI neutra explorer (selezione, …) — opzionale
 ├── packages/kit-theme/      # Composable / pattern shell condivisi tra temi — opzionale
 ├── apps/                    # App desktop (es. `app-about`, `app-explorer`, …)

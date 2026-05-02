@@ -1,24 +1,12 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useSystemBar } from '../composables/useSystemBar'
 import { useDesktopSession } from '@owdproject/kit-theme/runtime/composables/useDesktopSession'
-import { isDebugMode } from '@owdproject/core/runtime/utils/utilDebug'
+import { useBlockNonInputContextMenu } from '@owdproject/kit-theme/runtime/composables/useBlockNonInputContextMenu'
 
 const systemBar = useSystemBar()
 const { shuttingDown } = useDesktopSession()
 
-onMounted(() => {
-  document.addEventListener("contextmenu", (event) => {
-    if (isDebugMode()) return
-
-    const tag = event.target.tagName.toLowerCase()
-    const isInput = tag === 'input' || tag === 'textarea' || event.target.isContentEditable
-
-    if (!isInput) {
-      event.preventDefault()
-    }
-  })
-})
+useBlockNonInputContextMenu()
 </script>
 
 <template>

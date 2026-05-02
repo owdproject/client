@@ -4,7 +4,11 @@ import type {
   OwdDialogProvider,
 } from '@owdproject/core/runtime/dialogs/owdDialogProvider'
 
-export function createWin95OwdDialogs(
+/**
+ * Maps {@link OwdDialogProvider} onto PrimeVue Confirm — shared by any theme that uses PrimeVue dialogs.
+ * Themes still mount `<ConfirmDialog />` groups (`delete`, `about`, …) with their own templates/CSS.
+ */
+export function createPrimeVueOwdDialogs(
   confirm: ReturnType<typeof useConfirm>,
 ): OwdDialogProvider {
   return {

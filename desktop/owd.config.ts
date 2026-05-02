@@ -1,7 +1,8 @@
 import { defineDesktopConfig } from '@owdproject/core'
 
 export default defineDesktopConfig({
-  theme: '@owdproject/theme-win95',
+  /** Switch to `@owdproject/theme-win95` when working on the classic shell. */
+  theme: '@owdproject/theme-win11',
   apps: [
     '@owdproject/app-about',
   ],

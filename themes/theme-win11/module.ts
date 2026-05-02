@@ -17,7 +17,7 @@ export default defineNuxtModule({
   defaults: {
     name: 'win11',
     systemBar: {
-      enabled: true,
+      enabled: false,
       position: 'bottom',
       startButton: false,
     },
@@ -40,10 +40,7 @@ export default defineNuxtModule({
       nuxt,
       resolve('./runtime/components/**/*.{vue,mjs,ts}'),
     )
-    registerTailwindPath(
-      nuxt,
-      resolve('./runtime/pages/**/*.{vue,mjs,ts}'),
-    )
+    registerTailwindPath(nuxt, resolve('./runtime/pages/**/*.{vue,mjs,ts}'))
 
     nuxt.hook('i18n:registerModule', (register) => {
       register({
@@ -58,24 +55,21 @@ export default defineNuxtModule({
     })
 
     addImportsDir(resolve('./runtime/composables'))
-    addImportsDir(resolve('./runtime/consts'))
-    addImportsDir(resolve('./runtime/stores'))
-    addImportsDir(resolve('./runtime/utils'))
 
     addPlugin({
       src: resolve('./runtime/plugins/50.owd-theme-win11-dialogs.client.ts'),
       mode: 'client',
     })
 
-    nuxt.options.nitro = nuxt.options.nitro || {}
-    nuxt.options.nitro.publicAssets = nuxt.options.nitro.publicAssets || []
-    nuxt.options.nitro.publicAssets.push({
-      dir: resolve('./public'),
-    })
-
     if (nuxt.options.modules.includes('@owdproject/module-fs')) {
       await installModule('@owdproject/kit-fs')
       await installModule('@owdproject/app-explorer')
     }
+
+    nuxt.options.nitro.publicAssets = [
+      {
+        dir: resolve('./public'),
+      },
+    ]
   },
 })

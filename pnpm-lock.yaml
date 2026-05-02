@@ -228,8 +228,11 @@ importers:
       '@owdproject/core':
         specifier: ^3.1.5
         version: link:../packages/core
+      '@owdproject/theme-win11':
+        specifier: workspace:*
+        version: link:../themes/theme-win11
       '@owdproject/theme-win95':
-        specifier: 0.1.3
+        specifier: workspace:*
         version: link:../themes/theme-win95
 
   packages/core:
@@ -375,6 +378,9 @@ importers:
       '@owdproject/kit-theme':
         specifier: workspace:*
         version: link:../../packages/kit-theme
+      deepmerge:
+        specifier: ^4.3.1
+        version: 4.3.1
 
   themes/theme-win95:
     dependencies:
