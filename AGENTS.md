@@ -43,6 +43,8 @@ client/
 └── AGENTS.md                # Questo file
 ```
 
+**Convenzione cartelle (importante):** nel monorepo **non** esiste una directory top-level `client/modules/`. I pacchetti condivisi — `@owdproject/core`, moduli Nuxt opzionali come **`@owdproject/module-fs`**, **`@owdproject/kit-fs`**, ecc. — stanno sotto **`packages/*`**. Il campo **`modules`** in `owd.config.ts` è solo la **lista di moduli Nuxt** da caricare (nomi pacchetto), non un percorso filesystem `modules/`.
+
 ### `desktop/` — shell del desktop
 
 - **`nuxt.config.ts`**: registra `@owdproject/core`, opzioni Nuxt (host, i18n, `workspaceDir`, ecc.).
