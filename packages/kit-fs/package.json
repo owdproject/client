@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^4.4.4",
+    "@zenfs/core": "^2.2.3",
     "vue3-selecto": "^1.12.3"
   }
 }

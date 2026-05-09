@@ -3,11 +3,14 @@ import { ref, provide } from 'vue'
 import { computed } from '@vue/reactivity'
 import { useAppConfig } from 'nuxt/app'
 import { handleWindowControllerProps } from '@owdproject/core/runtime/utils/utilWindow'
+import { useDesktopWorkspaceStore } from '../../../stores/storeDesktopWorkspace'
 
 const props = defineProps<{
   window?: IWindowController
   content?: WindowContent
 }>()
+
+const desktopWorkspaceStore = useDesktopWorkspaceStore()
 
 const emit = defineEmits([
   'resize:start',
@@ -115,6 +118,36 @@ const classes = computed(() => {
 
   return list
 })
+
+/** While workspace overview is open, disable vue-resizable chrome drag and use native HTML5 drag to move windows between desktops. */
+const workspaceChromeDragSelector = computed(() => {
+  if (desktopWorkspaceStore.overview) {
+    return '.owd-window-overview-drag-none'
+  }
+  return windowController?.isDraggable
+    ? '.owd-window-nav__draggable'
+    : '.owd-window-nav__draggable-none'
+})
+
+function onOverviewNativeDragStart(e: DragEvent) {
+  if (!desktopWorkspaceStore.overview || !windowController) return
+  e.stopPropagation()
+  e.dataTransfer?.setData('text/plain', windowController.state.id)
+  e.dataTransfer!.effectAllowed = 'move'
+  try {
+    const img = new Image()
+    img.src =
+      'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    e.dataTransfer?.setDragImage(img, 0, 0)
+  } catch {
+    /* noop */
+  }
+}
+
+/** `fit-parent` clamps drag/resize to the parent box — wrong for viewport-fixed shells (Win11, GNOME). */
+const shouldFitParent = computed(
+  () => appConfig.desktop.windows.position !== 'fixed',
+)
 </script>
 
 <template>
@@ -130,7 +163,7 @@ const classes = computed(() => {
     :left="windowController?.position?.x"
     :top="windowController?.position?.y"
     :active="windowController?.isResizable ? undefined : []"
-    fit-parent
+    :fit-parent="shouldFitParent"
     @drag:start="onWindowDragStart"
     @drag:move="onWindowDragMove"
     @drag:end="onWindowDragEnd"
@@ -138,18 +171,21 @@ const classes = computed(() => {
     @resize:move="onWindowResizeMove"
     @resize:end="onWindowResizeEnd"
     :style="{ zIndex: windowController?.position?.z }"
-    :drag-selector="
-      windowController?.isDraggable
-        ? '.owd-window-nav__draggable'
-        : '.owd-window-nav__draggable-none'
-    "
+    :drag-selector="workspaceChromeDragSelector"
+    :draggable="desktopWorkspaceStore.overview"
     @pointerdown="onWindowPointerDown"
+    @dragstart="onOverviewNativeDragStart"
   >
     <slot />
   </vue-resizable>
 </template>
 
 <style scoped lang="scss">
+/* vue-resizable sets `.resizable-component { position: relative }` — override so desktop geometry stays consistent */
+.owd-window.resizable-component {
+  position: v-bind('appConfig.desktop.windows.position') !important;
+}
+
 .owd-window {
   position: v-bind('appConfig.desktop.windows.position');
 

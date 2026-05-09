@@ -1,0 +1,10 @@
+:root {
+  --p-card-background: #353535;
+  --p-card-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.p-card {
+  &--border {
+    border-radius: var(--p-window-border-radius);
+  }
+}

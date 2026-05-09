@@ -1,4 +1,73 @@
 export default {
+  win11: {
+    taskbar: {
+      search: 'Search',
+      runningApps: 'Open apps',
+      wifi: 'Network',
+      volume: 'Volume',
+      battery: 'Battery power',
+      tray: 'Notification area',
+      taskView: 'Task View — desktops overview',
+    },
+    taskView: {
+      overlayAria: 'Task View',
+      openWindows: 'Open windows',
+      noOpenWindows: 'No open windows',
+    },
+    settings: {
+      system: 'System',
+      systemPlaceholder:
+        'System settings placeholder — device, notifications, and related pages will map here.',
+      personalization: {
+        title: 'Personalization',
+        windowEffectTitle: 'Window effect',
+        windowEffectAcrylic: 'Acrylic (blur + transparency)',
+        windowEffectSolid: 'Solid tint',
+        tintTitle: 'Tint color',
+        customTint: 'Custom tint color',
+        appearanceTitle: 'Appearance',
+        appearanceDark: 'Dark',
+        appearanceLight: 'Light',
+      },
+    },
+    start: {
+      ariaLabel: 'Start menu',
+      searchPlaceholder: 'Search for apps, settings, and documents',
+      pinned: 'Pinned',
+      showAll: 'All',
+      pinnedHint:
+        'Pin apps from All apps — use the pin on each row (stored on this device).',
+      recommended: 'Recommended',
+      allApps: 'All apps',
+      pinToStart: 'Pin to Start',
+      unpin: 'Unpin from Start',
+      noResults: 'No matching apps',
+      workspaces: 'Desktops',
+      desktopN: 'Desktop {n}',
+      addDesktop: 'New desktop',
+      quickLinks: 'Quick links',
+      runTerminal: 'Terminal',
+      account: 'Account',
+      documents: 'Documents',
+      powerOff: 'Shut down',
+      viewPrefix: 'View:',
+      viewAria: 'All apps layout',
+      viewCategory: 'Category',
+      viewGrid: 'Grid',
+      viewList: 'List',
+      categories: {
+        other: 'Other',
+        systemTools: 'System Tools',
+      },
+      context: {
+        menuLabel: 'Start menu actions',
+        moveLeft: 'Move to left',
+        moveRight: 'Move to right',
+        moveToFront: 'Move to front',
+        unpinFromStart: 'Unpin from Start',
+      },
+    },
+  },
   /** Alias for `@owdproject/module-fs` prompts (`t('dialog.shortcutOverride.*')`). */
   dialog: {
     shortcutOverride: {
@@ -39,6 +108,18 @@ export default {
         edit: 'Edit',
         view: 'View',
         help: 'Help',
+      },
+      tabs: {
+        ariaLabel: 'Folder tabs',
+        newTab: 'New tab',
+        closeTab: 'Close tab',
+        thisPc: 'This PC',
+      },
+      breadcrumb: {
+        ariaLabel: 'Address breadcrumb',
+      },
+      search: {
+        placeholder: 'Search',
       },
       action: {
         yes: 'Yes',

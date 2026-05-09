@@ -1,0 +1,45 @@
+.owd-desktop--win11 {
+  .p-menubar {
+    background: transparent;
+    border: 0;
+    padding: 0 6px;
+    min-height: 28px;
+
+    &-root-list {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: nowrap;
+    }
+
+    &-item {
+      margin: 0;
+
+      &-link {
+        min-height: 26px;
+        padding: 0 10px;
+        border-radius: 4px;
+        color: rgba(255, 255, 255, 0.84);
+        font-size: 13px;
+        text-decoration: none;
+      }
+
+      &.p-focus,
+      &:hover {
+        > .p-menubar-item-content > .p-menubar-item-link {
+          background: rgba(255, 255, 255, 0.08);
+          color: rgba(255, 255, 255, 0.96);
+        }
+      }
+    }
+
+    &-submenu {
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(32, 32, 34, 0.98);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(16px);
+    }
+  }
+}

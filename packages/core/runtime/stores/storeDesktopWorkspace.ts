@@ -58,6 +58,7 @@ export const useDesktopWorkspaceStore = defineStore(
       setupWorkspaces,
       setOverview,
       setWorkspace,
+      createWorkspace,
     }
   },
 )

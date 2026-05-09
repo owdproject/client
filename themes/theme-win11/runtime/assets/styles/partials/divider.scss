@@ -1,0 +1,19 @@
+.owd-desktop--win11 {
+  .p-divider {
+    margin: 0;
+    border: 0;
+
+    &-horizontal {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    &-vertical {
+      align-self: stretch;
+      width: 1px;
+      min-height: 24px;
+      margin: 0 6px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+  }
+}

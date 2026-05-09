@@ -1,74 +1,32 @@
 <script setup lang="ts">
+import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
+import Frame from '@owdproject/kit-fs/runtime/components/explorer/Frame.vue'
+
 const props = defineProps<{
   window?: IWindowController
-  content?: any
+  content?: unknown
 }>()
+
+const desktopWorkspaceStore = useDesktopWorkspaceStore()
+
+function onWorkspaceWindowDragStart(e: DragEvent) {
+  if (!props.window?.state?.id) return
+  e.dataTransfer?.setData('text', props.window.state.id)
+}
 </script>
 
 <template>
-  <CoreWindow
+  <Frame
     v-bind="$props"
-    v-show="window?.state?.active ?? true"
+    :draggable="desktopWorkspaceStore.overview ? 'true' : 'false'"
+    @dragstart="onWorkspaceWindowDragStart"
   >
-    <Card pt:root="p-card--border">
-      <template #header>
-        <WindowNav>
-          <template v-slot:prepend>
-            <slot name="nav-prepend" />
-          </template>
-
-          <template v-slot:append>
-            <slot name="nav-append" />
-          </template>
-        </WindowNav>
-      </template>
-      <template #content>
-        <WindowContent>
-          <slot />
-        </WindowContent>
-      </template>
-    </Card>
-  </CoreWindow>
+    <template #nav-prepend>
+      <slot name="nav-prepend" />
+    </template>
+    <template #nav-append>
+      <slot name="nav-append" />
+    </template>
+    <slot />
+  </Frame>
 </template>
-
-<style scoped lang="scss">
-.owd-window.resizable-component {
-  box-sizing: border-box;
-  display: inline-block;
-  min-width: 160px;
-  min-height: 160px;
-  text-align: left;
-  cursor: default;
-  border-radius: var(--p-window-border-radius);
-
-  @media(max-width: 599px) {
-    top: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    max-width: 100vw;
-    max-height: 100vh;
-    height: 100vh !important;
-    z-index: 9999999999 !important;
-  }
-
-  :deep(> .p-card) {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: var(--owd-gap);
-
-    > .p-card-header {
-      margin-bottom: 2px;
-    }
-
-    > .p-card-body {
-      height: calc(100% - var(--owd-windov-nav-height));
-
-      > .p-card-content {
-        height: 100%;
-      }
-    }
-  }
-}
-</style>

@@ -8,6 +8,7 @@ import { debugLog, debugError } from '../../utils/utilDebug'
 import { useDesktopDefaultAppsStore } from '../../stores/storeDesktopDefaultApps'
 import { useDesktopWorkspaceStore } from '../../stores/storeDesktopWorkspace'
 import { reactive } from '@vue/reactivity'
+import { unref } from 'vue'
 
 export class ApplicationController implements IApplicationController {
   private readonly applicationManager: IApplicationManager
@@ -168,7 +169,7 @@ export class ApplicationController implements IApplicationController {
             y: positionY,
           },
           createdAt: +new Date(),
-          workspace: desktopWorkspaceStore.active,
+          workspace: String(unref(desktopWorkspaceStore.active) ?? ''),
         },
         meta,
       }

@@ -28,9 +28,13 @@ Documento di mappatura per separare **VFS / integrazione** da **UI tema** e per 
 
 Il binding avviene in `WindowDirectory.vue`: importa `useFileSystemExplorer` da `@owdproject/module-fs` e inietta **`useFsController`** dal tema come factory (`useFileSystemExplorer(window, useFsController, t)`).
 
-### Zona grigia (oggi in `module-fs`, da spostare o astrarre per `kit-fs`)
+### UI explorer (oggi in `@owdproject/kit-fs`)
 
-`useFileSystemExplorer.ts` (~400 righe) mescola:
+Finestre, toolbar, file row e **`createExplorerFsOperations`** vivono in **`packages/kit-fs`** (`KitFsExplorerWorkspace`, ecc.). `module-fs` resta VFS + `useFileSystemExplorer`.
+
+### Zona grigia (in `module-fs`, solo logica motore)
+
+`useFileSystemExplorer.ts` (~400 righe) mescola ancora:
 
 - Operazioni pure su `fs` (open, rename logic via paste, trash su `/tmp`, symlink, selezione).
 - **PrimeVue** `useConfirm` per `pasteShortcuts` (overwrite).

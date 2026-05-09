@@ -1,0 +1,12 @@
+:root {
+  --p-textarea-padding-x: var(--owd-input-padding-x);
+  --p-textarea-padding-y: var(--owd-input-padding-y);
+
+  --p-textarea-color: var(--p-input-color);
+  --p-textarea-background: rgba(255, 255, 255, 0.06);
+
+  --p-textarea-border-radius: var(--owd-border-radius-sm);
+}
+
+.p-inputtext {
+}

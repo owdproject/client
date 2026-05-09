@@ -1,0 +1,53 @@
+/*
+ * Window chrome only (Frame → Card as direct child of `.owd-window`).
+ * Avoid styling every `.p-card` (dialogs, panels, DataTable internals).
+ */
+.owd-desktop--win11 .owd-window.resizable-component {
+  > .p-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--win11-window-card-bg, rgba(32, 32, 32, 0.72));
+    color: var(--win11-window-text, rgba(245, 245, 245, 0.96));
+    border-radius: var(--p-window-border-radius);
+    border: 1px solid var(--win11-window-border, rgba(255, 255, 255, 0.1));
+    box-shadow: var(
+      --win11-window-shadow,
+      0 12px 40px rgba(0, 0, 0, 0.42),
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset
+    );
+    backdrop-filter: var(--win11-window-backdrop, blur(48px) saturate(160%));
+    -webkit-backdrop-filter: var(
+      --win11-window-backdrop-webkit,
+      blur(48px) saturate(160%)
+    );
+
+    &.p-card--border {
+      box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.42),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    }
+
+    > .p-card-body {
+      background: var(--win11-window-card-body-bg, rgba(22, 22, 24, 0.55));
+      color: var(--win11-window-text, rgba(245, 245, 245, 0.96));
+      box-shadow: none;
+    }
+
+    > .p-card-header {
+      padding: 0;
+      margin: 0;
+      border-radius: var(--p-window-border-radius) var(--p-window-border-radius) 0 0;
+      overflow: hidden;
+    }
+  }
+
+  &:not(.win11-explorer-frame) > .p-card > .p-card-header .owd-window-nav {
+    background: var(--win11-window-card-bg) !important;
+    color: var(--win11-shell-text) !important;
+
+    &--focused {
+      background: var(--win11-window-card-bg) !important;
+      color: var(--win11-shell-text) !important;
+    }
+  }
+}

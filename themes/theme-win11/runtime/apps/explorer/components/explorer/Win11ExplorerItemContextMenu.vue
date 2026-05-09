@@ -1,0 +1,91 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import ContextMenu from 'primevue/contextmenu'
+import type { IWindowController } from '@owdproject/core'
+import type { MenuItem } from 'primevue/menuitem'
+
+const { t } = useI18n()
+
+const props = defineProps<{
+  fileName: string
+  window: IWindowController
+}>()
+
+const emit = defineEmits(['open', 'rename'])
+
+const menu = ref<InstanceType<typeof ContextMenu> | null>(null)
+
+const items = ref<MenuItem[]>([
+  {
+    label: t('fs.contextMenu.open'),
+    icon: 'pi pi-folder-open',
+    command: () => emit('open', props.fileName),
+  },
+  {
+    label: t('fs.contextMenu.sendTo'),
+    icon: 'pi pi-share-alt',
+    command: () => {
+      window.alert('To be implemented')
+    },
+  },
+  { separator: true },
+  {
+    label: t('fs.contextMenu.cut'),
+    icon: 'pi pi-cut',
+    command: () => {
+      props.window.fsExplorer.selectFiles([props.fileName])
+      props.window.fsExplorer.cutSelectedFiles()
+    },
+  },
+  {
+    label: t('fs.contextMenu.copy'),
+    icon: 'pi pi-copy',
+    command: () => {
+      props.window.fsExplorer.selectFiles([props.fileName])
+      props.window.fsExplorer.copySelectedFiles()
+    },
+  },
+  { separator: true },
+  {
+    label: t('fs.contextMenu.delete'),
+    icon: 'pi pi-trash',
+    command: () => {
+      props.window.fsExplorer.selectFiles([
+        `${props.window.fsExplorer.basePath.value}/${props.fileName}`,
+      ])
+      props.window.fsExplorer.fsController.deleteSelectedFiles()
+    },
+  },
+  {
+    label: t('fs.contextMenu.rename'),
+    icon: 'pi pi-pencil',
+    command: () => emit('rename', props.fileName),
+  },
+  { separator: true },
+  {
+    label: t('fs.contextMenu.properties'),
+    icon: 'pi pi-info-circle',
+    command: () => {
+      props.window.fsExplorer.fileProperties()
+    },
+  },
+])
+
+function show(event: MouseEvent) {
+  event.preventDefault()
+  menu.value?.show(event)
+}
+
+defineExpose({
+  show,
+})
+</script>
+
+<template>
+  <ContextMenu
+    ref="menu"
+    class="win11-explorer-item-context-menu"
+    :model="items"
+  />
+</template>

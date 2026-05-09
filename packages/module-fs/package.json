@@ -2,10 +2,24 @@
   "name": "@owdproject/module-fs",
   "version": "0.0.3",
   "license": "MIT",
+  "type": "module",
   "homepage": "https://github.com/owdproject/module-fs",
   "author": {
     "name": "Open Web Desktop Team",
     "url": "https://github.com/owdproject"
+  },
+  "main": "./module.ts",
+  "module": "./module.ts",
+  "exports": {
+    ".": "./module.ts",
+    "./module": "./module.ts",
+    "./package.json": "./package.json",
+    "./runtime/*": {
+      "types": "./runtime/*",
+      "development": "./runtime/*",
+      "import": "./runtime/*",
+      "default": "./runtime/*"
+    }
   },
   "dependencies": {
     "@zenfs/core": "^2.2.3",

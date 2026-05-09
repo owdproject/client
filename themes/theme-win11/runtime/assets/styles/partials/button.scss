@@ -1,0 +1,124 @@
+/*
+ * Win11 caption only — never style global `.p-button` here or Menubar/Toolbar break.
+ * Explorer keeps PrimeVue chrome for menus/toolbars; Frame Nav uses `.owd-window-nav`.
+ */
+.owd-desktop--win11 .owd-window-nav {
+  .owd-window-nav__btn-group {
+    gap: 0;
+    padding: 0;
+    align-self: stretch;
+    display: flex;
+    align-items: stretch;
+
+    &--append {
+      >.p-button--window-nav {
+
+        /* Fix glyph vertical alignment for legacy kit-fs icons (_ and X). */
+        .owd-button__icon {
+          margin: 0 !important;
+          top: auto !important;
+          left: auto !important;
+        }
+
+        &:nth-last-child(3) {
+          .owd-button__icon {
+            width: 10px;
+            height: 10px;
+            transform: none !important;
+          }
+        }
+
+        &:nth-last-child(2) {
+          .iconify {
+            margin: 0 !important;
+            font-size: 11px !important;
+            line-height: 1;
+          }
+        }
+
+        &:last-child {
+          .owd-button__icon {
+            width: 10px;
+            height: 10px;
+            transform: rotate(45deg) !important;
+          }
+
+          &:hover {
+            background: rgba(232, 17, 35, 0.92);
+            color: #fff;
+
+            .iconify {
+              color: #fff;
+            }
+          }
+
+          &:active {
+            background: rgba(241, 112, 122, 0.95);
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  .p-button {
+    --p-button-primary-background: transparent;
+    --p-button-primary-hover-background: rgba(255, 255, 255, 0.06);
+    --p-button-primary-active-background: rgba(255, 255, 255, 0.1);
+    --p-button-primary-border-color: transparent;
+
+    &:not(.p-button-text) {
+      border-radius: 0;
+
+      &::before {
+        display: none !important;
+      }
+    }
+
+    &:not([disabled]) {
+
+      &:active>span,
+      &.p-button--active>span {
+        font-weight: inherit;
+      }
+    }
+
+    /* Fluent caption: 46×32 hit targets, vertically centered glyphs */
+    &--window-nav {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 46px;
+      width: 46px;
+      height: 100%;
+      min-height: var(--owd-windov-nav-height);
+      padding: 0;
+      margin: 0;
+      border-radius: 0;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.88);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      &:active {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    >.iconify {
+      background: transparent !important;
+      color: rgba(255, 255, 255, 0.88);
+    }
+  }
+
+  .owd-button__icon {
+
+    &::before,
+    &::after {
+      background: rgba(255, 255, 255, 0.88) !important;
+    }
+  }
+}

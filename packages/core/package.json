@@ -32,7 +32,12 @@
     "./module": "./module.ts",
     "./nuxt": "./module.ts",
     "./package.json": "./package.json",
-    "./runtime/*": "./runtime/*"
+    "./runtime/*": {
+      "types": "./runtime/*",
+      "development": "./runtime/*",
+      "import": "./runtime/*",
+      "default": "./runtime/*"
+    }
   },
   "bin": {
     "owd": "bin/owd.js"
@@ -59,5 +64,8 @@
     "shellwords": "^1.1.1",
     "vue-resizable": "^2.1.7",
     "getopts": "^2.3.0"
+  },
+  "optionalDependencies": {
+    "html2canvas": "^1.4.1"
   }
 }

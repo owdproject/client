@@ -116,7 +116,7 @@ interface IApplicationController {
   get windowsOpened(): Reactive<Map<string, IWindowController>>
 }
 
-interface IWindowController {
+export interface IWindowController {
   application: IApplicationController
   instanced: boolean
   model: string
@@ -179,14 +179,27 @@ interface IWindowController {
     setTitleOverride(title: string | undefined): void
     resetTitleOverride(): void
   }
+
+  /** Payload restored with window state (e.g. explorer cwd in `path`). */
+  get meta(): { path?: string } & Record<string, unknown>
+
+  /** Chrome menu model (e.g. PrimeVue Menubar). */
+  menu: unknown[]
+
+  setMenu(menu: unknown[]): void
+
+  destroy(): boolean
+
+  /** Set by module-fs when an explorer surface mounts on this window. */
+  fsExplorer?: any
 }
 
-interface WindowContent {
+export interface WindowContent {
   padded?: boolean
   centered?: boolean
 }
 
-interface WindowConfig {
+export interface WindowConfig {
   title?: string
   category?: string
   icon?: string
@@ -328,10 +341,27 @@ interface DesktopConfig {
   name?: string
   defaultApps?: DefaultAppsConfig
   features?: string[]
+  explorer?: DesktopExplorerConfig
 
   systemBar?: DesktopSystemBarConfig
   dockBar?: DesktopDockBarConfig
   workspaces?: DesktopWorkspacesConfig
+}
+
+interface DesktopExplorerFolderConfig {
+  id: string
+  label: string
+  path: string
+  icon?: string
+}
+
+interface DesktopExplorerConfig {
+  quickAccess?: DesktopExplorerFolderConfig[]
+  quickAccessExtra?: DesktopExplorerFolderConfig[]
+  quickAccessOverride?: DesktopExplorerFolderConfig[]
+  specialFolders?: DesktopExplorerFolderConfig[]
+  specialFoldersExtra?: DesktopExplorerFolderConfig[]
+  specialFoldersOverride?: DesktopExplorerFolderConfig[]
 }
 
 interface DesktopWindowsConfig {

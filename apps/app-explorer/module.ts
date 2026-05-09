@@ -3,6 +3,7 @@ import {
   createResolver,
   addComponentsDir,
   addPlugin,
+  installModule,
 } from '@nuxt/kit'
 import { registerTailwindPath } from '@owdproject/core'
 
@@ -12,6 +13,8 @@ export default defineNuxtModule({
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
+
+    await installModule('@owdproject/kit-fs')
 
     // add components
 

@@ -22,6 +22,7 @@
     "@owdproject/app-classic-audioplayer": "0.0.4",
     "@owdproject/app-classic-videoplayer": "0.0.4",
     "@owdproject/app-explorer": "workspace:*",
+    "@owdproject/kit-explorer": "workspace:*",
     "@owdproject/kit-fs": "workspace:*",
     "@owdproject/kit-theme": "workspace:*"
   },

@@ -8,6 +8,10 @@ import {
 } from '@nuxt/kit'
 import { registerTailwindPath } from '@owdproject/core/runtime/utils/utilApp'
 import deepMerge from 'deepmerge'
+import {
+  WIN11_EXPLORER_QUICK_ACCESS_SEED,
+  WIN11_EXPLORER_SPECIAL_FOLDERS,
+} from './runtime/apps/explorer/explorerNav.defaults'
 
 export default defineNuxtModule({
   meta: {
@@ -20,6 +24,17 @@ export default defineNuxtModule({
       enabled: false,
       position: 'bottom',
       startButton: false,
+    },
+    workspaces: {
+      enabled: true,
+    },
+    explorer: {
+      quickAccess: WIN11_EXPLORER_QUICK_ACCESS_SEED,
+      quickAccessExtra: [],
+      quickAccessOverride: [],
+      specialFolders: WIN11_EXPLORER_SPECIAL_FOLDERS,
+      specialFoldersExtra: [],
+      specialFoldersOverride: [],
     },
   },
   async setup(options, nuxt) {
@@ -61,9 +76,37 @@ export default defineNuxtModule({
       mode: 'client',
     })
 
+    addPlugin({
+      src: resolve('./runtime/apps/settings/plugin.ts'),
+      mode: 'client',
+    })
+
+    addComponentsDir({
+      path: resolve('./runtime/apps/settings/components'),
+    })
+
+    registerTailwindPath(
+      nuxt,
+      resolve('./runtime/apps/settings/components/**/*.{vue,mjs,ts}'),
+    )
+
     if (nuxt.options.modules.includes('@owdproject/module-fs')) {
-      await installModule('@owdproject/kit-fs')
-      await installModule('@owdproject/app-explorer')
+      /** Loads `@owdproject/kit-fs` automatically (see kit-explorer module). */
+      await installModule('@owdproject/kit-explorer')
+
+      addPlugin({
+        src: resolve('./runtime/apps/explorer/plugin.ts'),
+        mode: 'client',
+      })
+
+      addComponentsDir({
+        path: resolve('./runtime/apps/explorer/components'),
+      })
+
+      registerTailwindPath(
+        nuxt,
+        resolve('./runtime/apps/explorer/components/**/*.{vue,mjs,ts}'),
+      )
     }
 
     nuxt.options.nitro.publicAssets = [

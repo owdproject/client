@@ -1,0 +1,30 @@
+:root {
+  --p-button-primary-background: rgba(255, 255, 255, 0.06);
+  --p-button-primary-hover-background: rgba(255, 255, 255, 0.1);
+  --p-button-primary-active-background: rgba(255, 255, 255, 0.15);
+  --p-button-padding-x: 12px;
+  --p-button-padding-y: 8px;
+  --p-button-lg-padding-x: 14px;
+  --p-button-lg-padding-y: 10px;
+  --p-button-border-radius: var(--owd-border-radius-sm);
+  --p-button-rounded-border-radius: 32px;
+  --p-button-gap: 8px;
+}
+
+.p-button {
+  font-weight: bold;
+
+  min-width: 36px;
+  height: 36px;
+  font-size: 15px;
+
+  &-lg {
+    min-width: 44px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  &--icon {
+    --p-button-lg-padding-x: 10px;
+  }
+}

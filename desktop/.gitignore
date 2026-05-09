@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+
+# Nuxt (desktop app root)
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+
+# Local env
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+._*
+
+# TLS / local certs (see root .gitignore /desktop/certs)
+certs

@@ -1,5 +1,6 @@
 import { watchEffect } from 'vue'
 import { useMagicKeys } from '@vueuse/core'
+import type { IWindowController } from '@owdproject/core'
 
 export function useFileSystemKeyboardActions(
   owdWindow: IWindowController,
@@ -15,8 +16,8 @@ export function useFileSystemKeyboardActions(
   watchEffect(() => {
     if (owdWindow.state.focused) {
       // delete
-      if (keys.delete.value) {
-        actions.onDelete(!keys.shift.value)
+      if (keys.delete?.value) {
+        actions.onDelete?.(!keys.shift?.value)
       }
 
       // copy

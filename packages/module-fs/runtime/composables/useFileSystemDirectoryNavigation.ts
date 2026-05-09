@@ -36,12 +36,31 @@ export function useFileSystemDirectoryNavigation(initialPath: string) {
     return currentIndex.value < history.value.length - 1
   }
 
+  function snapshot(): { paths: string[]; index: number } {
+    return {
+      paths: [...history.value],
+      index: currentIndex.value,
+    }
+  }
+
+  function hydrate(data: { paths: string[]; index: number }) {
+    const paths = data.paths.length ? [...data.paths] : ['/']
+    let index = data.index
+    if (index < 0) index = 0
+    if (index > paths.length - 1) index = paths.length - 1
+    history.value = paths
+    currentIndex.value = index
+  }
+
   return {
     history,
+    currentIndex,
     push,
     back,
     forward,
     canGoBack,
     canGoForward,
+    snapshot,
+    hydrate,
   }
 }

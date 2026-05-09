@@ -12,9 +12,10 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@owdproject/core": "^3.1.5",
     "@owdproject/app-about": "^0.1.4",
-    "@owdproject/theme-win95": "workspace:*",
-    "@owdproject/theme-win11": "workspace:*"
+    "@owdproject/app-todo": "workspace:^",
+    "@owdproject/core": "^3.1.5",
+    "@owdproject/theme-win11": "workspace:*",
+    "@owdproject/theme-win95": "workspace:*"
   }
 }

@@ -8,7 +8,7 @@
 
 ## Overview
 
-A modern Windows 11-inspired theme, featuring Fluent Design.
+This theme for Open Web Desktop recreates a Windows 11-inspired desktop experience.
 
 ## Installation
 
@@ -27,10 +27,17 @@ export default defineDesktopConfig({
   theme: '@owdproject/theme-win11',
   desktop: {
     systemBar: {
-      enabled: true,
-      startButton: true,
+      enabled: false,
+      startButton: false,
       position: 'bottom'
-    }
+    },
+    workspaces: {
+      enabled: true
+    },
+    explorer: {
+      quickAccess: [],
+      specialFolders: []
+    },
   }
 })
 ```

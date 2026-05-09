@@ -8,6 +8,18 @@ export default defineNuxtModule({
   },
   defaults: {
     mounts: {},
+    folders: {
+      common: [
+        '/Desktop',
+        '/Documents',
+        '/Downloads',
+        '/Music',
+        '/Pictures',
+        '/Videos',
+      ],
+      extra: [],
+      override: [],
+    },
     fileAssociations: {
       mp4: 'video-player',
       webm: 'video-player',
@@ -27,7 +39,19 @@ export default defineNuxtModule({
         '/home': 'WebStorage',
         '/.cache': 'InMemory',
         '/.trash': 'InMemory',
-      }
+      },
+      folders: {
+        common: [
+          '/Desktop',
+          '/Documents',
+          '/Downloads',
+          '/Music',
+          '/Pictures',
+          '/Videos',
+        ],
+        extra: [],
+        override: [],
+      },
     }, _options)
 
     addPlugin({

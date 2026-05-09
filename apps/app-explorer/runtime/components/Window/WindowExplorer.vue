@@ -143,7 +143,7 @@ const confirm = useConfirm()
 </script>
 
 <template>
-  <WindowDirectory v-bind="$props" />
+  <KitFsExplorerWorkspace v-bind="$props" />
 
   <ConfirmDialog />
 

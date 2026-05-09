@@ -1,0 +1,26 @@
+{
+  "name": "@owdproject/theme-gnome",
+  "version": "0.1.0",
+  "description": "Open Web Desktop theme",
+  "homepage": "https://github.com/owdproject/theme-gnome#readme",
+  "bugs": {
+    "url": "https://github.com/owdproject/theme-gnome/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owdproject/theme-gnome.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Open Web Desktop Team",
+    "url": "https://github.com/owdproject"
+  },
+  "dependencies": {
+    "@owdproject/kit-explorer": "workspace:*",
+    "vue3-carousel": "^0.15.0",
+    "html2canvas": "^1.4.1"
+  },
+  "peerDependencies": {
+    "@owdproject/core": "^3.1.4"
+  }
+}

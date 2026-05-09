@@ -83,7 +83,7 @@ export default defineNuxtModule({
 
     {
       if (nuxt.options.modules.includes('@owdproject/module-fs')) {
-        await installModule('@owdproject/kit-fs')
+        await installModule('@owdproject/kit-explorer')
         await installModule('@owdproject/app-explorer')
         await installModule('@owdproject/app-classic-audioplayer')
         await installModule('@owdproject/app-classic-videoplayer')

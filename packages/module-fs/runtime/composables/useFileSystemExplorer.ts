@@ -1,5 +1,6 @@
 import { ref, watch } from 'vue'
 import { fs } from '@zenfs/core'
+import type { IWindowController } from '@owdproject/core'
 
 import { useApplicationManager } from '@owdproject/core/runtime/composables/useApplicationManager'
 import { useDesktopDefaultAppsStore } from '@owdproject/core/runtime/stores/storeDesktopDefaultApps'
@@ -16,35 +17,32 @@ const TRASH_PATH = '/tmp'
 
 export function useFileSystemExplorer(
   owdWindow: IWindowController,
-  useFsController,
-  t
+  useFsController: (fsExplorer: any, t: (key: string, values?: Record<string, unknown>) => string) => any,
+  t: (key: string, values?: Record<string, unknown>) => string,
 ) {
   const desktopDefaultAppsStore = useDesktopDefaultAppsStore()
 
-  const basePath = ref(owdWindow.meta.path)
+  const basePath = ref(owdWindow.meta.path ?? '/')
   const selectedFiles = ref<string[]>([])
   const layout = ref<string>('')
 
   const fsEntries = ref<string[]>([])
 
   const fsClipboard = useFileSystemClipboard()
-  const fsKeyboardActions = useFileSystemKeyboardActions(
-    owdWindow,
-    {
-      onDelete: async (toTrash) => {
-        fsExplorer.fsController.deleteSelectedFiles(toTrash)
-      },
-      onCopy: async () => {
-        fsExplorer.copySelectedFiles()
-      },
-      onCut: async () => {
-        fsExplorer.cutSelectedFiles()
-      },
-      onPaste: async (toTrash) => {
-        fsExplorer.fsController.pasteClipboardFiles()
-      }
-    }
-  )
+  useFileSystemKeyboardActions(owdWindow, {
+    onDelete: async (toTrash) => {
+      fsExplorer.fsController?.deleteSelectedFiles(toTrash)
+    },
+    onCopy: async () => {
+      fsExplorer.copySelectedFiles()
+    },
+    onCut: async () => {
+      fsExplorer.cutSelectedFiles()
+    },
+    onPaste: async () => {
+      fsExplorer.fsController?.pasteClipboardFiles()
+    },
+  })
   const fsDirectoryNavigation = useFileSystemDirectoryNavigation(basePath.value)
 
   const dialogs = useOwdDialogs()
@@ -161,7 +159,8 @@ export function useFileSystemExplorer(
     try {
       await fs.promises.rename(source, target)
     } catch (err) {
-      if (err.code === 'EXDEV') {
+      const code = err && typeof err === 'object' && 'code' in err ? (err as { code?: string }).code : undefined
+      if (code === 'EXDEV') {
         const stat = await fs.promises.stat(source)
 
         if (stat.isFile()) {
@@ -356,7 +355,7 @@ export function useFileSystemExplorer(
   }
 
   const fsExplorer = {
-    fsController: undefined,
+    fsController: undefined as any,
     fsEntries,
     fsClipboard,
     fsDirectoryNavigation,

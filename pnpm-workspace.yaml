@@ -11,3 +11,5 @@ onlyBuiltDependencies:
   - esbuild
   - nx
   - unrs-resolver
+patchedDependencies:
+  '@owdproject/nx@0.0.3': patches/@owdproject__nx@0.0.3.patch
