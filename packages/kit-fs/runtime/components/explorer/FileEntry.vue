@@ -327,9 +327,10 @@ const classes = computed(() => {
   &--size-smallIcons {
     .owd-file__name .truncate,
     .owd-file__name input {
-      font-size: 0.6875rem;
-      line-height: 1.25;
-      max-width: 72px;
+      /* Between Tailwind text-xs (12px) and text-sm (14px): readable on dense grids */
+      font-size: 0.8125rem;
+      line-height: 1.35;
+      max-width: 76px;
     }
   }
 
