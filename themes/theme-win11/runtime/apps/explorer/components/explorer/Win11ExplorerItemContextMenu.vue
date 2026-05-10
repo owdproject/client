@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ContextMenu from 'primevue/contextmenu'
 import type { IWindowController } from '@owdproject/core'
@@ -10,67 +10,90 @@ const { t } = useI18n()
 const props = defineProps<{
   fileName: string
   window: IWindowController
+  isDirectory?: boolean
+  openPathInNewTab?: (absolutePath: string) => void
 }>()
 
 const emit = defineEmits(['open', 'rename'])
 
 const menu = ref<InstanceType<typeof ContextMenu> | null>(null)
 
-const items = ref<MenuItem[]>([
-  {
-    label: t('fs.contextMenu.open'),
-    icon: 'pi pi-folder-open',
-    command: () => emit('open', props.fileName),
-  },
-  {
-    label: t('fs.contextMenu.sendTo'),
-    icon: 'pi pi-share-alt',
-    command: () => {
-      window.alert('To be implemented')
+function entryAbsolutePath(): string {
+  const bp = (props.window.fsExplorer.basePath.value || '/').replace(/\/+$/, '') || ''
+  const tail = props.fileName.replace(/^\/+/, '')
+  if (!bp || bp === '/') return `/${tail}`.replace(/\/+/g, '/')
+  return `${bp}/${tail}`.replace(/\/+/g, '/')
+}
+
+const items = computed<MenuItem[]>(() => {
+  const openItems: MenuItem[] = [
+    {
+      label: t('fs.contextMenu.open'),
+      icon: 'pi pi-folder-open',
+      command: () => emit('open', props.fileName),
     },
-  },
-  { separator: true },
-  {
-    label: t('fs.contextMenu.cut'),
-    icon: 'pi pi-cut',
-    command: () => {
-      props.window.fsExplorer.selectFiles([props.fileName])
-      props.window.fsExplorer.cutSelectedFiles()
+  ]
+
+  if (props.isDirectory && props.openPathInNewTab) {
+    openItems.push({
+      label: t('fs.contextMenu.openInNewTab'),
+      icon: 'pi pi-external-link',
+      command: () => props.openPathInNewTab!(entryAbsolutePath()),
+    })
+  }
+
+  return [
+    ...openItems,
+    {
+      label: t('fs.contextMenu.sendTo'),
+      icon: 'pi pi-share-alt',
+      command: () => {
+        window.alert('To be implemented')
+      },
     },
-  },
-  {
-    label: t('fs.contextMenu.copy'),
-    icon: 'pi pi-copy',
-    command: () => {
-      props.window.fsExplorer.selectFiles([props.fileName])
-      props.window.fsExplorer.copySelectedFiles()
+    { separator: true },
+    {
+      label: t('fs.contextMenu.cut'),
+      icon: 'pi pi-cut',
+      command: () => {
+        props.window.fsExplorer.selectFiles([props.fileName])
+        props.window.fsExplorer.cutSelectedFiles()
+      },
     },
-  },
-  { separator: true },
-  {
-    label: t('fs.contextMenu.delete'),
-    icon: 'pi pi-trash',
-    command: () => {
-      props.window.fsExplorer.selectFiles([
-        `${props.window.fsExplorer.basePath.value}/${props.fileName}`,
-      ])
-      props.window.fsExplorer.fsController.deleteSelectedFiles()
+    {
+      label: t('fs.contextMenu.copy'),
+      icon: 'pi pi-copy',
+      command: () => {
+        props.window.fsExplorer.selectFiles([props.fileName])
+        props.window.fsExplorer.copySelectedFiles()
+      },
     },
-  },
-  {
-    label: t('fs.contextMenu.rename'),
-    icon: 'pi pi-pencil',
-    command: () => emit('rename', props.fileName),
-  },
-  { separator: true },
-  {
-    label: t('fs.contextMenu.properties'),
-    icon: 'pi pi-info-circle',
-    command: () => {
-      props.window.fsExplorer.fileProperties()
+    { separator: true },
+    {
+      label: t('fs.contextMenu.delete'),
+      icon: 'pi pi-trash',
+      command: () => {
+        props.window.fsExplorer.selectFiles([
+          `${props.window.fsExplorer.basePath.value}/${props.fileName}`,
+        ])
+        props.window.fsExplorer.fsController.deleteSelectedFiles()
+      },
     },
-  },
-])
+    {
+      label: t('fs.contextMenu.rename'),
+      icon: 'pi pi-pencil',
+      command: () => emit('rename', props.fileName),
+    },
+    { separator: true },
+    {
+      label: t('fs.contextMenu.properties'),
+      icon: 'pi pi-info-circle',
+      command: () => {
+        props.window.fsExplorer.fileProperties()
+      },
+    },
+  ]
+})
 
 function show(event: MouseEvent) {
   event.preventDefault()
@@ -83,9 +106,5 @@ defineExpose({
 </script>
 
 <template>
-  <ContextMenu
-    ref="menu"
-    class="win11-explorer-item-context-menu"
-    :model="items"
-  />
+  <ContextMenu ref="menu" :model="items" />
 </template>

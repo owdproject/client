@@ -362,6 +362,8 @@ interface DesktopExplorerConfig {
   specialFolders?: DesktopExplorerFolderConfig[]
   specialFoldersExtra?: DesktopExplorerFolderConfig[]
   specialFoldersOverride?: DesktopExplorerFolderConfig[]
+  /** Friendly labels for ZenFS mount points shown under “This PC” (paths → label). */
+  mountLabels?: Record<string, string>
 }
 
 interface DesktopWindowsConfig {

@@ -35,7 +35,7 @@
 
     > .p-card-header {
       padding: 0;
-      margin: 0;
+      margin: 0 !important;
       border-radius: var(--p-window-border-radius) var(--p-window-border-radius) 0 0;
       overflow: hidden;
     }
@@ -49,5 +49,13 @@
       background: var(--win11-window-card-bg) !important;
       color: var(--win11-shell-text) !important;
     }
+  }
+}
+
+.win11-explorer-nav-row {
+  margin: 0 !important;
+
+  .p-button {
+    margin: 0 4px !important;
   }
 }

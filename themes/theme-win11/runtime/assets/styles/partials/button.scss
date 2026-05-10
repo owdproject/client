@@ -3,6 +3,9 @@
  * Explorer keeps PrimeVue chrome for menus/toolbars; Frame Nav uses `.owd-window-nav`.
  */
 .owd-desktop--win11 .owd-window-nav {
+
+  padding-left: 5px;
+
   .owd-window-nav__btn-group {
     gap: 0;
     padding: 0;
@@ -10,12 +13,16 @@
     display: flex;
     align-items: stretch;
 
+    .p-button {
+      margin: 0 20px !important;
+    }
+
     &--append {
       >.p-button--window-nav {
 
         /* Fix glyph vertical alignment for legacy kit-fs icons (_ and X). */
         .owd-button__icon {
-          margin: 0 !important;
+          margin: 0 12px !important;
           top: auto !important;
           left: auto !important;
         }

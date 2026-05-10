@@ -45,6 +45,11 @@ const viewItems = computed<MenuItem[]>(() => [
   },
 ])
 
+/** Fluent popup panels (PrimeVue portals to body; styled in explorer-prime-overlays.scss) */
+const explorerOverlayPt = {
+  root: { class: 'win11-explorer-popup-menu' },
+}
+
 const sortItems = computed<MenuItem[]>(() => [
   {
     label: 'Sort by name',
@@ -72,7 +77,7 @@ const sortItems = computed<MenuItem[]>(() => [
         :aria-label="t('apps.explorer.action.newFolder')"
         @click="fsExplorer.createNewDirectory()"
       >
-        <Icon name="mdi:folder-plus-outline" size="20" />
+        <Icon name="mdi:folder-plus-outline" size="18" />
       </Button>
       <Button
         type="button"
@@ -82,7 +87,7 @@ const sortItems = computed<MenuItem[]>(() => [
         :aria-label="t('apps.explorer.action.cut')"
         @click="fsExplorer.cutSelectedFiles()"
       >
-        <Icon name="mdi:content-cut" size="20" />
+        <Icon name="mdi:content-cut" size="18" />
       </Button>
       <Button
         type="button"
@@ -92,7 +97,7 @@ const sortItems = computed<MenuItem[]>(() => [
         :aria-label="t('apps.explorer.action.copy')"
         @click="fsExplorer.copySelectedFiles()"
       >
-        <Icon name="mdi:content-copy" size="20" />
+        <Icon name="mdi:content-copy" size="16" />
       </Button>
       <Button
         type="button"
@@ -102,7 +107,7 @@ const sortItems = computed<MenuItem[]>(() => [
         :aria-label="t('apps.explorer.action.paste')"
         @click="fsExplorer.fsController?.pasteClipboardFiles()"
       >
-        <Icon name="mdi:content-paste" size="20" />
+        <Icon name="mdi:content-paste" size="17" />
       </Button>
       <Button
         type="button"
@@ -140,7 +145,7 @@ const sortItems = computed<MenuItem[]>(() => [
       >
         <Icon name="mdi:sort-variant" size="20" />
       </Button>
-      <Menu ref="sortMenu" :model="sortItems" popup />
+      <Menu ref="sortMenu" :model="sortItems" popup :pt="explorerOverlayPt" />
 
       <Button
         type="button"
@@ -151,9 +156,9 @@ const sortItems = computed<MenuItem[]>(() => [
         :aria-label="t('apps.explorer.menu.view')"
         @click="toggleView"
       >
-        <Icon name="mdi:view-grid-outline" size="20" />
+        <Icon name="mdi:view-grid-outline" size="18" />
       </Button>
-      <Menu ref="viewMenu" :model="viewItems" popup />
+      <Menu ref="viewMenu" :model="viewItems" popup :pt="explorerOverlayPt" />
     </div>
 
     <span class="win11-explorer-command-bar__grow" />

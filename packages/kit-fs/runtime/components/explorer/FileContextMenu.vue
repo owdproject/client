@@ -9,6 +9,9 @@ const { t } = useI18n()
 const props = defineProps<{
   fileName: string
   window: IWindowController
+  /** Passed when embedded from themed explorers (optional). */
+  isDirectory?: boolean
+  openPathInNewTab?: (absolutePath: string) => void
 }>()
 
 const emit = defineEmits(['open', 'rename'])

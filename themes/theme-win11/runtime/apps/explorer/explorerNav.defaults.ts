@@ -14,7 +14,7 @@ export const WIN11_EXPLORER_SPECIAL_FOLDERS: ExplorerNavFolder[] = [
   { id: 'videos', label: 'Videos', path: '/Videos', icon: 'mdi:video' },
 ]
 
+/** Quick Access: user pins only (seed often just Home). Shell folders live under `specialFolders`, not here. */
 export const WIN11_EXPLORER_QUICK_ACCESS_SEED: ExplorerNavFolder[] = [
   { id: 'home', label: 'Home', path: '/', icon: 'mdi:home' },
-  ...WIN11_EXPLORER_SPECIAL_FOLDERS,
 ]

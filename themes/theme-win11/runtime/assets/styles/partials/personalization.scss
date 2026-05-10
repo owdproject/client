@@ -22,6 +22,18 @@
   --win11-window-backdrop-webkit: blur(48px) saturate(160%);
 
   --win11-explorer-chrome-light: rgba(58, 58, 62, 0.94);
+  /* Edge under tabs → breadcrumb row (separates from command bar below) */
+  --win11-explorer-top-band-separator: color-mix(
+    in srgb,
+    var(--win11-window-border, rgba(255, 255, 255, 0.1)) 65%,
+    transparent
+  );
+  /* Breadcrumb pill + search field outline */
+  --win11-explorer-chrome-control-border: color-mix(
+    in srgb,
+    var(--win11-window-border, rgba(255, 255, 255, 0.1)) 65%,
+    transparent
+  );
 
   /* Explorer content grid — Quick access–style folder/file accent colours */
   --win11-explorer-icon-desktop: #5eb8ff;
@@ -79,6 +91,17 @@
   --win11-explorer-icon-disc: #6e6e6e;
 
   --win11-explorer-chrome-light: rgba(230, 235, 242, 0.96);
+  /* Softer than bare grey on frosted panels */
+  --win11-explorer-top-band-separator: color-mix(
+    in srgb,
+    var(--win11-window-border) 38%,
+    var(--win11-window-surface-unified) 62%
+  );
+  --win11-explorer-chrome-control-border: color-mix(
+    in srgb,
+    var(--win11-window-border) 42%,
+    var(--win11-explorer-chrome-light) 58%
+  );
 }
 
 /* After appearance so tint applies in both dark and light. */
@@ -94,6 +117,22 @@
   );
   --win11-window-backdrop: none;
   --win11-window-backdrop-webkit: none;
+  /* Lighter strip above breadcrumb — follows tint, not fixed grey */
+  --win11-explorer-chrome-light: color-mix(
+    in srgb,
+    var(--win11-window-tint, #2d2d30) 62%,
+    rgb(255 255 255 / 0.14)
+  );
+  --win11-explorer-top-band-separator: color-mix(
+    in srgb,
+    var(--win11-window-tint, #2d2d30) 72%,
+    rgb(255 255 255 / 0.12)
+  );
+  --win11-explorer-chrome-control-border: color-mix(
+    in srgb,
+    var(--win11-window-tint, #2d2d30) 78%,
+    rgb(255 255 255 / 0.16)
+  );
 }
 
 .owd-desktop--win11.win11-personalization-window-solid.win11-personalization-appearance-light {
@@ -101,5 +140,20 @@
     in srgb,
     var(--win11-window-tint, #e8eaed) 88%,
     white
+  );
+  --win11-explorer-chrome-light: color-mix(
+    in srgb,
+    var(--win11-window-tint, #e8eaed) 78%,
+    white
+  );
+  --win11-explorer-top-band-separator: color-mix(
+    in srgb,
+    var(--win11-window-tint, #e8eaed) 65%,
+    rgb(0 0 0 / 0.12)
+  );
+  --win11-explorer-chrome-control-border: color-mix(
+    in srgb,
+    var(--win11-window-tint, #e8eaed) 55%,
+    rgb(0 0 0 / 0.14)
   );
 }

@@ -10,6 +10,10 @@ defineProps<{
 
 const menu = ref<InstanceType<typeof TieredMenu> | null>(null)
 
+const explorerOverlayPt = {
+  root: { class: 'win11-explorer-popup-menu' },
+}
+
 function toggle(event: Event) {
   menu.value?.toggle(event)
 }
@@ -29,7 +33,7 @@ function toggle(event: Event) {
     >
       <Icon name="mdi:dots-horizontal" size="20" />
     </Button>
-    <TieredMenu ref="menu" :model="model" popup />
+    <TieredMenu ref="menu" :model="model" popup :pt="explorerOverlayPt" />
   </div>
 </template>
 

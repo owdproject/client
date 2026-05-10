@@ -15,6 +15,8 @@ const props = defineProps<{
   window: IWindowController
   /** When set, replaces the default `FileContextMenu` (e.g. theme-specific UI). */
   contextMenuComponent?: Component
+  /** Middle-click on a folder opens that path in a new explorer tab (theme hook). */
+  openPathInNewTab?: (absolutePath: string) => void
 }>()
 
 const menuImpl = computed(
@@ -74,6 +76,14 @@ function onRightClick(event: MouseEvent) {
   contextMenuRef.value?.show(event)
 }
 
+function onAuxClick(event: MouseEvent) {
+  if (event.button !== 1) return
+  if (!isDirectory.value || !props.openPathInNewTab) return
+  event.preventDefault()
+  event.stopPropagation()
+  props.openPathInNewTab(path)
+}
+
 onMounted(() => {
   fetchStatsAndContent(path)
 })
@@ -101,13 +111,65 @@ function renameCancel() {
   isRenaming.value = false
 }
 
+const isRowLayout = computed(
+  () => props.layout === 'list' || props.layout === 'details',
+)
+
+function formatBytes(n: number): string {
+  if (!Number.isFinite(n) || n < 0) return '\u2014'
+  if (n < 1024) return `${n} B`
+  const units = ['KB', 'MB', 'GB', 'TB']
+  let v = n / 1024
+  let i = 0
+  while (v >= 1024 && i < units.length - 1) {
+    v /= 1024
+    i++
+  }
+  const rounded = v < 10 && i > 0 ? v.toFixed(1) : String(Math.round(v))
+  return `${rounded} ${units[i]}`
+}
+
+function statToDate(stats: fs.Stats | null): Date | null {
+  if (!stats) return null
+  const m = stats.mtime
+  if (m instanceof Date) return m
+  if (typeof m === 'number') return new Date(m)
+  return null
+}
+
+const modifiedLabel = computed(() => {
+  const d = statToDate(pathStats.value)
+  if (!d || Number.isNaN(d.getTime())) return '\u2014'
+  return d.toLocaleString(undefined, {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  })
+})
+
+const typeLabel = computed(() => {
+  if (isDirectory.value) return 'File folder'
+  const parts = props.fileName.split('.')
+  if (parts.length < 2) return 'File'
+  return `${parts.pop()!.toUpperCase()} file`
+})
+
+const sizeLabel = computed(() => {
+  if (!pathStats.value || isDirectory.value) return '\u2014'
+  if (!pathStats.value.isFile()) return '\u2014'
+  return formatBytes(pathStats.value.size)
+})
+
 const classes = computed(() => {
-  return [
-    'owd-file text-center',
-    `owd-file--size-${props.layout}`,
-    {'owd-file--selected': props.selected},
-    {'owd-file--cutted': props.cutted}
+  const list: (string | Record<string, boolean>)[] = [
+    'owd-file',
+    isRowLayout.value ? 'owd-file--row text-left' : 'text-center',
   ]
+  if (props.layout) {
+    list.push(`owd-file--size-${props.layout}`)
+  }
+  list.push({ 'owd-file--selected': props.selected })
+  list.push({ 'owd-file--cutted': props.cutted })
+  return list
 })
 </script>
 
@@ -117,50 +179,110 @@ const classes = computed(() => {
     :title="fileName"
     @dblclick="onFileOpen"
     @contextmenu.prevent="onRightClick"
+    @auxclick.prevent="onAuxClick"
   >
 
-    <div class="flex items-center rounded-sm p-2">
-      <!--
+    <template v-if="isRowLayout">
+      <div class="owd-file__row">
+        <div class="owd-file__icon-cell">
+          <slot
+            name="icon"
+            :file-name="fileName"
+            :is-directory="isDirectory"
+            :layout="layout"
+          >
+            <FileIcon
+              :file-name="fileName"
+              :is-directory="isDirectory"
+              :layout="layout"
+            />
+          </slot>
+        </div>
+
+        <div class="owd-file__name owd-file__name--row">
+          <span
+            v-if="!isRenaming"
+            @dblclick.stop="renameStart"
+            class="text-sm truncate"
+            v-text="fileName"
+          />
+
+          <input
+            v-else
+            v-model="editableName"
+            class="text-sm truncate border border-gray-300 rounded-sm px-1"
+            @blur="renameCommit"
+            @keyup.enter="renameCommit"
+            @keyup.esc="renameCancel"
+            autofocus
+          />
+        </div>
+
+        <template v-if="layout === 'details'">
+          <div
+            class="owd-file__col owd-file__col--date tabular-nums"
+            v-text="modifiedLabel"
+          />
+          <div
+            class="owd-file__col owd-file__col--type"
+            :title="typeLabel"
+            v-text="typeLabel"
+          />
+          <div
+            class="owd-file__col owd-file__col--size tabular-nums"
+            v-text="sizeLabel"
+          />
+        </template>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="flex items-center rounded-sm p-2">
+        <!--
       <FileSystemFileThumbnail
         v-if="layout === 'largeIcons' && isImageFile(fileName) && !isDirectory"
         :file-name="fileName"
         :path="path"
       />
       -->
-      <slot
-        name="icon"
-        :file-name="fileName"
-        :is-directory="isDirectory"
-        :layout="layout"
-      >
-        <FileIcon
+        <slot
+          name="icon"
           :file-name="fileName"
           :is-directory="isDirectory"
           :layout="layout"
+        >
+          <FileIcon
+            :file-name="fileName"
+            :is-directory="isDirectory"
+            :layout="layout"
+          />
+        </slot>
+      </div>
+
+      <div class="owd-file__name">
+
+        <span
+          v-if="!isRenaming"
+          @dblclick.stop="renameStart"
+          :class="['truncate', { 'text-sm': layout !== 'smallIcons' }]"
+          v-text="fileName"
         />
-      </slot>
-    </div>
 
-    <div class="owd-file__name">
+        <input
+          v-else
+          v-model="editableName"
+          :class="[
+            'truncate border border-gray-300 rounded-sm px-1',
+            { 'text-sm': layout !== 'smallIcons' },
+          ]"
+          @blur="renameCommit"
+          @keyup.enter="renameCommit"
+          @keyup.esc="renameCancel"
+          autofocus
+        />
 
-      <span
-        v-if="!isRenaming"
-        @dblclick.stop="renameStart"
-        class="text-sm truncate"
-        v-text="fileName"
-      />
-
-      <input
-        v-else
-        v-model="editableName"
-        class="text-sm truncate border border-gray-300 rounded-sm px-1"
-        @blur="renameCommit"
-        @keyup.enter="renameCommit"
-        @keyup.esc="renameCancel"
-        autofocus
-      />
-
-    </div>
+      </div>
+    </template>
     <slot />
 
     <component
@@ -168,6 +290,8 @@ const classes = computed(() => {
       ref="contextMenuRef"
       :file-name="fileName"
       :window="window"
+      :is-directory="!!isDirectory"
+      :open-path-in-new-tab="openPathInNewTab"
       @open="onFileOpen"
       @rename="renameStart"
     />
@@ -183,13 +307,29 @@ const classes = computed(() => {
 
   .owd-file__name {
     position: relative;
-    display: inline-flex;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
 
     input {
       border: 0;
       text-align: center;
       background: rgb(var(--owd-elevation-active-background));
       color: rgb(var(--owd-elevation-active-color)) !important;
+    }
+
+    span {
+      display: block;
+    }
+  }
+
+  &--size-smallIcons {
+    .owd-file__name .truncate,
+    .owd-file__name input {
+      font-size: 0.6875rem;
+      line-height: 1.25;
+      max-width: 72px;
     }
   }
 
@@ -203,12 +343,85 @@ const classes = computed(() => {
     }
   }
 
-  &--selected {
+  &--size-list,
+  &--size-details {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 1px 0;
+    padding: 0 4px;
+
+    .owd-file__row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 28px;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+
+    .owd-file__icon-cell {
+      flex-shrink: 0;
+      width: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .owd-file__name--row {
+      flex: 1;
+      min-width: 0;
+      display: block;
+
+      input {
+        text-align: left;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .truncate {
+        max-width: none;
+        display: block;
+        text-align: left;
+      }
+    }
+
+    .owd-file__col {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      line-height: 1.25;
+      opacity: 0.88;
+      white-space: nowrap;
+    }
+
+    .owd-file__col--date {
+      width: 132px;
+      text-align: right;
+    }
+
+    .owd-file__col--type {
+      width: 96px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .owd-file__col--size {
+      width: 72px;
+      text-align: right;
+    }
+  }
+
+  &--size-details .owd-file__icon-cell {
+    width: 30px;
+  }
+
+  &--selected:not(.owd-file--row) {
     .owd-file__name {
       background: rgb(var(--owd-elevation-active-background));
       color: rgb(var(--owd-elevation-active-color)) !important;
 
-      &:after {
+      &::after {
         position: absolute;
         top: 0;
         left: 0;
@@ -217,6 +430,25 @@ const classes = computed(() => {
         content: '';
         border: 1px dotted rgb(var(--owd-theme-color-white));
       }
+    }
+  }
+
+  &.owd-file--row.owd-file--selected .owd-file__row {
+    background: rgb(var(--owd-elevation-active-background));
+    color: rgb(var(--owd-elevation-active-color));
+
+    .owd-file__col {
+      color: inherit;
+      opacity: 1;
+    }
+
+    &::after {
+      position: absolute;
+      inset: 0;
+      content: '';
+      border: 1px dotted rgb(var(--owd-theme-color-white));
+      pointer-events: none;
+      border-radius: 2px;
     }
   }
 

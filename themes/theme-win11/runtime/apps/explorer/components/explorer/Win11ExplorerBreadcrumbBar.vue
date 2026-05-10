@@ -59,7 +59,7 @@ const { t } = useI18n()
     gap: 0;
     padding: 5px 8px;
     border-radius: 4px;
-    border: 1px solid color-mix(in srgb, var(--win11-window-border, rgba(255, 255, 255, 0.1)) 65%, transparent);
+    border: 1px solid var(--win11-explorer-chrome-control-border);
     background: color-mix(in srgb, var(--win11-explorer-chrome-light, rgba(58, 58, 62, 0.94)) 88%, transparent);
   }
 
@@ -102,7 +102,7 @@ const { t } = useI18n()
     font-size: 12px;
     color: var(--win11-shell-text, rgba(245, 245, 245, 0.96));
     background: color-mix(in srgb, var(--win11-explorer-chrome-light, rgba(58, 58, 62, 0.94)) 88%, transparent);
-    border-color: color-mix(in srgb, var(--win11-window-border, rgba(255, 255, 255, 0.1)) 65%, transparent);
+    border-color: var(--win11-explorer-chrome-control-border);
     border-width: 1px;
     border-style: solid;
     padding: 5px 8px;

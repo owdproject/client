@@ -80,7 +80,7 @@ function onTabMouseUp(id: string, e: MouseEvent) {
   display: inline-flex;
   align-items: center;
   min-width: 0;
-}
+} 
 
 .explorer-tab-strip-base__tab-label {
   min-width: 0;
@@ -88,5 +88,10 @@ function onTabMouseUp(id: string, e: MouseEvent) {
 
 .explorer-tab-strip-base__new {
   flex-shrink: 0;
+  background-color: transparent !important;
+
+  i {
+    margin-top: -8px;
+  }
 }
 </style>

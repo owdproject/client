@@ -11,6 +11,7 @@ import Win11ExplorerMainPane from './Win11ExplorerMainPane.vue'
 import Win11ExplorerStatusBar from './Win11ExplorerStatusBar.vue'
 import Win11ExplorerTabStrip from './Win11ExplorerTabStrip.vue'
 import { useI18n } from 'vue-i18n'
+import { provide } from 'vue'
 
 const props = defineProps<{
   config?: WindowConfig
@@ -39,6 +40,10 @@ const explorerTabs = useExplorerTabs(props.window, fsExplorer, {
   closeLastTab: () => {
     props.window.destroy()
   },
+})
+
+provide('win11ExplorerOpenPathInNewTab', (path: string) => {
+  void explorerTabs.openPathInNewTab(path)
 })
 
 void fsExplorer.initialize().then(() => {
@@ -89,7 +94,7 @@ async function navigateExplorerTo(target: string) {
         />
       </div>
     </template>
-    <div class="win11-explorer-shell flex flex-col h-full min-h-0">
+    <div class="win11-explorer-shell flex flex-col h-full min-h-0 overflow-hidden">
       <Win11ExplorerCommandBar
         :window="window"
         :fs-explorer="fsExplorer"
@@ -112,11 +117,20 @@ async function navigateExplorerTo(target: string) {
   overflow-x: hidden;
 }
 
-.win11-explorer-top-band {
-  background: var(--win11-explorer-chrome-light);
+/*
+ * Must be a flex column so `.win11-explorer-main-pane` gets a bounded height (`flex: 1` +
+ * `min-height: 0`). Otherwise the main pane grows with the tallest child (often the nav tree),
+ * no overflow is created, and the nav’s inner `.win11-explorer-nav-pane__scroll` never scrolls.
+ */
+.win11-explorer-shell__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
-.win11-explorer-shell__content {
+.win11-explorer-shell__content > .win11-explorer-main-pane {
   flex: 1;
   min-height: 0;
 }

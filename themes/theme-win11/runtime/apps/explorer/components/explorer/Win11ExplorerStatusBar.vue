@@ -30,7 +30,7 @@ defineProps<{
   font-size: 12px;
   color: rgba(245, 245, 245, 0.76);
   border-top: 1px solid rgba(255, 255, 255, 0.12);
-  background: transparent;
+  background: var(--win11-explorer-chrome-dark, var(--win11-window-surface-unified));
 }
 
 .win11-explorer-status-bar__spacer {

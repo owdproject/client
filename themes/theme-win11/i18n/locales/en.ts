@@ -90,6 +90,7 @@ export default {
   fs: {
     contextMenu: {
       open: 'Open',
+      openInNewTab: 'Open in new tab',
       rename: 'Rename',
       delete: 'Delete',
       print: 'Print',
@@ -114,6 +115,11 @@ export default {
         newTab: 'New tab',
         closeTab: 'Close tab',
         thisPc: 'This PC',
+      },
+      nav: {
+        openFolder: 'Open',
+        pinToQuickAccess: 'Pin to Quick access',
+        unpinFromQuickAccess: 'Unpin from Quick access',
       },
       breadcrumb: {
         ariaLabel: 'Address breadcrumb',

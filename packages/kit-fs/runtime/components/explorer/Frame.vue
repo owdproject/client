@@ -42,7 +42,8 @@ const cardRootClass = computed(() =>
             <template #prepend>
               <slot name="nav-prepend" />
             </template>
-          <template #title>
+            <!-- Only forward nav-title when set; otherwise Nav keeps icon + window title (About, Todo, …). -->
+            <template v-if="$slots['nav-title']" #title>
               <slot name="nav-title" />
             </template>
             <template #append>

@@ -131,13 +131,14 @@ function onPathCommit() {
 
 .explorer-breadcrumb-base__segment {
   border: none;
-  background: transparent;
   color: inherit;
   padding: 0;
 }
 
 .explorer-breadcrumb-base__input,
 .explorer-breadcrumb-base__search {
+  min-height: 36px;
   min-width: 0;
+  margin: 8px 8px 8px 0;
 }
 </style>

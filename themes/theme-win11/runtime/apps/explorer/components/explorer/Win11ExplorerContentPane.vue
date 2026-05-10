@@ -3,11 +3,17 @@ import type { IWindowController } from '@owdproject/core'
 import DataTable from 'primevue/datatable'
 import Win11ExplorerItemContextMenu from './Win11ExplorerItemContextMenu.vue'
 import Win11ExplorerFileIcon from './Win11ExplorerFileIcon.vue'
+import { inject } from 'vue'
 
 defineProps<{
   window: IWindowController
   fsExplorer: NonNullable<IWindowController['fsExplorer']>
 }>()
+
+const openPathInNewTab = inject<(path: string) => void>(
+  'win11ExplorerOpenPathInNewTab',
+  undefined,
+)
 </script>
 
 <template>
@@ -35,6 +41,7 @@ defineProps<{
             ) && fsExplorer.fsClipboard.clipboardType.value === 'cut'
           "
           :window="window"
+          :open-path-in-new-tab="openPathInNewTab"
           :contextMenuComponent="Win11ExplorerItemContextMenu"
         >
           <template #icon="{ fileName: iconFileName, isDirectory, layout }">
@@ -73,36 +80,40 @@ defineProps<{
   background: transparent;
 }
 
-/* Airy grid like Win11 Home / Quick access — wider gaps than kit-fs defaults */
+/* Denser grid than the old “airy” pass — still slightly roomier than kit-fs base */
 .win11-explorer-content-pane :deep(.owd-file) {
-  margin: 16px 20px;
+  margin: 8px 10px;
 }
 
 .win11-explorer-content-pane :deep(.owd-file > .flex.items-center) {
-  padding: 12px 14px;
+  padding: 6px 8px;
   justify-content: center;
 }
 
 .win11-explorer-content-pane :deep(.owd-file--size-smallIcons) {
-  margin: 20px 26px;
+  margin: 10px 12px;
 }
 
 .win11-explorer-content-pane :deep(.owd-file--size-largeIcons) {
-  width: 108px;
-  margin: 28px 36px;
+  width: 100px;
+  margin: 14px 16px;
 }
 
 .win11-explorer-content-pane :deep(.owd-file--size-largeIcons > .flex.items-center) {
-  padding: 16px 18px;
+  padding: 10px 12px;
 }
 
 .win11-explorer-content-pane :deep(.owd-file--size-largeIcons .truncate) {
-  max-width: 124px;
+  max-width: 116px;
 }
 
-/* List / details stay a bit tighter (row-style) */
 .win11-explorer-content-pane :deep(.owd-file--size-list),
 .win11-explorer-content-pane :deep(.owd-file--size-details) {
-  margin: 8px 14px;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding-left: 6px;
+  padding-right: 6px;
+  box-sizing: border-box;
 }
 </style>

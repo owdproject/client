@@ -35,6 +35,9 @@ export default defineNuxtModule({
       specialFolders: WIN11_EXPLORER_SPECIAL_FOLDERS,
       specialFoldersExtra: [],
       specialFoldersOverride: [],
+      mountLabels: {
+        '/home': 'Local Disk',
+      },
     },
   },
   async setup(options, nuxt) {

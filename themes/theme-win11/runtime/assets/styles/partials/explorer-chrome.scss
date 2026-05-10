@@ -32,11 +32,22 @@
       }
     }
 
+    /*
+     * CoreWindow applies `overflow-y: auto` on `.owd-window__content`, which scrolls the
+     * entire explorer body (command bar + nav + grid + status bar). Pin chrome: scroll only
+     * inside the content pane / nav columns.
+     */
+    .owd-window__content {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden !important;
+    }
+
     .win11-explorer-top-band {
       margin-top: -1px;
       background: var(--win11-explorer-chrome-light);
-      border-bottom: 1px solid
-        color-mix(in srgb, var(--win11-window-border, rgba(255, 255, 255, 0.1)) 65%, transparent);
+      border-bottom: 1px solid var(--win11-explorer-top-band-separator);
 
       :deep(.win11-explorer-chrome-band__inner) {
         padding: 2px 8px 5px;
@@ -55,11 +66,16 @@
     .win11-explorer-shell {
       flex: 1;
       min-height: 0;
+      overflow: hidden;
       background: var(--win11-explorer-chrome-dark);
       padding: 0 1px 1px;
       box-sizing: border-box;
       box-shadow: inset 0 1px 0
         color-mix(in srgb, var(--win11-window-border, rgba(255, 255, 255, 0.1)) 45%, transparent);
+    
+      .p-button {
+        margin: 3px !important;
+      }
     }
 
     .win11-explorer-command-bar {

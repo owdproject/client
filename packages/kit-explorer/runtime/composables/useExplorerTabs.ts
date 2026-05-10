@@ -173,6 +173,29 @@ export function useExplorerTabs(
     persistMeta()
   }
 
+  function normalizeExplorerPath(p: string): string {
+    let normalized = (p || '/').trim() || '/'
+    if (!normalized.startsWith('/')) normalized = `/${normalized}`
+    normalized = normalized.replace(/\/+/g, '/')
+    if (normalized.length > 1) normalized = normalized.replace(/\/$/, '')
+    return normalized || '/'
+  }
+
+  /** Opens an absolute VFS path in a new explorer tab (same window). */
+  async function openPathInNewTab(absolutePath: string) {
+    const normalized = normalizeExplorerPath(absolutePath)
+    saveActiveTabSnapshot()
+    const id = newExplorerTabId()
+    const snapshot: ExplorerNavSnapshot = {
+      paths: [normalized],
+      index: 0,
+    }
+    tabs.value.push({ id, snapshot })
+    activeTabId.value = id
+    await applyTab(id)
+    persistMeta()
+  }
+
   function closeTab(id: string) {
     if (tabs.value.length <= 1) {
       if (options.closeLastTab) {
@@ -224,6 +247,7 @@ export function useExplorerTabs(
     initTabs,
     selectTab,
     addTab,
+    openPathInNewTab,
     closeTab,
   })
 }
