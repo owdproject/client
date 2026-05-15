@@ -28,3 +28,6 @@ logs
 
 # TLS / local certs (see root .gitignore /desktop/certs)
 certs
+
+# Test zip file with module-fs
+public/test.zip

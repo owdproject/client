@@ -1,145 +1,35 @@
 <script setup lang="ts">
 import { useConfirm } from 'primevue/useconfirm'
 import { useI18n } from 'vue-i18n'
+import type { IWindowController } from '@owdproject/core'
+import { createExplorerWindowMenuItems } from '@owdproject/kit-explorer/runtime/composables/useExplorerWindowMenu'
 
 const props = defineProps<{
-  window: Window
+  window: IWindowController
 }>()
 
 const { t } = useI18n()
+const confirm = useConfirm()
 
-const explorerMenu = [
-  {
-    label: t('apps.explorer.menu.file'),
-    items: [
-      {
-        label: t('apps.explorer.action.newFolder'),
-        command: () => {
-          props.window.fsExplorer.createNewDirectory()
-        },
+const explorerMenu = createExplorerWindowMenuItems(
+  () => props.window,
+  t,
+  () =>
+    confirm.require({
+      group: 'about',
+      header: 'About',
+      acceptProps: {
+        label: 'OK',
+        class: 'p-button--primary',
       },
-      { separator: true },
-      {
-        label: t('apps.explorer.action.delete'),
-        command: () => {
-          props.window.fsExplorer.fsController.deleteSelectedFiles()
-        },
+      rejectProps: {
+        class: 'hidden',
       },
-      {
-        label: t('apps.explorer.action.rename'),
-        command: () => {},
-      },
-      {
-        label: t('apps.explorer.action.properties'),
-        command: () => {
-          props.window.fsExplorer.fileProperties()
-        },
-      },
-      { separator: true },
-      {
-        label: t('apps.explorer.action.close'),
-        command: () => {
-          props.window.destroy()
-        },
-      },
-    ],
-  },
-  {
-    label: t('apps.explorer.menu.edit'),
-    items: [
-      {
-        label: t('apps.explorer.action.cut'),
-        command: () => {
-          props.window.fsExplorer.cutSelectedFiles()
-        },
-      },
-      {
-        label: t('apps.explorer.action.copy'),
-        command: () => {
-          props.window.fsExplorer.copySelectedFiles()
-        },
-      },
-      {
-        label: t('apps.explorer.action.paste'),
-        command: () => {
-          props.window.fsExplorer.fsController.pasteClipboardFiles()
-        },
-      },
-      {
-        label: t('apps.explorer.action.pasteShortcut'),
-        command: () => {
-          props.window.fsExplorer.pasteShortcuts()
-        },
-      },
-      { separator: true },
-      {
-        label: t('apps.explorer.action.selectAll'),
-        command: () => {
-          props.window.fsExplorer.selectAllFiles()
-        },
-      },
-      {
-        label: t('apps.explorer.action.invertSelection'),
-        command: () => {
-          props.window.fsExplorer.invertSelection()
-        },
-      },
-    ],
-  },
-  {
-    label: t('apps.explorer.menu.view'),
-    items: [
-      {
-        label: t('apps.explorer.layout.largeIcons'),
-        command: () => props.window.fsExplorer.setLayout('largeIcons'),
-      },
-      {
-        label: t('apps.explorer.layout.smallIcons'),
-        command: () => props.window.fsExplorer.setLayout('smallIcons'),
-      },
-      {
-        label: t('apps.explorer.layout.list'),
-        command: () => props.window.fsExplorer.setLayout('list'),
-      },
-      {
-        label: t('apps.explorer.layout.details'),
-        command: () => props.window.fsExplorer.setLayout('details'),
-      },
-      { separator: true },
-      {
-        label: t('apps.explorer.action.refresh'),
-        command: () => {
-          props.window.fsExplorer.refreshDirectory()
-        },
-      },
-    ],
-  },
-  {
-    label: t('apps.explorer.menu.help'),
-    items: [
-      {
-        label: t('apps.explorer.action.about'),
-        command: () =>
-          confirm.require({
-            group: 'about',
-            header: 'About',
-            acceptProps: {
-              label: 'OK',
-              class: 'p-button--primary',
-            },
-            rejectProps: {
-              class: 'hidden',
-            },
-            accept: () => {},
-          }),
-      },
-    ],
-  },
-]
+      accept: () => {},
+    }),
+)
 
 props.window.setMenu(explorerMenu)
-
-const confirm = useConfirm()
 </script>
 
 <template>
@@ -156,7 +46,7 @@ const confirm = useConfirm()
         </div>
 
         <div>
-          {{ctx.message.message}}
+          {{ ctx.message.message }}
         </div>
       </div>
     </template>

@@ -4,6 +4,7 @@ import type { IWindowController } from '@owdproject/core'
 
 import { useApplicationManager } from '@owdproject/core/runtime/composables/useApplicationManager'
 import { useDesktopDefaultAppsStore } from '@owdproject/core/runtime/stores/storeDesktopDefaultApps'
+import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 import { shellEscape } from '@owdproject/core/runtime/utils/utilTerminal'
 
 import { getAppByFilename } from '@owdproject/module-fs/runtime/utils/utilFileSystem'
@@ -72,8 +73,7 @@ export function useFileSystemExplorer(
   }
 
   async function openDirectory(fileName: string) {
-    const fullPath =
-      basePath.value === '/' ? `/${fileName}` : `${basePath.value}/${fileName}`
+    const fullPath = explorerEntryAbsolutePath(basePath.value, fileName)
 
     try {
       const stats = fs.statSync(fullPath)
@@ -100,7 +100,7 @@ export function useFileSystemExplorer(
 
 
       if (defaultApp) {
-        const path = shellEscape(`${basePath.value}/${fileName}`)
+        const path = shellEscape(explorerEntryAbsolutePath(basePath.value, fileName))
 
         applicationManager.launchAppEntry(
           defaultApp.applicationId,
@@ -113,14 +113,14 @@ export function useFileSystemExplorer(
 
   function selectFiles(fileNames: string[]) {
     selectedFiles.value = fileNames.map((name) =>
-      basePath.value === '/' ? `/${name}` : `${basePath.value}/${name}`,
+      explorerEntryAbsolutePath(basePath.value, name),
     )
   }
 
   function selectAllFiles() {
     if (Array.isArray(fsEntries.value)) {
-      selectedFiles.value = fsEntries.value.map(
-        (name) => `${basePath.value}/${name}`,
+      selectedFiles.value = fsEntries.value.map((name) =>
+        explorerEntryAbsolutePath(basePath.value, name),
       )
     }
   }
@@ -132,9 +132,11 @@ export function useFileSystemExplorer(
 
     selectedFiles.value = fsEntries.value
       .filter((name) => {
-        return !currentSelection.has(`${basePath.value}/${name}`)
+        return !currentSelection.has(
+          explorerEntryAbsolutePath(basePath.value, name),
+        )
       })
-      .map((name) => `${basePath.value}/${name}`)
+      .map((name) => explorerEntryAbsolutePath(basePath.value, name))
   }
 
   function cutSelectedFiles() {
@@ -248,7 +250,7 @@ export function useFileSystemExplorer(
       const fileName = filePath.split('/').pop()
       if (!fileName) continue
 
-      const linkPath = `${basePath.value}/${fileName}`
+      const linkPath = explorerEntryAbsolutePath(basePath.value, fileName)
 
       const exists = await fs.promises
         .access(linkPath)
@@ -317,10 +319,7 @@ export function useFileSystemExplorer(
     const folderName = await dialogs.prompt('Type a name for the new folder')
     if (!folderName) return
 
-    const newFolderPath =
-      basePath.value === '/'
-        ? `/${folderName}`
-        : `${basePath.value}/${folderName}`
+    const newFolderPath = explorerEntryAbsolutePath(basePath.value, folderName)
 
     try {
       await fs.promises.mkdir(newFolderPath)
@@ -339,8 +338,7 @@ export function useFileSystemExplorer(
     const linkName = await dialogs.prompt('Write a name for the symbolic link')
     if (!linkName) return
 
-    const linkPath =
-      basePath.value === '/' ? `/${linkName}` : `${basePath.value}/${linkName}`
+    const linkPath = explorerEntryAbsolutePath(basePath.value, linkName)
 
     try {
       await fs.promises.symlink(targetPath, linkPath)

@@ -120,6 +120,7 @@ export default {
         openFolder: 'Open',
         pinToQuickAccess: 'Pin to Quick access',
         unpinFromQuickAccess: 'Unpin from Quick access',
+        resizePane: 'Resize navigation pane',
       },
       breadcrumb: {
         ariaLabel: 'Address breadcrumb',

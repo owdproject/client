@@ -18,16 +18,80 @@ export default defineNuxtPlugin({
 
     const preparedMounts: Record<string, any> = {}
 
+    const baseURL =
+      (typeof nuxtApp.$config?.app?.baseURL === 'string' && nuxtApp.$config.app.baseURL) ||
+      '/'
+
+    function resolveZipFetchUrl(spec: string): string {
+      if (spec.startsWith('http://') || spec.startsWith('https://')) return spec
+      const path = spec.startsWith('/') ? spec : `/${spec}`
+      const base = baseURL.endsWith('/') ? baseURL.slice(0, -1) : baseURL
+      if (!base || base === '') return path
+      return `${base}${path}`
+    }
+
+    function hexPreview(u8: Uint8Array, max = 24): string {
+      const n = Math.min(u8.length, max)
+      return Array.from(u8.subarray(0, n))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join(' ')
+    }
+
+    /**
+     * Find first ZIP local file header (PK\x03\x04). Strips UTF-8 BOM or a leading prefix
+     * (e.g. self-extracting stub) within the first 512 KiB.
+     */
+    function sliceZipPayload(buf: ArrayBuffer, mountPoint: string, url: string): ArrayBuffer {
+      const full = new Uint8Array(buf)
+      let start = 0
+      if (full.length >= 3 && full[0] === 0xef && full[1] === 0xbb && full[2] === 0xbf) {
+        start = 3
+      }
+      const u8 = full.subarray(start)
+      const maxScan = Math.min(Math.max(0, u8.length - 3), 512 * 1024)
+      let rel = -1
+      for (let i = 0; i <= maxScan; i++) {
+        if (
+          u8[i] === 0x50 &&
+          u8[i + 1] === 0x4b &&
+          u8[i + 2] === 0x03 &&
+          u8[i + 3] === 0x04
+        ) {
+          rel = i
+          break
+        }
+      }
+      if (rel < 0) {
+        throw new Error(
+          `[@owdproject/module-fs] Zip mount "${mountPoint}": ${url} has no PK\\x03\\x04 local header in the first ${start + maxScan} bytes (${full.byteLength} B total). First bytes: ${hexPreview(full)}`,
+        )
+      }
+      const absolute = start + rel
+      if (absolute === 0) return buf
+      console.info(
+        `[@owdproject/module-fs] Zip mount "${mountPoint}": skipping ${absolute} byte prefix before ZIP local header`,
+      )
+      return buf.slice(absolute)
+    }
+
     // it's just a test, should be improved todo
     for await (const [mountPoint, value] of Object.entries(mounts)) {
       if (typeof value === 'string') {
 
         if (value.endsWith('.zip')) {
 
-          const res = await fetch(value)
+          const url = resolveZipFetchUrl(value)
+          const res = await fetch(url)
+          if (!res.ok) {
+            throw new Error(
+              `[@owdproject/module-fs] Zip mount "${mountPoint}": fetch ${url} failed with HTTP ${res.status}`,
+            )
+          }
+          const buf = await res.arrayBuffer()
+          const zipBytes = sliceZipPayload(buf, mountPoint, url)
           preparedMounts[mountPoint] = {
             backend: Zip,
-            data: await res.arrayBuffer(),
+            data: zipBytes,
           }
 
         } else if (backendMap[value]) {

@@ -1,4 +1,5 @@
 import { useOwdDialogs } from '@owdproject/core/runtime/composables/useOwdDialogs'
+import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 
 /**
  * Pass this factory as the second argument to {@link useFileSystemExplorer} (`module-fs`).
@@ -19,7 +20,10 @@ export default function createExplorerFsOperations(fsExplorer: any, t: (key: str
       const fileName = sourcePath.split('/').pop()
       if (!fileName) continue
 
-      const targetPath = `${fsExplorer.basePath.value}/${fileName}`
+      const targetPath = explorerEntryAbsolutePath(
+        fsExplorer.basePath.value,
+        fileName,
+      )
       const exists = await fsExplorer.pathExists(targetPath)
 
       if (exists) {

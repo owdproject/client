@@ -15,6 +15,7 @@
     "@owdproject/app-about": "^0.1.4",
     "@owdproject/app-todo": "workspace:^",
     "@owdproject/core": "^3.1.5",
+    "@owdproject/theme-nova": "workspace:*",
     "@owdproject/theme-win11": "workspace:*",
     "@owdproject/theme-win95": "workspace:*"
   }

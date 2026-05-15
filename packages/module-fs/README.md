@@ -35,7 +35,9 @@ fs: {
 },
 ```
 
-If you are mounting zips, place them in your `/desktop/public` folder.
+If you are mounting zips, place them in your `/desktop/public` folder (served as `/filename.zip` from the app root, or under `app.baseURL` if you use a subpath). The module fetches the file on the client and rejects non-zip responses (e.g. HTML 404) before mounting.
+
+If you see **“could not locate End of Central Directory signature”**, the downloaded bytes are not a valid ZIP (wrong URL, 404 page, empty file, or corrupt archive).
 
 ## License
 

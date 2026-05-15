@@ -4,6 +4,7 @@ import DataTable from 'primevue/datatable'
 import Win11ExplorerItemContextMenu from './Win11ExplorerItemContextMenu.vue'
 import Win11ExplorerFileIcon from './Win11ExplorerFileIcon.vue'
 import { inject } from 'vue'
+import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 
 defineProps<{
   window: IWindowController
@@ -32,12 +33,18 @@ const openPathInNewTab = inject<(path: string) => void>(
           :layout="fsExplorer.layout.value"
           :selected="
             fsExplorer.selectedFiles.value.includes(
-              `${fsExplorer.basePath.value}/${fileName}`,
+              explorerEntryAbsolutePath(
+                fsExplorer.basePath.value,
+                fileName,
+              ),
             )
           "
           :cutted="
             fsExplorer.fsClipboard.clipboardFiles.value.includes(
-              `${fsExplorer.basePath.value}/${fileName}`,
+              explorerEntryAbsolutePath(
+                fsExplorer.basePath.value,
+                fileName,
+              ),
             ) && fsExplorer.fsClipboard.clipboardType.value === 'cut'
           "
           :window="window"

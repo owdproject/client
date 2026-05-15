@@ -10,6 +10,7 @@ import Frame from './Frame.vue'
 import Toolbar from './Toolbar.vue'
 import AddressBar from './AddressBar.vue'
 import { useI18n } from 'vue-i18n'
+import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 
 const props = defineProps<{
   config?: WindowConfig
@@ -80,8 +81,8 @@ void fsExplorer.initialize()
               :basePath="fsExplorer.basePath.value"
               :fileName="fileName"
               :layout="fsExplorer.layout.value"
-              :selected="fsExplorer.selectedFiles.value.includes(`${fsExplorer.basePath.value}/${fileName}`)"
-              :cutted="fsExplorer.fsClipboard.clipboardFiles.value.includes(`${fsExplorer.basePath.value}/${fileName}`) && fsExplorer.fsClipboard.clipboardType.value === 'cut'"
+              :selected="fsExplorer.selectedFiles.value.includes(explorerEntryAbsolutePath(fsExplorer.basePath.value, fileName))"
+              :cutted="fsExplorer.fsClipboard.clipboardFiles.value.includes(explorerEntryAbsolutePath(fsExplorer.basePath.value, fileName)) && fsExplorer.fsClipboard.clipboardType.value === 'cut'"
               :window="window"
             />
           </KitFsExplorerSelectableArea>

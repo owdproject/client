@@ -174,7 +174,7 @@ const sortItems = computed<MenuItem[]>(() => [
   gap: 2px;
   flex-shrink: 0;
   min-height: 34px;
-  padding: 2px 8px;
+  padding: 2px 4px;
   color: rgba(245, 245, 245, 0.96);
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   background: transparent;

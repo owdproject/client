@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ContextMenu from 'primevue/contextmenu'
 import type { IWindowController } from '@owdproject/core'
+import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 import type { MenuItem } from 'primevue/menuitem'
 
 const { t } = useI18n()
@@ -19,10 +20,10 @@ const emit = defineEmits(['open', 'rename'])
 const menu = ref<InstanceType<typeof ContextMenu> | null>(null)
 
 function entryAbsolutePath(): string {
-  const bp = (props.window.fsExplorer.basePath.value || '/').replace(/\/+$/, '') || ''
-  const tail = props.fileName.replace(/^\/+/, '')
-  if (!bp || bp === '/') return `/${tail}`.replace(/\/+/g, '/')
-  return `${bp}/${tail}`.replace(/\/+/g, '/')
+  return explorerEntryAbsolutePath(
+    props.window.fsExplorer.basePath.value ?? '/',
+    props.fileName,
+  )
 }
 
 const items = computed<MenuItem[]>(() => {
@@ -73,9 +74,7 @@ const items = computed<MenuItem[]>(() => {
       label: t('fs.contextMenu.delete'),
       icon: 'pi pi-trash',
       command: () => {
-        props.window.fsExplorer.selectFiles([
-          `${props.window.fsExplorer.basePath.value}/${props.fileName}`,
-        ])
+        props.window.fsExplorer.selectFiles([entryAbsolutePath()])
         props.window.fsExplorer.fsController.deleteSelectedFiles()
       },
     },

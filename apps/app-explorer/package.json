@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^4.4.4",
+    "@owdproject/kit-explorer": "workspace:*",
     "@owdproject/kit-fs": "workspace:*"
   },
   "peerDependencies": {

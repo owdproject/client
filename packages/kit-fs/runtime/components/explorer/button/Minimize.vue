@@ -3,7 +3,7 @@ import ChromeButton from './ChromeButton.vue'
 </script>
 
 <template>
-  <ChromeButton>
+  <ChromeButton variant="minimize" size="small">
     <div class="owd-button__icon" />
   </ChromeButton>
 </template>

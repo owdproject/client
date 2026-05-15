@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { fs } from '@zenfs/core'
-import { ref, onMounted, computed } from 'vue'
+import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
+import { ref, computed, watch } from 'vue'
 import type { Component } from 'vue'
 import type { IWindowController } from '@owdproject/core'
 import FileContextMenu from './FileContextMenu.vue'
@@ -29,7 +30,9 @@ const emit = defineEmits([
   'rename',
 ])
 
-const path = `${props.basePath}/${props.fileName}`
+const path = computed(() =>
+  explorerEntryAbsolutePath(props.basePath, props.fileName),
+)
 const pathStats = ref<fs.Stats | null>(null)
 const isDirectory = ref<boolean>(false)
 const isFile = ref<boolean>()
@@ -81,12 +84,16 @@ function onAuxClick(event: MouseEvent) {
   if (!isDirectory.value || !props.openPathInNewTab) return
   event.preventDefault()
   event.stopPropagation()
-  props.openPathInNewTab(path)
+  props.openPathInNewTab(path.value)
 }
 
-onMounted(() => {
-  fetchStatsAndContent(path)
-})
+watch(
+  path,
+  (p) => {
+    fetchStatsAndContent(p)
+  },
+  { immediate: true },
+)
 
 // rename
 

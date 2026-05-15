@@ -2,7 +2,7 @@
 import type { IWindowController } from '@owdproject/core'
 import { useDesktopExplorerStore } from '@owdproject/core/runtime/stores/storeDesktopExplorer'
 import { useRuntimeConfig } from 'nuxt/app'
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, withDefaults } from 'vue'
 import Tree from 'primevue/tree'
 import type { TreeNode } from 'primevue/treenode'
 import draggable from 'vuedraggable'
@@ -10,10 +10,15 @@ import ContextMenu from 'primevue/contextmenu'
 import type { MenuItem } from 'primevue/menuitem'
 import { useI18n } from 'vue-i18n'
 
-const props = defineProps<{
-  window: IWindowController
-  fsExplorer: NonNullable<IWindowController['fsExplorer']>
-}>()
+const props = withDefaults(
+  defineProps<{
+    window: IWindowController
+    fsExplorer: NonNullable<IWindowController['fsExplorer']>
+    /** Nav column width in px (parent splitter controls). */
+    widthPx?: number
+  }>(),
+  { widthPx: 248 },
+)
 
 type ExplorerNavFolder = {
   id: string
@@ -27,7 +32,7 @@ const desktopExplorerStore = useDesktopExplorerStore()
 const runtimeConfig = useRuntimeConfig()
 const selectedTreeKey = ref<string>('')
 
-/** Right‑click → Pin / Unpin on shell folder rows (Desktop, Documents, …). */
+/** Single context menu: Open + Pin/Unpin for every nav row (pins, shell folders, This PC tree). */
 const shellFolderCtxMenu = ref<InstanceType<typeof ContextMenu> | null>(null)
 const shellFolderCtxTarget = ref<ExplorerNavFolder | null>(null)
 
@@ -188,10 +193,29 @@ async function go(path: string) {
   await props.fsExplorer.navigateToDirectory(target)
 }
 
-async function onNodeSelect(event: { node?: TreeNode }) {
-  const path = event.node?.data?.path
+function unwrapTreeSelectPayload(
+  payload: TreeNode | { node?: TreeNode } | undefined,
+): TreeNode | undefined {
+  if (!payload || typeof payload !== 'object') return undefined
+  if ('node' in payload && (payload as { node?: TreeNode }).node) {
+    return (payload as { node: TreeNode }).node
+  }
+  return payload as TreeNode
+}
+
+async function onNodeSelect(payload: TreeNode | { node?: TreeNode }) {
+  const node = unwrapTreeSelectPayload(payload)
+  const path = node?.data?.path
   if (typeof path !== 'string') return
-  selectedTreeKey.value = String(event.node?.key ?? '')
+  selectedTreeKey.value = String(node?.key ?? '')
+  await go(path)
+}
+
+/** Single mode: second click emits unselect only — still navigate to the drive/folder. */
+async function onNodeUnselect(payload: TreeNode | { node?: TreeNode }) {
+  const node = unwrapTreeSelectPayload(payload)
+  const path = node?.data?.path
+  if (typeof path !== 'string') return
   await go(path)
 }
 
@@ -203,14 +227,40 @@ function pinFromSpecial(entry: ExplorerNavFolder) {
   desktopExplorerStore.pinQuickAccess(entry)
 }
 
-function pinVolumeFromTree(node: TreeNode) {
+function folderEntryFromTreeNode(node: TreeNode | undefined): ExplorerNavFolder | null {
+  if (!node) return null
+  const key = String(node.key ?? '')
+  if (key === 'thisPc') {
+    return {
+      id: 'thispc',
+      label: typeof node.label === 'string' ? node.label : 'This PC',
+      path: '/',
+      icon: typeof node.icon === 'string' ? node.icon : 'mdi:monitor',
+    }
+  }
   const path = node.data?.path
-  if (typeof path !== 'string') return
-  pinFromSpecial({
-    id: `pin:${path}`,
-    label: String(node.label ?? path),
+  if (typeof path !== 'string' || !path.startsWith('/')) return null
+  return {
+    id: `nav:${path}`,
+    label: typeof node.label === 'string' ? node.label : path,
     path,
     icon: typeof node.icon === 'string' ? node.icon : 'mdi:harddisk',
+  }
+}
+
+function treePinVisible(node: TreeNode | undefined): boolean {
+  const e = folderEntryFromTreeNode(node)
+  return Boolean(e && !isPinned(e.path))
+}
+
+function pinTreeNode(node: TreeNode) {
+  const e = folderEntryFromTreeNode(node)
+  if (!e) return
+  pinFromSpecial({
+    id: `pin:${e.path}`,
+    label: e.label,
+    path: e.path,
+    icon: e.icon,
   })
 }
 
@@ -245,11 +295,17 @@ const shellFolderMenuItems = computed<MenuItem[]>(() => {
   ]
 })
 
-async function onShellFolderContextMenu(entry: ExplorerNavFolder, event: MouseEvent) {
+async function openNavFolderContextMenu(entry: ExplorerNavFolder, event: MouseEvent) {
   event.preventDefault()
   shellFolderCtxTarget.value = entry
   await nextTick()
   shellFolderCtxMenu.value?.show(event)
+}
+
+async function onTreeRowContextMenu(node: TreeNode | undefined, event: MouseEvent) {
+  const entry = folderEntryFromTreeNode(node)
+  if (!entry) return
+  await openNavFolderContextMenu(entry, event)
 }
 
 const hasPinnedFolders = computed(() => quickAccessPinsModel.value.length > 0)
@@ -262,7 +318,14 @@ const showBorderBeforeThisPc = computed(
 </script>
 
 <template>
-  <aside class="win11-explorer-nav-pane" aria-label="Navigation">
+  <aside
+    class="win11-explorer-nav-pane"
+    aria-label="Navigation"
+    :style="{
+      width: `${props.widthPx}px`,
+      flex: `0 0 ${props.widthPx}px`,
+    }"
+  >
     <div class="win11-explorer-nav-pane__scroll">
       <draggable
         v-model="quickAccessPinsModel"
@@ -277,6 +340,7 @@ const showBorderBeforeThisPc = computed(
             class="win11-explorer-nav-pane__node win11-explorer-nav-pane__quick-item"
             :title="element.path"
             @click="go(element.path)"
+            @contextmenu="openNavFolderContextMenu(element, $event)"
           >
             <Icon :name="element.icon ?? 'mdi:folder'" size="16" />
             <span class="win11-explorer-nav-pane__label">{{ element.label }}</span>
@@ -306,7 +370,7 @@ const showBorderBeforeThisPc = computed(
             class="win11-explorer-nav-pane__node win11-explorer-nav-pane__quick-item"
             :title="entry.path"
             @click="go(entry.path)"
-            @contextmenu="onShellFolderContextMenu(entry, $event)"
+            @contextmenu="openNavFolderContextMenu(entry, $event)"
           >
             <Icon :name="entry.icon ?? 'mdi:folder'" size="16" />
             <span class="win11-explorer-nav-pane__label">{{ entry.label }}</span>
@@ -334,21 +398,21 @@ const showBorderBeforeThisPc = computed(
           selection-mode="single"
           :selection-keys="selectedTreeKey ? { [selectedTreeKey]: true } : {}"
           @node-select="onNodeSelect"
+          @node-unselect="onNodeUnselect"
         >
           <template #default="slotProps">
-            <div class="win11-explorer-nav-pane__node">
+            <div
+              class="win11-explorer-nav-pane__node"
+              @contextmenu.prevent="onTreeRowContextMenu(slotProps.node, $event)"
+            >
               <Icon v-if="slotProps.node.icon" :name="slotProps.node.icon" size="16" />
               <span class="win11-explorer-nav-pane__label">{{ slotProps.node.label }}</span>
               <Icon
-                v-if="
-                  slotProps.node.data?.path &&
-                    !isPinned(slotProps.node.data.path) &&
-                    String(slotProps.node.key ?? '').startsWith('vol:')
-                "
+                v-if="treePinVisible(slotProps.node)"
                 name="mdi:pin-outline"
                 size="14"
                 class="win11-explorer-nav-pane__action"
-                @click.stop="pinVolumeFromTree(slotProps.node)"
+                @click.stop="pinTreeNode(slotProps.node)"
               />
             </div>
           </template>
@@ -384,12 +448,9 @@ const showBorderBeforeThisPc = computed(
 
   display: flex;
   flex-direction: column;
-  width: 248px;
-  flex: 0 0 248px;
   min-width: 0;
   min-height: 0;
   align-self: stretch;
-  border-right: 1px solid var(--win11-explorer-pane-divider);
   overflow: hidden;
 }
 
@@ -515,7 +576,7 @@ const showBorderBeforeThisPc = computed(
 
 .win11-explorer-nav-pane :deep(.p-tree-node-content) {
   border-radius: 4px;
-  padding: 3px 6px !important;
+  padding: 0 6px !important;
   min-height: 28px !important;
   margin: 0;
   gap: 4px !important;

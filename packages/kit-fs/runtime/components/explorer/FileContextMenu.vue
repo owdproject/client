@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IWindowController } from '@owdproject/core'
+import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 import type { MenuItem } from 'primevue/menuitem'
 
 const { t } = useI18n()
@@ -54,7 +55,10 @@ const items = ref<MenuItem[]>([
     label: t('fs.contextMenu.delete'),
     command: () => {
       props.window.fsExplorer.selectFiles([
-        `${props.window.fsExplorer.basePath.value}/${props.fileName}`,
+        explorerEntryAbsolutePath(
+          props.window.fsExplorer.basePath.value,
+          props.fileName,
+        ),
       ])
       props.window.fsExplorer.fsController.deleteSelectedFiles()
     },

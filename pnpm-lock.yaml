@@ -209,6 +209,9 @@ importers:
       '@owdproject/core':
         specifier: ^3.1.5
         version: link:../../packages/core
+      '@owdproject/kit-explorer':
+        specifier: workspace:*
+        version: link:../../packages/kit-explorer
       '@owdproject/kit-fs':
         specifier: workspace:*
         version: link:../../packages/kit-fs
@@ -219,11 +222,29 @@ importers:
         specifier: ^3.1.4
         version: link:../../packages/core
 
+  apps/app-terminal:
+    dependencies:
+      '@owdproject/core':
+        specifier: ^3.1.4
+        version: link:../../packages/core
+
   apps/app-todo:
     dependencies:
       '@owdproject/core':
         specifier: ^3.1.0
         version: link:../../packages/core
+
+  apps/app-wasmboy:
+    dependencies:
+      '@owdproject/core':
+        specifier: ^3.1.0
+        version: link:../../packages/core
+      json-arraybuffer-reviver:
+        specifier: ^2.0.0
+        version: 2.0.0
+      wasmboy:
+        specifier: 0.7.1
+        version: 0.7.1
 
   apps/app-youtube:
     dependencies:
@@ -242,6 +263,9 @@ importers:
       '@owdproject/core':
         specifier: ^3.1.5
         version: link:../packages/core
+      '@owdproject/theme-nova':
+        specifier: workspace:*
+        version: link:../themes/theme-nova
       '@owdproject/theme-win11':
         specifier: workspace:*
         version: link:../themes/theme-win11
@@ -405,6 +429,33 @@ importers:
       vue3-carousel:
         specifier: ^0.15.0
         version: 0.15.1(vue@3.5.33(typescript@6.0.3))
+
+  themes/theme-nova:
+    dependencies:
+      '@owdproject/core':
+        specifier: ^3.1.5
+        version: link:../../packages/core
+      '@owdproject/kit-explorer':
+        specifier: workspace:*
+        version: link:../../packages/kit-explorer
+      '@owdproject/kit-fs':
+        specifier: workspace:*
+        version: link:../../packages/kit-fs
+      '@owdproject/kit-theme':
+        specifier: workspace:*
+        version: link:../../packages/kit-theme
+      '@primeuix/themes':
+        specifier: ^2.0.3
+        version: 2.0.3
+      deepmerge:
+        specifier: ^4.3.1
+        version: 4.3.1
+      nuxt:
+        specifier: ^4.0.0
+        version: 4.4.4(@babel/core@7.29.0)(@babel/plugin-proposal-decorators@7.28.0(@babel/core@7.29.0))(@babel/plugin-syntax-jsx@7.27.1(@babel/core@7.29.0))(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.33)(cac@6.7.14)(db0@0.3.4)(eslint@10.3.0(jiti@2.6.1))(ioredis@5.10.1)(lightningcss@1.32.0)(magicast@0.5.2)(optionator@0.9.4)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.33(typescript@6.0.3)))(rolldown@1.0.0-rc.17)(rollup-plugin-visualizer@7.0.1(rolldown@1.0.0-rc.17)(rollup@4.60.2))(rollup@4.60.2)(sass@1.99.0)(terser@5.44.0)(typescript@6.0.3)(vite@8.0.10(@types/node@25.6.0)(esbuild@0.28.0)(jiti@2.6.1)(sass@1.99.0)(terser@5.44.0)(yaml@2.8.2))(vue-tsc@3.2.7(typescript@6.0.3))(yaml@2.8.2)
+      vuedraggable:
+        specifier: ^4.1.0
+        version: 4.1.0(vue@3.5.33(typescript@6.0.3))
 
   themes/theme-win11:
     dependencies:
@@ -1116,6 +1167,10 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
+
+  '@bitauth/libauth@3.0.0':
+    resolution: {integrity: sha512-3yoL31XpnhAnf5nDVMFk4xPqebxDwXrgYAwpa31ARJnV5A/eXWlpNYvCd6FTZPFM4VvKfjCBi+jRCrw1hOZ0Jg==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   '@bomb.sh/tab@0.0.11':
     resolution: {integrity: sha512-RSqyreeicYBALcMaNxIUJTBknftXsyW45VRq5gKDNwKroh0Re5SDoWwXZaphb+OTEzVdpm/BA8Uq6y0P+AtVYw==}
@@ -2084,9 +2139,6 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
-
-  '@jridgewell/trace-mapping@0.3.30':
-    resolution: {integrity: sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q==}
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
@@ -5526,6 +5578,10 @@ packages:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
 
+  audiobuffer-to-wav@https://codeload.github.com/torch2424/audiobuffer-to-wav/tar.gz/8878a20c5cc7e457b113dabfb1781ad4178f9c62:
+    resolution: {tarball: https://codeload.github.com/torch2424/audiobuffer-to-wav/tar.gz/8878a20c5cc7e457b113dabfb1781ad4178f9c62}
+    version: 1.0.0
+
   autoprefixer@10.4.21:
     resolution: {integrity: sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==}
     engines: {node: ^10 || ^12 || >=14}
@@ -7222,6 +7278,9 @@ packages:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
 
+  idb@2.1.3:
+    resolution: {integrity: sha512-1He6QAuavrD38HCiJasi4lEEK87Y22ldFuM+ZHkp433n4Fd5jXjWKutClYFp8w4mgx3zgrjnWxL8dpjMzcQ+WQ==}
+
   identity-obj-proxy@3.0.0:
     resolution: {integrity: sha512-00n6YnVHKrinT9t0d9+5yZC6UBNJANpYEQvL2LlX6Ab9lnmxzIRcEmTPuyGScvl1+jKuCICX1Z0Ab1pPKKdikA==}
     engines: {node: '>=4'}
@@ -7620,6 +7679,9 @@ packages:
     resolution: {integrity: sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA==}
     engines: {node: '>=6'}
     hasBin: true
+
+  json-arraybuffer-reviver@2.0.0:
+    resolution: {integrity: sha512-wWEAnxKpD8y0Mc0sgc5XTcU05Lw6cX3QnH4y5pSZs0U4CMFMin1nnsK4wbHoL0wz/ApazGEs4SPaWjNHl1DRaQ==}
 
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
@@ -8575,6 +8637,9 @@ packages:
   perfect-debounce@2.1.0:
     resolution: {integrity: sha512-LjgdTytVFXeUgtHZr9WYViYSM/g8MkcTPYDlPa3cDqMirHjKiSZPYd6DoL7pK8AJQr+uWkQvCjHNdiMqsrJs+g==}
 
+  performance-now@2.1.0:
+    resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
+
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -9087,6 +9152,9 @@ packages:
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
 
+  raf@3.4.1:
+    resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
+
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
@@ -9224,6 +9292,9 @@ packages:
   responselike@4.0.2:
     resolution: {integrity: sha512-cGk8IbWEAnaCpdAt1BHzJ3Ahz5ewDJa0KseTsE3qIRMJ3C698W8psM7byCeWVpd/Ha7FUYzuRVzXoKoM6nRUbA==}
     engines: {node: '>=20'}
+
+  responsive-gamepad@1.1.0:
+    resolution: {integrity: sha512-njsJuKvany9eYjywXm8iorTeXeAAPqwMNaRWOo8jlh0iQboXgGPf6Z6bLGntELrfU+vR94jTPJYRW0Zzb2gaRA==}
 
   restore-cursor@3.1.0:
     resolution: {integrity: sha512-l+sSefzHpj5qimhFSE5a8nufZYAM3sBSVMAPtYkmC+4EH2anSGaEMXSD0izRQbu9nfyQ9y5JrVmp7E8oZrUjvA==}
@@ -10673,6 +10744,9 @@ packages:
   walker@1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
 
+  wasmboy@0.7.1:
+    resolution: {integrity: sha512-qgA3bIFAqioYs8kYXtsanIvedgZlZQf382zs3gNlZHIItsAnRzV70/Vp6cJxbK4FyaiG58ah8/g7OW3orrs9Lg==}
+
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
@@ -11803,6 +11877,8 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
+  '@bitauth/libauth@3.0.0': {}
+
   '@bomb.sh/tab@0.0.11(cac@6.7.14)(citty@0.1.6)':
     optionalDependencies:
       cac: 6.7.14
@@ -12591,12 +12667,12 @@ snapshots:
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/remapping@2.3.5':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -12606,11 +12682,6 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
-
-  '@jridgewell/trace-mapping@0.3.30':
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
@@ -15038,10 +15109,10 @@ snapshots:
       '@rollup/pluginutils': 5.3.0(rollup@4.55.2)
       commondir: 1.0.1
       estree-walker: 2.0.2
-      fdir: 6.5.0(picomatch@4.0.3)
+      fdir: 6.5.0(picomatch@4.0.4)
       is-reference: 1.2.1
       magic-string: 0.30.21
-      picomatch: 4.0.3
+      picomatch: 4.0.4
     optionalDependencies:
       rollup: 4.55.2
 
@@ -15159,7 +15230,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
       estree-walker: 2.0.2
-      picomatch: 4.0.3
+      picomatch: 4.0.4
     optionalDependencies:
       rollup: 4.55.2
 
@@ -15167,7 +15238,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
       estree-walker: 2.0.2
-      picomatch: 4.0.3
+      picomatch: 4.0.4
     optionalDependencies:
       rollup: 4.60.2
 
@@ -16223,7 +16294,7 @@ snapshots:
       birpc: 2.9.0
       hookable: 5.5.3
       mitt: 3.0.1
-      perfect-debounce: 2.0.0
+      perfect-debounce: 2.1.0
       speakingurl: 14.0.1
       superjson: 2.2.2
 
@@ -16258,7 +16329,7 @@ snapshots:
     dependencies:
       '@volar/language-core': 2.4.28
       '@vue/compiler-dom': 3.5.27
-      '@vue/shared': 3.5.27
+      '@vue/shared': 3.5.33
       alien-signals: 3.1.2
       muggle-string: 0.4.1
       path-browserify: 1.0.1
@@ -16635,6 +16706,8 @@ snapshots:
   asynckit@0.4.0: {}
 
   at-least-node@1.0.0: {}
+
+  audiobuffer-to-wav@https://codeload.github.com/torch2424/audiobuffer-to-wav/tar.gz/8878a20c5cc7e457b113dabfb1781ad4178f9c62: {}
 
   autoprefixer@10.4.21(postcss@8.5.6):
     dependencies:
@@ -17025,7 +17098,7 @@ snapshots:
   caniuse-api@3.0.0:
     dependencies:
       browserslist: 4.28.2
-      caniuse-lite: 1.0.30001765
+      caniuse-lite: 1.0.30001791
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
 
@@ -17976,8 +18049,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.15.0
-      acorn-jsx: 5.3.2(acorn@8.15.0)
+      acorn: 8.16.0
+      acorn-jsx: 5.3.2(acorn@8.16.0)
       eslint-visitor-keys: 3.4.3
 
   esprima@4.0.1: {}
@@ -18176,7 +18249,7 @@ snapshots:
   fix-dts-default-cjs-exports@1.0.1:
     dependencies:
       magic-string: 0.30.21
-      mlly: 1.8.0
+      mlly: 1.8.2
       rollup: 4.55.2
 
   flat-cache@4.0.1:
@@ -18343,9 +18416,9 @@ snapshots:
     dependencies:
       citty: 0.1.6
       consola: 3.4.2
-      defu: 6.1.4
+      defu: 6.1.7
       node-fetch-native: 1.6.7
-      nypm: 0.6.2
+      nypm: 0.6.6
       pathe: 2.0.3
 
   giget@3.2.0: {}
@@ -18602,6 +18675,8 @@ snapshots:
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
+
+  idb@2.1.3: {}
 
   identity-obj-proxy@3.0.0:
     dependencies:
@@ -19166,6 +19241,10 @@ snapshots:
 
   jsesc@3.1.0: {}
 
+  json-arraybuffer-reviver@2.0.0:
+    dependencies:
+      '@bitauth/libauth': 3.0.0
+
   json-buffer@3.0.1: {}
 
   json-parse-even-better-errors@2.3.1: {}
@@ -19432,16 +19511,16 @@ snapshots:
       clipboardy: 4.0.0
       consola: 3.4.2
       crossws: 0.3.5
-      defu: 6.1.4
+      defu: 6.1.7
       get-port-please: 3.2.0
-      h3: 1.15.5
+      h3: 1.15.11
       http-shutdown: 1.2.2
       jiti: 2.6.1
-      mlly: 1.8.0
+      mlly: 1.8.2
       node-forge: 1.3.1
       pathe: 1.1.2
       std-env: 3.10.0
-      ufo: 1.6.3
+      ufo: 1.6.4
       untun: 0.1.3
       uqr: 0.1.2
 
@@ -19712,7 +19791,7 @@ snapshots:
       chokidar: 5.0.0
       citty: 0.1.6
       compatx: 0.2.0
-      confbox: 0.2.2
+      confbox: 0.2.4
       consola: 3.4.2
       cookie-es: 2.0.1
       croner: 9.1.0
@@ -19727,14 +19806,14 @@ snapshots:
       exsolve: 1.0.8
       globby: 16.1.0
       gzip-size: 7.0.0
-      h3: 1.15.5
+      h3: 1.15.11
       hookable: 5.5.3
       httpxy: 0.1.7
       ioredis: 5.9.2
       jiti: 2.6.1
       klona: 2.0.6
       knitwork: 1.3.0
-      listhen: 1.9.0
+      listhen: 1.10.0
       magic-string: 0.30.21
       magicast: 0.5.1
       mime: 4.1.0
@@ -19763,10 +19842,10 @@ snapshots:
       unenv: 2.0.0-rc.24
       unimport: 5.6.0
       unplugin-utils: 0.3.1
-      unstorage: 1.17.4(db0@0.3.4)(ioredis@5.9.2)
+      unstorage: 1.17.5(db0@0.3.4)(ioredis@5.9.2)
       untyped: 2.0.0
       unwasm: 0.5.3
-      youch: 4.1.0-beta.13
+      youch: 4.1.1
       youch-core: 0.3.3
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -20899,6 +20978,8 @@ snapshots:
 
   perfect-debounce@2.1.0: {}
 
+  performance-now@2.1.0: {}
+
   picocolors@1.1.1: {}
 
   picomatch@2.3.1: {}
@@ -20925,7 +21006,7 @@ snapshots:
   pkg-types@1.3.1:
     dependencies:
       confbox: 0.1.8
-      mlly: 1.8.0
+      mlly: 1.8.2
       pathe: 2.0.3
 
   pkg-types@2.3.0:
@@ -21379,6 +21460,10 @@ snapshots:
 
   radix3@1.1.2: {}
 
+  raf@3.4.1:
+    dependencies:
+      performance-now: 2.1.0
+
   randombytes@2.1.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -21517,6 +21602,8 @@ snapshots:
   responselike@4.0.2:
     dependencies:
       lowercase-keys: 3.0.0
+
+  responsive-gamepad@1.1.0: {}
 
   restore-cursor@3.1.0:
     dependencies:
@@ -21993,7 +22080,7 @@ snapshots:
 
   stylehacks@7.0.6(postcss@8.5.6):
     dependencies:
-      browserslist: 4.28.1
+      browserslist: 4.28.2
       postcss: 8.5.6
       postcss-selector-parser: 7.1.0
 
@@ -22351,7 +22438,7 @@ snapshots:
 
   unctx@2.4.1:
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.16.0
       estree-walker: 3.0.3
       magic-string: 0.30.21
       unplugin: 2.3.11
@@ -22379,7 +22466,7 @@ snapshots:
 
   unhead@2.1.2:
     dependencies:
-      hookable: 6.0.1
+      hookable: 6.1.1
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
@@ -22447,12 +22534,12 @@ snapshots:
   unplugin-utils@0.2.5:
     dependencies:
       pathe: 2.0.3
-      picomatch: 4.0.3
+      picomatch: 4.0.4
 
   unplugin-utils@0.3.1:
     dependencies:
       pathe: 2.0.3
-      picomatch: 4.0.3
+      picomatch: 4.0.4
 
   unplugin-vue-components@28.4.1(@babel/parser@7.29.3)(@nuxt/kit@3.21.0(magicast@0.5.2))(vue@3.5.33(typescript@6.0.3)):
     dependencies:
@@ -22579,6 +22666,20 @@ snapshots:
     optionalDependencies:
       db0: 0.3.4
       ioredis: 5.10.1
+
+  unstorage@1.17.5(db0@0.3.4)(ioredis@5.9.2):
+    dependencies:
+      anymatch: 3.1.3
+      chokidar: 5.0.0
+      destr: 2.0.5
+      h3: 1.15.11
+      lru-cache: 11.3.5
+      node-fetch-native: 1.6.7
+      ofetch: 1.5.1
+      ufo: 1.6.4
+    optionalDependencies:
+      db0: 0.3.4
+      ioredis: 5.9.2
 
   untun@0.1.3:
     dependencies:
@@ -22823,7 +22924,7 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
       postcss: 8.5.13
-      rollup: 4.55.2
+      rollup: 4.60.2
       tinyglobby: 0.2.16
     optionalDependencies:
       '@types/node': 25.0.9
@@ -22840,7 +22941,7 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
       postcss: 8.5.13
-      rollup: 4.55.2
+      rollup: 4.60.2
       tinyglobby: 0.2.16
     optionalDependencies:
       '@types/node': 25.6.0
@@ -23124,6 +23225,13 @@ snapshots:
     dependencies:
       makeerror: 1.0.12
 
+  wasmboy@0.7.1:
+    dependencies:
+      audiobuffer-to-wav: https://codeload.github.com/torch2424/audiobuffer-to-wav/tar.gz/8878a20c5cc7e457b113dabfb1781ad4178f9c62
+      idb: 2.1.3
+      raf: 3.4.1
+      responsive-gamepad: 1.1.0
+
   wcwidth@1.0.1:
     dependencies:
       defaults: 1.0.4
@@ -23279,7 +23387,7 @@ snapshots:
       '@poppinss/colors': 4.1.5
       '@poppinss/dumper': 0.6.5
       '@speed-highlight/core': 1.2.14
-      cookie-es: 2.0.0
+      cookie-es: 2.0.1
       youch-core: 0.3.3
 
   youch@4.1.1:

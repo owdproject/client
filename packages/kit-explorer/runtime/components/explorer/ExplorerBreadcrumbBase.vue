@@ -137,7 +137,7 @@ function onPathCommit() {
 
 .explorer-breadcrumb-base__input,
 .explorer-breadcrumb-base__search {
-  min-height: 36px;
+  min-height: 34px;
   min-width: 0;
   margin: 8px 8px 8px 0;
 }
