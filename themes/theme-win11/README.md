@@ -13,7 +13,7 @@ This theme for Open Web Desktop recreates a Windows 11-inspired desktop experien
 ## Installation
 
 ```bash
-owd install-theme @owdproject/theme-win11
+desktop add theme-win11
 ```
 
 ## Usage

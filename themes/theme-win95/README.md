@@ -13,7 +13,7 @@ This theme for Open Web Desktop recreates the old fashioned Windows 95 UI.
 ## Installation
 
 ```bash
-owd install-theme @owdproject/theme-win95
+desktop add theme-win95
 ```
 
 ## Usage

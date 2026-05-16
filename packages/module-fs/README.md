@@ -18,7 +18,7 @@ This module enables a filesystem allowing [ZenFS](https://github.com/zen-fs/core
 ## Installation
 
 ```bash
-owd install-module @owdproject/module-fs
+desktop add module-fs
 ```
 
 ## Configuration

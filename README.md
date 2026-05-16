@@ -51,22 +51,26 @@ Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and e
 
 Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) tag on GitHub.
 
-For example, to install the To-do app:
+For example, to add the To-do app:
 
 ```bash
-owd install-app @owdproject/app-todo
+desktop add app-todo
+# from npm only:
+desktop add app-todo --npm
 ```
 
-This will install the package and automatically register it in your desktop configuration.
+This installs (or clones) the package and registers it in `desktop/owd.config.ts`. The `owd` command is a deprecated alias for `desktop`.
 
 ### 🧩 Install a module
 
 Discover modules by searching the [owd-modules](https://github.com/topics/owd-modules) tag on GitHub.
 
-For example, to install the session persistence module:
+For example, to add Pinia persistence backed by IndexedDB (`idb-keyval`):
 
 ```bash
-owd install-module @owdproject/module-pinia-localforage
+desktop add module-persistence
+# or your fork:
+desktop add module-persistence --from your-github-user
 ```
 
 ### 🖥️ Install a theme
@@ -77,10 +81,10 @@ Each theme provides a unique look and feel while maintaining consistent function
 Discover themes by searching the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
 
 ```bash
-owd install-theme @owdproject/theme-gnome
+desktop add theme-gnome
 ```
 
-### Note on `owd install-app` / Nx executors
+### Note on `desktop add --npm` / Nx executors
 
 The published `@owdproject/nx@0.0.3` package references executor JSON schemas that were missing from the npm tarball, which caused `Unable to resolve @owdproject/nx:install-app` / missing `schema.json`. This repository carries a **pnpm patch** (`patches/@owdproject__nx@0.0.3.patch`) that adds those files. Long-term, republishing `@owdproject/nx` with the schemas included (e.g. `0.0.4`) would remove the need for the patch.
 

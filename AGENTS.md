@@ -89,7 +89,7 @@ client/
 - **`defineDesktopConfig`**: usato in `owd.config.ts` (config statica lato build).
 - **`defineDesktopApp`**: usato nei **plugin** delle app per registrare un’applicazione nel `ApplicationManager` (id, titolo, finestre, comandi, entries).
 
-**CLI `owd`** (`bin/owd.js`): wrapper verso Nx (`install-app`, `install-module`, `install-theme`) per aggiungere pacchetti e aggiornare la config — flusso documentato anche nel README del repo.
+**CLI `desktop`** (`bin/desktop.js`, shared `bin/cli.js`): comando principale per aggiungere app/moduli/temi (`desktop add …`, clone workspace o `--npm` via Nx). **`owd`** (`bin/owd.js`) resta come alias deprecato.
 
 ### `apps/*` — applicazioni desktop (moduli Nuxt)
 
