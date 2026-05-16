@@ -44,6 +44,7 @@ function buildHelp(name) {
 ${name} — add apps, modules, and themes to your Open Web Desktop
 
 USAGE
+  ${name} ui              Interactive dashboard (btop-style TUI)
   ${name} add <package> [options]
   ${name} add <kind> <name> [options]
 
@@ -427,12 +428,18 @@ export async function runCli(name, argv, options = {}) {
   const cmd = _[0]
   let pkgInfo
 
+  if (cmd === 'ui') {
+    const { runTui } = await import('./tui.js')
+    await runTui(name)
+    return
+  }
+
   if (cmd === 'add') {
     pkgInfo = parseAddArgs(_.slice(1))
   } else if (LEGACY_COMMANDS[cmd]) {
     pkgInfo = parseLegacyInstall(cmd, _.slice(1))
   } else {
-    fail(`Unknown command: ${cmd}`, `Use \`${name} add <package>\`.`)
+    fail(`Unknown command: ${cmd}`, `Use \`${name} ui\` or \`${name} add <package>\`.`)
   }
 
   const { pkgName, shortName, kind } = pkgInfo

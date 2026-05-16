@@ -64,7 +64,8 @@
     "sass": "^1.99.0",
     "shellwords": "^1.1.1",
     "vue-resizable": "^2.1.7",
-    "getopts": "^2.3.0"
+    "getopts": "^2.3.0",
+    "neo-blessed": "^0.2.0"
   },
   "optionalDependencies": {
     "html2canvas": "^1.4.1"
