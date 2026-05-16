@@ -40,6 +40,7 @@
     }
   },
   "bin": {
+    "desktop": "bin/desktop.js",
     "owd": "bin/owd.js"
   },
   "dependencies": {
