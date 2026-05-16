@@ -9,12 +9,16 @@
     "dev": "nuxt dev --host",
     "generate": "nuxt generate --dev",
     "postinstall": "nuxt prepare",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "desktop": "desktop",
+    "owd": "owd"
   },
   "dependencies": {
     "@owdproject/app-about": "^0.1.4",
+    "@owdproject/app-classic-audioplayer": "workspace:*",
     "@owdproject/app-todo": "workspace:^",
     "@owdproject/core": "^3.1.5",
+    "@owdproject/module-persistence": "workspace:*",
     "@owdproject/theme-nova": "workspace:*",
     "@owdproject/theme-win11": "workspace:*",
     "@owdproject/theme-win95": "workspace:*"

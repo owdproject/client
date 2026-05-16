@@ -20,7 +20,9 @@
     "generate": "nx run desktop:generate",
     "prepare:modules": "pnpm -r --filter \"./apps/*\" --filter \"./themes/*\" --if-present run dev:prepare",
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
-    "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare"
+    "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
+    "desktop": "node ./packages/core/bin/desktop.js",
+    "owd": "node ./packages/core/bin/owd.js"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
