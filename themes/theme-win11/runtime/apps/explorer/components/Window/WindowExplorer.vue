@@ -57,12 +57,12 @@ props.window.setMenu(explorerMenu)
     <template #message>
       <div>
         <p>
-          Open Web Desktop (OWD) is a framework designed to provide<br />
-          a simple environment for building web desktop experiences.
+          Windows 11 theme for OWD desktop clients.<br />
+          Maintained by Diego Villa (<a href="https://github.com/dxlliv" target="_blank">@dxlliv</a>).
         </p>
         <p class="mt-2">
-          <a href="https://github.com/owdproject/theme-win95" target="_blank">
-            github.com/owdproject/theme-win95
+          <a href="https://github.com/dxlliv/theme-win11" target="_blank">
+            github.com/dxlliv/theme-win11
           </a>
         </p>
       </div>

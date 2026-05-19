@@ -1,13 +1,16 @@
 {
   "name": "@owdproject/core",
   "version": "3.1.5",
+  "description": "Nuxt Desktop — Nuxt module for browser desktop experiences (windows, shell, apps)",
   "keywords": [
-    "web",
-    "desktop",
-    "vue",
     "nuxt",
+    "nuxt-module",
+    "nuxt-desktop",
+    "desktop",
     "web-desktop",
-    "web-os"
+    "vue",
+    "owd",
+    "open-web-desktop"
   ],
   "homepage": "https://github.com/owdproject/client#readme",
   "bugs": {
@@ -24,13 +27,40 @@
   },
   "type": "module",
   "types": "types/index.d.ts",
+  "files": [
+    "bin",
+    "dist",
+    "runtime",
+    "types",
+    "index.ts",
+    "module.ts",
+    "package.json",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "pnpm run dev:prepare && cd playground && nuxt dev",
+    "dev:build": "nuxt build playground",
+    "dev:prepare": "nuxt-module-build build --stub && cd playground && pnpm exec nuxt prepare",
+    "build:module": "nuxt-module-build build",
+    "prepack": "nuxt-module-build build"
+  },
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
       "default": "./index.ts"
     },
-    "./module": "./module.ts",
-    "./nuxt": "./module.ts",
+    "./module": {
+      "types": "./dist/types.d.mts",
+      "development": "./module.ts",
+      "import": "./module.ts",
+      "default": "./module.ts"
+    },
+    "./nuxt": {
+      "types": "./dist/types.d.mts",
+      "development": "./module.ts",
+      "import": "./module.ts",
+      "default": "./module.ts"
+    },
     "./package.json": "./package.json",
     "./runtime/*": {
       "types": "./runtime/*",
@@ -69,5 +99,13 @@
   },
   "optionalDependencies": {
     "html2canvas": "^1.4.1"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^3.2.4",
+    "@nuxt/module-builder": "^1.0.2",
+    "@nuxt/schema": "^4.4.4",
+    "@owdproject/theme-win95": "workspace:*",
+    "typescript": "~5.8.3",
+    "vue-tsc": "^2.2.10"
   }
 }

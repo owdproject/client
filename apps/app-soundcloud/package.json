@@ -1,0 +1,20 @@
+{
+  "name": "@owdproject/app-soundcloud",
+  "version": "0.0.3",
+  "description": "SoundCloud App for your Open Web Desktop client",
+  "keywords": [
+    "owd-client",
+    "owd-apps",
+    "owd-modules",
+    "soundcloud"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/owdproject/app-soundcloud",
+  "author": {
+    "name": "Open Web Desktop Team",
+    "url": "https://github.com/owdproject"
+  },
+  "peerDependencies": {
+    "@owdproject/core": "^3.1.4"
+  }
+}

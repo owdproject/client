@@ -1,88 +1,238 @@
 import { execSync, spawn } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import {
+  existsSync,
+  readFileSync,
+  mkdirSync,
+  writeFileSync,
+  unlinkSync,
+  appendFileSync,
+} from 'node:fs'
+import { join } from 'node:path'
+import { owdDir } from './workspace.js'
 
-export function findDevProcess() {
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export function devPidPath(workspaceRoot) {
+  return join(owdDir(workspaceRoot), 'dev.pid')
+}
+
+export function devLogPath(workspaceRoot) {
+  return join(owdDir(workspaceRoot), 'dev.log')
+}
+
+function readPidFile(workspaceRoot) {
+  const path = devPidPath(workspaceRoot)
+  if (!existsSync(path)) return null
+  const pid = Number.parseInt(readFileSync(path, 'utf8').trim(), 10)
+  if (!Number.isFinite(pid)) return null
   try {
-    const out = execSync('pgrep -af "nuxt dev|nx run desktop:serve"', {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    })
-    const line = out.split('\n').find((l) => l.includes('nuxt') || l.includes('desktop'))
-    if (!line) return null
-    const pid = Number.parseInt(line.trim().split(/\s+/)[0], 10)
-    return Number.isFinite(pid) ? { pid, cmdline: line } : null
+    process.kill(pid, 0)
+    return pid
   } catch {
+    try {
+      unlinkSync(path)
+    } catch {
+      /* ignore */
+    }
     return null
   }
 }
 
+export function findDevProcess() {
+  const patterns = [
+    'nuxt dev',
+    'nuxi dev',
+    'nx run desktop:serve',
+    'node.*\\.nuxt',
+    'desktop.*nuxt',
+  ]
+
+  for (const pattern of patterns) {
+    try {
+      const out = execSync(`pgrep -af ${JSON.stringify(pattern)}`, {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      })
+      for (const line of out.split('\n').filter(Boolean)) {
+        if (line.includes('pgrep')) continue
+        const pid = Number.parseInt(line.trim().split(/\s+/)[0], 10)
+        if (Number.isFinite(pid)) return { pid, cmdline: line.trim() }
+      }
+    } catch {
+      /* try next pattern */
+    }
+  }
+
+  return null
+}
+
+export function findProcessOnPort(port) {
+  try {
+    const out = execSync(`ss -tlnp 2>/dev/null | grep :${port} || lsof -i :${port} -t 2>/dev/null | head -1`, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+    const pidMatch = out.match(/pid=(\d+)/) ?? out.match(/^(\d+)/m)
+    if (pidMatch) {
+      const pid = Number.parseInt(pidMatch[1], 10)
+      if (Number.isFinite(pid)) return pid
+    }
+  } catch {
+    /* ignore */
+  }
+  return null
+}
+
 export function readProcessStats(pid) {
   if (!pid || !existsSync(`/proc/${pid}/status`)) {
-    return { cpu: 0, memMb: 0, threads: 0 }
+    return { memMb: 0, threads: 0, rssKb: 0 }
   }
 
   try {
     const status = readFileSync(`/proc/${pid}/status`, 'utf8')
     const vmRss = status.match(/^VmRSS:\s+(\d+)/m)?.[1]
     const threads = status.match(/^Threads:\s+(\d+)/m)?.[1]
+    const rssKb = vmRss ? Number(vmRss) : 0
     return {
-      cpu: 0,
-      memMb: vmRss ? Math.round(Number(vmRss) / 1024) : 0,
+      memMb: rssKb ? Math.round(rssKb / 1024) : 0,
+      rssKb,
       threads: threads ? Number(threads) : 0,
     }
   } catch {
-    return { cpu: 0, memMb: 0, threads: 0 }
+    return { memMb: 0, threads: 0, rssKb: 0 }
   }
+}
+
+const SPARK_CHARS = '▁▂▃▄▅▆▇█'
+
+/** @param {number[]} samples RSS in MiB */
+export function formatSparkline(samples) {
+  if (!samples.length) return '—'
+  const min = Math.min(...samples)
+  const max = Math.max(...samples)
+  const span = max - min || 1
+  return samples
+    .map((v) => {
+      const idx = Math.min(
+        SPARK_CHARS.length - 1,
+        Math.floor(((v - min) / span) * (SPARK_CHARS.length - 1)),
+      )
+      return SPARK_CHARS[idx]
+    })
+    .join('')
+}
+
+/** @param {number} value @param {number} max @param {number} [width] */
+export function formatBar(value, max, width = 12) {
+  if (max <= 0) return '░'.repeat(width)
+  const filled = Math.round((value / max) * width)
+  return '█'.repeat(Math.min(width, filled)) + '░'.repeat(Math.max(0, width - filled))
 }
 
 export async function probeDevServer(port) {
   const url = `http://127.0.0.1:${port}/`
   try {
     const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 800)
+    const timer = setTimeout(() => controller.abort(), 1200)
     const res = await fetch(url, { signal: controller.signal, redirect: 'manual' })
     clearTimeout(timer)
-    return { up: res.ok || res.status < 500, status: res.status, url }
+    return { up: true, status: res.status, url }
   } catch {
     return { up: false, status: 0, url }
   }
 }
 
-export async function getClientStatus(port) {
-  const proc = findDevProcess()
+export async function getClientStatus(workspaceRoot, port) {
   const http = await probeDevServer(port)
-  const stats = proc ? readProcessStats(proc.pid) : { cpu: 0, memMb: 0, threads: 0 }
+  const fromFile = readPidFile(workspaceRoot)
+  const fromPg = findDevProcess()
+  const portPid = findProcessOnPort(port)
+
+  const pid = fromPg?.pid ?? portPid ?? fromFile ?? null
+  const stats = pid ? readProcessStats(pid) : { memMb: 0, threads: 0 }
+  const running = http.up || Boolean(fromPg) || Boolean(portPid) || Boolean(fromFile)
 
   return {
-    running: Boolean(proc) || http.up,
-    pid: proc?.pid ?? null,
+    running,
+    pid,
     http,
     stats,
     port,
+    cmdline: fromPg?.cmdline ?? null,
   }
 }
 
 let devChild = null
 
 export function startDev(workspaceRoot) {
-  if (devChild) return devChild
+  if (devChild?.pid) {
+    try {
+      process.kill(devChild.pid, 0)
+      return devChild
+    } catch {
+      devChild = null
+    }
+  }
+
+  mkdirSync(owdDir(workspaceRoot), { recursive: true })
+  const logPath = devLogPath(workspaceRoot)
+
   devChild = spawn('pnpm', ['run', 'dev'], {
     cwd: workspaceRoot,
     detached: true,
-    stdio: 'ignore',
+    stdio: ['ignore', 'pipe', 'pipe'],
   })
+
+  const appendLog = (chunk) => {
+    try {
+      appendFileSync(logPath, chunk)
+    } catch {
+      /* ignore */
+    }
+  }
+  devChild.stdout?.on('data', appendLog)
+  devChild.stderr?.on('data', appendLog)
+
   devChild.unref()
+  writeFileSync(devPidPath(workspaceRoot), String(devChild.pid))
   return devChild
 }
 
-export function stopDev(pid) {
-  if (!pid) return false
-  try {
-    process.kill(pid, 'SIGTERM')
-    return true
-  } catch {
-    return false
+export function stopDev(workspaceRoot, pid) {
+  const targets = new Set([pid, readPidFile(workspaceRoot)].filter(Boolean))
+
+  for (const p of targets) {
+    try {
+      process.kill(-p, 'SIGTERM')
+    } catch {
+      try {
+        process.kill(p, 'SIGTERM')
+      } catch {
+        /* ignore */
+      }
+    }
   }
+
+  try {
+    unlinkSync(devPidPath(workspaceRoot))
+  } catch {
+    /* ignore */
+  }
+
+  devChild = null
+  return targets.size > 0
+}
+
+export async function waitForDev(workspaceRoot, port, timeoutMs = 90_000) {
+  const started = Date.now()
+  while (Date.now() - started < timeoutMs) {
+    const status = await getClientStatus(workspaceRoot, port)
+    if (status.http.up) return status
+    await sleep(1500)
+  }
+  return getClientStatus(workspaceRoot, port)
 }
 
 export function runScript(workspaceRoot, script) {
@@ -91,4 +241,14 @@ export function runScript(workspaceRoot, script) {
     stdio: 'inherit',
     shell: false,
   })
+}
+
+/** Run dev in the foreground (default `desktop` command). */
+export function runDevForeground(workspaceRoot) {
+  const child = spawn('pnpm', ['run', 'dev'], {
+    cwd: workspaceRoot,
+    stdio: 'inherit',
+    shell: false,
+  })
+  child.on('exit', (code) => process.exit(code ?? 0))
 }

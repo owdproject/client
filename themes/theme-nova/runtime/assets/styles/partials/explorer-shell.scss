@@ -1,0 +1,21 @@
+.win11-explorer-shell {
+  :deep(.win11-explorer-content-pane) {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--win11-shell-text, #fff) 22%, transparent) transparent;
+  }
+
+  :deep(.win11-explorer-content-pane::-webkit-scrollbar) {
+    width: 8px;
+    height: 8px;
+  }
+
+  :deep(.win11-explorer-content-pane::-webkit-scrollbar-thumb) {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--win11-shell-text, #fff) 22%, transparent);
+  }
+
+  :deep(.p-datatable) {
+    border: none;
+    box-shadow: none;
+  }
+}

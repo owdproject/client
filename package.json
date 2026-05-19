@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",
-    "prepare:modules": "pnpm -r --filter \"./apps/*\" --filter \"./themes/*\" --if-present run dev:prepare",
+    "prepare:modules": "pnpm -r --filter \"./packages/core\" --filter \"./apps/*\" --filter \"./themes/*\" --if-present run dev:prepare",
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
     "desktop": "node ./packages/core/bin/desktop.js",

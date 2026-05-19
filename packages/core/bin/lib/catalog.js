@@ -14,8 +14,10 @@ import {
   fullName,
   shortName,
   inferKind,
+  isInstallableDesktopModule,
   owdDir,
 } from './workspace.js'
+import { hasLocalWorkspaceSource } from './install.js'
 
 const CACHE_TTL_MS = 60 * 60 * 1000
 
@@ -29,10 +31,18 @@ function readCache(workspaceRoot) {
   try {
     const data = JSON.parse(readFileSync(path, 'utf8'))
     if (Date.now() - data.fetchedAt > CACHE_TTL_MS) return null
-    return data.entries
+    const ageMin = Math.round((Date.now() - data.fetchedAt) / 60_000)
+    return { entries: data.entries, cacheAge: `${ageMin}m` }
   } catch {
     return null
   }
+}
+
+function formatCacheAge(fetchedAt) {
+  const ageMin = Math.round((Date.now() - fetchedAt) / 60_000)
+  if (ageMin < 1) return '<1m'
+  if (ageMin < 60) return `${ageMin}m`
+  return `${Math.round(ageMin / 60)}h`
 }
 
 function writeCache(workspaceRoot, entries) {
@@ -133,7 +143,8 @@ function scanLocal(workspaceRoot, kind) {
 
 export async function loadCatalog(workspaceRoot, settings) {
   const cached = readCache(workspaceRoot)
-  let remote = cached
+  let remote = cached?.entries ?? null
+  let cacheAge = cached?.cacheAge ?? null
 
   if (!remote) {
     remote = []
@@ -158,7 +169,11 @@ export async function loadCatalog(workspaceRoot, settings) {
       }
     }
 
-    if (remote.length) writeCache(workspaceRoot, remote)
+    if (remote.length) {
+      const at = Date.now()
+      writeCache(workspaceRoot, remote)
+      cacheAge = formatCacheAge(at)
+    }
   }
 
   const byName = new Map()
@@ -184,16 +199,22 @@ export async function loadCatalog(workspaceRoot, settings) {
     }
   }
 
-  return [...byName.values()].map((entry) => ({
+  const entries = [...byName.values()].map((entry) => ({
     ...entry,
     name: fullName(entry.shortName),
     kind: entry.kind ?? inferKind(entry.shortName),
   }))
+
+  return {
+    entries,
+    cacheAge: cacheAge ?? 'live',
+  }
 }
 
 export function filterCatalog(catalog, kind) {
   return catalog
     .filter((e) => e.kind === kind)
+    .filter((e) => kind !== 'module' || isInstallableDesktopModule(e.name))
     .sort((a, b) => {
       if (a.org === 'workspace' && b.org !== 'workspace') return -1
       if (b.org === 'workspace' && a.org !== 'workspace') return 1
@@ -201,7 +222,7 @@ export function filterCatalog(catalog, kind) {
     })
 }
 
-export function mergeInstalled(catalog, config, deps) {
+export function mergeInstalled(catalog, config, deps, workspaceRoot) {
   const installedApps = new Set(config.apps ?? [])
   const installedModules = new Set(config.modules ?? [])
   const activeTheme = config.theme
@@ -212,9 +233,14 @@ export function mergeInstalled(catalog, config, deps) {
     else if (entry.kind === 'module') installed = installedModules.has(entry.name)
     else if (entry.kind === 'theme') installed = activeTheme === entry.name
 
+    const localSource = workspaceRoot
+      ? hasLocalWorkspaceSource(workspaceRoot, entry.name)
+      : entry.org === 'workspace'
+
     return {
       ...entry,
       installed,
+      localSource,
       inPackageJson: deps.includes(entry.name),
       activeTheme: entry.kind === 'theme' && activeTheme === entry.name,
     }

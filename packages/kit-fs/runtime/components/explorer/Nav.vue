@@ -55,15 +55,18 @@ function onWindowNavDestroy() {
 
       <Minimize
         v-if="!windowController?.instanced || windowController?.isMinimizable"
-        @click="onWindowMinimize"
+        @mousedown.stop
+        @click.stop="onWindowMinimize"
       />
       <Maximize
         v-if="windowController?.isMaximizable"
-        @click="onWindowMaximize"
+        @mousedown.stop
+        @click.stop="onWindowMaximize"
       />
       <Close
         v-if="!windowController?.instanced || windowController?.isDestroyable"
-        @click="onWindowNavDestroy"
+        @mousedown.stop
+        @click.stop="onWindowNavDestroy"
       />
     </div>
   </CoreWindowNav>

@@ -1,0 +1,34 @@
+{
+  "name": "@owdproject/theme-nova",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Open Web Desktop theme (GitHub Sponsors)",
+  "homepage": "https://github.com/owdproject/theme-nova#readme",
+  "bugs": {
+    "url": "https://github.com/owdproject/theme-nova/issues"
+  },
+  "nx": {
+    "name": "theme-nova"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owdproject/theme-nova.git"
+  },
+  "license": "OWD-1.0-reserved",
+  "author": {
+    "name": "Open Web Desktop Team",
+    "url": "https://github.com/owdproject"
+  },
+  "dependencies": {
+    "@primeuix/themes": "^2.0.3",
+    "@owdproject/kit-explorer": "workspace:*",
+    "@owdproject/kit-fs": "workspace:*",
+    "@owdproject/kit-theme": "workspace:*",
+    "deepmerge": "^4.3.1",
+    "vuedraggable": "^4.1.0"
+  },
+  "peerDependencies": {
+    "@owdproject/core": "^3.1.5",
+    "nuxt": "^4.0.0"
+  }
+}

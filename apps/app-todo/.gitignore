@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+
+# Nuxt
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# Env
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea
+.DS_Store
+._*

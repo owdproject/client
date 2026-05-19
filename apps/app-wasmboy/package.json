@@ -1,0 +1,24 @@
+{
+  "name": "@owdproject/app-wasmboy",
+  "version": "0.1.0",
+  "description": "WasmBoy App for your Open Web Desktop client",
+  "keywords": [
+    "owd-client",
+    "owd-apps",
+    "owd-modules",
+    "wasmboy"
+  ],
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/owdproject/app-about",
+  "author": {
+    "name": "Open Web Desktop Team",
+    "url": "https://github.com/owdproject"
+  },
+  "dependencies": {
+    "wasmboy": "0.7.1",
+    "json-arraybuffer-reviver": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@owdproject/core": "^3.1.0"
+  }
+}

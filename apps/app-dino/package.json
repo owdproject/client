@@ -1,0 +1,23 @@
+{
+  "name": "@owdproject/app-dino",
+  "version": "0.0.1",
+  "description": "Chrome Dinosaur Game for your Open Web Desktop client",
+  "keywords": [
+    "owd-client",
+    "owd-apps",
+    "owd-modules"
+  ],
+  "private": true,
+  "license": "MIT",
+  "homepage": "https://github.com/owdproject/app-dino",
+  "author": {
+    "name": "Chris Deacy",
+    "url": "https://github.com/chrisdothtml"
+  },
+  "contributors": [
+    {
+      "name": "Open Web Desktop Team",
+      "url": "https://github.com/owdproject"
+    }
+  ]
+}

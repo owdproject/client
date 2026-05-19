@@ -1,0 +1,34 @@
+{
+  "name": "@owdproject/module-persistence",
+  "version": "0.0.1",
+  "description": "Pinia persistence via IndexedDB (idb-keyval), ESM-friendly",
+  "license": "MIT",
+  "homepage": "https://github.com/owdproject/module-persistence",
+  "author": {
+    "name": "Open Web Desktop Team",
+    "url": "https://github.com/owdproject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owdproject/module-persistence"
+  },
+  "bugs": {
+    "url": "https://github.com/owdproject/module-persistence/issues"
+  },
+  "keywords": [
+    "owdproject",
+    "owd-client",
+    "pinia",
+    "nuxt",
+    "persist",
+    "state"
+  ],
+  "dependencies": {
+    "idb-keyval": "^6.2.2",
+    "pinia-plugin-persistedstate-2": "^2.0.30"
+  },
+  "peerDependencies": {
+    "@owdproject/core": "^3.1.0",
+    "pinia": "^3.0.0"
+  }
+}

@@ -51,8 +51,15 @@ void fsExplorer.initialize().then(() => {
 })
 
 async function navigateExplorerTo(target: string) {
-  let normalized = (target || '/').trim()
-  if (!normalized.startsWith('/')) normalized = `/${normalized}`
+  const raw = (target || '/').trim() || '/'
+  const normalized = /^https?:\/\//i.test(raw)
+    ? raw
+    : (() => {
+        let p = raw
+        if (!p.startsWith('/')) p = `/${p}`
+        return p
+      })()
+
   fsExplorer.basePath.value = normalized
   fsExplorer.fsDirectoryNavigation.hydrate({
     paths: [normalized],

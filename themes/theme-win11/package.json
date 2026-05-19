@@ -1,22 +1,22 @@
 {
   "name": "@owdproject/theme-win11",
   "version": "0.0.1",
-  "description": "Open Web Desktop theme",
-  "homepage": "https://github.com/owdproject/theme-win11#readme",
+  "description": "Windows 11 desktop theme for OWD clients",
+  "homepage": "https://github.com/dxlliv/theme-win11#readme",
   "bugs": {
-    "url": "https://github.com/owdproject/theme-win11/issues"
+    "url": "https://github.com/dxlliv/theme-win11/issues"
   },
   "nx": {
     "name": "theme-win11"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/owdproject/theme-win11.git"
+    "url": "git+https://github.com/dxlliv/theme-win11.git"
   },
   "license": "MIT",
   "author": {
-    "name": "Open Web Desktop Team",
-    "url": "https://github.com/owdproject"
+    "name": "Diego Villa",
+    "url": "https://github.com/dxlliv"
   },
   "dependencies": {
     "@owdproject/kit-explorer": "workspace:*",

@@ -1,10 +1,17 @@
-import { execSync, spawn } from 'node:child_process'
+import { spawn } from 'node:child_process'
+import { runDevForeground } from './lib/status.js'
 import { existsSync } from 'node:fs'
-import { createRequire } from 'node:module'
-import { dirname, join } from 'node:path'
+import { join } from 'node:path'
 import getopts from 'getopts'
-
-const require = createRequire(import.meta.url)
+import {
+  resolveSource,
+  printPlan,
+  printNextSteps,
+  runWorkspaceInstall,
+  runNpmInstall,
+} from './lib/install.js'
+import { findWorkspaceRoot, inferKind } from './lib/workspace.js'
+import { scaffoldProject } from './lib/scaffold.js'
 
 const SCOPE = '@owdproject/'
 
@@ -44,9 +51,23 @@ function buildHelp(name) {
 ${name} — add apps, modules, and themes to your Open Web Desktop
 
 USAGE
+  ${name}                 Start the dev server (pnpm run dev)
+  ${name} init [dir]      Create a new OWD project (then opens desktop ui)
   ${name} ui              Interactive dashboard (btop-style TUI)
   ${name} add <package> [options]
   ${name} add <kind> <name> [options]
+
+INSTALL MODES
+  User (default)        npm registry — for end users and generated projects
+  Dev                   clone into apps/, packages/, or themes/ in the monorepo
+
+EXAMPLES
+  pnpm ${name}            # dev server
+  ${name} init my-desktop # scaffold + pnpm install + control panel
+  pnpm ${name} ui         # control panel
+  ${name} add app-todo --npm
+  ${name} add app-todo --dev
+  ${name} add module-persistence --from dxlliv
 
 KINDS (optional — inferred from the package name)
   app       app-*     → apps/
@@ -54,48 +75,25 @@ KINDS (optional — inferred from the package name)
   theme     theme-*   → themes/
 
 OPTIONS
-  --from <source>   Where to fetch the package (default: see below)
+  --from <source>   Git source (user, user/repo, or URL)
   --branch <name>   Git branch to clone
-  --npm             Install from the npm registry (skips git clone)
+  --npm             Install from npm (default when --from is omitted)
+  --dev, --workspace  Clone from github.com/owdproject/<package>
   --dry-run         Print the plan without changing anything
   -h, --help        Show this help
 
 --from <source>
-  (omit)          In the OWD monorepo: clone github.com/owdproject/<package>
-                  Elsewhere: install from npm
-  npm             Always install from npm
-  <github-user>   Your fork: github.com/<user>/<package>
-  <user>/<repo>   Explicit GitHub repo (fork or renamed repo)
-  <git-url>       Full URL or git@github.com:…
-
-EXAMPLES
-  ${name} add app-todo
-  ${name} add module-persistence
-  ${name} add app-todo --from dxlliv
-  ${name} add theme-gnome --from dxlliv --branch my-feature
-  ${name} add module-fs --from https://github.com/dxlliv/module-fs
-  ${name} add app-todo --npm
-  ${name} add app todo --from dxlliv
+  (omit)          npm registry (default)
+  npm             npm registry
+  owdproject      Clone official repo (monorepo only)
+  <github-user>   Clone github.com/<user>/<package> (your fork)
+  <user>/<repo>   Explicit GitHub repo
+  <git-url>       Full clone URL
 
 LEGACY (still supported)
   ${name} install-app @owdproject/app-todo
   → prefer: ${name} add app-todo
 `
-}
-
-function findWorkspaceRoot(startDir = process.cwd()) {
-  let dir = startDir
-  for (;;) {
-    if (
-      existsSync(join(dir, 'pnpm-workspace.yaml')) &&
-      existsSync(join(dir, 'nx.json'))
-    ) {
-      return dir
-    }
-    const parent = dirname(dir)
-    if (parent === dir) return null
-    dir = parent
-  }
 }
 
 function fail(message, hint) {
@@ -107,12 +105,6 @@ function fail(message, hint) {
 
 function warn(message) {
   console.warn(`\n⚠ ${message}\n`)
-}
-
-function inferKind(shortName) {
-  if (shortName.startsWith('app-')) return 'app'
-  if (shortName.startsWith('theme-')) return 'theme'
-  return 'module'
 }
 
 /**
@@ -145,220 +137,22 @@ function normalizePackage(input, explicitKind) {
   return { pkgName: `${SCOPE}${raw}`, shortName: raw, kind }
 }
 
-/**
- * @param {string | undefined} from
- * @param {string} shortName
- * @param {boolean} inMonorepo
- */
-function resolveSource(from, shortName, inMonorepo) {
-  if (!from || from === 'owdproject' || from === 'official') {
-    return {
-      mode: inMonorepo ? 'workspace' : 'npm',
-      gitUrl: `https://github.com/owdproject/${shortName}.git`,
-      label: 'github.com/owdproject/' + shortName,
-    }
-  }
-
-  if (from === 'npm' || from === 'registry') {
-    return { mode: 'npm', label: 'npm registry' }
-  }
-
-  const trimmed = from.trim()
-
-  if (
-    trimmed.startsWith('https://') ||
-    trimmed.startsWith('http://') ||
-    trimmed.startsWith('git@') ||
-    trimmed.startsWith('ssh://')
-  ) {
-    return {
-      mode: 'workspace',
-      gitUrl: normalizeGitUrl(trimmed),
-      label: trimmed,
-    }
-  }
-
-  const slug = trimmed
-    .replace(/^github:/, '')
-    .replace(/^fork:/, '')
-    .replace(/^https?:\/\/github\.com\//, '')
-    .replace(/\.git$/, '')
-    .replace(/\/$/, '')
-
-  if (slug.includes('/')) {
-    const gitUrl = normalizeGitUrl(`https://github.com/${slug}`)
-    return { mode: 'workspace', gitUrl, label: slug }
-  }
-
-  return {
-    mode: 'workspace',
-    gitUrl: `https://github.com/${slug}/${shortName}.git`,
-    label: `github.com/${slug}/${shortName}`,
-  }
-}
-
-function normalizeGitUrl(input) {
-  const trimmed = input.trim().replace(/\/$/, '')
-  if (trimmed.startsWith('git@') || trimmed.startsWith('ssh://')) return trimmed
-  if (/^https?:\/\//.test(trimmed)) {
-    return trimmed.endsWith('.git') ? trimmed : `${trimmed}.git`
-  }
-  const path = trimmed
-    .replace(/^github\.com\//, '')
-    .replace(/^https?:\/\/github\.com\//, '')
-  if (/^[\w.-]+\/[\w.-]+/.test(path)) {
-    return `https://github.com/${path.split('/').slice(0, 2).join('/')}.git`
-  }
-  fail(`Could not parse git source: "${input}"`, 'Use a URL, user/repo, or GitHub username.')
-}
-
-function loadConfigUtil(workspaceRoot) {
-  const utilPath = join(
-    workspaceRoot,
-    'node_modules/@owdproject/nx/dist/utils/utilConfig.js',
-  )
-  if (!existsSync(utilPath)) {
-    fail(
-      'Workspace install needs @owdproject/nx.',
-      'Run `pnpm install` at the repo root.',
-    )
-  }
-  return require(utilPath)
-}
-
-function printPlan({ pkgName, kind, targetDir, source, branch, dryRun }) {
-  const kindMeta = KINDS[kind]
-  console.log(`
-${dryRun ? 'Plan (dry run)' : 'Adding to desktop'}
-────────────────────────────────────────
-  Package   ${pkgName}
-  Type      ${kindMeta.label}
-  Folder    ${targetDir}/
-  Source    ${source.label}${branch ? ` (branch: ${branch})` : ''}
-  Config    desktop/owd.config.ts → ${kindMeta.configKey}
-────────────────────────────────────────
-`)
-}
-
-function printNextSteps({ targetDir, dryRun }) {
-  if (dryRun) {
-    console.log('Dry run complete. Re-run without --dry-run to apply.\n')
-    return
-  }
-  console.log(`Next steps:
-  pnpm run dev               Start the desktop
-  pnpm run prepare:modules   Rebuild module stubs if needed
-
-  Package lives in ${targetDir}/
-`)
-}
-
-function cloneRepo(targetDir, gitUrl, branch, workspaceRoot) {
-  const absoluteTarget = join(workspaceRoot, targetDir)
-
-  if (existsSync(join(absoluteTarget, 'package.json'))) {
-    console.log(`Folder ${targetDir}/ already exists — skipping clone.\n`)
-    return
-  }
-
-  if (existsSync(absoluteTarget)) {
-    fail(
-      `${targetDir}/ exists but has no package.json.`,
-      'Remove the folder or clone your fork there manually.',
-    )
-  }
-
-  const branchArg = branch ? `-b ${JSON.stringify(branch)} ` : ''
-  console.log(`Cloning into ${targetDir}/ …\n`)
-  execSync(
-    `git clone ${branchArg}${JSON.stringify(gitUrl)} ${JSON.stringify(absoluteTarget)}`,
-    { stdio: 'inherit', cwd: workspaceRoot },
-  )
-}
-
-function linkWorkspacePackage(desktopPath, pkgName) {
-  execSync(`pnpm add ${pkgName}@workspace:*`, {
-    stdio: 'inherit',
-    cwd: desktopPath,
-  })
-}
-
-function runDevPrepare(workspaceRoot, pkgName) {
-  try {
-    execSync(`pnpm --filter "${pkgName}" run dev:prepare`, {
-      stdio: 'inherit',
-      cwd: workspaceRoot,
-    })
-  } catch {
-    console.log('(no dev:prepare script — ok for some packages)\n')
-  }
-}
-
-async function runWorkspaceInstall({
-  pkgName,
-  shortName,
-  kind,
-  workspaceRoot,
-  source,
-  branch,
-  dryRun,
-}) {
-  const { configKey, workspaceDir } = KINDS[kind]
-  const targetDir = join(workspaceDir, shortName)
-  const desktopPath = join(workspaceRoot, 'desktop')
-  const configPath = join(desktopPath, 'owd.config.ts')
-
-  printPlan({
-    pkgName,
-    kind,
-    targetDir,
-    source,
-    branch,
-    dryRun,
-  })
-
-  if (dryRun) {
-    printNextSteps({ targetDir, dryRun: true })
-    return
-  }
-
-  cloneRepo(targetDir, source.gitUrl, branch, workspaceRoot)
-  linkWorkspacePackage(desktopPath, pkgName)
-
-  const { addToDesktopConfig } = loadConfigUtil(workspaceRoot)
-  addToDesktopConfig(configPath, configKey, pkgName)
-
-  runDevPrepare(workspaceRoot, pkgName)
-
-  console.log(`✓ ${pkgName} is ready.\n`)
-  printNextSteps({ targetDir, dryRun: false })
-}
-
-function runNpmInstall(kind, pkgName, workspaceRoot) {
-  const nxTarget = KINDS[kind].nx
-  const child = spawn('pnpm', ['nx', 'run', nxTarget, `--name=${pkgName}`], {
-    stdio: 'inherit',
-    shell: true,
-    cwd: workspaceRoot,
-  })
-  child.on('exit', (code) => process.exit(code ?? 1))
-}
-
 function mapLegacyFlags(parsed) {
-  const { dev, fork, repo, branch, from, npm } = parsed
+  const { dev, workspace, fork, repo, branch, from, npm } = parsed
   let mappedFrom = from
   let mappedNpm = npm
+  const forceDev = dev || workspace
 
   if (fork || repo) {
     warn('`--fork` and `--repo` are deprecated — use `--from` instead.')
     mappedFrom = repo || fork
   }
-  if (dev && !mappedFrom && !mappedNpm) {
+  if (forceDev && !mappedFrom && !mappedNpm) {
     mappedFrom = 'owdproject'
   }
   if (mappedNpm) mappedFrom = 'npm'
 
-  return { from: mappedFrom, branch, npm: mappedNpm }
+  return { from: mappedFrom, branch, npm: mappedNpm, dev: forceDev }
 }
 
 function parseAddArgs(positionals) {
@@ -403,21 +197,54 @@ export async function runCli(name, argv, options = {}) {
 
   const parsed = getopts(argv, {
     alias: { h: 'help', b: 'branch' },
-    boolean: ['help', 'npm', 'dry-run', 'dev'],
+    boolean: ['help', 'npm', 'dry-run', 'dev', 'workspace'],
     string: ['from', 'branch', 'fork', 'repo'],
   })
 
   const { _, help, npm: npmFlag } = parsed
   const dryRun = parsed['dry-run'] === true
-  const { from, branch, npm: npmFromLegacy } = mapLegacyFlags(parsed)
-  const useNpm = npmFlag || npmFromLegacy
+  const { from, branch, npm: npmFromLegacy, dev: devFlag } = mapLegacyFlags(parsed)
+  const useNpm = npmFlag || npmFromLegacy || (!from && !devFlag)
 
-  if (help || !_[0] || _[0] === 'help') {
+  if (help || _[0] === 'help') {
     console.log(buildHelp(name))
-    process.exit(_[0] && !help ? 1 : 0)
+    process.exit(0)
+  }
+
+  const cmd = _[0]
+
+  if (cmd === 'init') {
+    const projectDir = (_[1] || 'owd-client').trim()
+    const cwd = process.cwd()
+
+    if (findWorkspaceRoot(cwd)) {
+      fail(
+        'Already inside an OWD workspace.',
+        `Use \`${name} ui\` to manage this project, or run init from a parent directory.`,
+      )
+    }
+
+    try {
+      await scaffoldProject({ dir: projectDir, cwd, commandName: name })
+    } catch (error) {
+      fail(error.message ?? String(error))
+    }
+    return
   }
 
   const workspaceRoot = findWorkspaceRoot()
+
+  if (!cmd) {
+    if (!workspaceRoot) {
+      fail(
+        'Not inside an OWD workspace.',
+        'Run from the client repo, or try: desktop ui · desktop add <package>',
+      )
+    }
+    runDevForeground(workspaceRoot)
+    return
+  }
+
   if (!workspaceRoot) {
     fail(
       'Not inside an OWD workspace.',
@@ -425,7 +252,6 @@ export async function runCli(name, argv, options = {}) {
     )
   }
 
-  const cmd = _[0]
   let pkgInfo
 
   if (cmd === 'ui') {
@@ -443,7 +269,11 @@ export async function runCli(name, argv, options = {}) {
   }
 
   const { pkgName, shortName, kind } = pkgInfo
-  const source = resolveSource(useNpm ? 'npm' : from, shortName, Boolean(workspaceRoot))
+  const inMonorepo = Boolean(workspaceRoot)
+  const source = resolveSource(useNpm ? 'npm' : from, shortName, inMonorepo, {
+    npm: useNpm,
+    dev: devFlag,
+  })
 
   if (source.mode === 'npm') {
     if (dryRun) {

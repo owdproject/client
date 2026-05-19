@@ -301,7 +301,8 @@ function onKeydown(e: KeyboardEvent) {
         :aria-label="t('win11.start.ariaLabel')"
         @keydown="onKeydown"
       >
-        <div class="win11-start__search">
+        <div class="win11-start__search-container">
+          <div class="win11-start__search">
           <span class="win11-start__search-icon" aria-hidden="true" />
           <input
             ref="searchInput"
@@ -312,6 +313,7 @@ function onKeydown(e: KeyboardEvent) {
             autocomplete="off"
             spellcheck="false"
           />
+        </div>
         </div>
 
         <div ref="scrollRoot" class="win11-start__scroll">
@@ -910,6 +912,10 @@ function onKeydown(e: KeyboardEvent) {
     sans-serif;
 }
 
+.win11-start__search-container {
+  background: rgba(0, 0, 0, 0.2);
+}
+
 .win11-start__search {
   flex-shrink: 0;
   display: flex;
@@ -918,7 +924,7 @@ function onKeydown(e: KeyboardEvent) {
   margin: 12px 12px 8px;
   padding: 8px 12px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 

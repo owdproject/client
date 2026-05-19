@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { withDefaults } from 'vue'
 import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
 import Frame from '@owdproject/kit-fs/runtime/components/explorer/Frame.vue'
 
-const props = defineProps<{
-  window?: IWindowController
-  content?: unknown
-}>()
+const props = withDefaults(
+  defineProps<{
+    window?: IWindowController
+    content?: unknown
+    chromePadding?: boolean
+  }>(),
+  { chromePadding: true },
+)
 
 const desktopWorkspaceStore = useDesktopWorkspaceStore()
 
@@ -17,7 +22,9 @@ function onWorkspaceWindowDragStart(e: DragEvent) {
 
 <template>
   <Frame
-    v-bind="$props"
+    :window="props.window"
+    :content="props.content"
+    :chrome-padding="props.chromePadding"
     :draggable="desktopWorkspaceStore.overview ? 'true' : 'false'"
     @dragstart="onWorkspaceWindowDragStart"
   >

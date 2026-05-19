@@ -60,6 +60,10 @@ export function useFileSystemExplorer(
   }
 
   async function navigateToDirectory(path: string) {
+    if (/^https?:\/\//i.test(String(path).trim())) {
+      fsEntries.value = []
+      return
+    }
     try {
       fsEntries.value = fs.readdirSync(path)
     } catch (e) {

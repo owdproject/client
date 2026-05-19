@@ -3,13 +3,20 @@ import type { IWindowController } from '@owdproject/core'
 import DataTable from 'primevue/datatable'
 import Win11ExplorerItemContextMenu from './Win11ExplorerItemContextMenu.vue'
 import Win11ExplorerFileIcon from './Win11ExplorerFileIcon.vue'
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 
-defineProps<{
+const props = defineProps<{
   window: IWindowController
   fsExplorer: NonNullable<IWindowController['fsExplorer']>
 }>()
+
+const browsePath = computed(
+  () =>
+    String(props.window.meta?.path ?? props.fsExplorer.basePath.value ?? '').trim(),
+)
+
+const isWebUrl = computed(() => /^https?:\/\//i.test(browsePath.value))
 
 const openPathInNewTab = inject<(path: string) => void>(
   'win11ExplorerOpenPathInNewTab',
@@ -60,11 +67,13 @@ const openPathInNewTab = inject<(path: string) => void>(
           </template>
         </KitFsExplorerFileEntry>
       </KitFsExplorerSelectableArea>
-      <iframe
-        v-else
-        class="win11-explorer-content-pane__iframe"
-        :src="window.meta.path ?? ''"
-      />
+      <div v-else class="win11-explorer-content-pane__webview">
+        <iframe
+          class="win11-explorer-content-pane__iframe"
+          :class="{ 'pointer-events-none': !window.state.focused }"
+          :src="browsePath"
+        />
+      </div>
     </DataTable>
   </div>
 </template>
@@ -77,10 +86,25 @@ const openPathInNewTab = inject<(path: string) => void>(
   overflow: auto;
 }
 
-.win11-explorer-content-pane__iframe {
+.win11-explorer-content-pane__webview {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   width: 100%;
+  min-height: 12rem;
   height: 100%;
+}
+
+.win11-explorer-content-pane__iframe {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
   border: none;
+}
+
+.win11-explorer-content-pane :deep(.p-datatable-table-container),
+.win11-explorer-content-pane :deep(.p-datatable-wrapper) {
+  height: 100%;
 }
 
 .win11-explorer-content-pane__table {

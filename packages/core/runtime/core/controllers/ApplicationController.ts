@@ -143,6 +143,20 @@ export class ApplicationController implements IApplicationController {
       return
     }
 
+    if (!windowStoredState && this.config.singleton) {
+      const existing = this.getFirstWindowByModel(model)
+      if (existing) {
+        if (meta && typeof meta === 'object') {
+          Object.assign(existing.meta, meta)
+        }
+        if (!meta?.isRestoring) {
+          existing.state.active = true
+          existing.actions.bringToFront()
+        }
+        return existing
+      }
+    }
+
     let windowId: string
 
     if (!windowStoredState) {
@@ -152,7 +166,14 @@ export class ApplicationController implements IApplicationController {
         model
       ] as WindowConfig
       const screenHeight = window.innerHeight
-      const centerY = (screenHeight - Number(windowConfig.size.height)) / 2
+      const configHeight = windowConfig.size?.height
+      const layoutHeight =
+        typeof configHeight === 'number'
+          ? configHeight
+          : typeof configHeight === 'string' && /^\d+$/.test(configHeight)
+            ? Number(configHeight)
+            : 240
+      const centerY = (screenHeight - layoutHeight) / 2
       const positionY =
         windowConfig.position?.y !== undefined
           ? window.scrollY + windowConfig.position.y
@@ -201,7 +222,12 @@ export class ApplicationController implements IApplicationController {
   }
 
   public closeWindow(windowId: string) {
-    delete this.storeWindows.windows[windowId]
+    if (this.storeWindows.windows[windowId]) {
+      const nextWindows = { ...this.storeWindows.windows }
+      delete nextWindows[windowId]
+      this.storeWindows.windows = nextWindows
+    }
+
     this.windows.delete(windowId)
 
     if (this.windows.size === 0) {

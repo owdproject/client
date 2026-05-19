@@ -16,8 +16,10 @@
         "url": "https://github.com/owdproject"
     },
     "scripts": {
-        "dev": "nx run desktop:serve",
-        "generate": "nx run desktop:generate"
+        "dev": "pnpm --dir desktop dev",
+        "generate": "pnpm --dir desktop generate",
+        "desktop": "pnpm exec desktop",
+        "ui": "pnpm exec desktop ui"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3.3.1",

@@ -4,19 +4,37 @@ import { execSync } from 'node:child_process'
 
 export const SCOPE = '@owdproject/'
 
+/** Not loadable via owd.config `modules` (core is the shell; docs is internal). */
+export const DESKTOP_NON_INSTALLABLE = new Set([
+  '@owdproject/core',
+  '@owdproject/docs',
+])
+
+export function isInstallableDesktopModule(pkgName) {
+  return !DESKTOP_NON_INSTALLABLE.has(pkgName)
+}
+
 export const KINDS = {
-  app: { label: 'Apps', topic: 'owd-apps', workspaceDir: 'apps', configKey: 'apps' },
+  app: {
+    label: 'Apps',
+    topic: 'owd-apps',
+    workspaceDir: 'apps',
+    configKey: 'apps',
+    nx: 'desktop:install-app',
+  },
   module: {
     label: 'Modules',
     topic: 'owd-modules',
     workspaceDir: 'packages',
     configKey: 'modules',
+    nx: 'desktop:install-module',
   },
   theme: {
     label: 'Themes',
     topic: 'owd-themes',
     workspaceDir: 'themes',
     configKey: 'theme',
+    nx: 'desktop:install-theme',
   },
 }
 
@@ -43,19 +61,35 @@ export function settingsPath(workspaceRoot) {
   return join(owdDir(workspaceRoot), 'settings.json')
 }
 
+/** @typedef {'npm' | 'workspace'} InstallMode */
+
+export function normalizeInstallMode(value) {
+  if (value === 'workspace' || value === 'dev') return 'workspace'
+  return 'npm'
+}
+
+export function isWorkspaceInstallMode(settings) {
+  return normalizeInstallMode(settings?.installMode) === 'workspace'
+}
+
 export function loadSettings(workspaceRoot) {
   const defaults = {
     devPort: 3000,
     githubUser: null,
     githubOrgs: ['owdproject'],
+    installMode: /** @type {InstallMode} */ ('npm'),
   }
 
   try {
     const path = settingsPath(workspaceRoot)
-    if (!existsSync(path)) return { ...defaults, ...detectGithubUser() }
-    return { ...defaults, ...detectGithubUser(), ...JSON.parse(readFileSync(path, 'utf8')) }
+    if (!existsSync(path)) {
+      return { ...defaults, ...detectGithubUser(), installMode: 'npm' }
+    }
+    const merged = { ...defaults, ...detectGithubUser(), ...JSON.parse(readFileSync(path, 'utf8')) }
+    merged.installMode = normalizeInstallMode(merged.installMode)
+    return merged
   } catch {
-    return { ...defaults, ...detectGithubUser() }
+    return { ...defaults, ...detectGithubUser(), installMode: 'npm' }
   }
 }
 

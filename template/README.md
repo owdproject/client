@@ -1,14 +1,14 @@
 <p align="center">
   <img width="160" height="160" src="https://avatars.githubusercontent.com/u/65117737?s=160&v=4" />
 </p>
-<h1 align="center">Open Web Desktop</h1>
+<h1 align="center">Nuxt Desktop</h1>
 <h3 align="center">
-  A modular framework for building web-based desktop experiences.
+  Powered by <code>@owdproject/core</code> — browser desktop experiences on Nuxt.
 </h3>
 
 ## Overview
 
-Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with Vue.js & TypeScript, and it leverages the extensible Nuxt.js architecture.
+This project was scaffolded with **Nuxt Desktop** (Open Web Desktop). It is a Nuxt app plus `owd.config.ts` — no Nx required for day-to-day dev (`pnpm run dev` runs `nuxt dev` in `desktop/`).
 
 [Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA) · [Documentation](https://owdproject.org/)
 
@@ -22,24 +22,26 @@ Open Web Desktop (OWD) is a framework designed to provide a simple environment f
 
 ## Getting started
 
-Bootstrap a new project by running:
+Bootstrap a new project:
 
 ```bash
 npm create owd
+# or: desktop init my-desktop
+# or: npx nuxi@latest module add @owdproject/core
 ```
 
-Once the process is done, you can start to develop:
+Setup runs `pnpm install` and opens the **control panel** (`desktop ui`) when your terminal is interactive.
 
 ```bash
 cd owd-client
 
-# Run the dev server with hot-reload
-pnpm install
-pnpm run dev
+pnpm desktop ui     # catalog, install apps/themes (User mode = npm)
+pnpm run dev        # Nuxt dev server only
 
-# Build for production
-pnpm run generate
+pnpm run generate   # production build
 ```
+
+Default install mode is **User (npm)** — configured in `.owd/settings.json`.
 
 ## Extend your desktop
 
@@ -51,13 +53,11 @@ Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and e
 
 Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) tag on GitHub.
 
-For example, to add the To-do app:
+For example, to add the To-do app from the control panel press `s` after selecting packages, or:
 
 ```bash
-desktop add app-todo
+pnpm desktop add app-todo
 ```
-
-The `owd` command remains available but is deprecated.
 
 ### 🧩 Install a module
 

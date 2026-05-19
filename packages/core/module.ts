@@ -12,8 +12,8 @@ import pkg from './package.json'
 
 export default defineNuxtModule({
   meta: {
-    name: 'owd-core',
-    configKey: 'owd'
+    name: 'desktop',
+    configKey: 'owd',
   },
   defaults: {
     theme: '@owdproject/theme-win95',

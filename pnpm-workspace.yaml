@@ -2,6 +2,7 @@ packages:
   - desktop
   - apps/*
   - packages/*
+  - packages/core/playground
   - themes/*
   - plugins/*
 
