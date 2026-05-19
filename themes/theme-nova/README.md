@@ -1,14 +1,14 @@
 <p align="center">
   <img width="160" height="160" src="https://avatars.githubusercontent.com/u/65117737?s=160&v=4" />
 </p>
-<h1 align="center">Win95 Theme</h1>
+<h1 align="center">Nova Theme</h1>
 <h3 align="center">
-  Windows 95 Theme for Open Web Desktop.
+  Modern desktop theme for Open Web Desktop (GitHub Sponsors).
 </h3>
 
 ## Overview
 
-This theme for Open Web Desktop recreates the old fashioned Windows 95 UI.
+Nova is a modern OWD theme with a top system bar, bottom dock, and a Material-style PrimeVue preset. When `@owdproject/module-fs` is enabled, it also ships an integrated file explorer built on `kit-explorer`.
 
 ## Installation
 
@@ -24,17 +24,21 @@ You could set this configuration in `/desktop/owd.config.ts`:
 
 ```js
 export default defineDesktopConfig({
-  theme: '@owdproject/theme-win95',
+  theme: '@owdproject/theme-nova',
   desktop: {
     systemBar: {
       enabled: true,
-      startButton: true,
-      position: 'bottom'
-    }
-  }
+      position: 'top',
+      startButton: false,
+    },
+    dockBar: {
+      enabled: true,
+      position: 'bottom',
+    },
+  },
 })
 ```
 
 ## License
 
-The application is released under the [MIT License](LICENSE).
+This theme is released under the **OWD-1.0-reserved** license (GitHub Sponsors).
