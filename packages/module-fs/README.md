@@ -14,6 +14,8 @@ This module enables a filesystem allowing [ZenFS](https://github.com/zen-fs/core
 
 - Implements a Node.js-like filesystem using `ZenFS`
 - Allows different mounts like temp folders and zip files
+- External file import via `utilExternalFileImport` (OS drop → ZenFS write)
+- Internal path moves via `movePathsToDirectory` (used by kit-fs drag-and-drop)
 
 ## Installation
 
@@ -38,6 +40,17 @@ fs: {
 If you are mounting zips, place them in your `/desktop/public` folder (served as `/filename.zip` from the app root, or under `app.baseURL` if you use a subpath). The module fetches the file on the client and rejects non-zip responses (e.g. HTML 404) before mounting.
 
 If you see **“could not locate End of Central Directory signature”**, the downloaded bytes are not a valid ZIP (wrong URL, 404 page, empty file, or corrupt archive).
+
+## Explorer drag and drop
+
+When paired with `@owdproject/kit-fs`:
+
+| Utility / API | Role |
+|---------------|------|
+| `runtime/utils/utilExternalFileImport.ts` | Parse `DataTransfer` (files, folders, image URLs) and write into ZenFS |
+| `runtime/utils/utilExplorerMove.ts` | Path guards for internal moves (`isInvalidMoveTarget`) |
+| `useFileSystemExplorer.importExternalFiles(entries, targetDir?)` | Import into current or target directory |
+| `useFileSystemExplorer.movePathsToDirectory(paths, targetDir)` | Move VFS entries (internal drag) |
 
 ## License
 

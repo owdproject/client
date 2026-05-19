@@ -8,6 +8,11 @@ import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explor
 import { shellEscape } from '@owdproject/core/runtime/utils/utilTerminal'
 
 import { getAppByFilename } from '@owdproject/module-fs/runtime/utils/utilFileSystem'
+import {
+  importExternalFilesToDirectory,
+  type ExternalFileEntry,
+} from '@owdproject/module-fs/runtime/utils/utilExternalFileImport'
+import { isInvalidMoveTarget } from '@owdproject/module-fs/runtime/utils/utilExplorerMove'
 import { useFileSystemClipboard } from '@owdproject/module-fs/runtime/composables/useFileSystemClipboard'
 import { useFileSystemDirectoryNavigation } from '@owdproject/module-fs/runtime/composables/useFileSystemDirectoryNavigation'
 import { useFileSystemKeyboardActions } from '@owdproject/module-fs/runtime/composables/useFileSystemKeyboardActions'
@@ -227,6 +232,36 @@ export function useFileSystemExplorer(
     }
   }
 
+  async function importExternalFiles(
+    entries: ExternalFileEntry[],
+    targetDirectory?: string,
+  ) {
+    if (!entries.length) return
+    const directory = targetDirectory ?? basePath.value
+    await importExternalFilesToDirectory(directory, entries)
+    await refreshDirectory()
+  }
+
+  async function movePathsToDirectory(
+    sources: string[],
+    targetDirectory: string,
+  ) {
+    for (const source of sources) {
+      if (isInvalidMoveTarget(source, targetDirectory)) continue
+
+      const fileName = source.split('/').filter(Boolean).pop()
+      if (!fileName) continue
+
+      const targetPath = explorerEntryAbsolutePath(targetDirectory, fileName)
+      if (source === targetPath) continue
+
+      await moveFileOrDirectorySafe(source, targetPath)
+    }
+
+    selectedFiles.value = []
+    await refreshDirectory()
+  }
+
   async function pasteFile(filePath: string, targetPath: string, type: 'copy' | 'cut') {
     if (type === 'copy') {
       await fs.promises.copyFile(filePath, targetPath)
@@ -381,6 +416,8 @@ export function useFileSystemExplorer(
     pathExists,
     pasteFile,
     pasteShortcuts,
+    importExternalFiles,
+    movePathsToDirectory,
     fileProperties,
     operationUndo,
     navigateToDirectory,
