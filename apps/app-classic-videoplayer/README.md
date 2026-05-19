@@ -15,7 +15,7 @@ This app for Open Web Desktop provides a basic video player for the File System 
 ## Installation
 
 ```bash
-owd install-app @owdproject/app-classic-videoplayer
+pnpm desktop add @owdproject/app-classic-videoplayer
 ```
 
 ## Usage

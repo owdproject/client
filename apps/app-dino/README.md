@@ -16,7 +16,7 @@ Recreated by [chrisdothtml](https://github.com/chrisdothtml/chrome-dino) and ada
 ## Installation
 
 ```bash
-owd install-app @owdproject/app-dino
+pnpm desktop add @owdproject/app-dino
 ```
 
 ## Usage

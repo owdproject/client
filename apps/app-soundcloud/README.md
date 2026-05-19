@@ -15,7 +15,7 @@ This app for Open Web Desktop provides a SoundCloud player.
 ## Installation
 
 ```bash
-owd install-app @owdproject/app-soundcloud
+pnpm desktop add @owdproject/app-soundcloud
 ```
 
 ## Usage

@@ -15,7 +15,7 @@ This app for Open Web Desktop provides a simple and effective to-do list manager
 ## Installation
 
 ```bash
-owd install-app @owdproject/app-todo
+pnpm desktop add @owdproject/app-todo
 ```
 
 ## Usage

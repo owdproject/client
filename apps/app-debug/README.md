@@ -15,7 +15,7 @@ This app for Open Web Desktop is a test module with window states information.
 ## Installation
 
 ```bash
-owd install-app @owdproject/app-debug
+pnpm desktop add @owdproject/app-debug
 ```
 
 ## License

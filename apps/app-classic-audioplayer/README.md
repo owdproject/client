@@ -15,7 +15,7 @@ This app for Open Web Desktop provides a basic audio player for the File System 
 ## Installation
 
 ```bash
-owd install-app @owdproject/app-classic-audioplayer
+pnpm desktop add @owdproject/app-classic-audioplayer
 ```
 
 ## Usage
