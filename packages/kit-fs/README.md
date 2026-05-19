@@ -17,7 +17,7 @@ It is designed to work with `@owdproject/module-fs`, which remains the runtime m
 ## Installation
 
 ```bash
-pnpm add @owdproject/kit-fs
+pnpm desktop add @owdproject/kit-fs
 ```
 
 ## Usage

@@ -27,7 +27,7 @@ At runtime this module **automatically registers** `@owdproject/kit-fs` (filesys
 ## Installation
 
 ```bash
-pnpm add @owdproject/kit-explorer
+pnpm desktop add @owdproject/kit-explorer
 ```
 
 If your theme or app imports `KitFs*` components or paths under `@owdproject/kit-fs` directly, also add `@owdproject/kit-fs` to **`package.json`** so TypeScript and the bundler can resolve those imports. The Nuxt module for `kit-fs` still loads once via `kit-explorer`.

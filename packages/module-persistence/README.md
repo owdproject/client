@@ -17,14 +17,8 @@ This module registers [`pinia-plugin-persistedstate-2`](https://github.com/wobso
 
 ## Installation
 
-In the client monorepo, depend on the workspace package and add it to `owd.config.ts` → `modules`:
-
-```json
-"@owdproject/module-persistence": "workspace:*"
-```
-
-```ts
-modules: ['@owdproject/module-persistence'],
+```bash
+pnpm desktop add @owdproject/module-persistence
 ```
 
 ## License

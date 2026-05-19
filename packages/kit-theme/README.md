@@ -42,7 +42,7 @@ Start menu, taskbar, window borders, wallpapers, i18n, assets, and dialog markup
 ## Installation
 
 ```bash
-pnpm add @owdproject/kit-theme
+pnpm desktop add @owdproject/kit-theme
 ```
 
 Peers: **`vue`**, **`nuxt`**, **`@owdproject/core`** (match versions with your client workspace).
