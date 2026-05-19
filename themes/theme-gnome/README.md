@@ -12,27 +12,21 @@ This theme for Open Web Desktop recreates the Adwaita GNOME UI.
 
 ## Installation
 
-1.  Navigate to your client folder in your terminal:
+```bash
+pnpm desktop add @owdproject/theme-gnome
+```
 
-    ```bash
-    cd owd-client
-    ```
+## Usage
 
-2.  Install the desktop module using npm or yarn:
+#### Configuration
 
-    ```bash
-    npm install @owdproject/theme-gnome
-    ```
-
-3.  Register the application in your desktop configuration file:
-
-    ```typescript
-    // owd.config.ts
-    export default defineDesktopConfig({
-      theme: '@owdproject/theme-gnome',
-      apps: ['@owdproject/app-about'],
-    })
-    ```
+```typescript
+// owd.config.ts
+export default defineDesktopConfig({
+  theme: '@owdproject/theme-gnome',
+  apps: ['@owdproject/app-about'],
+})
+```
 
 ## License
 
