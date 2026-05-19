@@ -1,12 +1,27 @@
 <script setup lang="ts">
-import { ref, onMounted, useTemplateRef } from 'vue'
+import { ref, onMounted, useTemplateRef, computed } from 'vue'
 import { VueSelecto } from 'vue3-selecto'
+import { useExplorerExternalDrop } from '../../composables/useExplorerExternalDrop'
 
 const props = defineProps<{
   fsExplorer: {
     selectFiles: (names: string[]) => void
+    basePath: { value: string }
+    fsController?: {
+      importDroppedExternalFiles?: (entries: unknown[], targetDirectory?: string) => Promise<void>
+      moveDroppedVfsPaths?: (paths: string[], targetDirectory?: string) => Promise<void>
+    }
   }
+  /** Disable OS drag-and-drop import (e.g. HTTP iframe panes). */
+  dropEnabled?: boolean
 }>()
+
+const dropEnabled = computed(() => props.dropEnabled ?? true)
+
+const { isDragOver, onDragEnter, onDragOver, onDragLeave, onDrop } =
+  useExplorerExternalDrop(props.fsExplorer, {
+    enabled: () => dropEnabled.value,
+  })
 
 const selectoContainer = useTemplateRef('selectoContainer')
 const windowContentContainer = ref<HTMLElement | undefined>()
@@ -48,7 +63,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-full" ref="selectoContainer">
+  <div
+    class="kit-fs-explorer-dropzone h-full"
+    :class="{ 'kit-fs-explorer-dropzone--active': isDragOver }"
+    ref="selectoContainer"
+    @dragenter="onDragEnter"
+    @dragover="onDragOver"
+    @dragleave="onDragLeave"
+    @drop="onDrop"
+  >
     <VueSelecto
       v-if="container && windowContentContainer"
       :rootContainer="windowContentContainer"
@@ -66,3 +89,14 @@ onMounted(() => {
     <slot />
   </div>
 </template>
+
+<style scoped lang="scss">
+.kit-fs-explorer-dropzone--active {
+  outline: 2px dashed var(--owd-explorer-drop-outline, var(--p-primary-color, #3b82f6));
+  outline-offset: -2px;
+  background: var(
+    --owd-explorer-drop-surface,
+    color-mix(in srgb, var(--owd-explorer-drop-outline, var(--p-primary-color, #3b82f6)) 8%, transparent)
+  );
+}
+</style>

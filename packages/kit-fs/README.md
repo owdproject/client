@@ -58,6 +58,22 @@ Or from a theme/app **`module.ts`**: `await installModule('@owdproject/kit-fs')`
 - Use `@owdproject/kit-fs` for explorer UI building blocks (`KitFs*` components, selectable area).
 - **Layers:** `module-fs` → optional `kit-explorer` (which registers `kit-fs`) → theme-specific explorer UI. Declare the packages your sources import in **`package.json`**; register Nuxt modules in **`defineDesktopConfig`** and/or the theme’s **`module.ts`** as needed.
 
+#### Drag and drop
+
+Explorer listing areas use **native HTML5 drag-and-drop** (no extra Vue DnD library for file import):
+
+- **`KitFsExplorerSelectableArea`** — drop OS files, folders, or browser image URLs into the **current directory**
+- **`KitFsExplorerFileEntry`** — drag entries within the VFS; drop onto **folder rows** to import or move into that folder
+
+Wire `createExplorerFsOperations` from `@owdproject/kit-fs` into `useFileSystemExplorer` so overwrite dialogs and import/move run through `fsController`.
+
+Themes can style drop feedback via CSS variables:
+
+- `--owd-explorer-drop-outline`
+- `--owd-explorer-drop-surface`
+
+Classes: `.kit-fs-explorer-dropzone--active`, `.kit-fs-explorer-folder-drop-target--active`
+
 ## License
 
 The module is released under the [MIT License](LICENSE).

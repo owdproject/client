@@ -1,5 +1,7 @@
 import { useOwdDialogs } from '@owdproject/core/runtime/composables/useOwdDialogs'
 import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
+import type { ExternalFileEntry } from '@owdproject/module-fs/runtime/utils/utilExternalFileImport'
+import { isInvalidMoveTarget } from '@owdproject/module-fs/runtime/utils/utilExplorerMove'
 
 /**
  * Pass this factory as the second argument to {@link useFileSystemExplorer} (`module-fs`).
@@ -94,8 +96,96 @@ export default function createExplorerFsOperations(fsExplorer: any, t: (key: str
     }
   }
 
+  async function importDroppedExternalFiles(
+    entries: ExternalFileEntry[],
+    targetDirectory?: string,
+  ) {
+    if (!entries.length) return
+
+    const targetDir = targetDirectory ?? fsExplorer.basePath.value
+    const accepted: ExternalFileEntry[] = []
+
+    for (const entry of entries) {
+      const fileName = entry.relativePath.split('/').pop()
+      if (!fileName) continue
+
+      const targetPath = explorerEntryAbsolutePath(
+        targetDir,
+        entry.relativePath,
+      )
+      const exists = await fsExplorer.pathExists(targetPath)
+
+      if (exists) {
+        const confirmed = await dialogs.confirm({
+          title: t('apps.explorer.dialog.fileOverride.confirm.title'),
+          message: t('apps.explorer.dialog.fileOverride.confirm.message', {
+            name: fileName,
+          }),
+          acceptLabel: t('apps.explorer.action.yes'),
+          rejectLabel: t('apps.explorer.action.no'),
+        })
+        if (!confirmed) continue
+      }
+
+      accepted.push(entry)
+    }
+
+    if (!accepted.length) return
+
+    try {
+      await fsExplorer.importExternalFiles(accepted, targetDir)
+    } catch (err) {
+      console.error('Error while importing dropped files', err)
+    }
+  }
+
+  async function moveDroppedVfsPaths(
+    paths: string[],
+    targetDirectory?: string,
+  ) {
+    if (!paths.length) return
+
+    const targetDir = targetDirectory ?? fsExplorer.basePath.value
+    const accepted: string[] = []
+
+    for (const sourcePath of paths) {
+      if (isInvalidMoveTarget(sourcePath, targetDir)) continue
+
+      const fileName = sourcePath.split('/').filter(Boolean).pop()
+      if (!fileName) continue
+
+      const targetPath = explorerEntryAbsolutePath(targetDir, fileName)
+      if (sourcePath === targetPath) continue
+
+      const exists = await fsExplorer.pathExists(targetPath)
+      if (exists) {
+        const confirmed = await dialogs.confirm({
+          title: t('apps.explorer.dialog.fileOverride.confirm.title'),
+          message: t('apps.explorer.dialog.fileOverride.confirm.message', {
+            name: fileName,
+          }),
+          acceptLabel: t('apps.explorer.action.yes'),
+          rejectLabel: t('apps.explorer.action.no'),
+        })
+        if (!confirmed) continue
+      }
+
+      accepted.push(sourcePath)
+    }
+
+    if (!accepted.length) return
+
+    try {
+      await fsExplorer.movePathsToDirectory(accepted, targetDir)
+    } catch (err) {
+      console.error('Error while moving dropped files', err)
+    }
+  }
+
   return {
     pasteClipboardFiles,
     deleteSelectedFiles,
+    importDroppedExternalFiles,
+    moveDroppedVfsPaths,
   }
 }

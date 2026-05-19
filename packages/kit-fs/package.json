@@ -7,6 +7,7 @@
   "type": "module",
   "peerDependencies": {
     "@owdproject/core": "^3.1.5",
+    "@owdproject/module-fs": "^0.0.3",
     "nuxt": "^4.0.0",
     "vue": "^3.5.0"
   },

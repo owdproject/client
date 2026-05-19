@@ -6,6 +6,8 @@ import type { Component } from 'vue'
 import type { IWindowController } from '@owdproject/core'
 import FileContextMenu from './FileContextMenu.vue'
 import FileIcon from './FileIcon.vue'
+import { useExplorerInternalDrag } from '../../composables/useExplorerInternalDrag'
+import { useExplorerFolderDropTarget } from '../../composables/useExplorerFolderDropTarget'
 
 const props = defineProps<{
   basePath: string
@@ -18,6 +20,8 @@ const props = defineProps<{
   contextMenuComponent?: Component
   /** Middle-click on a folder opens that path in a new explorer tab (theme hook). */
   openPathInNewTab?: (absolutePath: string) => void
+  /** Enable drag-and-drop import/move. Default: true. */
+  dragEnabled?: boolean
 }>()
 
 const menuImpl = computed(
@@ -166,6 +170,20 @@ const sizeLabel = computed(() => {
   return formatBytes(pathStats.value.size)
 })
 
+const dragEnabled = computed(() => props.dragEnabled ?? true)
+
+const { onDragStart } = useExplorerInternalDrag({
+  entryPath: () => path.value,
+  selectedFiles: () => props.window.fsExplorer?.selectedFiles.value ?? [],
+  dragEnabled: () => dragEnabled.value,
+})
+
+const folderDrop = useExplorerFolderDropTarget({
+  fsExplorer: props.window.fsExplorer,
+  folderPath: () => path.value,
+  enabled: () => dragEnabled.value && isDirectory.value,
+})
+
 const classes = computed(() => {
   const list: (string | Record<string, boolean>)[] = [
     'owd-file',
@@ -176,6 +194,7 @@ const classes = computed(() => {
   }
   list.push({ 'owd-file--selected': props.selected })
   list.push({ 'owd-file--cutted': props.cutted })
+  list.push({ 'kit-fs-explorer-folder-drop-target--active': folderDrop.isDragOver.value })
   return list
 })
 </script>
@@ -184,6 +203,12 @@ const classes = computed(() => {
   <div
     :class="classes"
     :title="fileName"
+    :draggable="dragEnabled"
+    @dragstart.stop="onDragStart"
+    @dragenter="folderDrop.onDragEnter"
+    @dragover="folderDrop.onDragOver"
+    @dragleave="folderDrop.onDragLeave"
+    @drop="folderDrop.onDrop"
     @dblclick="onFileOpen"
     @contextmenu.prevent="onRightClick"
     @auxclick.prevent="onAuxClick"
@@ -462,6 +487,15 @@ const classes = computed(() => {
 
   &--cutted {
     opacity: 0.6;
+  }
+
+  &.kit-fs-explorer-folder-drop-target--active {
+    outline: 2px dashed var(--owd-explorer-drop-outline, var(--p-primary-color, #3b82f6));
+    outline-offset: -2px;
+    background: var(
+      --owd-explorer-drop-surface,
+      color-mix(in srgb, var(--owd-explorer-drop-outline, var(--p-primary-color, #3b82f6)) 8%, transparent)
+    );
   }
 }
 
