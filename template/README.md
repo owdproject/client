@@ -56,7 +56,7 @@ Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) ta
 For example, to add the To-do app from the control panel press `s` after selecting packages, or:
 
 ```bash
-pnpm desktop add app-todo
+pnpm desktop add @owdproject/app-todo
 ```
 
 ### 🧩 Install a module
@@ -66,7 +66,7 @@ Discover modules by searching the [owd-modules](https://github.com/topics/owd-mo
 For example, to add Pinia persistence backed by IndexedDB (`idb-keyval`):
 
 ```bash
-desktop add module-pinia-idb
+pnpm desktop add @owdproject/module-persistence
 ```
 
 ### 🖥️ Install a theme
@@ -77,7 +77,7 @@ Each theme provides a unique look and feel while maintaining consistent function
 Discover themes by searching the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
 
 ```bash
-desktop add theme-gnome
+pnpm desktop add @owdproject/theme-gnome
 ```
 
 ## Sponsors
