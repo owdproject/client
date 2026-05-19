@@ -30,6 +30,7 @@ const openPathInNewTab = inject<(path: string) => void>(
       <KitFsExplorerSelectableArea
         v-if="!String(window.meta.path ?? '').startsWith('http')"
         :fs-explorer="fsExplorer"
+        :drop-enabled="!isWebUrl"
       >
         <KitFsExplorerFileEntry
           v-for="fileName of fsExplorer.fsEntries.value"

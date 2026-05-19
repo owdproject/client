@@ -52,6 +52,15 @@
   --win11-explorer-icon-document: #d2d2d2;
   --win11-explorer-icon-code: #7eb8ff;
   --win11-explorer-icon-disc: #9aa0a6;
+
+  --owd-explorer-drop-outline: #60cfff;
+  --owd-explorer-drop-surface: color-mix(in srgb, var(--owd-explorer-drop-outline) 12%, transparent);
+
+  :deep(.kit-fs-explorer-dropzone--active),
+  :deep(.kit-fs-explorer-folder-drop-target--active) {
+    outline-color: var(--owd-explorer-drop-outline);
+    background: var(--owd-explorer-drop-surface);
+  }
 }
 
 .owd-desktop--win11.win11-personalization-appearance-light {

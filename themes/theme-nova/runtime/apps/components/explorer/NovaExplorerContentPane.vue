@@ -3,13 +3,20 @@ import type { IWindowController } from '@owdproject/core'
 import DataTable from 'primevue/datatable'
 import NovaExplorerItemContextMenu from './NovaExplorerItemContextMenu.vue'
 import NovaExplorerFileIcon from './NovaExplorerFileIcon.vue'
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 
-defineProps<{
+const props = defineProps<{
   window: IWindowController
   fsExplorer: NonNullable<IWindowController['fsExplorer']>
 }>()
+
+const browsePath = computed(
+  () =>
+    String(props.window.meta?.path ?? props.fsExplorer.basePath.value ?? '').trim(),
+)
+
+const isWebUrl = computed(() => /^https?:\/\//i.test(browsePath.value))
 
 const openPathInNewTab = inject<(path: string) => void>(
   'novaExplorerOpenPathInNewTab',
@@ -23,6 +30,7 @@ const openPathInNewTab = inject<(path: string) => void>(
       <KitFsExplorerSelectableArea
         v-if="!String(window.meta.path ?? '').startsWith('http')"
         :fs-explorer="fsExplorer"
+        :drop-enabled="!isWebUrl"
       >
         <KitFsExplorerFileEntry
           v-for="fileName of fsExplorer.fsEntries.value"
