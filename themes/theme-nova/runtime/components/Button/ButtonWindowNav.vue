@@ -5,20 +5,21 @@
 </template>
 
 <style scoped lang="scss">
+/* Sizing only — hover/focus colors in window-chrome.scss */
 .owd-window-nav__button {
   position: relative;
-  width: 23px;
-  height: 23px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--nova-window-control-size, 28px);
+  height: var(--nova-window-control-size, 28px);
+  padding: 0;
+  cursor: pointer;
 
   :deep(.iconify) {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    opacity: 0.5;
+    position: relative;
+    pointer-events: none;
   }
 }
 </style>

@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { useAppConfig } from 'nuxt/app'
 import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
+import NovaTopBar from './NovaTopBar.vue'
+import NovaLauncherOverlay from './NovaLauncherOverlay.vue'
+import { useNovaStartMenu } from '../composables/useNovaStartMenu'
+import { useNovaAccentTheme } from '../composables/useNovaAccentTheme'
+
+const { open: startMenuOpen, useFullscreenLauncher } = useNovaStartMenu()
+const { accentId } = useNovaAccentTheme()
 
 const props = defineProps<{
   systemBar?: DesktopSystemBarConfig
@@ -16,20 +23,24 @@ const desktopWorkspaceStore = useDesktopWorkspaceStore()
       :class="{
         'owd-desktop--overview-enabled': desktopWorkspaceStore.overview
     }"
+      :data-nova-accent="accentId"
   >
 
-    <!--
-    <SystemBar v-if="appConfig.desktop?.systemBar?.enabled" />
-    -->
+    <NovaTopBar />
 
     <Background/>
 
     <DesktopContent>
-      <CoreApplicationRender/>
       <slot/>
     </DesktopContent>
 
+    <CoreApplicationRender/>
+
     <DockBar v-if="appConfig.desktop?.dockBar?.enabled" />
+
+    <NovaLauncherOverlay
+      v-if="startMenuOpen && useFullscreenLauncher"
+    />
 
   </CoreDesktop>
 </template>
@@ -42,24 +53,20 @@ const desktopWorkspaceStore = useDesktopWorkspaceStore()
   font-family: var(--owd-font-family), serif;
   color: var(--owd-color);
   overflow: hidden;
-
-  /*
   display: flex;
   flex-direction: column;
 
-  &__system-bar {
-    flex: 0;
-
-    &--position-bottom {
-      flex-direction: column-reverse;
-    }
+  :deep(.owd-desktop__system-bar) {
+    flex: 0 0 auto;
   }
 
-  &__workspace-container {
-    flex: 1;
-    overflow: hidden;
+  :deep(.owd-desktop__content) {
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
-   */
+  &--system-bar-position-bottom {
+    flex-direction: column-reverse;
+  }
 }
 </style>

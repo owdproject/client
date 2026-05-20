@@ -1,7 +1,40 @@
 {
   "systemBar": {
+    "start": {
+      "button": "Start",
+      "panelLabel": "Start menu",
+      "searchLabel": "Search applications",
+      "searchPlaceholder": "Search apps…",
+      "emptyApps": "No applications loaded yet",
+      "emptySearch": "No matching apps"
+    },
+    "launcher": {
+      "panelLabel": "Applications",
+      "subheading": "Search or pick an app to open",
+      "close": "Close"
+    },
+    "settings": {
+      "label": "Quick settings"
+    },
+    "tray": {
+      "workspaces": "Workspaces",
+      "volume": "Volume and quick settings",
+      "battery": "Battery",
+      "batteryLevel": "{percent}% remaining",
+      "batteryCharging": "{percent}% — charging",
+      "network": "Network",
+      "guest": "Guest session",
+      "cycleAccent": "Switch accent theme (current: {accent})",
+      "accents": {
+        "ocean": "Ocean blue",
+        "ember": "Dark ember",
+        "forest": "Forest green",
+        "violet": "Violet dusk"
+      }
+    },
     "applications": {
-      "label": "Apps"
+      "label": "Apps",
+      "empty": "No applications loaded yet"
     }
   },
   "applications": {
@@ -14,6 +47,7 @@
       "office": "Office",
       "productivity": "Productivity",
       "programming": "Programming",
+      "system-tools": "System",
       "utilities": "Utilities",
       "tools": "Tools",
       "other": "Other"

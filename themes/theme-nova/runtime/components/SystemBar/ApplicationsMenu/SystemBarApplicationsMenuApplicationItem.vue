@@ -1,13 +1,13 @@
 <script setup lang="ts">
 defineProps<{
-  application: IApplicationController
+  entry: ApplicationEntryWithInherited
 }>()
 </script>
 
 <template>
   <ListItem>
-    <Icon :name="application.config.icon"/>
-    {{ application.config.name }}
+    <Icon :name="entry.icon" />
+    {{ entry.title }}
   </ListItem>
 </template>
 

@@ -3,13 +3,7 @@
 </script>
 
 <template>
-  <ButtonWindowNav>
-    <Icon name="mdi:remove" />
+  <ButtonWindowNav class="owd-window-nav__button--close">
+    <Icon name="mdi:close" :size="16" />
   </ButtonWindowNav>
 </template>
-
-<style scoped lang="scss">
-.iconify {
-  margin-left: -0.5px;
-}
-</style>

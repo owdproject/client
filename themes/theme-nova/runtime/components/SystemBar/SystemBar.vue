@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
 
 const desktopWorkspaceStore = useDesktopWorkspaceStore()
@@ -44,7 +45,8 @@ const classes = computed(() => {
   display: flex;
   flex-direction: row;
   transition: background 0.2s ease-in-out;
-  z-index: 3;
+  position: relative;
+  z-index: 10050;
 
   &--workspace-overview-enabled {
     background: transparent;

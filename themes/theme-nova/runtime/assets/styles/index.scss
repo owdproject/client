@@ -1,19 +1,18 @@
+@use './partials/accent.scss';
+@use './partials/window-tokens.scss';
 @use './partials/explorer-tokens.scss';
 @use './partials/explorer-shell.scss';
 @use './partials/explorer-prime-overlays.scss';
 @use './partials/explorer-chrome.scss';
+@use './partials/window-chrome.scss';
+@use './partials/shell.scss';
+@use './partials/tray.scss';
+@use './partials/start.scss';
+@use './partials/system-bar.scss';
 
 :root {
   --owd-font-family: 'Cantarell';
-
-  --owd-surface-700: #1d293d;
-  --owd-surface-900: rgba(6, 10, 16, 0.9);
-
-  --owd-primary-color: #1a6caf;
-  --owd-primary-hover-color: #1a6caf;
-  --owd-button-primary-active-background: #4593d8;
-  --owd-button-primary-active-border-color: #4593d8;
-
+  --owd-color: #e8eef6;
   --owd-background-color: var(--owd-surface-900);
   --owd-card-border-radius: 8px;
 

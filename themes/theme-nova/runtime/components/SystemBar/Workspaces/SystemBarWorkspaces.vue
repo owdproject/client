@@ -1,5 +1,5 @@
 <script setup>
-import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/composables/useDesktopWorkspaceStore'
+import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
 
 const desktopWorkspaceStore = useDesktopWorkspaceStore()
 

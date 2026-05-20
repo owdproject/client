@@ -28,6 +28,13 @@ const classes = computed(() => {
   overflow: hidden;
 
   &--system-bar-position-top {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  &--system-bar-position-bottom {
+    flex: 1 1 auto;
+    min-height: 0;
   }
 }
 </style>

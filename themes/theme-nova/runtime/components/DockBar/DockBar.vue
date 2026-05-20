@@ -2,21 +2,18 @@
 import { useApplicationManager } from '@owdproject/core/runtime/composables/useApplicationManager'
 
 const applicationManager = useApplicationManager()
+const appsRunning = applicationManager.appsRunning
 </script>
 
 <template>
   <div class="owd-dock-bar">
     <div class="owd-dock-bar__inner">
+      <DockBarButtonMenu />
       <DockBarButtonApp
-        v-for="application of applicationManager.appsRunning.value"
+        v-for="application of appsRunning"
         :key="application.id"
         :application="application"
       />
-      <Divider
-        v-if="applicationManager.appsRunning.value.length > 0"
-        layout="vertical"
-      />
-      <DockBarButtonMenu />
     </div>
   </div>
 </template>
@@ -27,7 +24,6 @@ const applicationManager = useApplicationManager()
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-
   &__inner {
     display: inline-flex;
     flex-direction: row;

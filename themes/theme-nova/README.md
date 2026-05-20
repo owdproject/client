@@ -8,7 +8,7 @@
 
 ## Overview
 
-Nova is a modern OWD theme with a top system bar, bottom dock, and a Material-style PrimeVue preset. When `@owdproject/module-fs` is enabled, it also ships an integrated file explorer built on `kit-explorer`.
+Nova is the **reference OWD shell**: a compact top bar with **Start** (search + app list), a **system tray** (workspaces, battery/volume/network status, clock, quick settings), a bottom dock for running apps, and a Material-style PrimeVue preset. It is the default theme in many module playgrounds (`app-about`, `module-docs`, …). When `@owdproject/module-fs` is enabled, Nova also ships an integrated file explorer on `kit-explorer`.
 
 ## Installation
 
@@ -18,25 +18,42 @@ pnpm desktop add @owdproject/theme-nova
 
 ## Usage
 
-#### Available configuration
+Shell options are merged into `appConfig.desktop` from the theme module defaults and optional overrides in `desktop.config.ts`:
 
-You could set this configuration in `/desktop/owd.config.ts`:
+```ts
+import { defineDesktopConfig } from '@owdproject/core'
 
-```js
 export default defineDesktopConfig({
   theme: '@owdproject/theme-nova',
-  desktop: {
-    systemBar: {
-      enabled: true,
-      position: 'top',
-      startButton: false,
-    },
-    dockBar: {
-      enabled: true,
-      position: 'bottom',
-    },
+  systemBar: {
+    enabled: true,
+    position: 'top',
+    startButton: true,
+  },
+  dockBar: {
+    enabled: true,
+    position: 'bottom',
   },
 })
+```
+
+| Option | Description |
+|--------|-------------|
+| `systemBar.enabled` | Show the Nova top bar |
+| `systemBar.startButton` | Show **Start** and the app launcher |
+| `systemBar.launcherPresentation` | `responsive` (default): compact panel on desktop, full-screen launcher with search on narrow viewports; `compact` or `fullscreen` to force one mode |
+| `systemBar.position` | `top` (default) or `bottom` |
+| `dockBar.enabled` | Show the bottom dock for running applications |
+| `dockBar.position` | `bottom` (default) |
+
+Use **Start** to search and launch registered desktop apps. The menu uses a **flat dark panel** with inset search, grouped categories (when not filtering), and squircle app tiles. The **top-right tray** shows workspace overview, status icons, date/time, and **quick settings** (user session, volume, battery). On desktop you get a compact panel under the button; on mobile (or with `launcherPresentation: 'fullscreen'`) you get a full-screen launcher with a large search field and touch-friendly app tiles. The dock **menu** button (grip icon) opens the same full-screen launcher; other dock buttons switch to running apps.
+
+## Playground
+
+```bash
+cd apps/app-about/playground
+pnpm install
+pnpm run dev
 ```
 
 ## License

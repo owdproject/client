@@ -1,112 +1,91 @@
 <script setup lang="ts">
 import { inject } from 'vue'
+import ButtonWindowNavMinimize from '../Button/ButtonWindowNavMinimize.vue'
+import ButtonWindowNavMaximize from '../Button/ButtonWindowNavMaximize.vue'
+import ButtonWindowNavClose from '../Button/ButtonWindowNavClose.vue'
 
 const windowController = inject<IWindowController>('windowController')
 
 function onWindowMinimize() {
   if (!windowController?.instanced) return
-
   windowController.actions.minimize()
 }
 
 function onWindowMaximize() {
   if (!windowController?.instanced) return
-
   windowController.actions.toggleMaximize()
 }
 
 function onWindowNavDestroy() {
   if (!windowController?.instanced) return
-
   windowController.actions.destroy()
 }
 </script>
 
 <template>
-  <CoreWindowNav
-      @dblclick="onWindowMaximize"
-  >
-
-    <div v-if="$slots.prepend" class="owd-window-nav__btn-group owd-window-nav__btn-group--append">
+  <CoreWindowNav @dblclick="onWindowMaximize">
+    <div
+      v-if="$slots.prepend"
+      class="owd-window-nav__btn-group owd-window-nav__btn-group--prepend"
+    >
       <slot name="prepend" />
     </div>
 
     <div
-        v-if="windowController?.title"
-        class="owd-window-nav__title"
+      v-if="windowController?.title"
+      class="owd-window-nav__title"
     >
       <div
-          class="owd-window-nav__title-inner text-ellipsis"
-          v-text="windowController?.title"
+        class="owd-window-nav__title-inner text-ellipsis"
+        v-text="windowController?.title"
       />
     </div>
 
     <div class="owd-window-nav__btn-group owd-window-nav__btn-group--append">
-
       <slot name="append" />
 
-      <!--
-      <ButtonMinimize
-          v-if="!windowController?.instanced || windowController?.isMinimizable"
-          size="sm"
-          @click="onWindowMinimize"
+      <ButtonWindowNavMinimize
+        v-if="!windowController?.instanced || windowController?.isMinimizable"
+        @mousedown.stop
+        @click.stop="onWindowMinimize"
       />
-      <ButtonMaximize
-          v-if="windowController?.isMaximizable"
-          size="sm"
-          @click="onWindowMaximize"
+      <ButtonWindowNavMaximize
+        v-if="windowController?.isMaximizable"
+        @mousedown.stop
+        @click.stop="onWindowMaximize"
       />
-      -->
       <ButtonWindowNavClose
-          v-if="!windowController?.instanced || windowController?.isDestroyable"
-          @click="onWindowNavDestroy"
+        v-if="!windowController?.instanced || windowController?.isDestroyable"
+        @mousedown.stop
+        @click.stop="onWindowNavDestroy"
       />
-
     </div>
-
   </CoreWindowNav>
 </template>
 
 <style scoped lang="scss">
+/* Layout only — colors in window-chrome.scss */
 .owd-window-nav {
-  display: flex;
-  align-items: center;
-  flex-shrink: 1;
-  width: 100%;
-  height: var(--owd-system-bar-height);
-  font-weight: bold;
-  box-shadow: 0 1px 0 0 var(--owd-surface-700);
-  color: rgba(255, 255, 255, 0.5);
-  border-radius: var(--owd-card-border-radius) var(--owd-card-border-radius) 0 0;
-  text-align: center;
-
-  &--focused {
-    color: white;
-  }
-
   &__btn-group {
     display: flex;
     flex-shrink: 0;
-    gap: 4px;
-    padding: 0 7px;
+    align-items: center;
+    gap: var(--nova-window-nav-gap, 2px);
+    padding: 0 var(--nova-window-nav-padding-x, 8px);
   }
 
   &__title {
     display: flex;
     align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 8px;
     text-align: center;
-    padding-left: 8px;
-    gap: 4px;
-    flex-grow: 1;
 
     &-inner {
       margin: 0 auto;
+      max-width: 100%;
     }
-  }
-
-  .owd-window-nav__draggable {
-    width: 100%;
-    height: 100%;
   }
 }
 </style>

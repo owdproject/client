@@ -24,7 +24,9 @@ export default defineNuxtModule({
     systemBar: {
       enabled: true,
       position: 'top',
-      startButton: false,
+      startButton: true,
+      /** compact = dropdown; fullscreen = overlay; responsive = overlay below 768px */
+      launcherPresentation: 'responsive',
     },
     dockBar: {
       enabled: true,
@@ -61,6 +63,7 @@ export default defineNuxtModule({
 
     addComponentsDir({
       path: resolve('./runtime/components'),
+      global: true,
     })
 
     registerTailwindPath(
