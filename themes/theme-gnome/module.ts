@@ -7,18 +7,40 @@ import {
   installModule,
 } from '@nuxt/kit'
 import { registerTailwindPath } from '@owdproject/core/runtime/utils/utilApp'
+import deepMerge from 'deepmerge'
+import {
+  GNOME_EXPLORER_QUICK_ACCESS_SEED,
+  GNOME_EXPLORER_SPECIAL_FOLDERS,
+} from './runtime/apps/explorer/explorerNav.defaults'
 
 export default defineNuxtModule({
   meta: {
     name: 'owd-theme-gnome',
+    configKey: 'desktop',
+  },
+  defaults: {
+    name: 'gnome',
+    explorer: {
+      quickAccess: GNOME_EXPLORER_QUICK_ACCESS_SEED,
+      quickAccessExtra: [],
+      quickAccessOverride: [],
+      specialFolders: GNOME_EXPLORER_SPECIAL_FOLDERS,
+      specialFoldersExtra: [],
+      specialFoldersOverride: [],
+      mountLabels: {
+        '/home': 'Home',
+      },
+    },
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
-    const desktopConfig = require(resolve('./desktop.config.ts'))
+    await installModule('@owdproject/kit-theme')
 
-    // assign open web desktop theme base config to runtime config
-    nuxt.options.runtimeConfig.public.desktop = desktopConfig.default
+    nuxt.options.runtimeConfig.public.desktop = deepMerge(
+      nuxt.options.runtimeConfig.public.desktop ?? {},
+      deepMerge(require(resolve('./desktop.config.ts')).default, options),
+    )
 
     {
       // add components
@@ -66,8 +88,29 @@ export default defineNuxtModule({
     }
 
     {
+      addPlugin({
+        src: resolve('./runtime/plugins/50.owd-theme-gnome-dialogs.client.ts'),
+        mode: 'client',
+      })
+    }
+
+    {
       if (nuxt.options.modules.includes('@owdproject/module-fs')) {
         await installModule('@owdproject/kit-explorer')
+
+        addPlugin({
+          src: resolve('./runtime/apps/explorer/plugin.ts'),
+          mode: 'client',
+        })
+
+        addComponentsDir({
+          path: resolve('./runtime/apps/explorer/components'),
+        })
+
+        registerTailwindPath(
+          nuxt,
+          resolve('./runtime/apps/explorer/components/**/*.{vue,mjs,ts}'),
+        )
       }
     }
   },

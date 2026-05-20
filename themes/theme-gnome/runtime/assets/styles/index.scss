@@ -10,6 +10,9 @@
 @use './partials/slider.scss';
 @use './partials/terminal.scss';
 @use './partials/textarea.scss';
+@use './partials/explorer-shell.scss';
+@use './partials/explorer-prime-overlays.scss';
+@use './partials/explorer-nautilus.scss';
 
 :root {
   --owd-input-padding-x: 8px;
