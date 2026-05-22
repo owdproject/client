@@ -1,19 +1,20 @@
 {
-    "name": "@owdproject/client",
-    "private": true,
-    "nx": {
-        "name": "desktop"
-    },
-    "scripts": {
-        "build": "nuxt generate",
-        "dev": "nuxt dev --host",
-        "generate": "nuxt generate --dev",
-        "postinstall": "nuxt prepare",
-        "preview": "nuxt preview"
-    },
-    "dependencies": {
-        "@owdproject/core": "^3.2.0",
-        "@owdproject/theme-win95": "^0.1.1",
-        "@owdproject/app-about": "^0.1.2"
-    }
+  "name": "@owdproject/client",
+  "private": true,
+  "nx": {
+    "name": "desktop"
+  },
+  "scripts": {
+    "build": "nuxt generate",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate --dev",
+    "postinstall": "nuxt prepare",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@owdproject/app-about": "^0.1.3",
+    "@owdproject/core": "^3.1.4",
+    "@owdproject/theme-win95": "^0.1.1",
+    "h3": "^2.0.1-rc.22"
+  }
 }

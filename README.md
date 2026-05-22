@@ -20,6 +20,11 @@ Open Web Desktop (OWD) is a framework designed to provide a simple environment f
 - Styled with PrimeVue and Tailwind for a consistent UI
 - Fully localizable with nuxt-i18n support
 
+## Repository layout
+
+- **`desktop/`** — monorepo dev desktop (workspace apps, modules, themes). Use `pnpm run dev` from the repo root.
+- **`template/`** — scaffold copied by `npm create owd` / `desktop init`. **Do not edit by hand**; regenerate with `pnpm desktop template` (or `pnpm template:sync`) after changing the starter desktop or publishing `@owdproject/*` packages. Blueprint sources live in `packages/core/template-blueprint/`.
+
 ## Getting started
 
 Bootstrap a new project by running:

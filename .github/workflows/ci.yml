@@ -35,5 +35,8 @@ jobs:
       - name: Prepare Nuxt modules (apps & themes)
         run: pnpm run prepare:modules
 
+      - name: Verify template/ is up to date
+        run: pnpm desktop template --check
+
       - name: Typecheck @owdproject/kit-fs
         run: pnpm exec tsc --noEmit -p packages/kit-fs/tsconfig.json

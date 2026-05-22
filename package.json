@@ -23,6 +23,7 @@
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
     "desktop": "node ./packages/core/bin/desktop.js",
+    "template:sync": "node ./packages/core/bin/desktop.js template",
     "validate:modules": "node ./packages/core/bin/desktop.js validate",
     "owd": "node ./packages/core/bin/owd.js"
   },

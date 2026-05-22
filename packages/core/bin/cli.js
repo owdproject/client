@@ -71,6 +71,12 @@ CONTROL PANEL (TUI)
   ${name} add <package> [options]
   ${name} add <kind> <name> [options]
   ${name} validate [path...]  Check Nuxt module + playground layout
+  ${name} template [--dry-run] [--check]  Regenerate client/template/ (maintainers)
+
+TEMPLATE (monorepo maintainers)
+  ${name} template              Write template/ from blueprint + desktop/ + latest npm versions
+  ${name} template --dry-run    Show planned @owdproject/* and starter versions
+  ${name} template --check      Fail if committed template/ differs (CI)
 
 VALIDATE
   ${name} validate            Validate cwd package, or all apps/themes/modules at repo root
@@ -228,7 +234,7 @@ export async function runCli(name, argv, options = {}) {
 
   const parsed = getopts(argv, {
     alias: { h: 'help', b: 'branch' },
-    boolean: ['help', 'npm', 'dry-run', 'dev', 'workspace', 'playground', 'json', 'strict', 'smoke'],
+    boolean: ['help', 'npm', 'dry-run', 'dev', 'workspace', 'playground', 'json', 'strict', 'smoke', 'check'],
     string: ['from', 'branch', 'fork', 'repo'],
   })
 
@@ -301,6 +307,22 @@ export async function runCli(name, argv, options = {}) {
       if (!json) console.log('')
     }
     process.exit(exitCode)
+  }
+
+  if (cmd === 'template') {
+    if (!workspaceRoot) {
+      fail(
+        'Not inside an OWD workspace.',
+        `Run from the client monorepo root to regenerate template/.`,
+      )
+    }
+    const { runGenerateTemplateCli } = await import('./lib/generateTemplate.js')
+    await runGenerateTemplateCli({
+      workspaceRoot,
+      dryRun: parsed['dry-run'] === true,
+      check: parsed.check === true,
+    })
+    return
   }
 
   if (!cmd) {
