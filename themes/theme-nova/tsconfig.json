@@ -1,6 +1,0 @@
-{
-  "extends": "../../tsconfig.base.json",
-  "include": ["src/runtime", "src/module.ts", "src/i18n", "../../packages/core/types/index.d.ts"],
-  "exclude": ["dist", "node_modules", "playground"],
-  "compilerOptions": { "outDir": "dist" }
-}
