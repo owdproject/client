@@ -1,0 +1,25 @@
+{
+  "name": "@owdproject/kit-explorer",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "Shared explorer logic and headless UI primitives for OWD themes.",
+  "homepage": "https://github.com/owdproject/client#readme",
+  "type": "module",
+  "main": "./module.ts",
+  "module": "./module.ts",
+  "exports": {
+    ".": "./module.ts",
+    "./module": "./module.ts",
+    "./runtime/*": "./runtime/*",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "@owdproject/core": "^3.2.0",
+    "nuxt": "^4.0.0",
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^4.4.4",
+    "@owdproject/kit-fs": "workspace:*"
+  }
+}
