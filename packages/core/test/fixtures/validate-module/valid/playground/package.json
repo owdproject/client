@@ -1,0 +1,11 @@
+{
+  "name": "@owdproject/app-fixture-valid-playground",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@owdproject/app-fixture-valid": "workspace:*",
+    "@owdproject/core": "workspace:*",
+    "@owdproject/theme-nova": "workspace:*",
+    "nuxt": "^4.4.4"
+  }
+}

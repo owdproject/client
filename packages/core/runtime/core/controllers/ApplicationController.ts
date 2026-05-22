@@ -7,7 +7,8 @@ import { useTerminalManager } from '../../composables/useTerminalManager'
 import { debugLog, debugError } from '../../utils/utilDebug'
 import { useDesktopDefaultAppsStore } from '../../stores/storeDesktopDefaultApps'
 import { useDesktopWorkspaceStore } from '../../stores/storeDesktopWorkspace'
-import { reactive } from '@vue/reactivity'
+import { useDesktopWindowStore } from '../../stores/storeDesktopWindow'
+import { shallowRef } from 'vue'
 import { unref } from 'vue'
 
 export class ApplicationController implements IApplicationController {
@@ -17,9 +18,24 @@ export class ApplicationController implements IApplicationController {
   public readonly id
   public readonly config
   public readonly storeWindows
-  public readonly storeMeta
 
-  public windows = reactive(new Map<string, IWindowController>())
+  private readonly _windows = shallowRef(new Map<string, IWindowController>())
+
+  /** Reactive window count for Vue (class getters are not tracked). */
+  public readonly openWindowCount = shallowRef(0)
+
+  get windows(): Map<string, IWindowController> {
+    return this._windows.value
+  }
+
+  private replaceWindows(
+    mutator: (next: Map<string, IWindowController>) => void,
+  ) {
+    const next = new Map(this._windows.value)
+    mutator(next)
+    this._windows.value = next
+    this.openWindowCount.value = next.size
+  }
 
   public isRunning = false
 
@@ -30,7 +46,11 @@ export class ApplicationController implements IApplicationController {
     this.id = id
     this.config = config
     this.storeWindows = useApplicationWindowsStore(id)
-    this.storeMeta = useApplicationMetaStore(id)
+  }
+
+  /** Lazy meta store — app modules should register state via `useApplicationMetaStore` before `defineDesktopApp`. */
+  get storeMeta() {
+    return useApplicationMetaStore(this.id)()
   }
 
   public async initApplication(): Promise<void> {
@@ -128,7 +148,30 @@ export class ApplicationController implements IApplicationController {
       }
     })
 
+    this.normalizeWindowFocus()
+
     debugLog('Windows have been restored', this.windows)
+  }
+
+  /** Ensure a single focused window after restore or stale persisted state. */
+  private normalizeWindowFocus() {
+    if (this.windows.size === 0) {
+      return
+    }
+
+    let topWindow: IWindowController | undefined
+    let topZ = -Infinity
+
+    for (const window of this.windows.values()) {
+      window.setFocus(false)
+      const z = window.state.position?.z ?? 0
+      if (z >= topZ) {
+        topZ = z
+        topWindow = window
+      }
+    }
+
+    topWindow?.setFocus(true)
   }
 
   public openWindow(
@@ -150,7 +193,7 @@ export class ApplicationController implements IApplicationController {
           Object.assign(existing.meta, meta)
         }
         if (!meta?.isRestoring) {
-          existing.state.active = true
+          existing.actions.setActive(true)
           existing.actions.bringToFront()
         }
         return existing
@@ -178,27 +221,42 @@ export class ApplicationController implements IApplicationController {
         windowConfig.position?.y !== undefined
           ? window.scrollY + windowConfig.position.y
           : window.scrollY + centerY
+      const cascadeStep = 40
+      const cascadeOffset = this.getWindowsByModel(model).length * cascadeStep
+      const baseX = windowConfig.position?.x ?? 100
+      const desktopWindowStore = useDesktopWindowStore()
+      const initialZ = desktopWindowStore.incrementPositionZ()
 
-      this.storeWindows.windows[windowId] = {
-        model,
-        state: {
-          id: windowId,
-          active: true,
-          focused: false,
-          position: {
-            x: windowConfig.position?.x,
-            y: positionY,
+      const nextWindows = {
+        ...this.storeWindows.windows,
+        [windowId]: {
+          model,
+          state: {
+            id: windowId,
+            active: true,
+            focused: false,
+            position: {
+              x: baseX + cascadeOffset,
+              y: positionY + cascadeOffset,
+              z: initialZ,
+            },
+            createdAt: +new Date(),
+            workspace: desktopWorkspaceStore.resolveActiveWorkspaceId(),
           },
-          createdAt: +new Date(),
-          workspace: String(unref(desktopWorkspaceStore.active) ?? ''),
+          meta,
         },
-        meta,
       }
+      this.storeWindows.windows = nextWindows
 
       windowStoredState = this.storeWindows.windows[windowId]
     } else {
       // restore previous id if state is defined
-      windowId = windowStoredState.state.id
+      windowId =
+        windowStoredState.state?.id ??
+        Object.keys(this.storeWindows.windows).find(
+          (key) => this.storeWindows.windows[key] === windowStoredState,
+        ) ??
+        `${model}-restored`
     }
 
     const windowConfig = this.config.windows[model] as WindowConfig
@@ -214,7 +272,9 @@ export class ApplicationController implements IApplicationController {
       windowController.actions.bringToFront()
     }
 
-    this.windows.set(windowId, windowController)
+    this.replaceWindows((next) => {
+      next.set(windowId, windowController)
+    })
 
     this.setRunning(true)
 
@@ -228,16 +288,19 @@ export class ApplicationController implements IApplicationController {
       this.storeWindows.windows = nextWindows
     }
 
-    this.windows.delete(windowId)
+    this.replaceWindows((next) => {
+      next.delete(windowId)
+    })
 
-    if (this.windows.size === 0) {
+    if (this.openWindowCount.value === 0) {
       this.applicationManager.closeApp(this.id)
     }
   }
 
   public closeAllWindows() {
     this.storeWindows.windows = {}
-    this.windows.clear()
+    this._windows.value = new Map()
+    this.openWindowCount.value = 0
   }
 
   get windowsOpened() {

@@ -9,6 +9,11 @@ import {
 } from 'node:fs'
 import { join } from 'node:path'
 import { owdDir } from './workspace.js'
+import {
+  devSpawnCwd,
+  devTargetLogLabel,
+  normalizeDevTarget,
+} from './playgroundContext.js'
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -166,7 +171,18 @@ export async function getClientStatus(workspaceRoot, port) {
 
 let devChild = null
 
-export function startDev(workspaceRoot) {
+/**
+ * @param {import('./playgroundContext.js').DevTarget | string} target
+ */
+export function startDev(target) {
+  const resolved = normalizeDevTarget(target)
+  if (!resolved) {
+    throw new Error('startDev: missing workspace root')
+  }
+
+  const { workspaceRoot } = resolved
+  const spawnCwd = devSpawnCwd(resolved)
+
   if (devChild?.pid) {
     try {
       process.kill(devChild.pid, 0)
@@ -180,7 +196,7 @@ export function startDev(workspaceRoot) {
   const logPath = devLogPath(workspaceRoot)
 
   devChild = spawn('pnpm', ['run', 'dev'], {
-    cwd: workspaceRoot,
+    cwd: spawnCwd,
     detached: true,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
@@ -191,6 +207,14 @@ export function startDev(workspaceRoot) {
     } catch {
       /* ignore */
     }
+  }
+  try {
+    appendFileSync(
+      logPath,
+      `[owd] dev target: ${devTargetLogLabel(resolved)} (cwd ${spawnCwd})\n`,
+    )
+  } catch {
+    /* ignore */
   }
   devChild.stdout?.on('data', appendLog)
   devChild.stderr?.on('data', appendLog)
@@ -243,10 +267,21 @@ export function runScript(workspaceRoot, script) {
   })
 }
 
-/** Run dev in the foreground (default `desktop` command). */
-export function runDevForeground(workspaceRoot) {
+/** Run dev in the foreground (`desktop dev`). */
+export function runDevForeground(target) {
+  const resolved = normalizeDevTarget(target)
+  if (!resolved) {
+    console.error('Not inside an OWD workspace.')
+    process.exit(1)
+  }
+
+  const spawnCwd = devSpawnCwd(resolved)
+  if (resolved.mode === 'playground' && resolved.packageName) {
+    console.log(`Starting playground: ${resolved.packageName}`)
+  }
+
   const child = spawn('pnpm', ['run', 'dev'], {
-    cwd: workspaceRoot,
+    cwd: spawnCwd,
     stdio: 'inherit',
     shell: false,
   })

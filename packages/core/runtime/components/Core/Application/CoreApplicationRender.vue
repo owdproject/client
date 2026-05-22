@@ -6,13 +6,15 @@ defineProps<{
 }>()
 
 const applicationManager = useApplicationManager()
+const runningApps = applicationManager.appsRunning
 </script>
 
 <template>
   <CoreApplicationWindowsRender
-    v-for="app of applicationManager.appsRunning.value"
+    v-for="app of runningApps"
     :key="app.id"
     :workspace-filter="workspaceFilter"
     :windows="app.windowsOpened"
+    :window-revision="app.openWindowCount.value"
   />
 </template>

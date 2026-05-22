@@ -1,17 +1,54 @@
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { execSync } from 'node:child_process'
+import {
+  resolveDesktopConfigPath,
+  desktopConfigWritePath,
+} from './desktopConfig.js'
 
 export const SCOPE = '@owdproject/'
 
-/** Not loadable via owd.config `modules` (core is the shell; docs is internal). */
+/** Not loadable via desktop.config `modules` (core is the shell). */
 export const DESKTOP_NON_INSTALLABLE = new Set([
   '@owdproject/core',
-  '@owdproject/docs',
 ])
 
+/** Installed documentation modules (current + deprecated package name). */
+export const DOCS_MODULE_PACKAGES = [
+  '@owdproject/module-docs',
+  '@owdproject/docs',
+]
+
+export function hasDocsModuleInstalled(config, deps = {}) {
+  return DOCS_MODULE_PACKAGES.some(
+    (name) => config?.modules?.includes(name) || deps[name],
+  )
+}
+
+export function docsBasePathFromConfig(config) {
+  const base = config?.docs?.basePath
+  if (typeof base === 'string' && base.startsWith('/')) return base
+  return '/docs'
+}
+
+/** Theme-internal UI kits — pulled in by themes, not listed as desktop modules. */
+export function isDesktopKitPackage(pkgName) {
+  const short = pkgName.startsWith(SCOPE) ? pkgName.slice(SCOPE.length) : pkgName
+  return short.startsWith('kit-')
+}
+
+/** Scaffold / blueprint packages — not loadable desktop modules. */
+export function isDesktopTemplatePackage(pkgName) {
+  const short = pkgName.startsWith(SCOPE) ? pkgName.slice(SCOPE.length) : pkgName
+  return short.endsWith('-template')
+}
+
 export function isInstallableDesktopModule(pkgName) {
-  return !DESKTOP_NON_INSTALLABLE.has(pkgName)
+  return (
+    !DESKTOP_NON_INSTALLABLE.has(pkgName) &&
+    !isDesktopKitPackage(pkgName) &&
+    !isDesktopTemplatePackage(pkgName)
+  )
 }
 
 export const KINDS = {
@@ -117,10 +154,16 @@ export function saveSettings(workspaceRoot, settings) {
 }
 
 export function desktopPaths(workspaceRoot) {
+  const desktop = join(workspaceRoot, 'desktop')
+  const resolved = resolveDesktopConfigPath(desktop)
+  const configWrite = desktopConfigWritePath(desktop)
+
   return {
-    desktop: join(workspaceRoot, 'desktop'),
-    config: join(workspaceRoot, 'desktop', 'owd.config.ts'),
-    packageJson: join(workspaceRoot, 'desktop', 'package.json'),
+    desktop,
+    config: resolved?.path ?? configWrite,
+    configWrite,
+    configLegacy: resolved?.legacy ?? false,
+    packageJson: join(desktop, 'package.json'),
   }
 }
 

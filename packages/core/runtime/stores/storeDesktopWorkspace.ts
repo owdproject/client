@@ -23,13 +23,23 @@ export const useDesktopWorkspaceStore = defineStore(
     function setupWorkspaces() {
       if (desktopStore.state.workspace.list.length === 0) {
         createWorkspace()
-        desktopStore.state.workspace.active = desktopStore.state.workspace
-          .list[0] as string
       }
 
       if (desktopStore.state.workspace.list.length === 1) {
         createWorkspace()
       }
+
+      const list = desktopStore.state.workspace.list
+      const active = desktopStore.state.workspace.active
+      if (!active || !list.includes(active)) {
+        desktopStore.state.workspace.active = list[0] ?? ''
+      }
+    }
+
+    /** Id of the workspace new windows should use (after setupWorkspaces). */
+    function resolveActiveWorkspaceId(): string {
+      setupWorkspaces()
+      return desktopStore.state.workspace.active || desktopStore.state.workspace.list[0] || ''
     }
 
     function setOverview(value: boolean) {
@@ -56,6 +66,7 @@ export const useDesktopWorkspaceStore = defineStore(
       list,
       workspaceActiveIndex,
       setupWorkspaces,
+      resolveActiveWorkspaceId,
       setOverview,
       setWorkspace,
       createWorkspace,

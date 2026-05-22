@@ -110,19 +110,19 @@ export function launchControlPanel(targetDir, commandName = 'desktop') {
   const relDir = basename(targetDir)
 
   if (!canLaunchUi()) {
-    console.log(`\nNext: cd ${relDir} && pnpm desktop ui\n`)
+    console.log(`\nNext: cd ${relDir} && pnpm desktop\n`)
     return false
   }
 
-  console.log('\nOpening control panel (desktop ui)…\n')
-  const result = spawnSync('pnpm', ['exec', commandName, 'ui'], {
+  console.log('\nOpening control panel…\n')
+  const result = spawnSync('pnpm', ['exec', commandName], {
     cwd: targetDir,
     stdio: 'inherit',
     shell: false,
   })
 
   if (result.status !== 0 && result.status !== null) {
-    console.log(`\nControl panel exited. Run again with: cd ${relDir} && pnpm desktop ui\n`)
+    console.log(`\nControl panel exited. Run again with: cd ${relDir} && pnpm desktop\n`)
   }
 
   return true
@@ -171,15 +171,15 @@ export async function scaffoldProject(options = {}) {
   if (!options.skipUi) {
     const launched = launchControlPanel(targetDir, commandName)
     if (launched) {
-      console.log(`\nLater: cd ${dir} && pnpm run dev · pnpm desktop ui\n`)
+      console.log(`\nLater: cd ${dir} && pnpm run dev · pnpm desktop\n`)
     } else {
       console.log(`  cd ${dir}`)
-      console.log('  pnpm desktop ui    # control panel')
+      console.log('  pnpm desktop       # control panel ([m] menu, [s] start, [x] stop, [R] reboot)')
       console.log('  pnpm run dev       # Nuxt dev server\n')
     }
   } else {
     console.log(`  cd ${dir}`)
-    console.log('  pnpm desktop ui')
+    console.log('  pnpm desktop')
     console.log('  pnpm run dev\n')
   }
 

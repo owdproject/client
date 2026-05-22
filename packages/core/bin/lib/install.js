@@ -9,6 +9,10 @@ import {
   isWorkspaceInstallMode,
   inferKind,
 } from './workspace.js'
+import {
+  resolveDesktopConfigPath,
+  desktopConfigWritePath,
+} from './desktopConfig.js'
 
 const require = createRequire(import.meta.url)
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -231,7 +235,7 @@ ${dryRun ? 'Plan (dry run)' : 'Adding to desktop'}
   Type      ${kindMeta.label}
   Folder    ${targetDir}/
   Source    ${source.label}${branch ? ` (branch: ${branch})` : ''}
-  Config    desktop/owd.config.ts → ${kindMeta.configKey}
+  Config    desktop/desktop.config.ts → ${kindMeta.configKey}
 ────────────────────────────────────────
 `)
 }
@@ -312,7 +316,8 @@ export async function runWorkspaceInstall({
   const { workspaceDir } = KINDS[kind]
   const targetDir = join(workspaceDir, pkgShort)
   const desktopPath = join(workspaceRoot, 'desktop')
-  const configPath = join(desktopPath, 'owd.config.ts')
+  const resolved = resolveDesktopConfigPath(desktopPath)
+  const configPath = resolved?.path ?? desktopConfigWritePath(desktopPath)
 
   printPlan({
     pkgName,

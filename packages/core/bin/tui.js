@@ -12,8 +12,16 @@ import {
   isWorkspaceInstallMode,
   isInstallableDesktopModule,
   normalizeInstallMode,
+  hasDocsModuleInstalled,
+  docsBasePathFromConfig,
 } from './lib/workspace.js'
-import { readDesktopConfig, writeDesktopConfig, readDesktopDependencies } from './lib/config.js'
+import {
+  readDesktopConfig,
+  writeDesktopConfig,
+  readDesktopDependencies,
+  resolveConfigPathForWrite,
+} from './lib/config.js'
+import { warnLegacyDesktopConfig } from './lib/desktopConfig.js'
 import {
   loadCatalog,
   filterCatalog,
@@ -37,6 +45,7 @@ import {
   formatSparkline,
   formatBar,
 } from './lib/status.js'
+import { resolveDevTarget } from './lib/playgroundContext.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -65,6 +74,12 @@ export async function runTui(commandName = 'desktop') {
   }
 
   const paths = desktopPaths(workspaceRoot)
+  const devTarget = resolveDevTarget(process.cwd(), workspaceRoot)
+  const playgroundActive = devTarget?.mode === 'playground'
+  const playgroundLabel = devTarget?.packageName ?? null
+  warnLegacyDesktopConfig(
+    paths.configLegacy ? { legacy: true, file: 'owd.config.ts' } : null,
+  )
   let settings = loadSettings(workspaceRoot)
   let config = readDesktopConfig(paths.config, workspaceRoot)
   let deps = readDesktopDependencies(paths.packageJson)
@@ -88,20 +103,40 @@ export async function runTui(commandName = 'desktop') {
   let modeFlash = 0
   let saveProgress = null
   let settingsOpen = false
+  let menuOpen = false
+
+  /** @type {{ id: string, label: string, key: string }[]} */
+  const MENU_ITEMS = [
+    { id: 'start', label: 'Start dev server', key: 's' },
+    { id: 'stop', label: 'Stop dev server', key: 'x' },
+    { id: 'reboot', label: 'Reboot dev server', key: 'R' },
+    { id: 'save', label: 'Save catalog / theme', key: 'w' },
+    { id: 'refresh', label: 'Refresh package list', key: 'r' },
+    { id: 'docs', label: 'Open documentation', key: 'i' },
+    { id: 'settings', label: 'Settings', key: 'g' },
+    { id: 'mode', label: 'Toggle install mode (USER/DEV)', key: 'd' },
+    { id: 'build', label: 'Build (pnpm generate)', key: 'b' },
+    { id: 'quit', label: 'Quit control panel', key: 'q' },
+  ]
 
   const screen = blessed.screen({
     smartCSR: true,
     fullUnicode: true,
-    title: 'Nuxt Desktop',
+    title: 'Open Web Desktop',
     dockCorners: false,
   })
+
+  const HEADER_ROWS = playgroundActive ? 4 : 3
+  const MAIN_TOP = HEADER_ROWS
+  const CLIENT_PANEL_H = 10
+  const PANELS_TOP = MAIN_TOP + CLIENT_PANEL_H
 
   const titleBar = blessed.box({
     parent: screen,
     top: 0,
     left: 0,
     width: '100%',
-    height: 2,
+    height: HEADER_ROWS,
     tags: true,
     content: '',
     style: { fg: C.title, bg: 'black' },
@@ -109,10 +144,10 @@ export async function runTui(commandName = 'desktop') {
 
   const clientBox = blessed.box({
     parent: screen,
-    top: 2,
+    top: MAIN_TOP,
     left: 0,
     width: '58%',
-    height: 8,
+    height: CLIENT_PANEL_H,
     tags: true,
     border: { type: 'line' },
     style: {
@@ -125,10 +160,10 @@ export async function runTui(commandName = 'desktop') {
 
   const metricsBox = blessed.box({
     parent: screen,
-    top: 2,
+    top: MAIN_TOP,
     left: '58%',
     width: '42%',
-    height: 8,
+    height: CLIENT_PANEL_H,
     tags: true,
     border: { type: 'line' },
     style: {
@@ -141,7 +176,7 @@ export async function runTui(commandName = 'desktop') {
 
   const themeBox = blessed.box({
     parent: screen,
-    top: 10,
+    top: PANELS_TOP,
     left: 0,
     width: '32%',
     height: '100%-15',
@@ -189,7 +224,7 @@ export async function runTui(commandName = 'desktop') {
 
   const catalogBox = blessed.box({
     parent: screen,
-    top: 10,
+    top: PANELS_TOP,
     left: '32%',
     width: '68%',
     height: '100%-15',
@@ -326,6 +361,42 @@ export async function runTui(commandName = 'desktop') {
     label: ' GitHub username ',
   })
 
+  const menuOverlay = blessed.box({
+    parent: screen,
+    top: 'center',
+    left: 'center',
+    width: 52,
+    height: MENU_ITEMS.length + 4,
+    hidden: true,
+    tags: true,
+    border: { type: 'line' },
+    label: ' Menu ',
+    style: { fg: 'white', bg: '#1e1e2e', border: { fg: C.accent } },
+  })
+
+  const menuList = blessed.list({
+    parent: menuOverlay,
+    top: 1,
+    left: 1,
+    width: '100%-2',
+    height: MENU_ITEMS.length + 1,
+    tags: true,
+    keys: true,
+    vi: true,
+    mouse: true,
+    scrollbar: true,
+    style: {
+      fg: 'white',
+      bg: '#1e1e2e',
+      selected: { bg: '#313244', fg: C.accent, bold: true },
+    },
+    items: MENU_ITEMS.map(({ label, key }) => `[${key}]  ${label}`),
+  })
+
+  function overlayBlocksKeys() {
+    return settingsOpen || menuOpen
+  }
+
   function installModeLabel() {
     return isWorkspaceInstallMode(settings) ? 'DEV' : 'USER'
   }
@@ -335,25 +406,37 @@ export async function runTui(commandName = 'desktop') {
   }
 
   function renderModeHeader() {
+    const isDev = isWorkspaceInstallMode(settings)
     const mode = installModeLabel()
     const color = installModeColor()
-    const installHint = isWorkspaceInstallMode(settings)
+
+    const installLine = isDev
       ? settings.githubUser
-        ? `clone → fork github.com/${settings.githubUser}/<pkg>`
-        : 'clone → github.com/owdproject/<pkg>'
-      : 'install → npm registry'
+        ? `save → git clone {bold}github.com/${settings.githubUser}/…{/}`
+        : 'save → git clone {bold}github.com/owdproject/…{/}'
+      : 'save → {bold}npm install{/} (registry)'
 
-    const orgs = [...new Set([...(settings.githubOrgs ?? ['owdproject']), settings.githubUser].filter(Boolean))]
-    const catalogLine = `Catalog: GitHub (${orgs.join(' + ')})${catalogCacheAge ? ` · cache ${catalogCacheAge}` : ''}`
+    const listCount = catalog.length
+      ? `{bold}${catalog.length}{/} packages`
+      : 'loading…'
+    const listCache = catalogCacheAge ? ` · ${catalogCacheAge}` : ''
 
-    const borderFlash = modeFlash > 0 ? 'white' : color
+    const borderFlash = modeFlash > 0 ? 'white' : C.title
     titleBar.style.fg = borderFlash
+
+    const playgroundLine = playgroundActive && playgroundLabel
+      ? ` {${C.accent}-fg}Playground:{/} {bold}${playgroundLabel}{/}  {${C.muted}-fg}[s] starts playground · catalog [w] → monorepo desktop{/}`
+      : null
 
     titleBar.setContent(
       [
-        ` {bold}{${C.title}-fg} Nuxt Desktop {/}{/}  {bold}{${color}-fg}[${mode}]{/}{/}  {${C.muted}-fg}${installHint}{/}`,
-        ` {${C.muted}-fg}${catalogLine}{/}`,
-      ].join('\n'),
+        ` {bold}{white-fg}Open Web Desktop{/}{/}  {${C.muted}-fg}control panel{/}  {${C.muted}-fg}[m] menu{/}`,
+        playgroundLine,
+        ` {${C.muted}-fg}Install mode{/}  {bold}{${color}-fg}${mode}{/}{/}  ${installLine}  {${C.muted}-fg}[d] switch{/}`,
+        ` {${C.muted}-fg}Package list{/}  ${listCount} from GitHub${listCache}  {${C.muted}-fg}[r] refresh{/}`,
+      ]
+        .filter(Boolean)
+        .join('\n'),
     )
   }
 
@@ -381,9 +464,26 @@ export async function runTui(commandName = 'desktop') {
     return `APPS & MODULES · ${KINDS[activeTab].label.toUpperCase()}`
   }
 
+  function isDevServerUp() {
+    return (
+      devPhase === 'running' ||
+      devPhase === 'starting' ||
+      clientStatus.running ||
+      clientStatus.http.up
+    )
+  }
+
+  function serverKeyHints() {
+    return `{${C.muted}-fg}[s]{/} start/stop  {${C.muted}-fg}[m]{/} menu`
+  }
+
+  function defaultStatusHint() {
+    return 'Press [s] start/stop · [m] menu · [w] save catalog changes'
+  }
+
   function renderHelp(tone = 'info') {
     const statusColor = tone === 'error' ? C.err : tone === 'ok' ? C.accent : C.warn
-    const msg = statusLine || 'Ready — edit then press s to save'
+    const msg = statusLine || defaultStatusHint()
     const progress =
       saveProgress !== null
         ? ` ${formatBar(saveProgress.step, saveProgress.total, 16)} ${saveProgress.label}`
@@ -397,9 +497,9 @@ export async function runTui(commandName = 'desktop') {
     helpBar.setContent(
       [
         `{bold}{${statusColor}-fg}${msg}{/}{/}${progress}`,
-        `{${C.focus}-fg}▸{/} {bold}${panelLabel()}{/}  {bold}{${installModeColor()}-fg}[${installModeLabel()}]{/}{/}`,
+        `{${C.focus}-fg}▸{/} {bold}${panelLabel()}{/}`,
         navLine,
-        `{${C.muted}-fg}Actions{/}  {bold}s{/} save   {bold}r{/} refresh   {bold}d{/} {bold}USER↔DEV{/} install   {bold}n{/} Nuxt dev   {bold}g{/} settings   {bold}b{/} build   {bold}q{/} quit`,
+        `{${C.muted}-fg}Server{/}  {bold}s{/} start/stop  {bold}m{/} menu   {${C.muted}-fg}│{/}  {bold}w{/} save  {bold}r{/} refresh  {bold}i{/} docs  {bold}g{/} settings  {bold}q{/} quit`,
       ].join('\n'),
     )
   }
@@ -473,16 +573,17 @@ export async function runTui(commandName = 'desktop') {
   function renderSettingsPanel() {
     const mode = installModeLabel()
     const color = installModeColor()
-    const fork = settings.githubUser
-      ? `github.com/${settings.githubUser}/<pkg>`
-      : 'github.com/owdproject/<pkg>'
+    const saveBehavior = isWorkspaceInstallMode(settings)
+      ? settings.githubUser
+        ? `git clone from github.com/${settings.githubUser}/…`
+        : 'git clone from github.com/owdproject/…'
+      : 'install from npm registry'
+
     settingsInfo.setContent(
       [
         `{bold}Install mode{/}  {${color}-fg}${mode}{/}`,
-        isWorkspaceInstallMode(settings)
-          ? `{${C.muted}-fg}Save clones to apps/ packages/ themes/{/}`
-          : `{${C.muted}-fg}Save installs from npm{/}`,
-        `{${C.muted}-fg}Toggle with {bold}d{/} · fork: ${fork}{/}`,
+        `{${C.muted}-fg}When you press {bold}w{/} (save): ${saveBehavior}{/}`,
+        `{${C.muted}-fg}[d] toggle USER/DEV · GitHub username below = your fork org (optional){/}`,
       ].join('\n'),
     )
   }
@@ -502,6 +603,70 @@ export async function runTui(commandName = 'desktop') {
     settingsOverlay.hide()
     focusCatalog()
     screen.render()
+  }
+
+  function openMenu() {
+    if (settingsOpen) return
+    menuOpen = true
+    menuOverlay.show()
+    menuList.focus()
+    setStatus('Menu — ↑↓ select · Enter run · Esc close')
+    screen.render()
+  }
+
+  function closeMenu() {
+    menuOpen = false
+    menuOverlay.hide()
+    focusCatalog()
+    screen.render()
+  }
+
+  async function runMenuAction(id) {
+    closeMenu()
+    switch (id) {
+      case 'start':
+        await startDevServer()
+        break
+      case 'stop':
+        await stopDevServer()
+        break
+      case 'reboot':
+        await rebootDevServer()
+        break
+      case 'save':
+        await applyChanges()
+        break
+      case 'refresh':
+        await refreshCatalog()
+        break
+      case 'docs':
+        openDocsInBrowser()
+        break
+      case 'settings':
+        openSettings()
+        break
+      case 'mode':
+        toggleInstallMode()
+        break
+      case 'build':
+        stopSpinner()
+        setStatus('Running pnpm run generate…')
+        screen.render()
+        try {
+          execSync('pnpm run generate', { cwd: workspaceRoot, stdio: 'pipe' })
+          setStatus('Generate finished', 'ok')
+        } catch (err) {
+          setStatus(`Generate failed: ${err.message}`, 'error')
+        } finally {
+          refreshTerminalUi()
+        }
+        break
+      case 'quit':
+        process.exit(0)
+        break
+      default:
+        break
+    }
   }
 
   function saveSettingsFromOverlay() {
@@ -577,22 +742,37 @@ export async function runTui(commandName = 'desktop') {
       devPhase = 'stopped'
     }
 
+    const serverRunning = clientStatus.running || http.up
     const pidLine = clientStatus.pid
       ? `PID ${clientStatus.pid}   ${clientStatus.stats.memMb} MiB   ${clientStatus.stats.threads} thr`
-      : http.up
-        ? 'responding on port (process not matched)'
-        : 'press [n] to start dev server'
+      : serverRunning
+        ? 'HTTP responding (process not matched)'
+        : 'dev server stopped'
 
     const warnDev =
       isWorkspaceInstallMode(settings) && !settings.githubUser
-        ? `\n  {${C.warn}-fg}⚠ Dev mode: set GitHub user [g] to clone your forks{/}`
+        ? `\n  {${C.warn}-fg}⚠ DEV mode: open settings [g] to set your GitHub username for fork clones{/}`
         : ''
+
+    const docsInstalled = hasDocsModuleInstalled(config, deps)
+    const docsLine = docsInstalled
+      ? clientStatus.running || http.up
+        ? `  {${C.muted}-fg}Documentation installed{/}  {${C.accent}-fg}[i]{/} open ${docsBasePathFromConfig(config)}`
+        : `  {${C.muted}-fg}Documentation installed{/}  {${C.muted}-fg}[s] start dev server, then [i] open docs{/}`
+      : ''
+
+    const devTargetLine = playgroundActive && playgroundLabel
+      ? `  {${C.accent}-fg}Dev target:{/} {bold}${playgroundLabel}{/} playground`
+      : null
 
     clientBox.setContent(
       [
         `  {${dotColor}-fg}${dotChar}{/}  {bold}${stateLabel}{/}   http://127.0.0.1:${settings.devPort}   HTTP ${http.status || '—'}`,
         `  ${pidLine}`,
-        `  {${C.muted}-fg}Theme:{/} {bold}${(pendingTheme ?? config.theme ?? '—').replace('@owdproject/', '')}{/}  {${C.muted}-fg}│ save [s]{/}`,
+        devTargetLine,
+        `  ${serverKeyHints()}`,
+        `  {${C.muted}-fg}Theme:{/} {bold}${(pendingTheme ?? config.theme ?? '—').replace('@owdproject/', '')}{/}  {${C.muted}-fg}│ [w] save{/}`,
+        docsLine,
         warnDev,
       ]
         .filter(Boolean)
@@ -638,7 +818,7 @@ export async function runTui(commandName = 'desktop') {
     const unsaved = pendingPackages.size
     const unsavedLine =
       unsaved > 0
-        ? `  {${C.warn}-fg}${unsaved}{/} {${C.muted}-fg}unsaved — [s] save{/}`
+        ? `  {${C.warn}-fg}${unsaved}{/} {${C.muted}-fg}unsaved — [w] save{/}`
         : null
 
     metricsBox.setContent(
@@ -690,7 +870,7 @@ export async function runTui(commandName = 'desktop') {
     renderClient()
     renderMetrics()
     if (announce) {
-      setStatus(`Theme → ${item.shortName} (press [s] to save)`, 'ok')
+      setStatus(`Theme → ${item.shortName} (press [w] to save)`, 'ok')
     }
   }
 
@@ -747,7 +927,7 @@ export async function runTui(commandName = 'desktop') {
         `{${C.muted}-fg}Source:{/} ${plan.label ?? plan.mode}`,
         `{${C.muted}-fg}Target:{/} ${target}/`,
         npmOnly
-          ? `{${C.warn}-fg}[npm] in config — save [s] to clone into workspace{/}`
+          ? `{${C.warn}-fg}[npm] in config — save [w] to clone into workspace{/}`
           : null,
         item.description ? `{${C.muted}-fg}${item.description.slice(0, 120)}{/}` : null,
       ]
@@ -779,7 +959,7 @@ export async function runTui(commandName = 'desktop') {
     focusPanel = 'catalog'
     catalogList.focus()
     applyFocusStyles()
-    setStatus(`${KINDS[activeTab].label} — Space toggles, s saves when done`)
+    setStatus(`${KINDS[activeTab].label} — Space toggles, [w] saves when done`)
   }
 
   function selectThemeAt(index) {
@@ -862,7 +1042,7 @@ export async function runTui(commandName = 'desktop') {
       }
 
       bump('Writing config…')
-      writeDesktopConfig(paths.config, workspaceRoot, {
+      writeDesktopConfig(resolveConfigPathForWrite(paths), workspaceRoot, {
         theme: nextTheme,
         apps: nextApps,
         modules: nextModules,
@@ -880,6 +1060,7 @@ export async function runTui(commandName = 'desktop') {
       }
 
       pendingPackages.clear()
+      paths.config = resolveConfigPathForWrite(paths)
       config = readDesktopConfig(paths.config, workspaceRoot)
       deps = readDesktopDependencies(paths.packageJson)
       pendingTheme = config.theme
@@ -892,29 +1073,77 @@ export async function runTui(commandName = 'desktop') {
     }
   }
 
-  async function toggleDev() {
-    if (devPhase === 'running' || clientStatus.running) {
-      stopDev(workspaceRoot, clientStatus.pid)
-      devPhase = 'stopped'
-      memHistory.length = 0
-      clientStatus = await getClientStatus(workspaceRoot, settings.devPort)
-      renderAll()
-      setStatus('Dev server stopped')
+  async function startDevServer() {
+    if (devPhase === 'starting') {
+      setStatus('Dev server is already starting…')
+      return
+    }
+    if (isDevServerUp()) {
+      setStatus('Dev server already running — [m] menu to stop or reboot', 'info')
       return
     }
 
     devPhase = 'starting'
     startSpinner('Starting dev server…')
     renderAll()
-    startDev(workspaceRoot)
+    startDev(devTarget)
     clientStatus = await waitForDev(workspaceRoot, settings.devPort)
     stopSpinner()
     devPhase = clientStatus.http.up ? 'running' : 'stopped'
     renderAll()
+    const targetHint = playgroundActive && playgroundLabel ? ` (${playgroundLabel})` : ''
     setStatus(
       clientStatus.http.up
-        ? `Dev server up on port ${settings.devPort}`
+        ? `Dev server up on port ${settings.devPort}${targetHint} — [m] menu to stop or reboot`
         : `Dev not responding — check ${devLogPath(workspaceRoot)}`,
+      clientStatus.http.up ? 'ok' : 'error',
+    )
+  }
+
+  async function stopDevServer() {
+    if (devPhase === 'starting') {
+      setStatus('Dev server is still starting…')
+      return
+    }
+    if (!isDevServerUp()) {
+      setStatus('Dev server not running — press [s] to start', 'info')
+      return
+    }
+
+    stopDev(workspaceRoot, clientStatus.pid)
+    devPhase = 'stopped'
+    memHistory.length = 0
+    clientStatus = await getClientStatus(workspaceRoot, settings.devPort)
+    renderAll()
+    setStatus('Dev server stopped — press [s] to start', 'ok')
+  }
+
+  async function rebootDevServer() {
+    if (devPhase === 'starting') {
+      setStatus('Cannot reboot while dev server is starting…')
+      return
+    }
+    if (!isDevServerUp()) {
+      setStatus('Dev server not running — press [s] to start', 'info')
+      return
+    }
+
+    devPhase = 'starting'
+    startSpinner('Rebooting dev server…')
+    renderAll()
+    stopDev(workspaceRoot, clientStatus.pid)
+    memHistory.length = 0
+    await new Promise((r) => setTimeout(r, 800))
+    startDev(devTarget)
+    clientStatus = await waitForDev(workspaceRoot, settings.devPort)
+    stopSpinner()
+    devPhase = clientStatus.http.up ? 'running' : 'stopped'
+    renderAll()
+    const targetHint = playgroundActive && playgroundLabel ? ` (${playgroundLabel})` : ''
+    setStatus(
+      clientStatus.http.up
+        ? `Dev server rebooted on port ${settings.devPort}${targetHint}`
+        : `Reboot failed — check ${devLogPath(workspaceRoot)}`,
       clientStatus.http.up ? 'ok' : 'error',
     )
   }
@@ -930,41 +1159,101 @@ export async function runTui(commandName = 'desktop') {
       pendingTheme = pendingTheme ?? config.theme
       stopSpinner()
       renderAll()
-      setStatus(`Catalog: ${catalog.length} packages`, 'ok')
+      setStatus(`Package list: ${catalog.length} from GitHub`, 'ok')
     } catch (err) {
       stopSpinner()
-      setStatus(`Catalog error: ${err.message}`, 'error')
+      setStatus(`Package list error: ${err.message}`, 'error')
     }
   }
 
-  screen.key(['escape', 'q', 'C-c'], () => {
+  screen.key(['escape'], () => {
     if (settingsOpen) {
       closeSettings()
+      return
+    }
+    if (menuOpen) {
+      closeMenu()
+    }
+  })
+
+  screen.key(['q', 'C-c'], () => {
+    if (settingsOpen) {
+      closeSettings()
+      return
+    }
+    if (menuOpen) {
+      closeMenu()
       return
     }
     process.exit(0)
   })
 
   screen.key(['tab'], () => {
-    if (settingsOpen) return
+    if (overlayBlocksKeys()) return
     if (focusPanel === 'catalog') focusTheme()
     else focusCatalog()
   })
   screen.key(['S-tab'], () => {
-    if (!settingsOpen) focusCatalog()
+    if (!overlayBlocksKeys()) focusCatalog()
+  })
+
+  screen.key(['m', 'M'], () => {
+    if (settingsOpen) return
+    if (menuOpen) closeMenu()
+    else openMenu()
   })
 
   screen.key(['d', 'D'], () => {
-    if (!settingsOpen) toggleInstallMode()
+    if (!overlayBlocksKeys()) toggleInstallMode()
   })
-  screen.key(['n', 'N'], () => {
-    if (!settingsOpen) toggleDev()
+  screen.key(['s', 'S'], () => {
+    if (!overlayBlocksKeys()) {
+      if (isDevServerUp()) stopDevServer()
+      else startDevServer()
+    }
+  })
+  screen.key(['x', 'X'], () => {
+    if (!overlayBlocksKeys()) stopDevServer()
+  })
+  screen.key(['R'], () => {
+    if (!overlayBlocksKeys()) rebootDevServer()
   })
   screen.key(['g'], () => {
-    if (!settingsOpen) openSettings()
+    if (!overlayBlocksKeys()) openSettings()
+  })
+
+  function openDocsInBrowser() {
+    if (!hasDocsModuleInstalled(config, deps)) {
+      setStatus('Install @owdproject/module-docs first', 'error')
+      return
+    }
+    const http = clientStatus.http
+    if (!clientStatus.running && !http.up) {
+      setStatus('Start dev server [s] before opening docs', 'error')
+      return
+    }
+    const base = docsBasePathFromConfig(config)
+    const url = `http://127.0.0.1:${settings.devPort}${base}`
+    const platform = process.platform
+    try {
+      if (platform === 'darwin') {
+        execSync('open', [url])
+      } else if (platform === 'win32') {
+        execSync('cmd', ['/c', 'start', '', url])
+      } else {
+        execSync('xdg-open', [url])
+      }
+      setStatus(`Opened ${url}`, 'ok')
+    } catch (err) {
+      setStatus(`Could not open browser: ${err.message}`, 'error')
+    }
+  }
+
+  screen.key(['i', 'I'], () => {
+    if (!overlayBlocksKeys()) openDocsInBrowser()
   })
   screen.key(['b'], () => {
-    if (!settingsOpen) {
+    if (!overlayBlocksKeys()) {
       stopSpinner()
       setStatus('Running pnpm run generate…')
       screen.render()
@@ -978,33 +1267,39 @@ export async function runTui(commandName = 'desktop') {
       }
     }
   })
-  screen.key(['s'], () => {
-    if (!settingsOpen) applyChanges()
+  screen.key(['w', 'W'], () => {
+    if (!overlayBlocksKeys()) applyChanges()
   })
   screen.key(['r'], () => {
-    if (!settingsOpen) refreshCatalog()
+    if (!overlayBlocksKeys()) refreshCatalog()
   })
 
   screen.key(['1'], () => {
-    if (settingsOpen) return
+    if (overlayBlocksKeys()) return
     activeTab = 'app'
     focusCatalog()
     renderAll()
   })
   screen.key(['2'], () => {
-    if (settingsOpen) return
+    if (overlayBlocksKeys()) return
     activeTab = 'module'
     focusCatalog()
     renderAll()
   })
   screen.key(['3', 't'], () => {
-    if (settingsOpen) return
+    if (overlayBlocksKeys()) return
     focusTheme()
     renderAll()
   })
 
   githubInput.key(['enter'], () => saveSettingsFromOverlay())
   githubInput.key(['escape'], () => closeSettings())
+
+  menuList.on('select', (_item, index) => {
+    const entry = MENU_ITEMS[index]
+    if (entry) runMenuAction(entry.id)
+  })
+  menuList.key(['escape'], () => closeMenu())
 
   themeList.on('select item', (_item, index) => {
     if (themeListSyncing) return
@@ -1050,13 +1345,20 @@ export async function runTui(commandName = 'desktop') {
   focusCatalog()
   renderAll()
 
+  const serverHint = ' Press [s] start/stop · [m] menu.'
+
   if (!isWorkspaceInstallMode(settings)) {
     setStatus(
-      'USER mode (npm). Press [d] for DEV install (clone sources) · [g] GitHub user for forks',
+      `USER mode: save installs from npm. Press [d] to switch to DEV (git clone).${serverHint}`,
       'info',
     )
   } else if (!settings.githubUser) {
-    setStatus('DEV mode — press [g] to set GitHub username for fork clones', 'ok')
+    setStatus(
+      `DEV mode: save clones from github.com/owdproject. Press [g] for your GitHub username.${serverHint}`,
+      'ok',
+    )
+  } else if (serverHint) {
+    setStatus(serverHint.trim(), 'info')
   }
 
   setInterval(async () => {

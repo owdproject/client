@@ -8,6 +8,10 @@ import {
 } from '@nuxt/kit'
 import { deepMerge } from './runtime/utils/utilCommon'
 import { assertValidOwdUserConfig } from './runtime/utils/validateOwdUserConfig'
+import {
+  resolveDesktopConfigPath,
+  warnLegacyDesktopConfig,
+} from './runtime/utils/resolveDesktopConfigPath'
 import pkg from './package.json'
 
 export default defineNuxtModule({
@@ -23,31 +27,48 @@ export default defineNuxtModule({
   async setup(_options, _nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
+    // Required for Nuxt 4 dev (playgrounds, module graphs): avoids
+    // "Vite Node IPC socket path not configured" when using @nuxt/kit pipelines.
+    _nuxt.options.experimental = {
+      ..._nuxt.options.experimental,
+      viteEnvironmentApi:
+        _nuxt.options.experimental?.viteEnvironmentApi ?? true,
+    }
+
     _nuxt.options.runtimeConfig.public.desktop = {}
 
-    // get open web desktop config
+    // get open web desktop config (desktop.config.ts; owd.config.ts legacy)
 
     let clientConfig
 
-    const owdConfigPath = `${_nuxt.options.rootDir}/owd.config.ts`
+    const resolvedConfig = resolveDesktopConfigPath(_nuxt.options.rootDir)
 
-    try {
-      clientConfig = (await import(owdConfigPath)).default
-    } catch (e) {
+    if (!resolvedConfig) {
       const hint =
-        'Create owd.config.ts next to your Nuxt root (e.g. desktop/owd.config.ts), export default defineDesktopConfig({ theme, apps, modules }).'
-      throw new Error(`[@owdproject/core] Cannot load ${owdConfigPath}. ${hint}`, {
-        cause: e,
-      })
+        'Create desktop.config.ts next to your Nuxt root (e.g. desktop/desktop.config.ts), export default defineDesktopConfig({ theme, apps, modules }).'
+      throw new Error(`[@owdproject/core] Cannot find desktop.config.ts in ${_nuxt.options.rootDir}. ${hint}`)
     }
 
-    assertValidOwdUserConfig(clientConfig)
+    warnLegacyDesktopConfig(resolvedConfig)
+
+    try {
+      clientConfig = (await import(resolvedConfig.path)).default
+    } catch (e) {
+      const hint =
+        'Export default defineDesktopConfig({ theme, apps, modules }) from desktop.config.ts.'
+      throw new Error(
+        `[@owdproject/core] Cannot load ${resolvedConfig.file}. ${hint}`,
+        { cause: e },
+      )
+    }
+
+    assertValidOwdUserConfig(clientConfig, resolvedConfig.file)
 
     if (!clientConfig.theme) {
       clientConfig.theme = '@owdproject/theme-win95'
     }
 
-    // extend nuxt.config.ts with owd.config.ts
+    // extend nuxt.config.ts with desktop.config.ts
 
     _nuxt.options = {
       ..._nuxt.options,

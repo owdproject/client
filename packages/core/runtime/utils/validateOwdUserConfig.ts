@@ -1,11 +1,14 @@
 /**
- * Runtime validation for the object exported from `owd.config.ts`.
- * Fails fast with clear messages when `theme`, `apps`, or `modules` have the wrong shape.
+ * Runtime validation for the object exported from `desktop.config.ts`
+ * (or legacy `owd.config.ts`).
  */
-export function assertValidOwdUserConfig(config: unknown): void {
+export function assertValidOwdUserConfig(
+  config: unknown,
+  configFile = 'desktop.config.ts',
+): void {
   if (!config || typeof config !== 'object' || Array.isArray(config)) {
     throw new Error(
-      '[@owdproject/core] owd.config.ts must default-export a non-array object from defineDesktopConfig({ ... }).',
+      `[@owdproject/core] ${configFile} must default-export a non-array object from defineDesktopConfig({ ... }).`,
     )
   }
 
@@ -13,7 +16,7 @@ export function assertValidOwdUserConfig(config: unknown): void {
 
   if (c.theme != null && typeof c.theme !== 'string') {
     throw new Error(
-      '[@owdproject/core] owd.config.ts: `theme` must be a string (npm package name of the theme module).',
+      `[@owdproject/core] ${configFile}: \`theme\` must be a string (npm package name of the theme module).`,
     )
   }
 
@@ -23,7 +26,7 @@ export function assertValidOwdUserConfig(config: unknown): void {
       !(c.apps as unknown[]).every((item) => typeof item === 'string')
     ) {
       throw new Error(
-        '[@owdproject/core] owd.config.ts: `apps` must be an array of strings (Nuxt module package names).',
+        `[@owdproject/core] ${configFile}: \`apps\` must be an array of strings (Nuxt module package names).`,
       )
     }
   }
@@ -34,7 +37,7 @@ export function assertValidOwdUserConfig(config: unknown): void {
       !(c.modules as unknown[]).every((item) => typeof item === 'string')
     ) {
       throw new Error(
-        '[@owdproject/core] owd.config.ts: `modules` must be an array of strings (Nuxt module package names).',
+        `[@owdproject/core] ${configFile}: \`modules\` must be an array of strings (Nuxt module package names).`,
       )
     }
   }

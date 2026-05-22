@@ -29,7 +29,7 @@ export function useApplicationManager() {
     const applicationController: IApplicationController = new ApplicationController(id, applicationConfig)
     await applicationController.initApplication()
 
-    apps.set(id, applicationController)
+    apps.set(id, markRaw(applicationController))
 
     return applicationController
   }
@@ -184,11 +184,18 @@ export function useApplicationManager() {
    * Array of opened windows for system bars, docks
    */
   const windowsOpened = computed(() => {
-    const windows: Map<string, IWindowController>[] = []
+    const windows = new Map<string, IWindowController>()
 
     for (const applicationController of apps.values()) {
-      if (applicationController.isRunning) {
-        windows.push(...applicationController.windows)
+      if (
+        !applicationController.isRunning &&
+        applicationController.openWindowCount.value === 0
+      ) {
+        continue
+      }
+
+      for (const [windowId, window] of applicationController.windows) {
+        windows.set(windowId, window)
       }
     }
 
@@ -202,7 +209,8 @@ export function useApplicationManager() {
     const runningApps: IApplicationController[] = []
 
     for (const applicationController of apps.values()) {
-      if (applicationController.isRunning) {
+      const openCount = applicationController.openWindowCount.value
+      if (applicationController.isRunning || openCount > 0) {
         runningApps.push(applicationController)
       }
     }
@@ -211,13 +219,10 @@ export function useApplicationManager() {
   })
 
   function getWindowOpenedId(windowId: string) {
-    const mapWindowFound = windowsOpened.value.find((window: any) => {
-      return window[1].state.id === windowId
-    })
-
-    if (mapWindowFound) {
-      // @ts-ignore
-      return mapWindowFound[1] as IWindowController
+    for (const window of windowsOpened.value.values()) {
+      if (window.state.id === windowId) {
+        return window
+      }
     }
   }
 

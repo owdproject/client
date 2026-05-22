@@ -11,6 +11,7 @@ import {
   runNpmInstall,
 } from './lib/install.js'
 import { findWorkspaceRoot, inferKind } from './lib/workspace.js'
+import { resolveDevTarget } from './lib/playgroundContext.js'
 import { scaffoldProject } from './lib/scaffold.js'
 
 const SCOPE = '@owdproject/'
@@ -51,30 +52,55 @@ function buildHelp(name) {
 ${name} — add apps, modules, and themes to your Open Web Desktop
 
 USAGE
-  ${name}                 Start the dev server (pnpm run dev)
-  ${name} init [dir]      Create a new OWD project (then opens desktop ui)
-  ${name} ui              Interactive dashboard (btop-style TUI)
+  ${name}                 Open the control panel (interactive TUI)
+  ${name} dev [--playground]  Start dev server (auto-detects module playground)
+
+CONTROL PANEL (TUI)
+  m                       Open command menu (all actions)
+  s                       Start the Nuxt dev server
+  x                       Stop the Nuxt dev server
+  R                       Reboot the Nuxt dev server (stop + start)
+  w                       Save catalog/theme changes to desktop.config.ts
+  i                       Open in-app docs (when module-docs is installed)
+  d                       Toggle User (npm) / Dev (git clone) install mode
+  g                       Settings (GitHub username for fork clones)
+  r                       Refresh package list from GitHub
+  b                       Run pnpm run generate
+  q / Esc                 Quit
+  ${name} init [dir]      Create a new OWD project (then opens the control panel)
   ${name} add <package> [options]
   ${name} add <kind> <name> [options]
+  ${name} validate [path...]  Check Nuxt module + playground layout
+
+VALIDATE
+  ${name} validate            Validate cwd package, or all apps/themes/modules at repo root
+  ${name} validate .          Validate explicit package directory
+  ${name} validate apps       Validate every @owdproject/* module under apps/
+  --json                      Machine-readable output
+  --strict                    Treat warnings as failures
+  --smoke                     Run dev:prepare + nuxt build playground (slow, CI)
 
 INSTALL MODES
   User (default)        npm registry — for end users and generated projects
   Dev                   clone into apps/, packages/, or themes/ in the monorepo
 
 EXAMPLES
-  pnpm ${name}            # dev server
+  pnpm ${name}            # control panel
+  pnpm ${name} dev        # monorepo desktop (from repo root)
+  cd apps/app-about && pnpm ${name} dev   # app-about playground
+  pnpm ${name} dev --playground           # force playground when cwd is in a module
   ${name} init my-desktop # scaffold + pnpm install + control panel
-  pnpm ${name} ui         # control panel
   ${name} add app-todo --npm
   ${name} add app-todo --dev
   ${name} add module-persistence --from dxlliv
 
 KINDS (optional — inferred from the package name)
   app       app-*     → apps/
-  module    module-*, kit-*  → packages/
+  module    module-*  → packages/  (kit-* and *-template are not listed in the control panel)
   theme     theme-*   → themes/
 
 OPTIONS
+  --playground      Start the module playground dev server (when cwd is inside an @owdproject/* package with playground/)
   --from <source>   Git source (user, user/repo, or URL)
   --branch <name>   Git branch to clone
   --npm             Install from npm (default when --from is omitted)
@@ -94,6 +120,11 @@ LEGACY (still supported)
   ${name} install-app @owdproject/app-todo
   → prefer: ${name} add app-todo
 `
+}
+
+async function openControlPanel(name) {
+  const { runTui } = await import('./tui.js')
+  await runTui(name)
 }
 
 function fail(message, hint) {
@@ -197,7 +228,7 @@ export async function runCli(name, argv, options = {}) {
 
   const parsed = getopts(argv, {
     alias: { h: 'help', b: 'branch' },
-    boolean: ['help', 'npm', 'dry-run', 'dev', 'workspace'],
+    boolean: ['help', 'npm', 'dry-run', 'dev', 'workspace', 'playground', 'json', 'strict', 'smoke'],
     string: ['from', 'branch', 'fork', 'repo'],
   })
 
@@ -220,7 +251,7 @@ export async function runCli(name, argv, options = {}) {
     if (findWorkspaceRoot(cwd)) {
       fail(
         'Already inside an OWD workspace.',
-        `Use \`${name} ui\` to manage this project, or run init from a parent directory.`,
+        `Use \`${name}\` to manage this project, or run init from a parent directory.`,
       )
     }
 
@@ -234,15 +265,57 @@ export async function runCli(name, argv, options = {}) {
 
   const workspaceRoot = findWorkspaceRoot()
 
+  if (cmd === 'dev') {
+    if (!workspaceRoot) {
+      fail(
+        'Not inside an OWD workspace.',
+        'Run from the client repo, or try: desktop · desktop add <package>',
+      )
+    }
+    const forcePlayground = parsed.playground === true
+    const devTarget = resolveDevTarget(process.cwd(), workspaceRoot, { forcePlayground })
+    if (forcePlayground && !devTarget) {
+      fail(
+        'No @owdproject module with playground/desktop.config.ts found from this directory.',
+        'Run from an app/theme/module package (e.g. apps/app-about), or omit --playground for the monorepo desktop.',
+      )
+    }
+    runDevForeground(devTarget)
+    return
+  }
+
+  if (cmd === 'validate') {
+    const { runValidateCli, formatValidationReport } = await import('./lib/validateModule.js')
+    const strict = parsed.strict === true
+    const json = parsed.json === true
+    const smoke = parsed.smoke === true
+    const paths = _.slice(1).map(String)
+    const { exitCode, results } = runValidateCli(paths, {
+      workspaceRoot,
+      json,
+      strict,
+      smoke,
+    })
+    for (const result of results) {
+      console.log(formatValidationReport(result, { json }))
+      if (!json) console.log('')
+    }
+    process.exit(exitCode)
+  }
+
   if (!cmd) {
     if (!workspaceRoot) {
       fail(
         'Not inside an OWD workspace.',
-        'Run from the client repo, or try: desktop ui · desktop add <package>',
+        'Run from the client repo, or try: desktop · desktop add <package>',
       )
     }
-    runDevForeground(workspaceRoot)
+    await openControlPanel(name)
     return
+  }
+
+  if (cmd === 'ui') {
+    fail('The `ui` subcommand was removed.', `Use \`${name}\` to open the control panel.`)
   }
 
   if (!workspaceRoot) {
@@ -254,18 +327,12 @@ export async function runCli(name, argv, options = {}) {
 
   let pkgInfo
 
-  if (cmd === 'ui') {
-    const { runTui } = await import('./tui.js')
-    await runTui(name)
-    return
-  }
-
   if (cmd === 'add') {
     pkgInfo = parseAddArgs(_.slice(1))
   } else if (LEGACY_COMMANDS[cmd]) {
     pkgInfo = parseLegacyInstall(cmd, _.slice(1))
   } else {
-    fail(`Unknown command: ${cmd}`, `Use \`${name} ui\` or \`${name} add <package>\`.`)
+    fail(`Unknown command: ${cmd}`, `Use \`${name}\`, \`${name} dev\`, or \`${name} add <package>\`.`)
   }
 
   const { pkgName, shortName, kind } = pkgInfo

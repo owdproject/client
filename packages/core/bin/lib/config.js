@@ -1,7 +1,8 @@
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, existsSync, copyFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { SCOPE } from './workspace.js'
+import { LEGACY_CONFIG_DEPRECATION } from './desktopConfig.js'
 
 const require = createRequire(import.meta.url)
 
@@ -64,6 +65,22 @@ export function readDesktopConfig(configPath, workspaceRoot) {
     apps: readArrayProperty(configObj, 'apps', SyntaxKind),
     modules: readArrayProperty(configObj, 'modules', SyntaxKind),
   }
+}
+
+/**
+ * When saving from the TUI, always target desktop.config.ts (migrate from legacy on first save).
+ *
+ * @param {{ config: string, configWrite: string }} paths
+ */
+export function resolveConfigPathForWrite(paths) {
+  if (paths.config === paths.configWrite) {
+    return paths.configWrite
+  }
+  if (!existsSync(paths.configWrite) && existsSync(paths.config)) {
+    copyFileSync(paths.config, paths.configWrite)
+    console.warn(LEGACY_CONFIG_DEPRECATION)
+  }
+  return paths.configWrite
 }
 
 export function writeDesktopConfig(configPath, workspaceRoot, state) {

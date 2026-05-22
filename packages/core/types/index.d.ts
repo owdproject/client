@@ -1,4 +1,5 @@
 import type { Nuxt } from '@nuxt/schema'
+import type { ShallowRef } from 'vue'
 import { useApplicationManager } from '../runtime/composables/useApplicationManager'
 
 declare module 'nuxt/schema' {
@@ -16,7 +17,7 @@ interface IApplicationManager {
 
   get appsRunning(): Reactive<IApplicationController[]>
 
-  get windowsOpened(): Reactive<IWindowController[]>
+  get windowsOpened(): Reactive<Map<string, IWindowController>>
 
   get appCategories(): string[]
 
@@ -84,7 +85,8 @@ interface IApplicationController {
   get meta(): { [key: string]: any }
 
   store: Pinia
-  windows: Reactive<Map<string, IWindowController>>
+  windows: Map<string, IWindowController>
+  openWindowCount: ShallowRef<number>
 
   isRunning: boolean
 
@@ -333,10 +335,25 @@ interface IDesktopManager {
   ): void
 }
 
+interface DocsModuleUserSourceConfig {
+  cwd: string
+  prefix?: string
+  include?: string
+  exclude?: string[]
+}
+
+interface DocsModuleConfig {
+  basePath?: string
+  title?: string
+  sources?: DocsModuleUserSourceConfig[]
+}
+
 interface DesktopConfig {
   theme?: string
   modules?: string[]
   apps?: string[]
+
+  docs?: DocsModuleConfig
 
   name?: string
   defaultApps?: DefaultAppsConfig

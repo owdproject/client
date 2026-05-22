@@ -1,3 +1,10 @@
+## 3.2.0 (2026-05-22)
+
+### 🚀 Features
+
+- Workspace edge drop helpers moved to `@owdproject/kit-theme` (`useWorkspaceEdgeDrop`).
+- Desktop config and module playground validation aligned with Nuxt 4 module authoring.
+
 ## 3.1.4 (2025-05-22)
 
 ### 🚀 Features

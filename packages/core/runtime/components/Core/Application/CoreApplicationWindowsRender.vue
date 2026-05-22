@@ -1,17 +1,38 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue'
+import { useDesktopWorkspaceStore } from '../../../stores/storeDesktopWorkspace'
+
+const props = defineProps<{
   workspaceFilter?: string
-  windows: Map<string, IApplicationController['windows']>
+  windows: Map<string, IWindowController>
+  /** Tracks ApplicationController.openWindowCount so Vue re-renders when the map is replaced. */
+  windowRevision?: number
 }>()
+
+const desktopWorkspaceStore = useDesktopWorkspaceStore()
+
+const windowEntries = computed(() => {
+  void props.windowRevision
+  return Array.from(props.windows.entries())
+})
+
+function matchesWorkspace(window: IWindowController): boolean {
+  const filter = props.workspaceFilter
+  if (!filter) return true
+
+  const ws = window.state.workspace
+  if (!ws) {
+    return filter === desktopWorkspaceStore.active
+  }
+
+  return ws === filter
+}
 </script>
 
 <template>
-  <template v-for="[windowId, window] in windows" :key="windowId">
+  <template v-for="[windowId, window] in windowEntries" :key="windowId">
     <component
-      v-if="
-        !workspaceFilter ||
-        (workspaceFilter && window.state.workspace === workspaceFilter)
-      "
+      v-if="matchesWorkspace(window)"
       :window="window"
       :is="window.config.component"
     />
