@@ -1,6 +1,0 @@
-title: Getting Started
-icon: lucide:rocket
-children:
-  - introduction
-  - installation
-  - module-playground

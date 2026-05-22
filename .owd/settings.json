@@ -1,0 +1,8 @@
+{
+  "devPort": 3000,
+  "githubUser": "dxlliv",
+  "githubOrgs": [
+    "owdproject"
+  ],
+  "installMode": "npm"
+}
