@@ -1,0 +1,157 @@
+/*
+ * Explorer window chrome — same card / header language as generic Nova windows.
+ * Frame uses chromePadding=false + .nova-explorer-frame.
+ */
+.owd-desktop--nova {
+  .owd-window.nova-explorer-frame {
+    box-sizing: border-box;
+    border-radius: var(--nova-window-radius);
+    color: var(--nova-explorer-text);
+    transition:
+      opacity 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:not(.owd-window--focused) {
+      opacity: var(--nova-window-inactive-opacity);
+    }
+
+    > .p-card {
+      --p-card-background: var(--nova-explorer-caption-bg);
+      --p-card-border-color: var(--nova-explorer-border);
+      --p-card-color: var(--nova-explorer-text);
+      --p-content-background: var(--nova-explorer-surface);
+      --p-content-border-color: var(--nova-explorer-border);
+
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      margin: 0;
+      border-radius: inherit;
+      background: var(--nova-explorer-caption-bg);
+      border: 1px solid var(--nova-explorer-border);
+      box-shadow: var(--nova-window-shadow);
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    &.owd-window--focused > .p-card {
+      border-color: var(--nova-window-border-focused);
+      box-shadow: var(--nova-window-shadow-focused);
+    }
+
+    > .p-card > .p-card-header {
+      flex-shrink: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+    }
+
+    > .p-card > .p-card-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 0;
+      background: var(--nova-explorer-surface);
+    }
+
+    .p-card-header .owd-window-nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: var(--nova-window-nav-height);
+      padding: 0;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--nova-explorer-text-inactive);
+      background: var(--nova-explorer-surface-elevated) !important;
+      border-bottom: 1px solid var(--nova-window-nav-divider) !important;
+      border-radius: var(--nova-window-radius) var(--nova-window-radius) 0 0;
+      box-shadow: none;
+      transition:
+        color 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        border-radius: var(--nova-window-radius) var(--nova-window-radius) 0 0;
+        background: transparent;
+        transition: background 0.15s ease;
+      }
+
+      &--focused {
+        color: var(--nova-explorer-text) !important;
+        background: var(--nova-window-header-focused-bg) !important;
+
+        &::before {
+          background: linear-gradient(
+            90deg,
+            var(--nova-explorer-accent-line),
+            var(--nova-explorer-accent)
+          );
+        }
+      }
+    }
+
+    /* Caption buttons: explorer-caption-controls.scss */
+
+    /*
+     * CoreWindow applies overflow on `.owd-window__content`; pin chrome so only
+     * nav / content columns scroll internally.
+     */
+    .owd-window__content {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden !important;
+      color: var(--nova-explorer-text);
+      background: var(--nova-explorer-surface);
+    }
+
+    .nova-explorer-top-band {
+      background: transparent;
+      border-bottom: none;
+
+      :deep(.nova-explorer-chrome-band__inner) {
+        padding: 4px 10px 6px;
+      }
+
+      :deep(.nova-explorer-chrome-band__nav) {
+        flex: 0 0 auto;
+      }
+
+      :deep(.nova-explorer-chrome-band__crumb) {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    .nova-explorer-shell {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      background: var(--nova-explorer-surface);
+      padding: 0;
+      box-sizing: border-box;
+      box-shadow: inset 0 1px 0 var(--nova-explorer-border-subtle);
+
+      .p-button {
+        margin: 2px !important;
+      }
+    }
+
+    .nova-explorer-command-bar {
+      background: var(--nova-explorer-surface);
+      min-height: 36px;
+      border-bottom: 1px solid var(--nova-explorer-border-subtle);
+      color: var(--nova-explorer-text);
+    }
+  }
+}

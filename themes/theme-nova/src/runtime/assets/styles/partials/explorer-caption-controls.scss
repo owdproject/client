@@ -1,0 +1,107 @@
+/* Explorer caption — always-white controls (glyphs + app icon) */
+.owd-desktop--nova .owd-window.nova-explorer-frame {
+  .p-card-header .owd-window-nav {
+    align-items: center;
+    min-height: var(--nova-window-nav-height);
+
+    .owd-window-nav__title {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding-left: 10px;
+      text-align: left;
+
+      .owd-window-nav__title-inner {
+        margin: 0;
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--nova-explorer-caption-control);
+      }
+    }
+
+    .owd-window-nav__icon {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      padding-left: 8px;
+
+      :deep(.iconify),
+      :deep(svg) {
+        margin: 0;
+        vertical-align: middle;
+        width: 18px !important;
+        height: 18px !important;
+        min-width: 18px;
+        min-height: 18px;
+        color: var(--nova-explorer-caption-control) !important;
+        opacity: 1 !important;
+      }
+    }
+
+    .owd-window-nav__btn-group--append {
+      position: relative;
+      z-index: 3;
+      flex-shrink: 0;
+      align-self: center;
+      align-items: center;
+      gap: var(--nova-window-nav-gap);
+      padding: 0 var(--nova-window-nav-padding-x) 0 4px;
+      margin: 0;
+      pointer-events: auto;
+    }
+
+    .owd-window-nav__button {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: var(--nova-window-control-size);
+      height: var(--nova-window-control-size);
+      border-radius: var(--nova-window-control-radius);
+      background: transparent;
+      border: 0;
+      transition: background 0.15s ease;
+
+      .owd-window-nav__glyph {
+        color: var(--nova-explorer-caption-control) !important;
+        opacity: 1 !important;
+        font-family: system-ui, sans-serif;
+      }
+
+      .owd-window-nav__glyph-icon,
+      :deep(.iconify),
+      :deep(svg) {
+        color: var(--nova-explorer-caption-control) !important;
+        opacity: 1 !important;
+      }
+
+      &:hover {
+        background: var(--nova-window-control-hover);
+      }
+
+      &:active {
+        background: var(--nova-window-control-active);
+      }
+    }
+
+    .owd-window-nav__button--close:hover {
+      background: var(--nova-window-close-hover);
+
+      .owd-window-nav__glyph,
+      .owd-window-nav__glyph-icon,
+      :deep(.iconify),
+      :deep(svg) {
+        color: var(--nova-explorer-caption-control) !important;
+      }
+    }
+
+    /* Fallback if kit-fs chrome buttons are still mounted */
+    .p-button--window-nav-minimize,
+    .p-button--window-nav-maximize,
+    .p-button--window-nav-close {
+      .owd-button__icon::before,
+      .owd-button__icon::after {
+        background: var(--nova-explorer-caption-control) !important;
+      }
+    }
+  }
+}

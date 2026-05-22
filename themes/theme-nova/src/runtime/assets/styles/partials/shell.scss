@@ -1,0 +1,31 @@
+.owd-desktop--nova {
+  .nova-top-bar,
+  .owd-desktop__system-bar.nova-top-bar {
+    position: relative;
+    z-index: 10050;
+    flex-shrink: 0;
+  }
+
+  .nova-top-bar__settings-anchor {
+    z-index: 10051;
+  }
+
+  .nova-launcher {
+    z-index: 10070;
+  }
+
+  .owd-dock-bar {
+    z-index: 10050;
+    pointer-events: none;
+
+    &__inner {
+      pointer-events: auto;
+      padding: 6px 10px;
+      border-radius: 14px;
+      background: var(--nova-shell-dock-bg, rgba(6, 10, 16, 0.88));
+      border: 1px solid var(--owd-surface-700);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(16px);
+    }
+  }
+}

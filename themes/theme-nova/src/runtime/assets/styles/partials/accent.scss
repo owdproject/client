@@ -1,0 +1,118 @@
+/* Default accent (ocean) — also applied when data-nova-accent is unset */
+.owd-desktop--nova,
+body.owd-has-nova-desktop {
+  --nova-accent: var(--owd-primary-color);
+  --nova-shell-bar-bg: rgba(6, 10, 16, 0.92);
+  --nova-shell-dock-bg: rgba(6, 10, 16, 0.88);
+  --nova-accent-muted: rgba(26, 108, 175, 0.32);
+  --nova-accent-focus-ring: rgba(26, 108, 175, 0.45);
+  --nova-window-header-focused-bg: rgba(14, 24, 38, 0.96);
+  --nova-window-frame-bg: rgba(6, 10, 16, 0.94);
+  --nova-window-header-bg: rgba(6, 10, 16, 0.92);
+  --nova-window-body-bg: rgba(10, 14, 22, 0.98);
+
+  /* Apps launcher (teleported to body) */
+  --nova-start-surface: rgba(12, 18, 28, 0.96);
+  --nova-start-surface-elevated: rgba(26, 108, 175, 0.1);
+  --nova-start-tile-icon-bg: rgba(26, 108, 175, 0.14);
+  --nova-start-active-text: #e8f4fc;
+  --nova-launcher-backdrop: rgba(4, 10, 18, 0.48);
+
+  /* PrimeVue surfaces inside the Nova shell follow the active accent */
+  --p-primary-color: var(--owd-primary-color);
+  --p-primary-hover-color: var(--owd-primary-hover-color);
+  --p-button-primary-background: var(--owd-button-primary-active-background);
+  --p-button-primary-hover-background: var(--owd-primary-hover-color);
+  --p-button-primary-active-background: var(--owd-button-primary-active-background);
+  --p-button-primary-border-color: var(--owd-button-primary-active-border-color);
+  --p-focus-ring-color: var(--nova-accent-focus-ring);
+  --p-focus-ring-shadow: 0 0 0 2px var(--nova-accent-focus-ring);
+  --p-card-background: var(--nova-window-frame-bg);
+  --p-card-border-color: var(--owd-surface-700);
+  --p-content-background: var(--nova-window-frame-bg);
+  --p-content-border-color: var(--owd-surface-700);
+
+  --owd-surface-700: #1d293d;
+  --owd-surface-900: rgba(6, 10, 16, 0.9);
+  --owd-primary-color: #1a6caf;
+  --owd-primary-hover-color: #1a6caf;
+  --owd-button-primary-active-background: #4593d8;
+  --owd-button-primary-active-border-color: #4593d8;
+}
+
+.owd-desktop--nova[data-nova-accent='ember'],
+body.owd-has-nova-desktop[data-nova-accent='ember'] {
+  --nova-accent: var(--owd-primary-color);
+  --nova-shell-bar-bg: rgba(14, 6, 8, 0.92);
+  --nova-shell-dock-bg: rgba(18, 8, 10, 0.88);
+  --nova-accent-muted: rgba(159, 18, 57, 0.38);
+  --nova-accent-focus-ring: rgba(190, 24, 72, 0.5);
+  --nova-window-header-focused-bg: rgba(38, 14, 20, 0.96);
+  --nova-window-frame-bg: rgba(14, 6, 8, 0.94);
+  --nova-window-header-bg: rgba(14, 6, 8, 0.92);
+  --nova-window-body-bg: rgba(28, 10, 16, 0.98);
+
+  --nova-start-surface: rgba(18, 8, 12, 0.96);
+  --nova-start-surface-elevated: rgba(190, 24, 72, 0.12);
+  --nova-start-tile-icon-bg: rgba(190, 24, 72, 0.18);
+  --nova-start-active-text: #fce8ef;
+  --nova-launcher-backdrop: rgba(12, 4, 8, 0.52);
+
+  --owd-surface-700: #3d1d28;
+  --owd-surface-900: rgba(14, 6, 8, 0.92);
+  --owd-primary-color: #9f1239;
+  --owd-primary-hover-color: #be123c;
+  --owd-button-primary-active-background: #e11d48;
+  --owd-button-primary-active-border-color: #e11d48;
+}
+
+.owd-desktop--nova[data-nova-accent='forest'],
+body.owd-has-nova-desktop[data-nova-accent='forest'] {
+  --nova-accent: var(--owd-primary-color);
+  --nova-shell-bar-bg: rgba(6, 14, 10, 0.92);
+  --nova-shell-dock-bg: rgba(8, 16, 12, 0.88);
+  --nova-accent-muted: rgba(22, 101, 52, 0.36);
+  --nova-accent-focus-ring: rgba(34, 139, 72, 0.48);
+  --nova-window-header-focused-bg: rgba(14, 32, 22, 0.96);
+  --nova-window-frame-bg: rgba(6, 12, 9, 0.94);
+  --nova-window-header-bg: rgba(6, 12, 9, 0.92);
+  --nova-window-body-bg: rgba(10, 24, 16, 0.98);
+
+  --nova-start-surface: rgba(8, 16, 12, 0.96);
+  --nova-start-surface-elevated: rgba(34, 139, 72, 0.1);
+  --nova-start-tile-icon-bg: rgba(34, 139, 72, 0.16);
+  --nova-start-active-text: #e8fcef;
+  --nova-launcher-backdrop: rgba(4, 12, 8, 0.5);
+
+  --owd-surface-700: #1d3d2a;
+  --owd-surface-900: rgba(6, 12, 9, 0.92);
+  --owd-primary-color: #166534;
+  --owd-primary-hover-color: #15803d;
+  --owd-button-primary-active-background: #22c55e;
+  --owd-button-primary-active-border-color: #22c55e;
+}
+
+.owd-desktop--nova[data-nova-accent='violet'],
+body.owd-has-nova-desktop[data-nova-accent='violet'] {
+  --nova-shell-bar-bg: rgba(10, 6, 16, 0.92);
+  --nova-shell-dock-bg: rgba(12, 8, 18, 0.88);
+  --nova-accent-muted: rgba(109, 40, 217, 0.34);
+  --nova-accent-focus-ring: rgba(124, 58, 237, 0.48);
+  --nova-window-header-focused-bg: rgba(24, 14, 38, 0.96);
+  --nova-window-frame-bg: rgba(10, 6, 16, 0.94);
+  --nova-window-header-bg: rgba(10, 6, 16, 0.92);
+  --nova-window-body-bg: rgba(18, 10, 28, 0.98);
+
+  --nova-start-surface: rgba(14, 8, 20, 0.96);
+  --nova-start-surface-elevated: rgba(124, 58, 237, 0.1);
+  --nova-start-tile-icon-bg: rgba(124, 58, 237, 0.16);
+  --nova-start-active-text: #f0e8fc;
+  --nova-launcher-backdrop: rgba(8, 4, 14, 0.5);
+
+  --owd-surface-700: #2a1d3d;
+  --owd-surface-900: rgba(10, 6, 16, 0.92);
+  --owd-primary-color: #6d28d9;
+  --owd-primary-hover-color: #7c3aed;
+  --owd-button-primary-active-background: #8b5cf6;
+  --owd-button-primary-active-border-color: #8b5cf6;
+}

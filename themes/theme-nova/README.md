@@ -34,19 +34,22 @@ export default defineDesktopConfig({
     enabled: true,
     position: 'bottom',
   },
+  workspaces: {
+    enabled: true,
+  },
 })
 ```
 
 | Option | Description |
 |--------|-------------|
 | `systemBar.enabled` | Show the Nova top bar |
-| `systemBar.startButton` | Show **Start** and the app launcher |
-| `systemBar.launcherPresentation` | `responsive` (default): compact panel on desktop, full-screen launcher with search on narrow viewports; `compact` or `fullscreen` to force one mode |
+| `systemBar.startButton` | Show **Start** and the unified app launcher |
 | `systemBar.position` | `top` (default) or `bottom` |
 | `dockBar.enabled` | Show the bottom dock for running applications |
 | `dockBar.position` | `bottom` (default) |
+| `workspaces.enabled` | Virtual desktops: tray overview button, per-desktop window stacks, overview grid with drag-between-desktops (core `useWorkspaceOverview`), bottom switcher to add/switch desktops |
 
-Use **Start** to search and launch registered desktop apps. The menu uses a **flat dark panel** with inset search, grouped categories (when not filtering), and squircle app tiles. The **top-right tray** shows workspace overview, status icons, date/time, and **quick settings** (user session, volume, battery). On desktop you get a compact panel under the button; on mobile (or with `launcherPresentation: 'fullscreen'`) you get a full-screen launcher with a large search field and touch-friendly app tiles. The dock **menu** button (grip icon) opens the same full-screen launcher; other dock buttons switch to running apps.
+Use **Start** (or the dock **menu** grip button) to open the **Apps** launcher: a single overlay with a blurred/dimmed backdrop over the whole desktop, centered panel on wide viewports, and edge-to-edge panel on narrow screens. Search filters the grid; without a query, apps are grouped by category. Launching an app, pressing **Esc**, or clicking the backdrop closes the launcher. The **top-right tray** shows **workspaces** (overview grid: switch desktop, add desktop, drag windows between desktops), status icons, date/time, an **account** button (guest session + volume + battery), and an **accent** button to cycle shell colors. On narrow viewports, workspace/battery/volume/wifi collapse into a **More** (⋯) menu; clock, account, and accent stay visible.
 
 ## Playground
 

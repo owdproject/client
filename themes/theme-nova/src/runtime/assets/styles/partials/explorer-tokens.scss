@@ -1,0 +1,64 @@
+/* Nova Explorer — surfaces follow the active accent (see accent.scss / window-tokens.scss). */
+.owd-desktop--nova {
+  --nova-explorer-text: var(--nova-window-text);
+  --nova-explorer-text-muted: var(--nova-window-text-muted);
+  --nova-explorer-text-inactive: var(--nova-window-text-inactive);
+
+  --nova-explorer-surface: var(--nova-window-body-bg);
+  --nova-explorer-surface-elevated: var(--nova-window-header-bg);
+  --nova-explorer-toolbar: color-mix(
+    in srgb,
+    var(--nova-window-header-bg) 55%,
+    var(--nova-window-body-bg)
+  );
+  --nova-explorer-caption-bg: var(--nova-window-frame-bg);
+  --nova-explorer-caption-control: #ffffff;
+
+  --nova-explorer-border: var(--nova-window-border);
+  --nova-explorer-border-subtle: color-mix(
+    in srgb,
+    var(--nova-window-border) 55%,
+    transparent
+  );
+  --nova-explorer-pane-divider: var(--nova-window-border);
+  --nova-explorer-control-border: color-mix(
+    in srgb,
+    var(--nova-window-border) 75%,
+    transparent
+  );
+
+  --nova-explorer-accent: var(--nova-window-accent);
+  --nova-explorer-accent-line: var(--nova-window-accent-line);
+  --nova-explorer-accent-muted: var(--nova-accent-muted);
+  --nova-explorer-focus-ring: var(--nova-accent-focus-ring);
+
+  --nova-explorer-icon-desktop: #5eb8ff;
+  --nova-explorer-icon-downloads: #3fd4e8;
+  --nova-explorer-icon-documents: #c8c8c8;
+  --nova-explorer-icon-pictures: #5eb8ff;
+  --nova-explorer-icon-music: #f07ec7;
+  --nova-explorer-icon-videos: #a78bfa;
+  --nova-explorer-icon-folder-generic: #f3c84b;
+  --nova-explorer-icon-file: rgba(235, 235, 235, 0.88);
+  --nova-explorer-icon-image: #5eb8ff;
+  --nova-explorer-icon-video: #a78bfa;
+  --nova-explorer-icon-audio: #f07ec7;
+  --nova-explorer-icon-pdf: #ff8585;
+  --nova-explorer-icon-archive: #ffb84d;
+  --nova-explorer-icon-document: #d2d2d2;
+  --nova-explorer-icon-code: #7eb8ff;
+  --nova-explorer-icon-disc: #9aa0a6;
+
+  --owd-explorer-drop-outline: var(--nova-explorer-accent-line);
+  --owd-explorer-drop-surface: color-mix(
+    in srgb,
+    var(--owd-explorer-drop-outline) 14%,
+    transparent
+  );
+
+  :deep(.kit-fs-explorer-dropzone--active),
+  :deep(.kit-fs-explorer-folder-drop-target--active) {
+    outline-color: var(--owd-explorer-drop-outline);
+    background: var(--owd-explorer-drop-surface);
+  }
+}

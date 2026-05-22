@@ -1,0 +1,23 @@
+.nova-explorer-shell {
+  :deep(.nova-explorer-content-pane) {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--nova-explorer-text) 28%, transparent)
+      transparent;
+  }
+
+  :deep(.nova-explorer-content-pane::-webkit-scrollbar) {
+    width: 8px;
+    height: 8px;
+  }
+
+  :deep(.nova-explorer-content-pane::-webkit-scrollbar-thumb) {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--nova-explorer-text) 28%, transparent);
+  }
+
+  :deep(.p-datatable) {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+}
