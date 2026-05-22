@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "src/module.ts",
+    "src/index.ts",
+    "src/registerOwdDocsSource.ts",
+    "src/utils/writeContentConfig.ts",
+    "../../packages/core/types/index.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "playground"
+  ],
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}

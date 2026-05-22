@@ -23,9 +23,11 @@ This module enables a filesystem allowing [ZenFS](https://github.com/zen-fs/core
 pnpm desktop add @owdproject/module-fs
 ```
 
+With in-app documentation, install **`@owdproject/module-docs` before** this module in `desktop.config.ts` so FS docs pages are registered (`/docs/modules/filesystem/...`).
+
 ## Configuration
 
-You could set this configuration in `/desktop/owd.config.ts`:
+You could set this configuration in `/desktop/desktop.config.ts`:
 
 ```js
 fs: {
