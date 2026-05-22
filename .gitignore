@@ -12,7 +12,7 @@ node_modules
 /.idea
 .project
 .classpath
-.owd
+.desktop
 .cursor
 .c9/
 *.launch

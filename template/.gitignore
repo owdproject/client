@@ -48,4 +48,4 @@ Thumbs.db
 .nitro
 .cache
 vite.config.*.timestamp*
-vitest.config.*.timestamp*template/.owd/
+vitest.config.*.timestamp*template/.desktop/

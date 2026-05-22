@@ -90,12 +90,12 @@ export function findWorkspaceRoot(startDir = process.cwd()) {
   }
 }
 
-export function owdDir(workspaceRoot) {
-  return join(workspaceRoot, '.owd')
+export function desktopMetaDir(workspaceRoot) {
+  return join(workspaceRoot, '.desktop')
 }
 
 export function settingsPath(workspaceRoot) {
-  return join(owdDir(workspaceRoot), 'settings.json')
+  return join(desktopMetaDir(workspaceRoot), 'settings.json')
 }
 
 /** @typedef {'npm' | 'workspace'} InstallMode */
@@ -148,7 +148,7 @@ function detectGithubUser() {
 }
 
 export function saveSettings(workspaceRoot, settings) {
-  const dir = owdDir(workspaceRoot)
+  const dir = desktopMetaDir(workspaceRoot)
   mkdirSync(dir, { recursive: true })
   writeFileSync(settingsPath(workspaceRoot), JSON.stringify(settings, null, 2) + '\n')
 }

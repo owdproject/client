@@ -41,7 +41,7 @@ pnpm run dev        # Nuxt dev server only
 pnpm run generate   # production build
 ```
 
-Default install mode is **User (npm)** — configured in `.owd/settings.json`.
+Default install mode is **User (npm)** — configured in `.desktop/settings.json`.
 
 ## Extend your desktop
 

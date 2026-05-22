@@ -15,14 +15,14 @@ import {
   shortName,
   inferKind,
   isInstallableDesktopModule,
-  owdDir,
+  desktopMetaDir,
 } from './workspace.js'
 import { hasLocalWorkspaceSource } from './install.js'
 
 const CACHE_TTL_MS = 60 * 60 * 1000
 
 function cachePath(workspaceRoot) {
-  return join(owdDir(workspaceRoot), 'catalog-cache.json')
+  return join(desktopMetaDir(workspaceRoot), 'catalog-cache.json')
 }
 
 function readCache(workspaceRoot) {
@@ -46,7 +46,7 @@ function formatCacheAge(fetchedAt) {
 }
 
 function writeCache(workspaceRoot, entries) {
-  mkdirSync(owdDir(workspaceRoot), { recursive: true })
+  mkdirSync(desktopMetaDir(workspaceRoot), { recursive: true })
   writeFileSync(
     cachePath(workspaceRoot),
     JSON.stringify({ fetchedAt: Date.now(), entries }, null, 2),

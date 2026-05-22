@@ -8,7 +8,7 @@ import {
   appendFileSync,
 } from 'node:fs'
 import { join } from 'node:path'
-import { owdDir } from './workspace.js'
+import { desktopMetaDir } from './workspace.js'
 import {
   devSpawnCwd,
   devTargetLogLabel,
@@ -20,11 +20,11 @@ function sleep(ms) {
 }
 
 export function devPidPath(workspaceRoot) {
-  return join(owdDir(workspaceRoot), 'dev.pid')
+  return join(desktopMetaDir(workspaceRoot), 'dev.pid')
 }
 
 export function devLogPath(workspaceRoot) {
-  return join(owdDir(workspaceRoot), 'dev.log')
+  return join(desktopMetaDir(workspaceRoot), 'dev.log')
 }
 
 function readPidFile(workspaceRoot) {
@@ -192,7 +192,7 @@ export function startDev(target) {
     }
   }
 
-  mkdirSync(owdDir(workspaceRoot), { recursive: true })
+  mkdirSync(desktopMetaDir(workspaceRoot), { recursive: true })
   const logPath = devLogPath(workspaceRoot)
 
   devChild = spawn('pnpm', ['run', 'dev'], {
