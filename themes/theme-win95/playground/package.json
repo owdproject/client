@@ -1,0 +1,16 @@
+{
+  "name": "@owdproject/theme-win95-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@owdproject/app-about": "workspace:*",
+    "@owdproject/core": "workspace:*",
+    "@owdproject/theme-win95": "workspace:*",
+    "nuxt": "^4.4.4"
+  }
+}

@@ -1,0 +1,69 @@
+@use './variants/default/variables';
+
+@use './partials/scrollbar.scss';
+@use './partials/card.scss';
+@use './partials/button.scss';
+@use './partials/menu.scss';
+@use './partials/contextmenu.scss';
+@use './partials/divider.scss';
+@use './partials/input.scss';
+@use './partials/datatable.scss';
+@use './partials/explorer-shell.scss';
+@use './partials/explorer-prime-overlays.scss';
+@use './partials/explorer-chrome.scss';
+@use './partials/personalization.scss';
+
+:root {
+  --owd-font-family:
+    'Segoe UI Variable',
+    'Segoe UI',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  --p-font-size: 0.875rem;
+  --p-window-border-radius: 8px;
+
+  --owd-windov-nav-height: 32px;
+  --owd-system-bar-height: 48px;
+
+  --owd-border-width: 1px;
+  --owd-gap: 2px;
+  --owd-card-body-padding: 16px;
+
+  --owd-input-padding-x: 10px;
+  --owd-input-padding-y: 6px;
+
+  /* RGB triplets for rgb(var(--...)) — tuned for dark Fluent surfaces */
+  --owd-theme-color-lightgrey: 180, 180, 180;
+  --owd-theme-color-grey: 120, 120, 120;
+  --owd-theme-color-super-light: 245, 245, 245;
+  --owd-theme-color-light: 240, 240, 240;
+  --owd-theme-color-white: 255, 255, 255;
+  --owd-theme-color-black: 18, 18, 20;
+  --owd-theme-color-dark: 72, 72, 76;
+
+  --p-surface-900: rgba(44, 44, 48, 0.92);
+
+  --p-card-color: rgba(245, 245, 245, 0.96);
+  --p-card-border-color: rgba(255, 255, 255, 0.12);
+  --p-card-box-shadow: none;
+  --p-card-border-color-alternative: rgba(255, 255, 255, 0.08);
+  --p-card-box-shadow-alternative: none;
+
+  --p-input-color: rgba(255, 255, 255, 0.92);
+  --p-input-backgorund: rgba(32, 32, 36, 0.85);
+  --p-input-border-color: rgba(255, 255, 255, 0.12);
+  --p-input-box-shadow: none;
+
+  --owd-border-color: none;
+}
+
+::selection {
+  background: rgb(var(--owd-elevation-active-background));
+  color: rgb(var(--owd-elevation-active-color));
+}
+
+.owd-desktop {
+  font-size: var(--p-font-size);
+  line-height: 1.25rem;
+}

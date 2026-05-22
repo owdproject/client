@@ -20,7 +20,7 @@ pnpm desktop add @owdproject/theme-win11
 
 #### Available configuration
 
-You could set this configuration in `/desktop/owd.config.ts`:
+You could set this configuration in `/desktop/desktop.config.ts`:
 
 ```js
 export default defineDesktopConfig({

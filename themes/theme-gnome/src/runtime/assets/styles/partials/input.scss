@@ -1,0 +1,16 @@
+:root {
+  --p-inputtext-padding-x: var(--owd-input-padding-x);
+  --p-inputtext-padding-y: var(--owd-input-padding-y);
+
+  --p-inputtext-color: var(--p-input-color);
+  --p-inputtext-background: rgba(255, 255, 255, 0.06);
+
+  --p-inputtext-border-radius: var(--owd-border-radius-sm);
+}
+
+b + br + .p-inputtext {
+  margin-top: 8px;
+}
+
+.p-inputtext {
+}

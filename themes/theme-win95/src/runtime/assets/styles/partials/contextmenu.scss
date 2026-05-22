@@ -1,0 +1,34 @@
+:root {
+  --p-contextmenu-background: var(--p-surface-900);
+  --p-contextmenu-submenu-background: var(--p-contextmenu-background);
+  --p-contextmenu-shadow: var(--owd-border-color);
+  --p-contextmenu-item-padding: 6px 8px;
+  --p-contextmenu-submenu-label-padding: 4px 8px;
+  --p-contextmenu-submenu-label-font-weight: 600;
+}
+
+.p-contextmenu {
+  font-family: var(--owd-font-family);
+  font-size: var(--p-font-size);
+  border-width: 2px;
+  padding: var(--owd-border-width);
+
+  &-item {
+    &-content {
+      &:hover {
+        background: rgb(var(--owd-elevation-active-background)) !important;
+        color: rgb(var(--owd-elevation-active-color)) !important;
+      }
+    }
+  }
+
+  &-separator {
+    margin: 4px 2px;
+    height: 2px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(var(--owd-theme-color-dark)) rgb(var(--owd-theme-color-white)) rgb(var(--owd-theme-color-white))
+    rgb(var(--owd-theme-color-dark));
+    background: rgb(var(--owd-theme-color-dark));
+  }
+}

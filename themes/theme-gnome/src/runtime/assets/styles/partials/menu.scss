@@ -1,0 +1,43 @@
+:root {
+  --p-menu-background: var(--p-background-color);
+  --p-menu-color: var(--p-color);
+  --p-menu-shadow: var(--p-border);
+  --p-menu-item-padding: 8px 8px;
+  --p-menu-submenu-label-padding: 4px 8px;
+  --p-menu-submenu-label-font-weight: 600;
+
+  --p-menu-item-focus-background: rgba(var(--owd-hover-background-color));
+
+  --p-menubar-item-padding: 10px 12px;
+  --p-menubar-base-item-padding: 8px 16px;
+}
+
+.p-menubar {
+  &-submenu {
+    border-radius: 8px;
+    background: var(--p-menu-background);
+    box-shadow: var(--p-border);
+
+    .p-menubar-item {
+      &:hover {
+        background: rgba(var(--owd-hover-background-color));
+      }
+    }
+
+    margin-top: 12px;
+
+    &-icon {
+      margin-top: 2px;
+      margin-left: 6px;
+    }
+  }
+}
+
+.p-menu {
+  border-radius: 8px;
+  margin-top: 12px;
+
+  .p-menu-list {
+    padding: 4px;
+  }
+}

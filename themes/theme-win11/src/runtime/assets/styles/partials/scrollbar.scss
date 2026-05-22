@@ -1,0 +1,83 @@
+/* Fluent overlay scrollbars — opt-in on scroll regions only (never on window chrome / *). */
+.owd-desktop--win11,
+body:has(.owd-desktop--win11) {
+  --win11-scrollbar-size: 10px;
+  --win11-scrollbar-thumb: color-mix(
+    in srgb,
+    var(--win11-shell-text, #fff) 34%,
+    transparent
+  );
+  --win11-scrollbar-track: color-mix(
+    in srgb,
+    var(--win11-shell-text, #fff) 8%,
+    transparent
+  );
+  --win11-scrollbar-thumb-hover: color-mix(
+    in srgb,
+    var(--win11-shell-text, #fff) 48%,
+    transparent
+  );
+}
+
+@mixin win11-modern-scrollbar($stable-gutter: false) {
+  @if $stable-gutter {
+    scrollbar-gutter: stable;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--win11-scrollbar-thumb) var(--win11-scrollbar-track);
+
+  &::-webkit-scrollbar {
+    width: var(--win11-scrollbar-size);
+    height: var(--win11-scrollbar-size);
+  }
+
+  &::-webkit-scrollbar-track {
+    margin: 2px 0;
+    border-radius: 999px;
+    background: var(--win11-scrollbar-track);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    background-color: var(--win11-scrollbar-thumb);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--win11-scrollbar-thumb-hover);
+  }
+}
+
+.owd-desktop--win11 {
+  .win11-explorer-nav-pane__scroll,
+  .win11-task-view__grid-scroll,
+  .win11-settings-shell__content {
+    @include win11-modern-scrollbar(true);
+  }
+
+  .win11-start__scroll {
+    @include win11-modern-scrollbar(false);
+  }
+
+  .win11-explorer-content-pane,
+  .win11-explorer-content-pane .p-datatable-table-container,
+  .win11-explorer-content-pane .p-datatable-wrapper,
+  .owd-window:not(.win11-explorer-frame) .owd-window__content {
+    @include win11-modern-scrollbar(false);
+  }
+}
+
+/* Regions that intentionally hide scrollbars (taskbar overflow, tab strip). */
+.owd-desktop--win11 .win11-dock__center-cluster,
+.owd-desktop--win11 .win11-dock__segment--apps,
+.owd-desktop--win11 .win11-explorer-tab-strip__tabs {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}

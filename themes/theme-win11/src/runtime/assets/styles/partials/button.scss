@@ -1,0 +1,138 @@
+/*
+ * Win11 caption only — never style global `.p-button` here or Menubar/Toolbar break.
+ * Explorer keeps PrimeVue chrome for menus/toolbars; Frame Nav uses `.owd-window-nav`.
+ */
+.owd-desktop--win11 .owd-window-nav {
+
+  padding-left: 5px;
+
+  .owd-window-nav__btn-group {
+    gap: 0;
+    padding: 0;
+    align-self: stretch;
+    display: flex;
+    align-items: stretch;
+
+    /*
+     * Caption controls use explicit variants from kit-fs ChromeButton (`p-button--window-nav-*`).
+     * Do not blanket-margin every `.p-button` here — it broke alignment and append-slot tools.
+     */
+    .p-button--window-nav-minimize,
+    .p-button--window-nav-maximize,
+    .p-button--window-nav-close {
+      margin: 0 !important;
+    }
+
+    &--append {
+      .p-button--window-nav-minimize .owd-button__icon,
+      .p-button--window-nav-close .owd-button__icon {
+        margin: 0 !important;
+        top: auto !important;
+        left: auto !important;
+      }
+
+      .p-button--window-nav-minimize .owd-button__icon {
+        width: 10px;
+        height: 10px;
+        transform: none !important;
+      }
+
+      .p-button--window-nav-maximize .iconify {
+        margin: 0 !important;
+        font-size: 11px !important;
+        line-height: 1;
+      }
+
+      .p-button--window-nav-close .owd-button__icon {
+        width: 10px;
+        height: 10px;
+        transform: rotate(45deg) !important;
+      }
+
+      .p-button--window-nav-close:hover {
+        background: rgba(232, 17, 35, 0.92);
+        color: #fff;
+
+        .iconify {
+          color: #fff;
+        }
+
+        .owd-button__icon::before,
+        .owd-button__icon::after {
+          background: #fff !important;
+        }
+      }
+
+      .p-button--window-nav-close:active {
+        background: rgba(241, 112, 122, 0.95);
+        color: #fff;
+
+        .owd-button__icon::before,
+        .owd-button__icon::after {
+          background: #fff !important;
+        }
+      }
+    }
+  }
+
+  .p-button {
+    --p-button-primary-background: transparent;
+    --p-button-primary-hover-background: rgba(255, 255, 255, 0.06);
+    --p-button-primary-active-background: rgba(255, 255, 255, 0.1);
+    --p-button-primary-border-color: transparent;
+
+    &:not(.p-button-text) {
+      border-radius: 0;
+
+      &::before {
+        display: none !important;
+      }
+    }
+
+    &:not([disabled]) {
+
+      &:active>span,
+      &.p-button--active>span {
+        font-weight: inherit;
+      }
+    }
+
+    /* Fluent caption: 46×32 hit targets, vertically centered glyphs */
+    &--window-nav {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 46px;
+      width: 46px;
+      height: 100%;
+      min-height: var(--owd-windov-nav-height);
+      padding: 0;
+      margin: 0;
+      border-radius: 0;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.88);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      &:active {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    >.iconify {
+      background: transparent !important;
+      color: rgba(255, 255, 255, 0.88);
+    }
+  }
+
+  .owd-button__icon {
+
+    &::before,
+    &::after {
+      background: rgba(255, 255, 255, 0.88) !important;
+    }
+  }
+}

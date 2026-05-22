@@ -1,0 +1,17 @@
+:root {
+  --p-divider-border-color: transparent;
+  --p-divider-vertical-margin: 0 4px;
+}
+
+.p-divider {
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(var(--owd-theme-color-dark)) rgb(var(--owd-theme-color-white)) rgb(var(--owd-theme-color-white))
+    rgb(var(--owd-theme-color-dark));
+  background: rgb(var(--owd-theme-color-light));
+
+  &-horizontal {
+    margin: 16px 0;
+    top: -2px;
+  }
+}

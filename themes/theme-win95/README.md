@@ -16,11 +16,41 @@ This theme for Open Web Desktop recreates the old fashioned Windows 95 UI.
 pnpm desktop add @owdproject/theme-win95
 ```
 
+## Development (monorepo)
+
+After changing theme source, rebuild the module stub before running the desktop:
+
+```bash
+# from client root
+pnpm run prepare:themes
+
+# or inside this package
+pnpm run dev:prepare
+```
+
+The theme ships as a Nuxt module (`src/module.ts` → `dist/module.mjs`). Window chrome lives under `src/runtime/components/Window/` (required for apps that use `<Window>`).
+
+## Playground
+
+From the theme package (monorepo or standalone clone):
+
+```bash
+pnpm install
+pnpm run dev:prepare
+pnpm run dev
+```
+
+Static preview build (GitHub Pages uses the same output):
+
+```bash
+pnpm run dev:generate
+```
+
 ## Usage
 
 #### Available configuration
 
-You could set this configuration in `/desktop/owd.config.ts`:
+You could set this configuration in `/desktop/desktop.config.ts`:
 
 ```js
 export default defineDesktopConfig({

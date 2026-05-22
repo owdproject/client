@@ -1,0 +1,68 @@
+/* Win95 explorer (KitFs Workspace + frameClass). */
+.owd-desktop--win95 {
+  .owd-window.win95-explorer-frame.resizable-component {
+    > .p-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    :deep(> .p-card) {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: var(--owd-gap);
+
+      > .p-card-header {
+        margin-bottom: 2px;
+        flex-shrink: 0;
+      }
+
+      > .p-card-body {
+        flex: 1;
+        min-height: 0;
+        height: auto;
+
+        > .p-card-content {
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  .owd-window.win95-explorer-frame {
+    .owd-window__content {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden !important;
+    }
+
+    > .p-card > .p-card-body {
+      flex: 1;
+      min-height: 0;
+      height: auto;
+    }
+
+    .p-card-header .owd-window-nav {
+      background: rgb(var(--owd-elevation-inactive)) !important;
+      color: rgb(var(--owd-theme-color-light)) !important;
+
+      &--focused {
+        background: rgb(var(--owd-elevation-active-background)) !important;
+        color: rgb(var(--owd-elevation-active-color)) !important;
+      }
+    }
+
+    .flex-1.overflow-auto {
+      border-top: var(--owd-border-width) solid #000;
+      border-left: var(--owd-border-width) solid #000;
+      border-right: var(--owd-border-width) solid #c3c7cb;
+      border-bottom: var(--owd-border-width) solid #c3c7cb;
+      box-shadow:
+        -1px -1px 0 #868a8e,
+        1px 1px 0 #fff;
+      margin: 0 var(--owd-gap) var(--owd-gap);
+      background-color: white;
+    }
+  }
+}

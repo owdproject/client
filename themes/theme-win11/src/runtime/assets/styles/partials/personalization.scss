@@ -1,0 +1,168 @@
+/* Personalization tokens for Win11 shell/window surfaces. */
+.owd-desktop--win11 {
+  --win11-shell-surface: rgba(36, 36, 36, 0.80);
+  --win11-shell-border: rgba(66, 66, 66, 0.2);
+  --win11-shell-text: rgba(255, 255, 255, 0.92);
+  --win11-shell-muted: rgba(255, 255, 255, 0.55);
+
+  /* Single surface for normal windows (nav + body); same as Explorer content tier. */
+  --win11-window-surface-unified: rgba(26, 26, 28, 0.82);
+  --win11-explorer-chrome-dark: var(--win11-window-surface-unified);
+  --win11-explorer-caption-bg: rgba(12, 12, 14, 0.96);
+
+  --win11-window-card-bg: var(--win11-window-surface-unified);
+  --win11-window-card-body-bg: var(--win11-window-surface-unified);
+  --win11-window-text: rgba(245, 245, 245, 0.96);
+  --win11-window-muted: rgba(210, 210, 210, 0.78);
+  --win11-window-border: rgba(255, 255, 255, 0.1);
+  --win11-window-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --win11-window-backdrop: blur(48px) saturate(160%);
+  --win11-window-backdrop-webkit: blur(48px) saturate(160%);
+
+  --win11-explorer-chrome-light: rgba(58, 58, 62, 0.94);
+  /* Edge under tabs → breadcrumb row (separates from command bar below) */
+  --win11-explorer-top-band-separator: color-mix(
+    in srgb,
+    var(--win11-window-border, rgba(255, 255, 255, 0.1)) 65%,
+    transparent
+  );
+  /* Breadcrumb pill + search field outline */
+  --win11-explorer-chrome-control-border: color-mix(
+    in srgb,
+    var(--win11-window-border, rgba(255, 255, 255, 0.1)) 65%,
+    transparent
+  );
+
+  /* Explorer content grid — Quick access–style folder/file accent colours */
+  --win11-explorer-icon-desktop: #5eb8ff;
+  --win11-explorer-icon-downloads: #3fd4e8;
+  --win11-explorer-icon-documents: #c8c8c8;
+  --win11-explorer-icon-pictures: #5eb8ff;
+  --win11-explorer-icon-music: #f07ec7;
+  --win11-explorer-icon-videos: #a78bfa;
+  --win11-explorer-icon-folder-generic: #f3c84b;
+  --win11-explorer-icon-file: rgba(235, 235, 235, 0.88);
+  --win11-explorer-icon-image: #5eb8ff;
+  --win11-explorer-icon-video: #a78bfa;
+  --win11-explorer-icon-audio: #f07ec7;
+  --win11-explorer-icon-pdf: #ff8585;
+  --win11-explorer-icon-archive: #ffb84d;
+  --win11-explorer-icon-document: #d2d2d2;
+  --win11-explorer-icon-code: #7eb8ff;
+  --win11-explorer-icon-disc: #9aa0a6;
+
+  --owd-explorer-drop-outline: #60cfff;
+  --owd-explorer-drop-surface: color-mix(in srgb, var(--owd-explorer-drop-outline) 12%, transparent);
+
+  :deep(.kit-fs-explorer-dropzone--active),
+  :deep(.kit-fs-explorer-folder-drop-target--active) {
+    outline-color: var(--owd-explorer-drop-outline);
+    background: var(--owd-explorer-drop-surface);
+  }
+}
+
+.owd-desktop--win11.win11-personalization-appearance-light {
+  --win11-shell-surface: rgba(245, 247, 250, 0.88);
+  --win11-shell-border: rgba(130, 146, 164, 0.35);
+  --win11-shell-text: rgba(24, 30, 36, 0.98);
+  --win11-shell-muted: rgba(54, 66, 80, 0.82);
+
+  --win11-window-surface-unified: rgba(214, 220, 228, 0.9);
+  --win11-explorer-chrome-dark: var(--win11-window-surface-unified);
+  --win11-explorer-caption-bg: rgba(252, 253, 255, 0.98);
+
+  --win11-window-card-bg: var(--win11-window-surface-unified);
+  --win11-window-card-body-bg: var(--win11-window-surface-unified);
+  --win11-window-text: rgba(24, 30, 36, 0.98);
+  --win11-window-muted: rgba(64, 76, 90, 0.82);
+  --win11-window-border: rgba(112, 126, 142, 0.28);
+  --win11-window-shadow:
+    0 10px 30px rgba(90, 104, 120, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+
+  --win11-explorer-icon-desktop: #0078d4;
+  --win11-explorer-icon-downloads: #0098c7;
+  --win11-explorer-icon-documents: #6b6b6b;
+  --win11-explorer-icon-pictures: #0078d4;
+  --win11-explorer-icon-music: #c239b3;
+  --win11-explorer-icon-videos: #744bc4;
+  --win11-explorer-icon-folder-generic: #e0a106;
+  --win11-explorer-icon-file: rgba(36, 44, 54, 0.9);
+  --win11-explorer-icon-image: #0078d4;
+  --win11-explorer-icon-video: #744bc4;
+  --win11-explorer-icon-audio: #c239b3;
+  --win11-explorer-icon-pdf: #d13438;
+  --win11-explorer-icon-archive: #ca5010;
+  --win11-explorer-icon-document: #5c5c5c;
+  --win11-explorer-icon-code: #0078d4;
+  --win11-explorer-icon-disc: #6e6e6e;
+
+  --win11-explorer-chrome-light: rgba(230, 235, 242, 0.96);
+  /* Softer than bare grey on frosted panels */
+  --win11-explorer-top-band-separator: color-mix(
+    in srgb,
+    var(--win11-window-border) 38%,
+    var(--win11-window-surface-unified) 62%
+  );
+  --win11-explorer-chrome-control-border: color-mix(
+    in srgb,
+    var(--win11-window-border) 42%,
+    var(--win11-explorer-chrome-light) 58%
+  );
+}
+
+/* After appearance so tint applies in both dark and light. */
+.owd-desktop--win11.win11-personalization-window-solid {
+  --win11-window-surface-unified: var(--win11-window-tint, #2d2d30);
+  --win11-window-card-bg: var(--win11-window-surface-unified);
+  --win11-window-card-body-bg: var(--win11-window-surface-unified);
+  --win11-explorer-chrome-dark: var(--win11-window-surface-unified);
+  --win11-explorer-caption-bg: color-mix(
+    in srgb,
+    var(--win11-window-tint, #2d2d30) 78%,
+    black
+  );
+  --win11-window-backdrop: none;
+  --win11-window-backdrop-webkit: none;
+  /* Lighter strip above breadcrumb — follows tint, not fixed grey */
+  --win11-explorer-chrome-light: color-mix(
+    in srgb,
+    var(--win11-window-tint, #2d2d30) 62%,
+    rgb(255 255 255 / 0.14)
+  );
+  --win11-explorer-top-band-separator: color-mix(
+    in srgb,
+    var(--win11-window-tint, #2d2d30) 72%,
+    rgb(255 255 255 / 0.12)
+  );
+  --win11-explorer-chrome-control-border: color-mix(
+    in srgb,
+    var(--win11-window-tint, #2d2d30) 78%,
+    rgb(255 255 255 / 0.16)
+  );
+}
+
+.owd-desktop--win11.win11-personalization-window-solid.win11-personalization-appearance-light {
+  --win11-explorer-caption-bg: color-mix(
+    in srgb,
+    var(--win11-window-tint, #e8eaed) 88%,
+    white
+  );
+  --win11-explorer-chrome-light: color-mix(
+    in srgb,
+    var(--win11-window-tint, #e8eaed) 78%,
+    white
+  );
+  --win11-explorer-top-band-separator: color-mix(
+    in srgb,
+    var(--win11-window-tint, #e8eaed) 65%,
+    rgb(0 0 0 / 0.12)
+  );
+  --win11-explorer-chrome-control-border: color-mix(
+    in srgb,
+    var(--win11-window-tint, #e8eaed) 55%,
+    rgb(0 0 0 / 0.14)
+  );
+}

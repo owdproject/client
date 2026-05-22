@@ -1,0 +1,149 @@
+export default {
+  systemBar: {
+    applications: {
+      label: 'Apps',
+    },
+  },
+  applications: {
+    categories: {
+      favorites: 'Favorites',
+      accessories: 'Accessories',
+      games: 'Games',
+      graphics: 'Graphics',
+      internet: 'Internet',
+      office: 'Office',
+      productivity: 'Productivity',
+      'system-tools': 'System Tools',
+      programming: 'Programming',
+      utilities: 'Utilities',
+      tools: 'Tools',
+      other: 'Other',
+    },
+  },
+  fs: {
+    contextMenu: {
+      open: 'Open',
+      openInNewTab: 'Open in new tab',
+      rename: 'Rename',
+      delete: 'Delete',
+      print: 'Print',
+      sendTo: 'Send To',
+      cut: 'Cut',
+      copy: 'Copy',
+      properties: 'Properties',
+      createShortcut: 'Create Shortcut',
+    },
+  },
+  apps: {
+    explorer: {
+      windowTitle: 'Files',
+      places: {
+        home: 'Home',
+        recent: 'Recent',
+        starred: 'Starred',
+        network: 'Network',
+        trash: 'Trash',
+      },
+      address: 'Address',
+      menu: {
+        file: 'File',
+        edit: 'Edit',
+        view: 'View',
+        help: 'Help',
+      },
+      tabs: {
+        ariaLabel: 'Folder tabs',
+        newTab: 'New tab',
+        closeTab: 'Close tab',
+        thisPc: 'Files',
+      },
+      nav: {
+        openFolder: 'Open',
+        pinToQuickAccess: 'Pin to Quick access',
+        unpinFromQuickAccess: 'Unpin from Quick access',
+        resizePane: 'Resize navigation pane',
+      },
+      breadcrumb: {
+        ariaLabel: 'Address breadcrumb',
+      },
+      search: {
+        placeholder: 'Search',
+      },
+      action: {
+        yes: 'Yes',
+        no: 'No',
+        back: 'Back',
+        forward: 'Forward',
+        up: 'Up',
+        undo: 'Undo',
+        delete: 'Delete',
+        properties: 'Properties',
+        newFolder: 'New Folder',
+        ok: 'OK',
+        cancel: 'Cancel',
+        close: 'Close',
+        cut: 'Cut',
+        copy: 'Copy',
+        rename: 'Rename',
+        paste: 'Paste',
+        pasteShortcut: 'Paste shortcut',
+        selectAll: 'Select All',
+        invertSelection: 'Invert selection',
+        refresh: 'Refresh',
+        sortBy: 'Sort by',
+        about: 'About Files',
+      },
+      layout: {
+        largeIcons: 'Large Icons',
+        smallIcons: 'Small Icons',
+        list: 'List',
+        details: 'Details',
+      },
+      sortBy: {
+        name: 'Name',
+        size: 'Size',
+        date: 'Date Modified',
+      },
+      dialog: {
+        deleteFile: {
+          confirm: {
+            title: 'Confirm File Delete',
+            message: {
+              toVoid: "Are you sure you want to delete '{fileName}'?",
+              toTrash:
+                "Are you sure you want to send '{fileName}' to the trash?",
+            },
+          },
+        },
+        deleteFiles: {
+          confirm: {
+            title: 'Confirm Files Delete',
+            message: {
+              toVoid: 'Are you sure you want to delete {count} files?',
+              toTrash: 'Are you sure you want to send {count} files to the trash?',
+            },
+          },
+        },
+        deleteFolder: {
+          confirm: {
+            title: 'Confirm Folder Delete',
+            message:
+              'Are you sure you want to remove the folder {name} and all its content?',
+          },
+        },
+        fileOverride: {
+          confirm: {
+            title: 'Confirm File Replace',
+            message: 'The folder already contains a file named {name}.',
+          },
+        },
+        shortcutOverride: {
+          confirm: {
+            title: 'Confirm File Replace',
+            message: 'The folder already contains a file named {name}.',
+          },
+        },
+      },
+    },
+  },
+}

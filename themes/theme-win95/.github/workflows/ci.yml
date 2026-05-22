@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - run: npm i -g --force corepack@latest && corepack enable
+
+      - name: Install dependencies
+        run: npx nypm@latest i
+
+      - name: Prepare module and playground
+        run: npm run dev:prepare
+
+      - name: Generate playground (static)
+        run: npm run dev:generate
+        env:
+          NUXT_APP_BASE_URL: /theme-win95/
+
+      - name: Upload playground artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: playground-dist
+          path: playground/.output/public

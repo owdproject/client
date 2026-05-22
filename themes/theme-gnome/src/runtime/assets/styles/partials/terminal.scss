@@ -1,0 +1,12 @@
+:root {
+  --p-terminal-background: black;
+  --p-terminal-color: white;
+  --p-terminal-padding: 8px;
+  --p-terminal-height: 100%;
+}
+
+.p-terminal-prompt,
+.p-terminal-command {
+  height: 21px;
+  line-height: 21px;
+}

@@ -21,7 +21,7 @@ pnpm desktop add @owdproject/theme-gnome
 #### Configuration
 
 ```typescript
-// owd.config.ts
+// desktop.config.ts
 export default defineDesktopConfig({
   theme: '@owdproject/theme-gnome',
   apps: ['@owdproject/app-about'],

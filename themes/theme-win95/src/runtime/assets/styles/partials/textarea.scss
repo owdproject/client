@@ -1,0 +1,21 @@
+:root {
+  --p-textarea-padding-x: var(--owd-input-padding-x);
+  --p-textarea-padding-y: var(--owd-input-padding-y);
+
+  --p-textarea-color: var(--p-input-color);
+  --p-textarea-background: var(--p-input-backgorund);
+
+  --p-textarea-border-color: var(--p-input-border-color);
+  --p-textarea-hover-border-color: var(--p-input-border-color);
+  --p-textarea-focus-border-color: var(--p-input-border-color);
+
+  --p-textarea-shadow: var(--p-input-box-shadow);
+  --p-textarea-hover-ring-shadow: var(--p-input-box-shadow);
+  --p-textarea-focus-ring-shadow: var(--p-input-box-shadow);
+}
+
+.p-textarea {
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--p-inputtext-border-color);
+}

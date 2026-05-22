@@ -1,0 +1,95 @@
+:root {
+  --p-dialog-background: var(--p-surface-900);
+  --p-dialog-color: var(--p-card-color);
+  --p-dialog-shadow: var(--p-card-box-shadow);
+}
+
+.p-dialog {
+  border: var(--owd-border-width) solid;
+  border-color: var(--p-card-border-color);
+  padding: var(--owd-border-width);
+  font-family: var(--owd-font-family);
+  font-size: var(--p-font-size);
+
+  &-header {
+    font-weight: bold;
+    background: rgb(var(--owd-elevation-active-background)) !important;
+    color: rgb(var(--owd-elevation-active-color)) !important;
+    height: var(--owd-windov-nav-height);
+    padding: 0 0 0 6px;
+  }
+
+  &-title {
+    margin-top: 1px;
+  }
+
+  &-content,
+  &-footer {
+    padding: 10px;
+  }
+
+  .p-dialog-close-button,
+  .p-dialog-close-button:hover {
+    min-width: 21px !important;
+    height: 21px !important;
+    margin-top: 1px;
+    margin-right: 3px;
+    padding: 0 !important;
+    border-style: solid;
+    border-width: var(--owd-border-width);
+    border-color: var(--p-card-border-color) !important;
+    box-shadow: var(--p-card-box-shadow) !important;
+    background: var(--p-surface-900) !important;
+
+    svg {
+      display: none;
+    }
+
+    .p-button-label {
+      display: inline-block !important;
+      width: 12px;
+      height: 12px;
+      transform: translateX(-50%) translateY(-50%) rotateZ(45deg);
+      position: relative;
+      top: 8px;
+      left: 6px;
+      opacity: 1;
+      visibility: initial;
+      z-index: 99;
+
+      &:before,
+      &:after {
+        position: absolute;
+        background: rgb(var(--owd-theme-color-black));
+        content: '';
+      }
+
+      &:before {
+        height: 100%;
+        width: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      &:after {
+        height: 2px;
+        width: 100%;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+  }
+}
+
+// disable confirm animation
+.p-dialog-mask {
+  .p-button {
+    min-width: 80px;
+  }
+
+  &, & * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

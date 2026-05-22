@@ -1,0 +1,70 @@
+@use './variants/adwaita-dark/variables.scss';
+
+@use './partials/avatar.scss';
+@use './partials/button.scss';
+@use './partials/card.scss';
+@use './partials/checkbox.scss';
+@use './partials/input.scss';
+@use './partials/menu.scss';
+@use './partials/tabs.scss';
+@use './partials/slider.scss';
+@use './partials/terminal.scss';
+@use './partials/textarea.scss';
+@use './partials/explorer-shell.scss';
+@use './partials/explorer-prime-overlays.scss';
+@use './partials/explorer-nautilus.scss';
+
+:root {
+  --owd-input-padding-x: 8px;
+  --owd-input-padding-y: 8px;
+  --owd-border-radius-sm: 8px;
+  --owd-border-radius-md: 12px;
+
+  --owd-hover-background-color: 255, 255, 255, 0.04;
+  --owd-hover-background-color-accent: 255, 255, 255, 0.1;
+
+  --p-font-family: 'Cantarell';
+
+  --p-primary-color: 53, 132, 228;
+  --p-background-color: #282828;
+  --p-color: #fff;
+  --p-window-border-radius: var(--owd-border-radius-md);
+
+  --p-dock-bar-height: 120px;
+  --p-dock-bar-spacing: 12px;
+  --p-dock-bar-spacing-inner: 8px;
+  --p-dock-bar-button-size: 64px;
+
+  --p-input-color: white;
+
+  --p-system-bar-height: 32px;
+  --p-system-bar-padding: 4px;
+  --p-system-bar-menu-spacing: 8px;
+
+  --p-divider-border-color: rgba(255, 255, 255, 0.06);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+:hover::-webkit-scrollbar-thumb,
+:focus::-webkit-scrollbar-thumb,
+:active::-webkit-scrollbar-thumb,
+.show-scrollbar::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
