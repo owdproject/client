@@ -2,25 +2,13 @@ packages:
   - desktop
   - apps/*
   - packages/*
-  - packages/core/playground
-  - packages/module-docs/playground
-  - packages/module-fs/playground
-  - packages/module-persistence/playground
-  - apps/*/playground
-  - themes/*/playground
   - themes/*
   - plugins/*
 
 allowBuilds:
-  '@owdproject/app-about': true
   '@owdproject/nx': true
-  '@owdproject/theme-nova': true
-  '@owdproject/theme-win95': true
 onlyBuiltDependencies:
-  - '@owdproject/app-about'
   - '@owdproject/nx'
-  - '@owdproject/theme-nova'
-  - '@owdproject/theme-win95'
   - '@parcel/watcher'
   - '@swc/core'
   - esbuild
