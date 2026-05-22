@@ -3,6 +3,11 @@ packages:
   - apps/*
   - packages/*
   - packages/core/playground
+  - packages/module-docs/playground
+  - packages/module-fs/playground
+  - packages/module-persistence/playground
+  - apps/*/playground
+  - themes/*/playground
   - themes/*
   - plugins/*
 

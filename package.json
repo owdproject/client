@@ -18,10 +18,12 @@
   "scripts": {
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",
-    "prepare:modules": "pnpm -r --filter \"./packages/core\" --filter \"./apps/*\" --filter \"./themes/*\" --if-present run dev:prepare",
+    "prepare:stubs": "pnpm -r --filter \"./packages/module-fs\" --filter \"./packages/module-persistence\" --filter \"./packages/module-docs\" --filter \"./apps/*\" --filter \"./themes/*\" exec nuxt-module-build build --stub",
+    "prepare:modules": "pnpm run prepare:stubs && pnpm -r --filter \"./packages/*\" --filter \"./apps/*\" --filter \"./themes/*\" --if-present run dev:prepare",
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
     "desktop": "node ./packages/core/bin/desktop.js",
+    "validate:modules": "node ./packages/core/bin/desktop.js validate",
     "owd": "node ./packages/core/bin/owd.js"
   },
   "devDependencies": {
@@ -55,7 +57,6 @@
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.9.0",
-    "h3": "^2.0.0",
     "jiti": "2.6.1",
     "jsdom": "~29.1.1",
     "nuxt": "^4.4.4",

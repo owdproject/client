@@ -7,7 +7,7 @@ index 0000000000000000000000000000000000000000..ad71d5b1d30cb0a7efc5013c0b2b2fef
 +{
 +  "$schema": "https://json-schema.org/draft/2020-12/schema",
 +  "title": "InstallAppExecutor",
-+  "description": "Install an OWD desktop app package into desktop/ and register it in owd.config.ts.",
++  "description": "Install an OWD desktop app package into desktop/ and register it in desktop.config.ts.",
 +  "type": "object",
 +  "properties": {
 +    "name": {
@@ -27,7 +27,7 @@ index 0000000000000000000000000000000000000000..bfefb4fabb7bbe7e5e8d50cd5051edf7
 +{
 +  "$schema": "https://json-schema.org/draft/2020-12/schema",
 +  "title": "InstallModuleExecutor",
-+  "description": "Install an OWD Nuxt module into desktop/ and register it in owd.config.ts.",
++  "description": "Install an OWD Nuxt module into desktop/ and register it in desktop.config.ts.",
 +  "type": "object",
 +  "properties": {
 +    "name": {
@@ -47,7 +47,7 @@ index 0000000000000000000000000000000000000000..a98b2b1d2a306c53f087e3fcf534b2ac
 +{
 +  "$schema": "https://json-schema.org/draft/2020-12/schema",
 +  "title": "InstallThemeExecutor",
-+  "description": "Install an OWD theme into desktop/ and set theme in owd.config.ts.",
++  "description": "Install an OWD theme into desktop/ and set theme in desktop.config.ts.",
 +  "type": "object",
 +  "properties": {
 +    "name": {
