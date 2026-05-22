@@ -8,7 +8,7 @@
 
 ## Overview
 
-This project was scaffolded with **Nuxt Desktop** (Open Web Desktop). It is a Nuxt app plus `owd.config.ts` — no Nx required for day-to-day dev (`pnpm run dev` runs `nuxt dev` in `desktop/`).
+This project was scaffolded with **Nuxt Desktop** (Open Web Desktop). It is a Nuxt app plus `desktop.config.ts` — no Nx required for day-to-day dev (`pnpm run dev` runs `nuxt dev` in `desktop/`).
 
 [Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA) · [Documentation](https://owdproject.org/)
 
@@ -30,12 +30,12 @@ npm create owd
 # or: npx nuxi@latest module add @owdproject/core
 ```
 
-Setup runs `pnpm install` and opens the **control panel** (`desktop ui`) when your terminal is interactive.
+Setup runs `pnpm install` and opens the **control panel** (`pnpm desktop`) when your terminal is interactive.
 
 ```bash
 cd owd-client
 
-pnpm desktop ui     # catalog, install apps/themes (User mode = npm)
+pnpm desktop        # control panel: [m] menu, [s] start, [x] stop, [R] reboot, [w] save
 pnpm run dev        # Nuxt dev server only
 
 pnpm run generate   # production build
@@ -53,7 +53,7 @@ Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and e
 
 Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) tag on GitHub.
 
-For example, to add the To-do app from the control panel press `s` after selecting packages, or:
+For example, to add the To-do app from the control panel: press `s` to start the dev server (`x` to stop), select packages, then press `w` to save, or:
 
 ```bash
 pnpm desktop add @owdproject/app-todo

@@ -18,8 +18,7 @@
     "scripts": {
         "dev": "pnpm --dir desktop dev",
         "generate": "pnpm --dir desktop generate",
-        "desktop": "pnpm exec desktop",
-        "ui": "pnpm exec desktop ui"
+        "desktop": "pnpm exec desktop"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3.3.1",

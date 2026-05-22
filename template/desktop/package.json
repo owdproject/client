@@ -12,7 +12,7 @@
         "preview": "nuxt preview"
     },
     "dependencies": {
-        "@owdproject/core": "^3.1.4",
+        "@owdproject/core": "^3.2.0",
         "@owdproject/theme-win95": "^0.1.1",
         "@owdproject/app-about": "^0.1.2"
     }
