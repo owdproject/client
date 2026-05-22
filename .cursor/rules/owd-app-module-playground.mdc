@@ -1,0 +1,20 @@
+---
+description: Playground + nuxt-module-build pattern for OWD apps, themes, and publishable modules
+globs: apps/**,themes/**,packages/**/playground/**,packages/**/src/module.ts
+alwaysApply: false
+---
+
+# OWD module playground pattern
+
+When adding or migrating `@owdproject/app-*`, `@owdproject/theme-*`, or optional `packages/module-*` with a demo:
+
+1. **Read the full playbook:** `docs/agents/OWD_APP_MODULE_PLAYGROUND.md`
+2. **Copy from references:** `apps/app-about` (minimal app), `apps/app-wasmboy` (legacy migration), `themes/theme-win95` (theme + Pages)
+3. **Required layout:** `src/module.ts` + `src/runtime/` → `dist/module.mjs` via `@nuxt/module-builder`; never commit hand-edited `dist/`
+4. **Playground:** `playground/` with `@owdproject/core`, `desktop.config.ts`, `theme-nova` (apps), `ssr: false`; register path in root `pnpm-workspace.yaml`
+5. **Scripts:** `dev:prepare`, `dev`, `dev:generate` with `NUXT_APP_BASE_URL=/<repo-slug>/`
+6. **Register plugin:** `name: 'owd-app-*-register'`, client-only `defineDesktopApp`
+7. **After changes:** run `pnpm run dev:prepare` in the package before expecting monorepo `desktop` to load it
+8. **GitHub Pages:** `.github/workflows/pages.yml` → artifact `playground/.output/public`
+
+Update `AGENTS.md` playground table when adding a new playground package.

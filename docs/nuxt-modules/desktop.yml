@@ -1,0 +1,22 @@
+# Submit to https://github.com/nuxt/modules as modules/desktop.yml
+# Open a PR or use: https://github.com/nuxt/modules/issues/new?template=module_request.yml
+
+name: desktop
+description: >-
+  Nuxt module for browser desktop experiences — windows, shell, taskbar, and
+  installable apps. Part of the Open Web Desktop (OWD) ecosystem.
+repo: owdproject/client#main/packages/core
+npm: '@owdproject/core'
+icon: desktop.svg
+github: https://github.com/owdproject/client
+website: https://owdproject.org
+learn_more: 'https://owdproject.org'
+category: UI
+type: 3rd-party
+maintainers:
+  - name: Open Web Desktop Team
+    github: owdproject
+compatibility:
+  nuxt: '>=3.15.0 || ^4.0.0'
+  requires:
+    bridge: optional

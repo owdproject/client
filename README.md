@@ -45,6 +45,8 @@ pnpm run generate
 
 Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and ensure a consistent look across all apps. Each theme defines its own style, making your desktop both cohesive and uniquely yours.
 
+**Developing apps/themes in isolation:** publishable packages use a `playground/` mini-desktop and `nuxt-module-build` — see [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agents/OWD_APP_MODULE_PLAYGROUND.md) (examples: [app-about](https://owdproject.github.io/app-about/), [app-wasmboy](https://owdproject.github.io/app-wasmboy/)).
+
 [Applications](https://github.com/topics/owd-apps) · [Modules](https://github.com/topics/owd-modules) · [Themes](https://github.com/topics/owd-themes)
 
 ### 🧩 Install an app
@@ -59,7 +61,7 @@ desktop add app-todo
 desktop add app-todo --npm
 ```
 
-This installs (or clones) the package and registers it in `desktop/owd.config.ts`. The `owd` command is a deprecated alias for `desktop`.
+This installs (or clones) the package and registers it in `desktop/desktop.config.ts`. The `owd` command is a deprecated alias for `desktop`.
 
 ### 🧩 Install a module
 
