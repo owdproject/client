@@ -1,5 +1,0 @@
-{
-  "installMode": "npm",
-  "githubOrgs": ["owdproject"],
-  "devPort": 3000
-}
