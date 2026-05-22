@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { useRuntimeConfig } from 'nuxt/app'
 
+defineProps<{
+  window?: IWindowController
+}>()
+
 const runtimeConfig = useRuntimeConfig()
 </script>
 
 <template>
-  <Window :content="{ centered: true }">
+  <Window :window="window" :content="{ centered: true }">
     <div class="container">
       <h2
         class="text-2xl font-semibold mb-1"

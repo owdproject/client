@@ -24,7 +24,7 @@ pnpm desktop add @owdproject/app-terminal
 
 #### Available configuration
 
-You could set this configuration in `/desktop/owd.config.ts`:
+You could set this configuration in `/desktop/desktop.config.ts`:
 
 ```json
 terminal: {

@@ -1,0 +1,16 @@
+{
+  "name": "@owdproject/app-youtube-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@owdproject/core": "workspace:*",
+    "@owdproject/app-youtube": "workspace:*",
+    "nuxt": "^4.4.4",
+    "@owdproject/theme-nova": "workspace:*"
+  }
+}

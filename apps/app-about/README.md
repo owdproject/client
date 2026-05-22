@@ -12,6 +12,28 @@
 
 This app for Open Web Desktop displays the version and other information.
 
+## Playground
+
+```bash
+pnpm install
+pnpm run dev:prepare
+pnpm run dev
+```
+
+In dev, the playground auto-opens the About window via `playground/app/plugins/launch-about.client.ts` (not used for static `dev:generate` / GitHub Pages).
+
+Static preview (GitHub Pages):
+
+```bash
+pnpm run dev:generate
+```
+
+Uses `@owdproject/theme-nova` as the base shell in the monorepo playground.
+
+Live demo: [owdproject.github.io/app-about](https://owdproject.github.io/app-about/)
+
+Contributor/agent playbook (scaffold other apps the same way): [OWD_APP_MODULE_PLAYGROUND.md](../../docs/agents/OWD_APP_MODULE_PLAYGROUND.md) in the client monorepo.
+
 ## Installation
 
 ```bash

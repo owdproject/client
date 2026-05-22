@@ -1,6 +1,6 @@
 {
+  "name": "@owdproject/app-about-playground",
   "private": true,
-  "name": "my-app-playground",
   "type": "module",
   "scripts": {
     "dev": "nuxt dev",
@@ -8,8 +8,9 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@owdproject/core": "^3.1.4",
-    "@owdproject/app-about": "^0.1.3",
-    "@owdproject/theme-win95": "0.1.1"
+    "@owdproject/app-about": "workspace:*",
+    "@owdproject/core": "workspace:*",
+    "@owdproject/theme-nova": "workspace:*",
+    "nuxt": "^4.4.4"
   }
 }

@@ -3,10 +3,9 @@ import { defineDesktopApp } from '@owdproject/core/runtime/utils/utilDesktop'
 import configAppAbout from './app.config'
 
 export default defineNuxtPlugin({
-  parallel: true,
-  async setup(nuxtApp) {
-    nuxtApp.hook('app:created', async () => {
-      await defineDesktopApp(configAppAbout)
-    })
+  name: 'owd-app-about-register',
+  async setup() {
+    if (import.meta.server) return
+    await defineDesktopApp(configAppAbout)
   },
 })

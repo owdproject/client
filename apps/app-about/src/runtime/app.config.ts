@@ -26,7 +26,14 @@ export default {
   },
   commands: {
     about: (app: IApplicationController) => {
-      app.openWindow('main')
+      const existing = app.getFirstWindowByModel('main')
+      if (existing) {
+        existing.actions.setActive(true)
+        existing.actions.bringToFront()
+        return existing
+      }
+
+      return app.openWindow('main')
     },
   },
 }

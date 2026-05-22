@@ -1,0 +1,67 @@
+name: Deploy playground to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout OWD client (workspace deps)
+        uses: actions/checkout@v4
+        with:
+          repository: owdproject/client
+          path: client
+
+      - name: Overlay this app-about repo
+        uses: actions/checkout@v4
+        with:
+          path: client/apps/app-about
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm i -g --force corepack@latest && corepack enable
+
+      - name: Install monorepo dependencies
+        working-directory: client
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Prepare module and playground
+        working-directory: client/apps/app-about
+        run: pnpm run dev:prepare
+
+      - name: Generate static playground
+        working-directory: client/apps/app-about
+        run: pnpm run dev:generate
+        env:
+          NUXT_APP_BASE_URL: /app-about/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: client/apps/app-about/playground/.output/public
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
