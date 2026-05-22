@@ -44,7 +44,7 @@
     "@nx/vite": "22.7.1",
     "@nx/web": "22.7.1",
     "@nx/workspace": "22.7.1",
-    "@owdproject/nx": "^0.0.3",
+    "@owdproject/nx": "workspace:*",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "~0.8.1",
     "@swc/core": "~1.15.32",
@@ -72,10 +72,5 @@
     "vue-router": "^5.0.6",
     "vue-tsc": "^3.2.7"
   },
-  "packageManager": "pnpm@10.33.2",
-  "pnpm": {
-    "patchedDependencies": {
-      "@owdproject/nx@0.0.3": "patches/@owdproject__nx@0.0.3.patch"
-    }
-  }
+  "packageManager": "pnpm@10.33.2"
 }

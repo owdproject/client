@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Open Web Desktop application installer",
+  "description": "",
+  "type": "object",
+  "properties": {},
+  "required": []
+}

@@ -104,7 +104,6 @@
     "@nuxt/devtools": "^3.2.4",
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.4.4",
-    "@owdproject/theme-win95": "workspace:*",
     "typescript": "~5.8.3",
     "vue-tsc": "^2.2.10"
   }

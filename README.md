@@ -91,10 +91,6 @@ Discover themes by searching the [owd-themes](https://github.com/topics/owd-them
 desktop add theme-gnome
 ```
 
-### Note on `desktop add --npm` / Nx executors
-
-The published `@owdproject/nx@0.0.3` package references executor JSON schemas that were missing from the npm tarball, which caused `Unable to resolve @owdproject/nx:install-app` / missing `schema.json`. This repository carries a **pnpm patch** (`patches/@owdproject__nx@0.0.3.patch`) that adds those files. Long-term, republishing `@owdproject/nx` with the schemas included (e.g. `0.0.4`) would remove the need for the patch.
-
 ## Sponsors
 
 Be the first to support this project and help us keep it growing! [Sponsor the project](https://github.com/sponsors/owdproject)

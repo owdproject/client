@@ -14,23 +14,7 @@
     "owd": "owd"
   },
   "dependencies": {
-    "@owdproject/app-about": "^0.1.4",
-    "@owdproject/app-classic-audioplayer": "workspace:*",
-    "@owdproject/app-classic-videoplayer": "workspace:*",
-    "@owdproject/app-debug": "workspace:*",
-    "@owdproject/app-dino": "workspace:*",
-    "@owdproject/app-soundcloud": "workspace:*",
-    "@owdproject/app-terminal": "workspace:*",
-    "@owdproject/app-todo": "workspace:^",
-    "@owdproject/app-wasmboy": "workspace:*",
-    "@owdproject/app-youtube": "workspace:*",
-    "@owdproject/core": "workspace:^",
-    "h3": "^1.15.1",
-    "@owdproject/module-docs": "workspace:*",
-    "@owdproject/module-persistence": "workspace:*",
-    "@owdproject/theme-gnome": "workspace:*",
-    "@owdproject/theme-nova": "workspace:*",
-    "@owdproject/theme-win11": "workspace:*",
-    "@owdproject/theme-win95": "workspace:*"
+    "@owdproject/core": "3.2.0",
+    "@owdproject/theme-nova": "workspace:*"
   }
 }

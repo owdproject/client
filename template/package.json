@@ -39,7 +39,7 @@
     "@nx/workspace": "22.7.1",
     "@owdproject/app-about": "^0.1.3",
     "@owdproject/core": "^3.1.4",
-    "@owdproject/nx": "^0.0.3",
+    "@owdproject/nx": "^0.0.4",
     "@owdproject/theme-win95": "^0.1.1",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "~0.8.1",

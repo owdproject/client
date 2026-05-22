@@ -1,0 +1,19 @@
+{
+  "executors": {
+    "install-app": {
+      "implementation": "./dist/executors/install-app/index.js",
+      "schema": "./dist/executors/install-app/schema.json",
+      "description": "build executor"
+    },
+    "install-module": {
+      "implementation": "./dist/executors/install-module/index.js",
+      "schema": "./dist/executors/install-module/schema.json",
+      "description": "build executor"
+    },
+    "install-theme": {
+      "implementation": "./dist/executors/install-theme/index.js",
+      "schema": "./dist/executors/install-theme/schema.json",
+      "description": "build executor"
+    }
+  }
+}

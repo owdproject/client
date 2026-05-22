@@ -11,11 +11,18 @@ packages:
   - themes/*
   - plugins/*
 
+allowBuilds:
+  '@owdproject/app-about': true
+  '@owdproject/nx': true
+  '@owdproject/theme-nova': true
+  '@owdproject/theme-win95': true
 onlyBuiltDependencies:
+  - '@owdproject/app-about'
+  - '@owdproject/nx'
+  - '@owdproject/theme-nova'
+  - '@owdproject/theme-win95'
   - '@parcel/watcher'
   - '@swc/core'
   - esbuild
   - nx
   - unrs-resolver
-patchedDependencies:
-  '@owdproject/nx@0.0.3': patches/@owdproject__nx@0.0.3.patch
