@@ -1,7 +1,7 @@
 import { defineDesktopConfig } from '@owdproject/core'
 
 export default defineDesktopConfig({
-  theme: '@owdproject/theme-win95',
+  theme: '@owdproject/theme-nova',
   apps: [],
   modules: [],
 })
