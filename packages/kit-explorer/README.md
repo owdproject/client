@@ -34,7 +34,7 @@ If your theme or app imports `KitFs*` components or paths under `@owdproject/kit
 
 ## Usage
 
-### Desktop config (`owd.config.ts`)
+### Desktop config (`desktop.config.ts`)
 
 Minimal stack for an explorer-enabled desktop:
 

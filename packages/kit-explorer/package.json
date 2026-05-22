@@ -14,7 +14,7 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@owdproject/core": "^3.1.5",
+    "@owdproject/core": "^3.2.0",
     "nuxt": "^4.0.0",
     "vue": "^3.5.0"
   },
