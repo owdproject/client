@@ -65,16 +65,20 @@ function onTodoEditCancel() {
     </div>
 
     <div clasS="todo-list__input">
-      <InputText
+      <form
         v-if="isEditing"
-        v-model="todoTitleDraft"
-        placeholder="empty"
-        autocomplete="false"
-        spellcheck="false"
-        @keyup.esc="onTodoEditCancel"
-        @keyup.enter="onTodoEditConfirm"
-        @dblclick="onTodoDblClickEdit"
-      />
+        class="todo-list__edit-form"
+        @submit.prevent="onTodoEditConfirm"
+        @keydown.esc.prevent="onTodoEditCancel"
+      >
+        <InputText
+          v-model="todoTitleDraft"
+          placeholder="empty"
+          autocomplete="off"
+          spellcheck="false"
+          @dblclick="onTodoDblClickEdit"
+        />
+      </form>
       <span
         v-else
         class="ellipse pl-1"

@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import { nanoid } from 'nanoid'
 import { useTodoStore } from '../../stores/storeTodo'
-import { computed } from '@vue/reactivity'
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 
 const todoStore = useTodoStore()
+const { list, filter } = storeToRefs(todoStore)
 
-const todoCount = computed(() => todoStore.list.length)
+const todoCount = computed(() => list.value.length)
 const todoCountCompleted = computed(
-  () => todoStore.list.filter((item) => item.completed).length,
+  () => list.value.filter((item) => item.completed).length,
 )
 const todoCountNotCompleted = computed(
-  () => todoStore.list.filter((item) => !item.completed).length,
+  () => list.value.filter((item) => !item.completed).length,
 )
 
 const todoListFiltered = computed(() => {
-  return todoStore.list
+  return [...list.value]
     .sort((a, b) => +b.completed - +a.completed)
     .filter(function (item) {
-      switch (todoStore.filter) {
+      switch (filter.value) {
         case 'todo':
           return item.completed === false
         case 'done':
@@ -28,31 +29,19 @@ const todoListFiltered = computed(() => {
     })
 })
 
-function todoAdd(item) {
-  if (item && item.trim() !== '') {
-    todoStore.list.push({
-      id: nanoid(8),
-      title: item,
-      completed: false,
-      editing: false,
-    })
-
-    // set show All if Done filter is active
-    if (todoStore.filter === 'done') {
-      todoStore.filter = 'all'
-    }
-  }
+function todoAdd(item: string) {
+  todoStore.addTodo(item)
 }
 
 /**
  * Remove to-do
  */
-function onTodoRemove(index: number) {
+function onTodoRemove(todoId: string) {
   if (confirm('Are you sure to remove this item?') !== true) {
     return
   }
 
-  todoStore.list.splice(index, 1)
+  todoStore.removeTodo(todoId)
 }
 </script>
 
@@ -65,8 +54,8 @@ function onTodoRemove(index: number) {
 
       <div class="todo-list">
         <ul>
-          <template v-for="(todo, index) in todoListFiltered" :key="todo.id">
-            <TodoListItem :todo="todo" @remove="onTodoRemove(index)" />
+          <template v-for="todo in todoListFiltered" :key="todo.id">
+            <TodoListItem :todo="todo" @remove="onTodoRemove(todo.id)" />
           </template>
         </ul>
       </div>
@@ -78,18 +67,18 @@ function onTodoRemove(index: number) {
         </li>
         <li>
           <a
-            :class="[{ 'opacity-50': todoStore.filter !== 'all' }]"
-            @click="todoStore.filter = 'all'"
+            :class="[{ 'opacity-50': filter !== 'all' }]"
+            @click="filter = 'all'"
             >all</a
           >
           <a
-            :class="[{ 'opacity-50': todoStore.filter !== 'todo' }]"
-            @click="todoStore.filter = 'todo'"
+            :class="[{ 'opacity-50': filter !== 'todo' }]"
+            @click="filter = 'todo'"
             >to do</a
           >
           <a
-            :class="[{ 'opacity-50': todoStore.filter !== 'done' }]"
-            @click="todoStore.filter = 'done'"
+            :class="[{ 'opacity-50': filter !== 'done' }]"
+            @click="filter = 'done'"
             >done</a
           >
         </li>

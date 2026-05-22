@@ -3,6 +3,7 @@ export default {
   title: 'To-do',
   category: 'productivity',
   icon: 'mdi:format-list-bulleted',
+  singleton: false,
   windows: {
     main: {
       component: () => import('./components/Window/WindowTodo.vue'),
@@ -25,7 +26,14 @@ export default {
   },
   commands: {
     todo: (app: IApplicationController) => {
-      app.openWindow('main')
+      const existing = app.getFirstWindowByModel('main')
+      if (existing) {
+        existing.actions.setActive(true)
+        existing.actions.bringToFront()
+        return existing
+      }
+
+      return app.openWindow('main')
     },
   },
 }
