@@ -18,9 +18,13 @@ This package does **not** ship UI components or filesystem primitives; see **`ki
 
 | Area | Purpose |
 |------|---------|
+| **`useDesktopShellIdentity`** | Shell user identity (display name, avatar, VFS home). Defaults to Guest; auth modules call `setShellIdentity` after login. |
 | **`useDesktopSession`** | End-of-session flow (e.g. shutdown animation → navigate to the theme’s `/start` route). |
 | **`useDesktopShellOptions`** | Read `runtimeConfig` / `appConfig` for `desktop.systemBar` (enabled, position, start button). |
 | **`useBlockNonInputContextMenu`** | Disable browser context menu on non-input elements (desktop shell–style). |
+| **`useWorkspaceEdgeDrop`** | Drag a window to the left/right screen edge to move it to an adjacent virtual desktop (shared state + drop). |
+| **`useWorkspaceEdgeDropWindowHandlers`** | Wire `useWorkspaceEdgeDrop` to theme `Window.vue` (`@drag:start` / `@drag:end` on `CoreWindow`). |
+| **`WorkspaceEdgeHintsBase`** | Headless edge overlay; themes supply slots for labels/chrome. |
 | **`createPrimeVueOwdDialogs`** | Implement `OwdDialogProvider` with PrimeVue `useConfirm` (shared by themes that use PrimeVue confirm groups). |
 
 Composables under `runtime/composables/` are **auto-imported** when the Nuxt module loads. `createPrimeVueOwdDialogs` lives under `runtime/dialogs/` and is **imported explicitly** in theme plugins.
@@ -63,8 +67,24 @@ Use in theme components without manual registration:
 
 ```ts
 import { useDesktopSession } from '@owdproject/kit-theme/runtime/composables/useDesktopSession'
+import { useDesktopShellIdentity } from '@owdproject/kit-theme/runtime/composables/useDesktopShellIdentity'
 import { useDesktopShellOptions } from '@owdproject/kit-theme/runtime/composables/useDesktopShellOptions'
 import { useBlockNonInputContextMenu } from '@owdproject/kit-theme/runtime/composables/useBlockNonInputContextMenu'
+```
+
+#### `useDesktopShellIdentity`
+
+Neutral shell user for display and per-user VFS paths (e.g. recent files under `{userHome}/.local/share/`).
+
+- **Defaults:** Guest user (`userId: 'guest'`, `displayName: 'Guest'`, `userHome` from `runtimeConfig.public.desktop.fs.defaultUserHome` or `/home/Guest`).
+- **`setShellIdentity(partial)`** — call after login from an auth module to set `userId`, `displayName`, `avatarUrl`, `userHome`.
+- **`clearShellIdentity()`** — reset to Guest.
+- **Helpers:** `userHomeFromHandle(handle)` and `sanitizeUserHomeSegment()` for deriving home paths from handles (e.g. `@alice.bsky.social`).
+
+Used by `@owdproject/module-fs` (`useFsRecentFiles`) and theme-specific UI (e.g. Win11 Start menu footer).
+
+```ts
+const { displayName, avatarUrl, userHome, setShellIdentity } = useDesktopShellIdentity()
 ```
 
 (Depending on Nuxt auto-import settings, you may omit imports where symbols are globally available.)

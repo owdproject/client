@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted } from 'vue'
+import { useEventListener } from '@vueuse/core'
 import { isDebugMode } from '@owdproject/core/runtime/utils/utilDebug'
 
 /**
@@ -6,28 +6,25 @@ import { isDebugMode } from '@owdproject/core/runtime/utils/utilDebug'
  * Debug builds skip blocking so DevTools stay usable when {@link isDebugMode} is true.
  */
 export function useBlockNonInputContextMenu() {
-  const handler = (event: MouseEvent) => {
-    if (isDebugMode()) return
+  useEventListener(
+    document,
+    'contextmenu',
+    (event: MouseEvent) => {
+      if (isDebugMode()) return
 
-    const target = event.target as HTMLElement | null
-    if (!target) return
+      const target = event.target as HTMLElement | null
+      if (!target) return
 
-    const tag = target.tagName?.toLowerCase()
-    const isInput =
-      tag === 'input' ||
-      tag === 'textarea' ||
-      Boolean(target.isContentEditable)
+      const tag = target.tagName?.toLowerCase()
+      const isInput =
+        tag === 'input' ||
+        tag === 'textarea' ||
+        Boolean(target.isContentEditable)
 
-    if (!isInput) {
-      event.preventDefault()
-    }
-  }
-
-  onMounted(() => {
-    document.addEventListener('contextmenu', handler)
-  })
-
-  onUnmounted(() => {
-    document.removeEventListener('contextmenu', handler)
-  })
+      if (!isInput) {
+        event.preventDefault()
+      }
+    },
+    { passive: false },
+  )
 }

@@ -18,11 +18,15 @@ export function useDesktopShellOptions() {
 
   const desktop = () => appConfig.desktop as DesktopAppShape | undefined
 
-  const systemBarEnabled = computed(() => desktop()?.systemBar?.enabled)
+  const systemBarEnabled = computed(
+    () => desktop()?.systemBar?.enabled !== false,
+  )
 
   const systemBarPosition = computed(() => desktop()?.systemBar?.position)
 
-  const startButtonEnabled = computed(() => desktop()?.systemBar?.startButton)
+  const startButtonEnabled = computed(
+    () => desktop()?.systemBar?.startButton !== false,
+  )
 
   return {
     systemBarEnabled,
