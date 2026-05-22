@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { IWindowController } from '@owdproject/core'
-import { useSlots, computed } from 'vue'
+import { useSlots, computed, useAttrs } from 'vue'
 import Nav from './Nav.vue'
 import Body from './Body.vue'
 
@@ -10,8 +10,18 @@ const props = withDefaults(
     content?: unknown
     /** When false, removes inner Card padding and header gap (Explorer chrome flush to edges). */
     chromePadding?: boolean
+    /** Extra class on the window root (e.g. theme explorer frame). */
+    frameClass?: string
   }>(),
   { chromePadding: true },
+)
+
+defineOptions({ inheritAttrs: false })
+
+const attrs = useAttrs()
+
+const windowRootClass = computed(() =>
+  [attrs.class, props.frameClass].filter(Boolean),
 )
 
 const slots = useSlots()
@@ -31,6 +41,7 @@ const cardRootClass = computed(() =>
 
 <template>
   <CoreWindow
+    :class="windowRootClass"
     :window="props.window"
     :content="props.content"
     v-show="props.window?.state?.active ?? true"

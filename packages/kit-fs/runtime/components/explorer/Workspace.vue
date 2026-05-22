@@ -15,6 +15,8 @@ import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explor
 const props = defineProps<{
   config?: WindowConfig
   window: IWindowController
+  /** Passed to Frame → `.owd-window` (theme explorer styling). */
+  frameClass?: string
 }>()
 
 const { t } = useI18n()
@@ -30,7 +32,11 @@ void fsExplorer.initialize()
 </script>
 
 <template>
-  <Frame v-bind="$props">
+  <Frame
+    :window="window"
+    :config="config"
+    :frame-class="frameClass"
+  >
     <div class="flex flex-col h-full">
       <div class="flex flex-row items-center">
         <div class="flex-1 overflow-hidden">

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, useTemplateRef, computed } from 'vue'
 import { VueSelecto } from 'vue3-selecto'
-import { useExplorerExternalDrop } from '../../composables/useExplorerExternalDrop'
+import { useExplorerExternalDrop } from '../composables/useExplorerExternalDrop'
 
 const props = defineProps<{
   fsExplorer: {
