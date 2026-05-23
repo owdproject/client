@@ -15,6 +15,6 @@
   },
   "dependencies": {
     "@owdproject/core": "3.2.0",
-    "@owdproject/theme-nova": "workspace:*"
+    "@owdproject/theme-nova": "0.0.1"
   }
 }

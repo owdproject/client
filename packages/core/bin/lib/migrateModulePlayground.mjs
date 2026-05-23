@@ -126,7 +126,7 @@ function buildPackageJson(cfg, old) {
     '@nuxt/module-builder': '^1.0.2',
     '@nuxt/schema': '^4.3.0',
     '@owdproject/core': 'workspace:*',
-    '@owdproject/theme-nova': 'workspace:*',
+    '@owdproject/theme-nova': '0.0.1',
     nuxt: '^4.3.0',
     typescript: '~5.9.3',
     ...(cfg.devDependencies || {}),
@@ -172,7 +172,7 @@ function buildPlaygroundPkg(cfg) {
     nuxt: '^4.4.4',
     ...(cfg.playgroundExtraDevDeps || {}),
   }
-  if (!cfg.playgroundTheme) deps['@owdproject/theme-nova'] = 'workspace:*'
+  if (!cfg.playgroundTheme) deps['@owdproject/theme-nova'] = '0.0.1'
   if (cfg.playgroundTheme) deps[cfg.playgroundTheme] = 'workspace:*'
   return {
     name: `${cfg.name}-playground`,

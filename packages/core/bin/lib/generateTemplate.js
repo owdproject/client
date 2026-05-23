@@ -24,10 +24,15 @@ const BLUEPRINT_ROOT = resolve(__dirname, '../../template-blueprint')
 
 export const STARTER_DESKTOP_DEPS = [
   '@owdproject/core',
-  '@owdproject/theme-win95',
+  '@owdproject/theme-nova',
   '@owdproject/app-about',
   'h3',
 ]
+
+/** Used when a starter package is not on npm yet (before first publish). */
+export const TEMPLATE_NPM_FALLBACK_VERSIONS = {
+  '@owdproject/theme-nova': '0.0.1',
+}
 
 const DESKTOP_COPY_FILES = [
   'tsconfig.json',
@@ -122,7 +127,11 @@ export async function resolveTemplateVersions(workspaceRoot, options = {}) {
   /** @type {Record<string, string>} */
   const versions = { ...monorepoDevDeps, ...npmLatest }
   for (const name of STARTER_DESKTOP_DEPS) {
-    versions[name] = npmLatest[name]
+    versions[name] =
+      npmLatest[name] ?? TEMPLATE_NPM_FALLBACK_VERSIONS[name] ?? monorepoDevDeps[name]
+    if (!versions[name]) {
+      throw new Error(`Could not resolve version for ${name}`)
+    }
   }
 
   return versions

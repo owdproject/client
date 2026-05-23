@@ -19,9 +19,22 @@ export function formatCaretVersion(version) {
 }
 
 /**
- * @param {string} pkgName
+ * @param {unknown} error
  */
-export function fetchLatestVersion(pkgName) {
+function isNpmLookupSkippableError(error) {
+  const msg = error?.stderr?.toString?.() || error?.message || String(error)
+  return (
+    /E404|404 Not Found/.test(msg) ||
+    /EAI_AGAIN|ENOTFOUND|ETIMEDOUT|ECONNREFUSED|network/i.test(msg)
+  )
+}
+
+/**
+ * @param {string} pkgName
+ * @param {{ optional?: boolean }} [options]
+ * @returns {string | null}
+ */
+export function fetchLatestVersion(pkgName, options = {}) {
   let out
   try {
     out = execSync(`npm view ${JSON.stringify(pkgName)} version`, {
@@ -29,6 +42,7 @@ export function fetchLatestVersion(pkgName) {
       stdio: ['pipe', 'pipe', 'pipe'],
     }).trim()
   } catch (error) {
+    if (options.optional || isNpmLookupSkippableError(error)) return null
     const msg = error.stderr?.toString?.() || error.message || String(error)
     throw new Error(`npm view failed for ${pkgName}: ${msg}`)
   }
@@ -39,59 +53,16 @@ export function fetchLatestVersion(pkgName) {
  * @param {string[]} pkgNames
  * @returns {Record<string, string>}
  */
-export function fetchLatestVersions(pkgNames) {
+export function fetchLatestVersions(pkgNames, options = {}) {
   const unique = [...new Set(pkgNames.filter(Boolean))]
   if (unique.length === 0) return {}
 
-  if (unique.length === 1) {
-    return { [unique[0]]: fetchLatestVersion(unique[0]) }
-  }
-
-  let raw
-  try {
-    raw = execSync(`npm view ${unique.map((p) => JSON.stringify(p)).join(' ')} version --json`, {
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }).trim()
-  } catch (error) {
-    const msg = error.stderr?.toString?.() || error.message || String(error)
-    throw new Error(`npm view batch failed: ${msg}`)
-  }
-
-  let parsed
-  try {
-    parsed = JSON.parse(raw)
-  } catch {
-    parsed = raw
-  }
-
   /** @type {Record<string, string>} */
   const result = {}
-
-  if (typeof parsed === 'string') {
-    result[unique[0]] = formatCaretVersion(parsed)
-    for (let i = 1; i < unique.length; i++) {
-      result[unique[i]] = fetchLatestVersion(unique[i])
-    }
-    return result
-  }
-
-  if (Array.isArray(parsed)) {
-    unique.forEach((name, i) => {
-      result[name] = formatCaretVersion(parsed[i])
-    })
-    return result
-  }
-
   for (const name of unique) {
-    const version = parsed[name]
-    if (version == null) {
-      result[name] = fetchLatestVersion(name)
-    } else {
-      result[name] = formatCaretVersion(String(version))
-    }
+    const version = fetchLatestVersion(name, options)
+    if (version) result[name] = version
   }
-
   return result
 }
 

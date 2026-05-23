@@ -16,16 +16,15 @@
     "url": "https://github.com/owdproject"
   },
   "scripts": {
+    "desktop": "node ./packages/core/bin/desktop.js",
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",
     "prepare:stubs": "pnpm -r --filter \"./packages/module-fs\" --filter \"./packages/module-persistence\" --filter \"./packages/module-docs\" --filter \"./apps/*\" --filter \"./themes/*\" exec nuxt-module-build build --stub",
     "prepare:modules": "pnpm run prepare:stubs && pnpm -r --filter \"./packages/*\" --filter \"./apps/*\" --filter \"./themes/*\" --if-present run dev:prepare",
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
-    "desktop": "node ./packages/core/bin/desktop.js",
     "template:sync": "node ./packages/core/bin/desktop.js template",
-    "validate:modules": "node ./packages/core/bin/desktop.js validate",
-    "owd": "node ./packages/core/bin/owd.js"
+    "validate:modules": "node ./packages/core/bin/desktop.js validate"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

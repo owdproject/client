@@ -20,7 +20,7 @@ export default defineNuxtModule({
     configKey: 'owd',
   },
   defaults: {
-    theme: '@owdproject/theme-win95',
+    theme: '@owdproject/theme-nova',
     apps: [],
     modules: [],
   },
@@ -65,7 +65,7 @@ export default defineNuxtModule({
     assertValidOwdUserConfig(clientConfig, resolvedConfig.file)
 
     if (!clientConfig.theme) {
-      clientConfig.theme = '@owdproject/theme-win95'
+      clientConfig.theme = '@owdproject/theme-nova'
     }
 
     // extend nuxt.config.ts with desktop.config.ts

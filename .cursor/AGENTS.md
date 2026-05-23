@@ -122,7 +122,7 @@ Pacchetti convertiti al pattern **Nuxt module authoring** (`nuxt-module-build`, 
 | `@owdproject/theme-win11` | `themes/theme-win11/playground` | (tema stesso) + FS + audioplayer | repo standalone |
 | `@owdproject/theme-gnome` | `themes/theme-gnome/playground` | (tema stesso) + FS + audioplayer | repo standalone |
 | `@owdproject/theme-win95` | `themes/theme-win95/playground` | (tema stesso) + `app-about` | `owdproject.github.io/theme-win95/` |
-| `@owdproject/core` | `packages/core/playground` | `theme-win95` | (monorepo) |
+| `@owdproject/core` | `packages/core/playground` | `theme-nova` | (monorepo) |
 
 **`theme-nova`** è il **shell di riferimento** OWD per playground di app/moduli: Start (ricerca + app), tray, dock. Smoke test: Start elenca le app in `desktop.config.ts` del playground.
 
