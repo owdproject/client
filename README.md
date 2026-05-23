@@ -91,10 +91,6 @@ Discover themes by searching the [owd-themes](https://github.com/topics/owd-them
 desktop add theme-gnome
 ```
 
-## Sponsors
-
-Be the first to support this project and help us keep it growing! [Sponsor the project](https://github.com/sponsors/owdproject)
-
 ## License
 
 Open Web Desktop is released under the [MIT License](LICENSE).
