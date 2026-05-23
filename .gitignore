@@ -8,11 +8,17 @@ out-tsc
 # dependencies
 node_modules
 
+#desktop
+.desktop
+/desktop/certs
+/apps
+/packages/module-*/
+/themes
+
 # IDEs and editors
 /.idea
 .project
 .classpath
-.desktop
 .cursor
 .c9/
 *.launch
@@ -28,7 +34,6 @@ node_modules
 
 # misc
 /.sass-cache
-/desktop/certs
 /connect.lock
 /coverage
 /libpeerconnection.log
