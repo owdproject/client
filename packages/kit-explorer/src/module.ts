@@ -5,16 +5,16 @@ import {
   addImportsDir,
   installModule,
 } from '@nuxt/kit'
+import { registerTailwindPath } from '@owdproject/core/runtime/utils/utilApp'
 
 export default defineNuxtModule({
   meta: {
     name: 'owd-kit-explorer',
     configKey: 'kitExplorer',
   },
-  async setup() {
+  async setup(_options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
-    /** Lower-layer explorer UI primitives (`KitFs*` components, composables). */
     await installModule('@owdproject/kit-fs')
 
     addComponentsDir({
@@ -23,5 +23,10 @@ export default defineNuxtModule({
     })
 
     addImportsDir(resolve('./runtime/composables'))
+
+    registerTailwindPath(
+      nuxt,
+      resolve('./runtime/components/**/*.{vue,mjs,ts}'),
+    )
   },
 })

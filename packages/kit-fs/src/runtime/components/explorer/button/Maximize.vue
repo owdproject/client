@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import ChromeButton from './ChromeButton.vue'
+<script setup>
+import ChromeButton from "./ChromeButton.vue";
 </script>
 
 <template>

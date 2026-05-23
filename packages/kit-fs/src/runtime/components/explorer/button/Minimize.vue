@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import ChromeButton from './ChromeButton.vue'
+<script setup>
+import ChromeButton from "./ChromeButton.vue";
 </script>
 
 <template>
@@ -8,7 +8,8 @@ import ChromeButton from './ChromeButton.vue'
   </ChromeButton>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
+@charset "UTF-8";
 /* Centered dash — avoids Win95-era vertical offsets when caption height ≠ 21px */
 .owd-button__icon {
   position: relative;
@@ -16,16 +17,15 @@ import ChromeButton from './ChromeButton.vue'
   height: 12px;
   flex-shrink: 0;
   margin: 0;
-
-  &:before {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 11px;
-    height: 1px;
-    transform: translate(-50%, -50%);
-    background: rgb(var(--owd-theme-color-black));
-    content: '';
-  }
+}
+.owd-button__icon:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 1px;
+  transform: translate(-50%, -50%);
+  background: rgb(var(--owd-theme-color-black));
+  content: "";
 }
 </style>

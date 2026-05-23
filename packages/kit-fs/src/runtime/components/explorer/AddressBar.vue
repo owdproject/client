@@ -1,25 +1,22 @@
-<script setup lang="ts">
-import { ref, watch } from 'vue'
-
-const props = defineProps<{
-  address: string
-}>()
-
-const addressInput = ref(props.address)
-
+<script setup>
+import { ref, watch } from "vue";
+const props = defineProps({
+  address: { type: String, required: true }
+});
+const addressInput = ref(props.address);
 watch(
   () => props.address,
-  (address: string) => {
-    addressInput.value = address
-  },
-)
+  (address) => {
+    addressInput.value = address;
+  }
+);
 </script>
 
 <template>
   <div>
     <div class="flex">
       <div class="flex-col px-1" style="align-items: center; display: grid">
-        {{$t('apps.explorer.address')}}
+        {{$t("apps.explorer.address")}}
       </div>
       <div class="flex-col w-full">
         <InputText
@@ -31,7 +28,3 @@ watch(
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-
-</style>

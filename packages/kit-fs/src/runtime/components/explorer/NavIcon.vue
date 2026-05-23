@@ -1,7 +1,7 @@
-<script setup lang="ts">
-defineProps<{
-  icon: string
-}>()
+<script setup>
+defineProps({
+  icon: { type: String, required: true }
+});
 </script>
 
 <template>
@@ -10,7 +10,7 @@ defineProps<{
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .iconify {
   vertical-align: -4px;
   margin-left: 7px;

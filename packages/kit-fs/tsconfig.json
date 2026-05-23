@@ -1,19 +1,23 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.module.json",
+  "include": [
+    "src/runtime",
+    "src/module.ts",
+    "../../packages/core/types/index.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "src/**/*.d.vue.ts",
+    "src/**/*.vue.d.ts"
+  ],
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
-    "lib": ["ES2022", "DOM"],
-    "noEmit": true,
-    "composite": false,
-    "declaration": false,
-    "declarationMap": false,
-    "emitDeclarationOnly": false,
+    "outDir": "dist",
     "skipLibCheck": true,
+    "lib": ["ES2022", "DOM"],
     "paths": {
       "@owdproject/core/runtime/*": ["../core/runtime/*"],
-      "@owdproject/module-fs/runtime/*": ["../module-fs/runtime/*"]
+      "@owdproject/module-fs/runtime/*": ["../module-fs/src/runtime/*"]
     }
-  },
-  "include": ["module.ts", "runtime/**/*.ts", "runtime/**/*.vue"]
+  }
 }

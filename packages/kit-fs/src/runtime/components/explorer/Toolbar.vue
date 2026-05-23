@@ -1,9 +1,8 @@
-<script setup lang="ts">
-defineProps<{
-  arrowsDisabled: boolean
-}>()
-
-defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 'properties'])
+<script setup>
+defineProps({
+  arrowsDisabled: { type: Boolean, required: true }
+});
+defineEmits(["back", "forward", "up", "cut", "copy", "paste", "undo", "delete", "properties"]);
 </script>
 
 <template>
@@ -16,7 +15,7 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
           style="width: 15px"
         />
       </div>
-      {{$t('apps.explorer.action.back')}}
+      {{$t("apps.explorer.action.back")}}
     </Button>
     <Button :disabled="arrowsDisabled" variant="text" @click="$emit('forward')">
       <div class="p-button-image">
@@ -26,7 +25,7 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
           style="width: 15px"
         />
       </div>
-      {{$t('apps.explorer.action.forward')}}
+      {{$t("apps.explorer.action.forward")}}
     </Button>
     <Divider layout="vertical" />
     <Button variant="text" @click="$emit('up')">
@@ -37,7 +36,7 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
           style="width: 15px"
         />
       </div>
-      {{$t('apps.explorer.action.up')}}
+      {{$t("apps.explorer.action.up")}}
     </Button>
     <Button variant="text" @click="$emit('cut')">
       <div class="p-button-image">
@@ -47,7 +46,7 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
           style="width: 15px"
         />
       </div>
-      {{$t('apps.explorer.action.cut')}}
+      {{$t("apps.explorer.action.cut")}}
     </Button>
     <Button variant="text" @click="$emit('copy')">
       <div class="p-button-image">
@@ -57,7 +56,7 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
           style="width: 20px"
         />
       </div>
-      {{$t('apps.explorer.action.copy')}}
+      {{$t("apps.explorer.action.copy")}}
     </Button>
     <Button variant="text" @click="$emit('paste')">
       <div class="p-button-image">
@@ -67,7 +66,7 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
           style="width: 19px"
         />
       </div>
-      {{$t('apps.explorer.action.paste')}}
+      {{$t("apps.explorer.action.paste")}}
     </Button>
     <!--
     <Divider layout="vertical" />
@@ -90,7 +89,7 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
           style="width: 18px"
         />
       </div>
-      {{$t('apps.explorer.action.delete')}}
+      {{$t("apps.explorer.action.delete")}}
     </Button>
     <Divider layout="vertical" />
     <Button variant="text" @click="$emit('properties')">
@@ -101,12 +100,12 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
           style="width: 18px"
         />
       </div>
-      {{$t('apps.explorer.action.properties')}}
+      {{$t("apps.explorer.action.properties")}}
     </Button>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .p-button {
   text-align: center;
   vertical-align: top;
@@ -114,25 +113,21 @@ defineEmits(['back', 'forward', 'up', 'cut', 'copy', 'paste', 'undo', 'delete', 
   height: 50px;
   margin-bottom: 4px;
   filter: grayscale(1);
-
-  &-image {
-    display: grid;
-    align-items: center;
-    height: 32px;
-
-    img {
-      pointer-events: none;
-      vertical-align: middle;
-    }
-  }
-
-  &:disabled {
-    opacity: 0.35;
-  }
-
-  &:not(:disabled):hover {
-    filter: grayscale(0);
-  }
+}
+.p-button-image {
+  display: grid;
+  align-items: center;
+  height: 32px;
+}
+.p-button-image img {
+  pointer-events: none;
+  vertical-align: middle;
+}
+.p-button:disabled {
+  opacity: 0.35;
+}
+.p-button:not(:disabled):hover {
+  filter: grayscale(0);
 }
 
 .p-divider {

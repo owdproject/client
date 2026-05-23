@@ -3,14 +3,40 @@
   "version": "3.2.0",
   "description": "Optional shared shell patterns for OWD themes (neutral composables, no visual chrome).",
   "license": "MIT",
+  "homepage": "https://github.com/owdproject/client#readme",
   "type": "module",
   "exports": {
-    ".": "./module.ts",
-    "./module": "./module.ts",
-    "./runtime/*": "./runtime/*"
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    },
+    "./runtime/*": {
+      "types": "./src/runtime/*",
+      "import": "./src/runtime/*"
+    }
+  },
+  "main": "./dist/module.mjs",
+  "typesVersions": {
+    "*": {
+      ".": ["./dist/types.d.mts"]
+    }
+  },
+  "files": ["dist", "src/runtime"],
+  "scripts": {
+    "prepack": "nuxt-module-build build",
+    "dev": "pnpm run dev:prepare",
+    "dev:prepare": "nuxt-module-build build --stub",
+    "build:module": "nuxt-module-build build"
   },
   "dependencies": {
     "@nuxt/kit": "^4.4.4"
+  },
+  "devDependencies": {
+    "@nuxt/module-builder": "^1.0.2",
+    "@nuxt/schema": "^4.3.0",
+    "@owdproject/core": "workspace:*",
+    "nuxt": "^4.3.0",
+    "typescript": "~5.9.3"
   },
   "peerDependencies": {
     "@owdproject/core": "^3.2.0",

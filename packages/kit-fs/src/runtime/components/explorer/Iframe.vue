@@ -1,15 +1,13 @@
-<script setup lang="ts">
-import type { IWindowController, WindowConfig } from '@owdproject/core'
-import Frame from './Frame.vue'
-
-defineProps<{
-  config?: WindowConfig
-  window?: IWindowController
-  src: string
-  width: string
-  height: string
-  allow: string
-}>()
+<script setup>
+import Frame from "./Frame.vue";
+defineProps({
+  config: { type: Object, required: false },
+  window: { type: Object, required: false },
+  src: { type: String, required: true },
+  width: { type: String, required: true },
+  height: { type: String, required: true },
+  allow: { type: String, required: true }
+});
 </script>
 
 <template>
@@ -30,7 +28,7 @@ defineProps<{
   </Frame>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.owd-window__content) {
   height: 100%;
 }

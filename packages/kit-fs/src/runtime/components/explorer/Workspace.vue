@@ -1,34 +1,24 @@
-<script setup lang="ts">
-/**
- * Legacy monolithic explorer workspace (toolbar + address + listing).
- * Themes such as Win11 mount their own shell / layout and reuse kit-fs entry + FS composables instead.
- */
-import type { IWindowController, WindowConfig } from '@owdproject/core'
-import { useFileSystemExplorer } from '@owdproject/module-fs/runtime/composables/useFileSystemExplorer'
-import createExplorerFsOperations from '../../composables/useExplorerFsOperations'
-import Frame from './Frame.vue'
-import Toolbar from './Toolbar.vue'
-import AddressBar from './AddressBar.vue'
-import { useI18n } from 'vue-i18n'
-import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
-
-const props = defineProps<{
-  config?: WindowConfig
-  window: IWindowController
-  /** Passed to Frame → `.owd-window` (theme explorer styling). */
-  frameClass?: string
-}>()
-
-const { t } = useI18n()
-
+<script setup>
+import { useFileSystemExplorer } from "@owdproject/module-fs/runtime/composables/useFileSystemExplorer";
+import createExplorerFsOperations from "../../composables/useExplorerFsOperations";
+import Frame from "./Frame.vue";
+import Toolbar from "./Toolbar.vue";
+import AddressBar from "./AddressBar.vue";
+import { useI18n } from "vue-i18n";
+import { explorerEntryAbsolutePath } from "@owdproject/core/runtime/utils/explorerEntryPath";
+const props = defineProps({
+  config: { type: Object, required: false },
+  window: { type: Object, required: true },
+  frameClass: { type: String, required: false }
+});
+const { t } = useI18n();
 const fsExplorer = useFileSystemExplorer(
   props.window,
   createExplorerFsOperations,
-  t,
-)
-
-props.window.fsExplorer = fsExplorer
-void fsExplorer.initialize()
+  t
+);
+props.window.fsExplorer = fsExplorer;
+void fsExplorer.initialize();
 </script>
 
 <template>
@@ -68,7 +58,9 @@ void fsExplorer.initialize()
 
       <AddressBar
         :address="fsExplorer.basePath.value ?? ''"
-        @update:modelValue="(value: string) => { fsExplorer.basePath.value = value }"
+        @update:modelValue="(value) => {
+  fsExplorer.basePath.value = value;
+}"
       />
 
       <Divider />
@@ -103,7 +95,7 @@ void fsExplorer.initialize()
   </Frame>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .h-full {
   overflow-x: hidden;
 }
@@ -113,9 +105,7 @@ iframe {
   height: 100%;
 }
 
-:deep(.owd-window:not(.owd-window--focused)) {
-  iframe {
-    pointer-events: none;
-  }
+:deep(.owd-window:not(.owd-window--focused)) iframe {
+  pointer-events: none;
 }
 </style>
