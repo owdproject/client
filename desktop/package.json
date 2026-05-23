@@ -10,11 +10,10 @@
     "generate": "nuxt generate --dev",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
-    "desktop": "desktop",
-    "owd": "owd"
+    "desktop": "desktop"
   },
   "dependencies": {
     "@owdproject/core": "3.2.0",
-    "@owdproject/theme-nova": "0.0.1"
+    "@owdproject/theme-nova": "0.0.2"
   }
 }

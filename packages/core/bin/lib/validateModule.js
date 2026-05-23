@@ -295,6 +295,20 @@ export function validateOwdModule(packageDir, options = {}) {
   if (scripts['prepack'] && !scripts['prepack'].includes('nuxt-module-build')) {
     issue('error', 'prepack-builder', 'prepack must run nuxt-module-build build')
   }
+  if (scripts.prepare) {
+    issue(
+      'error',
+      'no-prepare-script',
+      'Do not add a "prepare" script on publishable packages — it runs on npm publish/install and breaks release. Use "prepack" (full build) and "dev:prepare" (local stub + playground) only.',
+    )
+  }
+  if (!rootExport?.development?.includes('src/module')) {
+    issue(
+      'warning',
+      'exports-development',
+      'exports["."].development should point to ./src/module.ts (monorepo dev without manual stub after every edit)',
+    )
+  }
   if (!scripts['dev:generate']?.includes('NUXT_APP_BASE_URL')) {
     issue(
       'warning',

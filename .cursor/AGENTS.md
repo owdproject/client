@@ -141,6 +141,14 @@ Full migration checklist: [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agen
 | `npm publish` on `@owdproject/*` packages | `prepack` only (full build); never add `prepare` stub on publishable packages |
 | `pnpm run dev:prepare` in a package | Isolated package playground only |
 
+**New app/theme checklist (copy `themes/theme-nova` or `apps/app-about`):**
+
+1. `package.json` scripts: `prepack`, `dev`, `dev:prepare`, `dev:generate` — **no** `prepare`.
+2. `exports["."].development` → `./src/module.ts`; `import`/`default` → `./dist/module.mjs`.
+3. `playground/` with `desktop.config.ts`, `nuxt.config.ts` (`ssr: false`, `@owdproject/core`).
+4. Before publish: `desktop validate .` in the package (fails on `prepare` or missing layout).
+5. Monorepo: register path in `pnpm-workspace.yaml`; standalone repo: `pnpm dev` only (runs `dev:prepare`).
+
 **Playground commands:** `dev:prepare`, `dev`, `dev:generate` with `NUXT_APP_BASE_URL=/<repo-slug>/`. Root helpers: `pnpm run prepare:stubs`, `prepare:apps`, `prepare:themes`.
 
 **Standalone demos:** `.github/workflows/pages.yml` → artifact `playground/.output/public`.
