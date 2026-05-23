@@ -1,6 +1,6 @@
 {
   "name": "@owdproject/kit-explorer",
-  "version": "0.0.1",
+  "version": "3.2.0",
   "license": "MIT",
   "description": "Shared explorer logic and headless UI primitives for OWD themes.",
   "homepage": "https://github.com/owdproject/client#readme",
@@ -20,6 +20,6 @@
   },
   "dependencies": {
     "@nuxt/kit": "^4.4.4",
-    "@owdproject/kit-fs": "workspace:*"
+    "@owdproject/kit-fs": "^3.2.0"
   }
 }
