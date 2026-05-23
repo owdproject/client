@@ -42,7 +42,7 @@
     "@zenfs/core": "^2.2.3",
     "@zenfs/dom": "^1.1.7",
     "vue3-selecto": "^1.12.3",
-    "@owdproject/kit-theme": "workspace:*"
+    "@owdproject/kit-theme": "^3.2.0"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^1.0.2",
