@@ -1,6 +1,6 @@
 {
   "name": "@owdproject/module-persistence",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Pinia persistence via IndexedDB (idb-keyval), ESM-friendly",
   "license": "MIT",
   "homepage": "https://github.com/owdproject/module-persistence",
