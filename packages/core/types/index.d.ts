@@ -136,6 +136,8 @@ export interface IWindowController {
   // sizes
   get size(): WindowSize
 
+  get position(): WindowPosition | undefined
+
   // minimize
   get isMinimizable(): boolean
 

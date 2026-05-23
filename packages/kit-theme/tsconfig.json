@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "lib": ["ES2022", "DOM"],
     "paths": {
+      "@owdproject/core": ["../core/types/index.d.ts"],
       "@owdproject/core/runtime/*": ["../core/runtime/*"]
     }
   }

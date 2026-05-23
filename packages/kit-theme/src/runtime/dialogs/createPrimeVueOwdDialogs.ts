@@ -4,6 +4,13 @@ import type {
   OwdDialogProvider,
 } from '@owdproject/core/runtime/dialogs/owdDialogProvider'
 
+/** PrimeVue types `message` as string; OWD delete slots use `{ message, toTrash }`. */
+type DeleteConfirmRequireOptions = Parameters<
+  ReturnType<typeof useConfirm>['require']
+>[0] & {
+  message?: string | { message: string; toTrash: boolean }
+}
+
 /**
  * Maps {@link OwdDialogProvider} onto PrimeVue Confirm — shared by any theme that uses PrimeVue dialogs.
  * Themes still mount `<ConfirmDialog />` groups (`delete`, `about`, …) with their own templates/CSS.
@@ -28,7 +35,7 @@ export function createPrimeVueOwdDialogs(
           rejectProps: { label: opts.rejectLabel ?? 'Cancel', width: 120 },
           accept: () => resolve(true),
           reject: () => resolve(false),
-        })
+        } as DeleteConfirmRequireOptions)
       })
     },
     alert(message, options): Promise<void> {

@@ -1,3 +1,4 @@
+import type { IWindowController } from '@owdproject/core'
 import { computed, ref } from 'vue'
 import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
 
@@ -92,16 +93,18 @@ export function useWorkspaceEdgeDrop() {
 
     const inset = WORKSPACE_EDGE_DROP_PX + 24
     const pos = win.position
-    if (pos) {
+    if (pos && typeof pos.y === 'number') {
       const viewportWidth =
         typeof globalThis !== 'undefined' ? globalThis.innerWidth : 1920
+      const rawWidth = win.size?.width ?? 400
+      const width =
+        typeof rawWidth === 'number'
+          ? rawWidth
+          : Number.parseFloat(String(rawWidth)) || 400
       const x =
         side === 'left'
           ? inset
-          : Math.max(
-              inset,
-              viewportWidth - (win.size?.width ?? 400) - inset,
-            )
+          : Math.max(inset, viewportWidth - width - inset)
       win.actions.setPosition({ x, y: pos.y })
     }
 

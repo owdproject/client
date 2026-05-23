@@ -186,9 +186,6 @@ importers:
 
   desktop:
     dependencies:
-      '@owdproject/app-about':
-        specifier: workspace:*
-        version: link:../apps/app-about
       '@owdproject/core':
         specifier: 3.2.0
         version: link:../packages/core
@@ -381,7 +378,7 @@ importers:
         specifier: ^4.3.0
         version: 4.4.6(magicast@0.5.3)
       '@owdproject/kit-theme':
-        specifier: ^3.2.0
+        specifier: workspace:*
         version: link:../kit-theme
       '@zenfs/archives':
         specifier: ^1.2.0
@@ -465,13 +462,13 @@ importers:
         specifier: ^4.3.0
         version: 4.4.6(magicast@0.5.3)
       '@owdproject/kit-explorer':
-        specifier: ^3.2.0
+        specifier: workspace:*
         version: link:../../packages/kit-explorer
       '@owdproject/kit-fs':
-        specifier: ^3.2.0
+        specifier: workspace:*
         version: link:../../packages/kit-fs
       '@owdproject/kit-theme':
-        specifier: ^3.2.0
+        specifier: workspace:*
         version: link:../../packages/kit-theme
       '@primeuix/themes':
         specifier: ^2.0.3
