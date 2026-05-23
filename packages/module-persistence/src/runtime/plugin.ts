@@ -1,6 +1,6 @@
 import { createPersistedStatePlugin } from 'pinia-plugin-persistedstate-2'
 import { defineNuxtPlugin } from 'nuxt/app'
-import { usePinia } from '#imports'
+import { usePinia } from 'pinia'
 import { get, set, del } from 'idb-keyval'
 
 export default defineNuxtPlugin({

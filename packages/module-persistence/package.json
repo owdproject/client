@@ -41,6 +41,7 @@
     "@owdproject/app-todo": "^0.1.3",
     "@owdproject/core": "workspace:*",
     "nuxt": "^4.3.0",
+    "pinia": "^3.0.0",
     "typescript": "~5.9.3"
   },
   "peerDependencies": {
