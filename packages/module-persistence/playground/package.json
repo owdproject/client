@@ -1,0 +1,17 @@
+{
+  "name": "@owdproject/module-persistence-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@owdproject/app-todo": "^0.1.3",
+    "@owdproject/core": "workspace:*",
+    "@owdproject/module-persistence": "0.0.2",
+    "@owdproject/theme-nova": "0.0.1",
+    "nuxt": "^4.4.4"
+  }
+}

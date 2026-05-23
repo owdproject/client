@@ -12,7 +12,6 @@ node_modules
 .desktop
 /desktop/certs
 /apps
-/packages/module-*/
 /themes
 
 # IDEs and editors
