@@ -5,7 +5,16 @@ import { findWorkspaceRoot } from './workspace.js'
 
 const SCOPE = '@owdproject/'
 
+export const DESKTOP_CORE_PACKAGE = '@owdproject/core'
+
 const REQUIRED_SCRIPTS = ['dev', 'dev:prepare', 'dev:generate', 'prepack']
+
+/**
+ * @param {string} pkgName
+ */
+export function isDesktopCorePackage(pkgName) {
+  return pkgName === DESKTOP_CORE_PACKAGE
+}
 
 /**
  * @param {string} pkgName
@@ -70,6 +79,7 @@ export function discoverOwdModulePackages(workspaceRoot) {
       try {
         const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'))
         if (!pkg.name?.startsWith(SCOPE)) continue
+        if (isDesktopCorePackage(pkg.name)) continue
         if (!existsSync(join(dir, 'src', 'module.ts'))) continue
         roots.push(dir)
       } catch {
@@ -204,9 +214,50 @@ export function validateOwdModule(packageDir, options = {}) {
   }
 
   const kind = inferModuleKind(pkgName)
+  const isCore = isDesktopCorePackage(pkgName)
 
   if (pkg.type !== 'module') {
     issue('error', 'type-module', 'package.json must set "type": "module"')
+  }
+
+  if (isCore) {
+    const scripts = /** @type {Record<string, string>} */ (pkg.scripts ?? {})
+    if (!scripts['dev:prepare']?.includes('nuxt-module-build')) {
+      issue(
+        'error',
+        'dev-prepare-builder',
+        'dev:prepare must run nuxt-module-build build --stub',
+      )
+    }
+    if (!scripts['prepack']?.includes('nuxt-module-build')) {
+      issue('error', 'prepack-builder', 'prepack must run nuxt-module-build build')
+    }
+    const devDeps = /** @type {Record<string, string>} */ (pkg.devDependencies ?? {})
+    if (!devDeps['@nuxt/module-builder']) {
+      issue(
+        'error',
+        'module-builder-dep',
+        'devDependencies must include @nuxt/module-builder',
+      )
+    }
+    const distModule = join(dir, 'dist', 'module.mjs')
+    if (!existsSync(distModule)) {
+      issue(
+        options.requireDist ? 'error' : 'error',
+        'dist-module',
+        'dist/module.mjs missing — run: pnpm run dev:prepare',
+      )
+    }
+    const ok =
+      errors.length === 0 && (!options.strict || warnings.length === 0)
+    return {
+      ok,
+      packageDir: dir,
+      pkgName,
+      kind,
+      errors,
+      warnings,
+    }
   }
 
   const exports = /** @type {Record<string, unknown>} */ (pkg.exports ?? {})
@@ -612,7 +663,7 @@ export function runValidateCli(paths, options = {}) {
       strict: options.strict,
     })
 
-    if (options.smoke && result.pkgName) {
+    if (options.smoke && result.pkgName && !isDesktopCorePackage(result.pkgName)) {
       const smoke = runSmokeBuild(dir, { smoke: true })
       if (!smoke.ok) {
         result.errors.push({

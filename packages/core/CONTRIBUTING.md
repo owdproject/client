@@ -10,8 +10,8 @@
 ```bash
 pnpm install
 pnpm run prepare:modules
-pnpm run dev              # full desktop (Nx)
-cd packages/core && pnpm run dev   # module playground only
+pnpm run dev              # full desktop (Nx) — use this to develop @owdproject/core
+cd packages/core && pnpm run dev:prepare   # stub dist/ only (no separate playground)
 pnpm desktop              # control panel
 ```
 

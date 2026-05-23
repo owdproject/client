@@ -38,9 +38,8 @@
     "README.md"
   ],
   "scripts": {
-    "dev": "pnpm run dev:prepare && cd playground && nuxt dev",
-    "dev:build": "nuxt build playground",
-    "dev:prepare": "nuxt-module-build build --stub && cd playground && pnpm exec nuxt prepare",
+    "dev": "pnpm run dev:prepare",
+    "dev:prepare": "nuxt-module-build build --stub",
     "build:module": "nuxt-module-build build",
     "prepack": "nuxt-module-build build"
   },

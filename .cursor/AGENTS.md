@@ -1,228 +1,202 @@
-# Open Web Desktop (OWD) — documentazione di contesto
+# Open Web Desktop (OWD) — Agent & contributor context
 
-Questo file descrive il **repository client** del progetto **Open Web Desktop**: obiettivo, architettura, cartelle, flussi di estensione e concetti da riusare nelle sessioni di lavoro (incluso supporto per assistenti AI). Per una chat nuova, includi `@AGENTS.md` così non serve ribadire la struttura ogni volta.
+This document describes the **OWD client monorepo**: what it is, how it is organized, and how to extend it. Include `@AGENTS.md` in new sessions so assistants do not need the layout explained from scratch.
 
-**Playbook moduli con playground** (migrazione legacy, `nuxt-module-build`, GitHub Pages): [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agents/OWD_APP_MODULE_PLAYGROUND.md) — in Cursor anche regola `.cursor/rules/owd-app-module-playground.mdc` su `apps/**` e `themes/**`.
+**Product positioning:** an open, modular **Nuxt module** for building **browser-based desktop experiences** (windows, shell, workspace). Themes shape the “OS” look and feel; apps register programs via `defineDesktopApp`. The repo is meant to be reusable, documented, and approachable for contributors and downstream teams.
 
-**Posizionamento**: framework/modulo Nuxt per costruire **esperienze “desktop” nel browser** (finestre, barra, workspace), **modulare** (temi, moduli, app), pensato per essere **open source**, **riutilizzabile** e documentabile come prodotto **enterprise** — bootstrap rapido del shell desktop + creazione di nuovi moduli/app seguendo un pattern ripetibile.
-
----
-
-## Visione in una frase
-
-Un’unica app Nuxt (`desktop/`) carica **`@owdproject/core`**, che legge **`desktop.config.ts`**, installa in sequenza **tema → moduli opzionali → app**, e fornisce runtime (Pinia, gestione applicazioni/finestre, UI core). I temi personalizzano look & layout (il team li paragona a “sistemi operativi” lato UI); le app registrano programmi nel desktop tramite **`defineDesktopApp`**.
+**Module playground playbook** (Nuxt module authoring, `nuxt-module-build`, GitHub Pages): [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agents/OWD_APP_MODULE_PLAYGROUND.md). In Cursor, see also `.cursor/rules/owd-app-module-playground.mdc` under `apps/**` and `themes/**`.
 
 ---
 
-## Stack tecnico
+## One-sentence architecture
 
-| Layer | Scelta |
+A single Nuxt app (`desktop/`) loads **`@owdproject/core`**, which reads **`desktop.config.ts`**, installs **theme → optional modules → apps** (all as Nuxt modules), and provides the shared runtime (Pinia, application/window management, core UI). Themes customize layout and chrome; apps register desktop programs through **`defineDesktopApp`**.
+
+---
+
+## Tech stack
+
+| Layer | Choice |
 |--------|--------|
-| Framework UI | **Vue 3**, **Nuxt 4** (nel client root spesso SPA: `ssr: false` sul desktop) |
-| Monorepo | **pnpm** workspace + **Nx** (comandi `nx run desktop:…`) |
-| Stato | **Pinia** |
-| Styling | **Tailwind** + **PrimeVue** (+ tema PrimeVue via core) |
-| Icone / font | **@nuxt/icon**, **@nuxt/fonts** |
+| UI | **Vue 3**, **Nuxt 4** (monorepo desktop is typically SPA: `ssr: false`) |
+| Monorepo | **pnpm** workspaces + **Nx** (`nx run desktop:…`) |
+| State | **Pinia** |
+| Styling | **Tailwind**, **PrimeVue** (theme wired through core) |
+| Icons / fonts | **@nuxt/icon**, **@nuxt/fonts** |
 | i18n | **@nuxtjs/i18n** |
-| Estensioni app | Moduli Nuxt con **`@nuxt/module-builder`** → artefatto **`dist/module.mjs`** |
+| Extension packages | **@nuxt/module-builder** → published **`dist/module.mjs`** |
 
 ---
 
-## Mappa del repository (root = `client/`)
+## Repository map (root = `client/`)
 
 ```
 client/
-├── desktop/                 # Applicazione Nuxt “shell” del desktop (entry utente)
-├── packages/core/           # Motore OWD — modulo Nuxt `@owdproject/core`
-├── packages/module-fs/      # Modulo opzionale FS (ZenFS) — non è nel core
-├── packages/kit-theme/      # Pattern shell neutri (sessione desktop, dialog PrimeVue, guard UI…)
-├── packages/kit-fs/         # UI explorer neutra (`KitFs*`), da usare con `module-fs`
-├── packages/kit-fs/         # UI neutra explorer (selezione, …) — opzionale
-├── packages/kit-theme/      # Composable / pattern shell condivisi tra temi — opzionale
-├── apps/                    # App desktop (es. `app-about`, `app-explorer`, …)
-├── themes/                  # Temi (look & feel / “desktop environment” UI)
-├── plugins/                 # Slot workspace per plugin Nuxt futuri (cartella opzionale)
-├── template/                # Blueprint per `npm create owd` / progetti generati
-├── package.json             # Script root: dev, generate, prepare:modules, …
+├── desktop/                 # Monorepo Nuxt shell (primary dev entry)
+├── packages/
+│   ├── core/                # @owdproject/core — orchestration module + desktop CLI
+│   ├── module-fs/           # Optional ZenFS virtual filesystem
+│   ├── module-docs/         # Optional in-app documentation (Nuxt Content)
+│   ├── module-persistence/  # Optional Pinia persistence (IndexedDB)
+│   ├── kit-fs/              # Theme-neutral explorer UI (use with module-fs)
+│   ├── kit-theme/           # Shared shell composables (session, dialogs, …)
+│   └── nx/                  # Nx plugin helpers
+├── apps/                    # Desktop apps (@owdproject/app-*)
+├── themes/                  # Desktop themes (@owdproject/theme-*)
+├── plugins/                 # Optional workspace slot for future Nuxt plugins
+├── template/                # Generated starter (npm create owd) — do not hand-edit
+├── packages/core/template-blueprint/  # Maintainer source for template/
+├── package.json
 ├── pnpm-workspace.yaml
-├── nx.json
-└── AGENTS.md                # Questo file
+└── nx.json
 ```
 
-**Convenzione cartelle (importante):** nel monorepo **non** esiste una directory top-level `client/modules/`. I pacchetti condivisi — `@owdproject/core`, moduli Nuxt opzionali come **`@owdproject/module-fs`**, **`@owdproject/kit-fs`**, ecc. — stanno sotto **`packages/*`**. Il campo **`modules`** in `desktop.config.ts` è solo la **lista di moduli Nuxt** da caricare (nomi pacchetto), non un percorso filesystem `modules/`.
+**Folder convention:** there is **no** top-level `modules/` directory. Shared packages live under **`packages/*`**. The **`modules`** field in `desktop.config.ts` is a **list of Nuxt package names** to load, not a filesystem path.
 
-### `desktop/` — shell del desktop
+### `desktop/` — monorepo shell
 
-- **`nuxt.config.ts`**: registra `@owdproject/core`, opzioni Nuxt (host, i18n, `workspaceDir`, ecc.).
-- **`desktop.config.ts`**: **config dichiarativa** del desktop (`defineDesktopConfig`): `theme`, `modules`, `apps` (nomi pacchetto risolti da pnpm).
-- **`app/app.vue`**: radice minimale; monta il componente tema (es. `<Desktop />` dal tema attivo).
-- Non contiene la logica finestra/app: delega a **core + tema + app caricate**.
-
-### `packages/module-docs/` — `@owdproject/module-docs`
-
-- Modulo Nuxt **opzionale**: documentazione in-app su `/docs` (Nuxt Content v3 + layout OWD compatibile con PrimeVue/Tailwind del desktop).
-- Attivalo in **`desktop.config.ts` → `modules`** (prima dei moduli che estendono la doc, es. `module-fs`).
-- Config opzionale: chiave top-level **`docs`** (`basePath`, `title`, `sources` per markdown aggiuntivo in `./content`).
-- API **`registerOwdDocsSource(nuxt, { id, cwd, prefix, include })`** per aggiungere pagine da altri pacchetti (es. `module-fs` → `/docs/modules/filesystem/...`).
-- TUI (`pnpm desktop`): **`[m]`** menu comandi; **`[s]`** start, **`[x]`** stop, **`[R]`** reboot del dev server; **`[w]`** salva il catalogo; se installato `module-docs`, **`[i]`** apre `/docs` nel browser.
-- Alias deprecato: `@owdproject/docs` re-exporta `module-docs`.
-- Sito pubblico **owd-docs** (repo sorella, Docus): può condividere gli stessi contenuti a medio termine; in-app non usa il layer Docus completo (conflitto stack con il core).
-
-### `packages/module-fs/` — `@owdproject/module-fs`
-
-- Modulo Nuxt **opzionale**: monta ZenFS e fornisce composable/componenti per explorer (clipboard, navigazione, ecc.).
-- Attivalo in **`desktop.config.ts` → `modules`** se il desktop deve avere VFS; l’app Explorer è il pacchetto **`@owdproject/app-explorer`** sotto `apps/app-explorer` (i temi la caricano se `module-fs` è attivo).
-- **`kit-fs`** sotto `packages/`: componenti UI neutri per l’explorer; non sostituisce `module-fs`.
-- **`kit-theme`** sotto `packages/`: composable con nomi neutri (`useDesktopSession`, `useDesktopShellOptions`, …) per non duplicare la logica tra temi.
+- **`nuxt.config.ts`** — registers `@owdproject/core`, Nuxt options (host, i18n, `workspaceDir`, …).
+- **`desktop.config.ts`** — declarative desktop config (`defineDesktopConfig`): `theme`, `modules`, `apps`.
+- **`app/app.vue`** — minimal root; renders the active theme (e.g. `<Desktop />`).
+- Window/app logic lives in **core + theme + loaded apps**, not in `desktop/` itself.
 
 ### `packages/core/` — `@owdproject/core`
 
-**Ruolo**: modulo Nuxt centrale che orchestra tutto.
+Central Nuxt module and **`desktop`** CLI (`bin/desktop.js`; `owd` is a deprecated alias).
 
-**All’avvio (ordine logico)**:
+**Startup (logical order):**
 
-1. Inizializza `runtimeConfig.public.desktop`.
-2. **Import dinamico** di `desktop.config.ts` dalla root Nuxt (`rootDir + '/desktop.config.ts'`; `owd.config.ts` ancora accettato con warning). Se manca o è invalido, log errore e **interrompe** il setup (il desktop non si configura).
-3. Merge della config desktop con `runtimeConfig.public.desktop` (include **`coreVersion`** da `package.json` del core).
-4. **`installModule`** in sequenza: **tema** → voci **`modules`** → voci **`apps`** (tutti sono moduli Nuxt).
-5. Installa lo stack condiviso: PrimeVue, Tailwind (con content paths aggregati), Pinia, font, icon, VueUse, i18n, ecc.
-6. Registra componenti globali core, plugin resize client, auto-import da `composables`, `stores`, `utils`, `core/controllers`.
+1. Initialize `runtimeConfig.public.desktop`.
+2. Dynamic import of `desktop.config.ts` from the Nuxt root (`rootDir + '/desktop.config.ts'`). Legacy `owd.config.ts` is still accepted with a console warning. Invalid or missing config **stops** setup.
+3. Merge desktop config into `runtimeConfig.public.desktop` (includes **`coreVersion`** from core’s `package.json`).
+4. **`installModule`** in order: **theme** → **`modules`** → **`apps`**.
+5. Shared stack: PrimeVue, Tailwind (aggregated content paths), Pinia, fonts, icons, VueUse, i18n, …
+6. Global core components, client plugins, auto-imports from `composables`, `stores`, `utils`, `controllers`.
 
-**Runtime principale** (sotto `runtime/`):
+**There is no `packages/core/playground/`.** Develop core through the monorepo **`desktop/`** app, or run `pnpm run dev:prepare` in `packages/core` to stub `dist/` only.
 
-- **`composables/`**: `useApplicationManager`, `useDesktopManager`, `useApplicationEntries`, terminal, …
-- **`stores/`**: desktop, finestre, workspace, applicazioni, meta, volume, …
-- **`core/controllers/`**: `ApplicationController`, `WindowController` — ciclo di vita app/finestre.
-- **`components/Core/`**: shell astratta — es. `CoreDesktop`, `CoreWindow`, rendering applicazioni/finestre.
-- **`utils/`**: `defineDesktopApp`, `defineDesktopConfig`, `registerTailwindPath`, normalizzazione config app.
+**Public API** (`packages/core/index.ts`, `types/`):
 
-**API pubblica utile** (export da `packages/core/index.ts` e tipi in `types/`):
+- **`defineDesktopConfig`** — used in `desktop.config.ts`.
+- **`defineDesktopApp`** — used in app plugins to register an application (`ApplicationManager`).
 
-- **`defineDesktopConfig`**: usato in `desktop.config.ts` (config statica lato build).
-- **`defineDesktopApp`**: usato nei **plugin** delle app per registrare un’applicazione nel `ApplicationManager` (id, titolo, finestre, comandi, entries).
+**CLI highlights:** `pnpm desktop` (control panel TUI), `desktop dev`, `desktop add`, `desktop validate`, `desktop template` (maintainers).
 
-**CLI `desktop`** (`bin/desktop.js`, shared `bin/cli.js`): comando principale — `pnpm desktop` apre il pannello di controllo; `desktop dev` avvia il dev server; `desktop add …` installa app/moduli/temi. **`owd`** (`bin/owd.js`) resta come alias deprecato.
+### Optional packages (summary)
 
-### Playground moduli (app e temi)
+| Package | Role |
+|---------|------|
+| `@owdproject/module-fs` | ZenFS mount + explorer composables; enable in `desktop.config.ts` → `modules`. Explorer app: `@owdproject/app-explorer`. |
+| `@owdproject/module-docs` | In-app docs at `/docs` (Nuxt Content). TUI **`[i]`** opens docs when installed. Deprecated alias: `@owdproject/docs`. |
+| `@owdproject/module-persistence` | Pinia persistence via IndexedDB. |
+| `@owdproject/kit-fs` | Neutral explorer UI components (with `module-fs`). |
+| `@owdproject/kit-theme` | Neutral shell composables shared across themes. |
 
-Pacchetti convertiti al pattern **Nuxt module authoring** (`nuxt-module-build`, `src/module.ts`, `dist/module.mjs`) espongono un **`playground/`** registrato nel workspace root (`pnpm-workspace.yaml`).
+### `apps/*` — desktop applications
 
-**Guida operativa completa (agent/contributor):** [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agents/OWD_APP_MODULE_PLAYGROUND.md) — checklist migrazione da layout legacy, template `package.json` / workflow Pages, plugin `launch-*` in dev, troubleshooting `Could not load @owdproject/…`.
+Each app is an **`@owdproject/app-*`** Nuxt module:
 
-| Pacchetto | Playground | Tema base | GitHub Pages |
-|-----------|------------|-----------|--------------|
-| `@owdproject/app-about` | `apps/app-about/playground` | `theme-nova` | `owdproject.github.io/app-about/` |
-| `@owdproject/app-wasmboy` | `apps/app-wasmboy/playground` | `theme-nova` | `owdproject.github.io/app-wasmboy/` |
-| `@owdproject/app-todo` … `app-explorer` | `apps/<app>/playground` | `theme-nova` | repo standalone |
-| `@owdproject/app-classic-audioplayer` | `apps/app-classic-audioplayer/playground` | `theme-nova` + **`module-fs`** + mount `test-small.zip` | repo standalone |
-| `@owdproject/module-docs` | `packages/module-docs/playground` | `theme-nova` | (monorepo) |
-| `@owdproject/module-fs` | `packages/module-fs/playground` | `theme-nova` + audioplayer + FS demo mp3 | `owdproject.github.io/module-fs/` |
-| `@owdproject/module-persistence` | `packages/module-persistence/playground` | `theme-nova` + `app-todo` | repo standalone |
-| `@owdproject/theme-nova` | `themes/theme-nova/playground` | (tema stesso) + FS + audioplayer | repo standalone |
-| `@owdproject/theme-win11` | `themes/theme-win11/playground` | (tema stesso) + FS + audioplayer | repo standalone |
-| `@owdproject/theme-gnome` | `themes/theme-gnome/playground` | (tema stesso) + FS + audioplayer | repo standalone |
-| `@owdproject/theme-win95` | `themes/theme-win95/playground` | (tema stesso) + `app-about` | `owdproject.github.io/theme-win95/` |
-| `@owdproject/core` | `packages/core/playground` | `theme-nova` | (monorepo) |
+- **`src/module.ts`** — `defineNuxtModule`, Tailwind paths, runtime config.
+- **`src/runtime/plugin.ts`** — typically `defineDesktopApp` on `app:created` (client-only).
+- **`src/runtime/app.config.ts`** — `ApplicationConfig` (id, title, windows, entries, commands).
+- **`playground/`** — isolated Nuxt app for developing the module (`theme-nova` recommended).
+- Build with **`nuxt-module-build`** → **`dist/module.mjs`**.
 
-**`theme-nova`** è il **shell di riferimento** OWD per playground di app/moduli: Start (ricerca + app), tray, dock. Smoke test: Start elenca le app in `desktop.config.ts` del playground.
+**Flow:** `desktop.config.ts` lists the package under **`apps`** → core `installModule` → app plugin → `defineDesktopApp` → entries appear in the shell.
 
-Comandi nel pacchetto: `dev:prepare` (obbligatorio prima del desktop monorepo), `dev`, `dev:generate` (`NUXT_APP_BASE_URL=/nome-repo/`). Root: `pnpm run prepare:apps` / `prepare:themes`.
+### `themes/*` — desktop environments
 
-Repo standalone: `.github/workflows/pages.yml` → `playground/.output/public`; in repo Settings → Pages → source **GitHub Actions**.
+Nuxt modules (e.g. `@owdproject/theme-nova`, `@owdproject/theme-win95`) that provide layout, chrome, styles, and i18n. They may conditionally load extra modules (e.g. FS explorer integration).
 
-**`theme-win95`**: sorgente in `themes/theme-win95/src/` (`src/module.ts`, `src/runtime/components/Window/*` per `<Window>` delle app). Dopo modifiche al tema: `pnpm run prepare:themes`. Explorer: plugin in `src/runtime/apps/explorer/` (non `installModule('@owdproject/app-explorer')`).
-
-### `apps/*` — applicazioni desktop (moduli Nuxt)
-
-Ogni app è un **pacchetto** (es. `@owdproject/app-about`) con:
-
-- **`src/module.ts`**: `defineNuxtModule` — aggiunge componenti, plugin, path Tailwind (`registerTailwindPath`), opzioni `runtimeConfig` se necessario.
-- **`src/runtime/plugin.ts`**: tipicamente su `app:created` chiama **`defineDesktopApp(import.meta → app.config)`** per registrare l’app nel manager.
-- **`src/runtime/app.config.ts`**: schema **`ApplicationConfig`** — `id`, `title`, `windows`, `entries`, `commands`, …
-- **`playground/`**: mini Nuxt che dipende da `@owdproject/core` per sviluppare il modulo in isolamento.
-- Build: **`nuxt-module-build`** → output **`dist/`** esposto da `package.json` (`exports`).
-
-**Flusso dati**: `desktop.config.ts` elenca il pacchetto in **`apps`** → core fa `installModule` → il modulo registra il plugin → il plugin chiama `defineDesktopApp` → le voci compaiono nel sistema (menu, comandi, …).
-
-### `themes/*` — temi (“desktop environment” / OS UI)
-
-Sono **moduli Nuxt** (es. `@owdproject/theme-win95`) che:
-
-- Estendono **`runtimeConfig.public.desktop`** (nome tema, system bar, …) spesso con **deepMerge**.
-- Registrano **componenti** (desktop, finestra, barra, sfondo, …), **pagine** (`start`, `boot`, …), **stili** SCSS, **i18n** del tema.
-- Registrano path Tailwind per il scanning.
-
-**Nota importante**: un tema può **condizionare** moduli extra (es. Win95: se è presente `@owdproject/module-fs`, installa explorer + player classici). I temi future-oriented (“ogni OS è un tema”) vivono qui: stesso contratto core, asset e layout diversi.
+**`theme-nova`** is the **reference shell** for app/module playgrounds (Start menu, tray, dock). Smoke test: Start lists apps from the playground’s `desktop.config.ts`.
 
 ### `template/`
 
-Scheletro per progetti generati (`npm create owd`): `nuxt.config` minimo con `@owdproject/core`, convenzioni path — utile come riferimento per “prodotto minimo” distribuito agli utenti.
-
-### `plugins/`
-
-Previsto dal **workspace pnpm**; può ospitare estensioni Nuxt transversali. Può essere vuoto nel checkout.
+Output of **`pnpm desktop template`** (from `template-blueprint/` + monorepo `desktop/` + latest npm versions). Used by **`npm create owd`** / **`desktop init`**. Default starter theme: **`@owdproject/theme-nova`**.
 
 ---
 
-## Configurazione utente: `desktop.config.ts`
+## Playground matrix (representative)
 
-Dal core **3.2** il file canonico è **`desktop.config.ts`** accanto a `nuxt.config.ts`. **`desktop.config.ts`** resta supportato temporaneamente (warning in console); rinominare prima dell’upgrade.
+Full migration checklist: [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agents/OWD_APP_MODULE_PLAYGROUND.md).
 
-Campi tipici (vedi tipi `DesktopConfig` in core):
+| Package | Playground | Base theme | Notes |
+|---------|------------|------------|--------|
+| `@owdproject/app-about` | `apps/app-about/playground` | `theme-nova` | Minimal app reference |
+| `@owdproject/app-wasmboy` | `apps/app-wasmboy/playground` | `theme-nova` | Legacy migration example |
+| Other `app-*` | `apps/<app>/playground` | `theme-nova` | Standalone repos often ship GitHub Pages |
+| `@owdproject/module-docs` | `packages/module-docs/playground` | `theme-nova` | Monorepo |
+| `@owdproject/module-fs` | `packages/module-fs/playground` | `theme-nova` + FS demos | |
+| `@owdproject/module-persistence` | `packages/module-persistence/playground` | `theme-nova` + `app-todo` | |
+| `@owdproject/theme-nova` | `themes/theme-nova/playground` | (self) | Reference theme |
+| `@owdproject/theme-win95` | `themes/theme-win95/playground` | (self) + `app-about` | Retro reference |
+| `@owdproject/core` | **`desktop/`** (no package playground) | `theme-nova` | Monorepo integration |
 
-| Campo | Significato |
-|--------|-------------|
-| `theme` | Pacchetto tema (default core: win95) |
-| `modules` | Moduli Nuxt aggiuntivi (servizi, persistenza, FS, docs, …) |
-| `docs` | Opzioni `@owdproject/module-docs` (`basePath`, `title`, `sources`) |
-| `apps` | App desktop da caricare (moduli che espongono plugin + `defineDesktopApp`) |
+**Playground commands:** `dev:prepare` (required before monorepo desktop picks up local `dist/`), `dev`, `dev:generate` with `NUXT_APP_BASE_URL=/<repo-slug>/`. Root: `pnpm run prepare:apps` / `prepare:themes`.
 
-Il merge finisce in **`runtimeConfig.public.desktop`** e in **`appConfig.desktop`** per override runtime.
+**Standalone demos:** `.github/workflows/pages.yml` → artifact `playground/.output/public`.
 
 ---
 
-## Comandi operativi (root `client/`)
+## `desktop.config.ts`
 
-| Comando | Scopo |
+Canonical file since core **3.2**: **`desktop.config.ts`** next to `nuxt.config.ts`. Legacy **`owd.config.ts`** still works with a deprecation warning.
+
+| Field | Meaning |
+|--------|---------|
+| `theme` | Theme package (default: `@owdproject/theme-nova`) |
+| `modules` | Extra Nuxt modules (FS, persistence, docs, …) |
+| `docs` | Options for `@owdproject/module-docs` |
+| `apps` | Desktop apps to load |
+
+Merged into **`runtimeConfig.public.desktop`** and **`appConfig.desktop`** for runtime overrides.
+
+---
+
+## Common commands (repo root)
+
+| Command | Purpose |
 |---------|--------|
-| `pnpm install` | Installa tutte le workspace |
-| `pnpm run prepare:modules` | Esegue `dev:prepare` su `apps/*` e `themes/*` dove definito (build/stub moduli) |
-| `pnpm desktop` | Pannello di controllo TUI (catalogo, install, dev server dal pannello) |
-| `pnpm desktop dev` | Avvia il dev server in foreground (equivalente a `pnpm run dev`) |
-| `pnpm run dev` | Avvia il desktop (Nx → `desktop` → `nuxt dev`) |
-| `pnpm run generate` | Build statica del desktop |
+| `pnpm install` | Install workspace |
+| `pnpm run prepare:modules` | `dev:prepare` on apps/themes/packages where defined |
+| `pnpm desktop` | Control panel TUI (catalog, install, dev server) |
+| `pnpm desktop dev` | Foreground dev server |
+| `pnpm run dev` | Nx → desktop → `nuxt dev` |
+| `pnpm run generate` | Static generate for desktop |
+| `pnpm desktop template` | Regenerate `template/` (maintainers) |
+| `pnpm run validate:modules` | `desktop validate` across workspace modules |
 
-Dopo modifiche al **sorgente** di un’app modulo, rigenera la `dist` (o stub) con `dev:prepare` / `prepack` nell’app.
-
----
-
-## Come si crea un nuovo modulo app (riassunto)
-
-Seguire il playbook [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agents/OWD_APP_MODULE_PLAYGROUND.md); in sintesi:
-
-1. Layout `src/module.ts` + `src/runtime/` + `playground/` (`@owdproject/core` + `theme-nova`).
-2. Plugin con `name: 'owd-app-*-register'` e `defineDesktopApp` (client-only).
-3. `registerTailwindPath` per i componenti Vue.
-4. Script `dev:prepare` / `dev:generate`; voce `apps/<pkg>/playground` in `pnpm-workspace.yaml`.
-5. Opzionale: integrazione in `desktop/desktop.config.ts`; Pages con `pages.yml` se repo standalone.
+After changing **module source**, run `dev:prepare` or `prepack` in that package so `dist/` is current.
 
 ---
 
-## Documentazione umana
+## Creating a new app module (short)
 
-Il **`README.md`** in root descrive installazione app/temi/moduli via CLI, community e link esterni (`owdproject.org`). Questo **`AGENTS.md`** è orientato a **contesto architetturale** e convenzioni nel repo.
+See the full playbook. In brief:
 
-La documentazione pubblica di prodotto sta in **`owd-docs`** (repo sorella / cartella accanto al client): sito **Docus** + Nuxt Content + Nuxt UI. **Lingua: solo inglese** (pagine utente in `content/`). Path utili in dev: **`/getting-started/introduction`**, **`/architecture/overview`**, **`/architecture/docs-module`**, **`/apps/overview`**, **`/themes/overview`**, **`/setup/owd-cli`**, **`/internals/boot-sequence`**, **`/reference/glossary`**. Aggiornare `owd-docs` in parallelo al codice.
+1. `src/module.ts` + `src/runtime/` + `playground/` with `@owdproject/core` and **`theme-nova`**.
+2. Client plugin `name: 'owd-app-<slug>-register'` calling **`defineDesktopApp`**.
+3. **`registerTailwindPath`** for Vue components.
+4. Scripts `dev:prepare`, `dev:generate`; register `apps/<pkg>/playground` in `pnpm-workspace.yaml`.
+5. Optional: add to `desktop/desktop.config.ts`; add `pages.yml` for standalone GitHub Pages.
+
+**Validation:** `desktop validate .` from the package directory. **`@owdproject/core`** uses a reduced ruleset (no playground required); other packages follow the full playbook.
 
 ---
 
-## Roadmap / area di attenzione (non bloccanti ma da progettare)
+## Human-facing documentation
 
-Punti che il team ha già in mente per maturità **enterprise** e multi-“OS”:
+- Root **`README.md`** — install, community, links ([owdproject.org](https://owdproject.org)).
+- Product docs live in the **`owd-docs`** sibling repo (Docus, **English only**). Useful paths: `/getting-started/introduction`, `/architecture/overview`, `/apps/overview`, `/themes/overview`, `/setup/owd-cli`, `/internals/boot-sequence`.
+- Keep **`AGENTS.md`** aligned with the repo when architecture or defaults change.
 
-- **Temi come superficie unica** per differenze UX tra “sistemi operativi” (layout, boot flow, barra, metafora filesystem) mantenendo **API app** stabili.
-- **Allineamento versioni** Nuxt/core tra root desktop e singole app (`peerDependencies`, CI).
-- **Test e contract** tra core e moduli (prepare/build in CI per ogni app).
-- **Theme Win95** oggi può portare dipendenze opzionali condizionate: documentare matrice “tema × modulo FS × app”.
+---
 
-Quando si affrontano questi temi, aggiornare questo file o una sezione `docs/` dedicata per mantenere una sola fonte di verità.
+## Design notes (for planning, not blockers)
+
+- **Themes as the UX surface** for different “OS” metaphors while keeping **app APIs** stable.
+- **Version alignment** across Nuxt, core, and extension packages (`peerDependencies`, CI).
+- **CI contracts** — `dev:prepare` + playground build per published module.
+- Document **theme × module × app** compatibility (e.g. FS + explorer + classic themes).
+
+Update this file when conventions change so agents and contributors share one source of truth.
