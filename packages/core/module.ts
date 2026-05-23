@@ -124,6 +124,14 @@ export default defineNuxtModule({
       _nuxt.options.primevue.options = _nuxt.options.primevue.options || {}
       _nuxt.options.primevue.options.theme =
         _nuxt.options.primevue.options.theme || {}
+      _nuxt.options.primevue.components =
+        _nuxt.options.primevue.components || {}
+      const include = _nuxt.options.primevue.components.include
+      if (include && include !== '*' && Array.isArray(include)) {
+        if (!include.includes('ConfirmDialog')) {
+          include.push('ConfirmDialog')
+        }
+      }
 
       await installModule('@primevue/nuxt-module')
     }

@@ -16,6 +16,7 @@
     "url": "https://github.com/owdproject"
   },
   "scripts": {
+    "postinstall": "pnpm run prepare:stubs",
     "desktop": "node ./packages/core/bin/desktop.js",
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",

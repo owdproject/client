@@ -132,7 +132,16 @@ Full migration checklist: [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agen
 | `@owdproject/theme-win95` | `themes/theme-win95/playground` | (self) + `app-about` | Retro reference |
 | `@owdproject/core` | **`desktop/`** (no package playground) | `theme-nova` | Monorepo integration |
 
-**Playground commands:** `dev:prepare` (required before monorepo desktop picks up local `dist/`), `dev`, `dev:generate` with `NUXT_APP_BASE_URL=/<repo-slug>/`. Root: `pnpm run prepare:apps` / `prepare:themes`.
+**Monorepo dev vs publish**
+
+| Command | When |
+|---------|------|
+| `pnpm install` (repo root) | Runs `prepare:stubs` for all workspace modules, then desktop `nuxt prepare` |
+| `pnpm dev` / `nx run desktop:serve` | No manual stub step |
+| `npm publish` on `@owdproject/*` packages | `prepack` only (full build); never add `prepare` stub on publishable packages |
+| `pnpm run dev:prepare` in a package | Isolated package playground only |
+
+**Playground commands:** `dev:prepare`, `dev`, `dev:generate` with `NUXT_APP_BASE_URL=/<repo-slug>/`. Root helpers: `pnpm run prepare:stubs`, `prepare:apps`, `prepare:themes`.
 
 **Standalone demos:** `.github/workflows/pages.yml` → artifact `playground/.output/public`.
 
