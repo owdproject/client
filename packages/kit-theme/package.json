@@ -34,7 +34,7 @@
   "devDependencies": {
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.3.0",
-    "@owdproject/core": "workspace:*",
+    "@owdproject/core": "^3.2.0",
     "nuxt": "^4.3.0",
     "typescript": "~5.9.3"
   },
