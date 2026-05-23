@@ -1,6 +1,5 @@
 import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
 import { deepMerge } from '@owdproject/core/runtime/utils/utilCommon'
-import { registerOwdDocsSource } from '@owdproject/module-docs/register'
 
 export default defineNuxtModule({
   meta: {
@@ -36,7 +35,7 @@ export default defineNuxtModule({
       png: 'image-viewer',
     }
   },
-  setup(_options, _nuxt) {
+  async setup(_options, _nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
     _nuxt.options.runtimeConfig.public ??= {}
@@ -71,12 +70,17 @@ export default defineNuxtModule({
     })
 
     if (docsInstalled) {
-      registerOwdDocsSource(_nuxt, {
-        id: 'module-fs',
-        cwd: resolve('./content'),
-        include: 'docs/**',
-        prefix: '/docs/modules/filesystem',
-      })
+      try {
+        const { registerOwdDocsSource } = await import('@owdproject/module-docs/register')
+        registerOwdDocsSource(_nuxt, {
+          id: 'module-fs',
+          cwd: resolve('./content'),
+          include: 'docs/**',
+          prefix: '/docs/modules/filesystem',
+        })
+      } catch {
+        /* module-docs optional — skip in-repo docs registration */
+      }
     }
 
     addPlugin({
