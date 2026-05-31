@@ -17,7 +17,7 @@
     "lib": ["ES2022", "DOM"],
     "paths": {
       "@owdproject/core/runtime/*": ["../core/runtime/*"],
-      "@owdproject/module-fs/runtime/*": ["../module-fs/src/runtime/*"]
+      "@owdproject/module-fs/runtime/*": ["../../node_modules/@owdproject/module-fs/runtime/*"]
     }
   }
 }

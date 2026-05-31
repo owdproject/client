@@ -61,6 +61,7 @@ vitest.config.*.timestamp*
 *.tsbuildinfo
 
 # Package manager & lock noise
+.pnpm-store/
 pnpm-debug.log*
 
 # Local overrides (never commit secrets)

@@ -104,8 +104,8 @@ export const configs = [
     fsMounts: { '/mnt/test': '/test.zip' },
     copyTestZip: true,
     playgroundExtraDevDeps: {
-      '@owdproject/module-fs': 'workspace:*',
-      '@owdproject/module-persistence': 'workspace:*',
+      '@owdproject/module-fs': '^0.0.4',
+      '@owdproject/module-persistence': '^0.0.2',
     },
     launch: {
       file: 'launch-audioplayer.client.ts',
@@ -143,8 +143,8 @@ export const configs = [
     fsMounts: { '/mnt/test': '/test.zip' },
     copyTestZip: true,
     playgroundExtraDevDeps: {
-      '@owdproject/module-fs': 'workspace:*',
-      '@owdproject/module-persistence': 'workspace:*',
+      '@owdproject/module-fs': '^0.0.4',
+      '@owdproject/module-persistence': '^0.0.2',
       '@owdproject/kit-fs': 'workspace:*',
       '@owdproject/kit-explorer': 'workspace:*',
     },
