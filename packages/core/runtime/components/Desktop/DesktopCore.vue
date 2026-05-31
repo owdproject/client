@@ -2,10 +2,10 @@
 import { onBeforeMount, onMounted, onUnmounted } from 'vue'
 import { useAppConfig, useRuntimeConfig } from 'nuxt/app'
 import { computed, toRaw } from '@vue/reactivity'
-import { useDesktopManager } from '../../../composables/useDesktopManager'
-import { useDesktopStore } from '../../../stores/storeDesktop'
-import { useDesktopDefaultAppsStore } from '../../../stores/storeDesktopDefaultApps'
-import { useDesktopWorkspaceStore } from '../../../stores/storeDesktopWorkspace'
+import { useDesktopManager } from '../../composables/useDesktopManager'
+import { useDesktopStore } from '../../stores/storeDesktop'
+import { useDesktopDefaultAppsStore } from '../../stores/storeDesktopDefaultApps'
+import { useDesktopWorkspaceStore } from '../../stores/storeDesktopWorkspace'
 
 const props = withDefaults(
   defineProps<{

@@ -26,7 +26,7 @@ const cardRootClass = computed(
 </script>
 
 <template>
-  <CoreWindow
+  <DesktopWindow
     :class="windowRootClass"
     :window="props.window"
     :content="props.content"
@@ -61,7 +61,7 @@ const cardRootClass = computed(
         </Body>
       </template>
     </Card>
-  </CoreWindow>
+  </DesktopWindow>
 </template>
 
 <style scoped>

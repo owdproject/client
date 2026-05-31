@@ -22,7 +22,7 @@ function onWindowNavDestroy() {
 </script>
 
 <template>
-  <CoreWindowNav @dblclick="onWindowMaximize">
+  <DesktopWindowNav @dblclick="onWindowMaximize">
     <slot name="prepend" />
 
     <slot v-if="hasCustomTitle" name="title" />
@@ -60,7 +60,7 @@ function onWindowNavDestroy() {
         @click.stop="onWindowNavDestroy"
       />
     </div>
-  </CoreWindowNav>
+  </DesktopWindowNav>
 </template>
 
 <style scoped>

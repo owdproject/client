@@ -148,7 +148,7 @@ export function useWorkspaceEdgeDrop() {
 }
 
 /**
- * Wire {@link useWorkspaceEdgeDrop} to CoreWindow drag events (theme Window wrapper).
+ * Wire {@link useWorkspaceEdgeDrop} to DesktopWindow drag events (theme Window wrapper).
  */
 export function useWorkspaceEdgeDropWindowHandlers(
   getWindow: () => IWindowController | undefined,

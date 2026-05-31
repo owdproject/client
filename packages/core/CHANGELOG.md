@@ -1,3 +1,9 @@
+## 3.3.0 (2026-05-23)
+
+### ⚠️ Breaking Changes
+
+- Rename kernel Vue components from `Core*` to `Desktop*` (e.g. `CoreDesktop` → `DesktopCore`, `CoreWindow` → `DesktopWindow`). Themes must update their templates.
+
 ## 3.2.0 (2026-05-22)
 
 ### 🚀 Features

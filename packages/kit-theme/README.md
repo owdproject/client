@@ -23,7 +23,7 @@ This package does **not** ship UI components or filesystem primitives; see **`ki
 | **`useDesktopShellOptions`** | Read `runtimeConfig` / `appConfig` for `desktop.systemBar` (enabled, position, start button). |
 | **`useBlockNonInputContextMenu`** | Disable browser context menu on non-input elements (desktop shell–style). |
 | **`useWorkspaceEdgeDrop`** | Drag a window to the left/right screen edge to move it to an adjacent virtual desktop (shared state + drop). |
-| **`useWorkspaceEdgeDropWindowHandlers`** | Wire `useWorkspaceEdgeDrop` to theme `Window.vue` (`@drag:start` / `@drag:end` on `CoreWindow`). |
+| **`useWorkspaceEdgeDropWindowHandlers`** | Wire `useWorkspaceEdgeDrop` to theme `Window.vue` (`@drag:start` / `@drag:end` on `DesktopWindow`). |
 | **`WorkspaceEdgeHintsBase`** | Headless edge overlay; themes supply slots for labels/chrome. |
 | **`createDesktopDialogs`** | Build a `DesktopDialogProvider` from a Confirm service (themes wire this in a client plugin). |
 | **`useDesktopDialogs`** | Resolve the active dialog provider (theme) or browser fallback. |
