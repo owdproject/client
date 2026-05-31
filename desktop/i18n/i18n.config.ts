@@ -3,7 +3,7 @@ export default defineI18nConfig(() => {
     locale: 'en',
     messages: {
       en: {
-        title: 'atproto OS',
+        title: 'Desktop',
       },
     },
   }

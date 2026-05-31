@@ -71,7 +71,9 @@ Central Nuxt module and **`desktop`** CLI (`bin/desktop.js`; `owd` is a deprecat
 3. Merge desktop config into `runtimeConfig.public.desktop` (includes **`coreVersion`** from core’s `package.json`).
 4. **`installModule`** in order: **theme** → **`modules`** → **`apps`**.
 5. Shared stack: PrimeVue, Tailwind (aggregated content paths), Pinia, fonts, icons, VueUse, i18n, …
-6. Global core components, client plugins, auto-imports from `composables`, `stores`, `utils`, `controllers`.
+6. Global core components, client plugins, auto-imports from `composables`, `stores`, `utils` (not `runtime/internal/` — kernel controllers are private).
+
+**`runtime/internal/`** — private kernel (`ApplicationController`, `WindowController`). Not auto-imported; use `defineDesktopApp` and `useApplicationManager` instead.
 
 **There is no `packages/core/playground/`.** Develop core through the monorepo **`desktop/`** app, or run `pnpm run dev:prepare` in `packages/core` to stub `dist/` only.
 

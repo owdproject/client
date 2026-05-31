@@ -1,0 +1,66 @@
+import { ref } from 'vue'
+
+export function useFileSystemDirectoryNavigation(initialPath: string) {
+  const history = ref<string[]>([initialPath])
+  const currentIndex = ref(0)
+
+  function push(path: string) {
+    if (currentIndex.value < history.value.length - 1) {
+      history.value.splice(currentIndex.value + 1)
+    }
+    history.value.push(path)
+    currentIndex.value++
+  }
+
+  function back(): string | null {
+    if (currentIndex.value > 0) {
+      currentIndex.value--
+      return history.value[currentIndex.value]
+    }
+    return null
+  }
+
+  function forward(): string | null {
+    if (currentIndex.value < history.value.length - 1) {
+      currentIndex.value++
+      return history.value[currentIndex.value]
+    }
+    return null
+  }
+
+  function canGoBack() {
+    return currentIndex.value > 0
+  }
+
+  function canGoForward() {
+    return currentIndex.value < history.value.length - 1
+  }
+
+  function snapshot(): { paths: string[]; index: number } {
+    return {
+      paths: [...history.value],
+      index: currentIndex.value,
+    }
+  }
+
+  function hydrate(data: { paths: string[]; index: number }) {
+    const paths = data.paths.length ? [...data.paths] : ['/']
+    let index = data.index
+    if (index < 0) index = 0
+    if (index > paths.length - 1) index = paths.length - 1
+    history.value = paths
+    currentIndex.value = index
+  }
+
+  return {
+    history,
+    currentIndex,
+    push,
+    back,
+    forward,
+    canGoBack,
+    canGoForward,
+    snapshot,
+    hydrate,
+  }
+}

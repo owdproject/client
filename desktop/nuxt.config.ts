@@ -3,17 +3,13 @@ export default defineNuxtConfig({
 
   ssr: false,
 
-  devServer: {
-    host: '127.0.0.1',
-  },
-
   modules: ['@owdproject/core'],
 
   i18n: {
     strategy: 'no_prefix',
   },
 
-  compatibilityDate: '2025-05-15',
+  compatibilityDate: '2026-05-31',
 
   experimental: {
     viteEnvironmentApi: true,
