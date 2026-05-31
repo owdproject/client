@@ -1,14 +1,14 @@
 import { defineNuxtPlugin } from 'nuxt/app'
 import {
-  OWD_DIALOG_PROVIDER_KEY,
+  DESKTOP_DIALOG_PROVIDER_KEY,
   createBrowserFallbackDialogProvider,
-} from '../dialogs/owdDialogProvider'
+} from '../dialogs/desktopDialogProvider'
 
 export default defineNuxtPlugin({
-  name: 'owd-dialogs-fallback',
+  name: 'desktop-dialogs-fallback',
   setup(nuxtApp) {
     nuxtApp.vueApp.provide(
-      OWD_DIALOG_PROVIDER_KEY,
+      DESKTOP_DIALOG_PROVIDER_KEY,
       createBrowserFallbackDialogProvider(),
     )
   },

@@ -3,7 +3,7 @@ import { defineNuxtPlugin } from 'nuxt/app'
 import { flushPendingDesktopApps } from '../utils/utilDesktop'
 
 export default defineNuxtPlugin({
-  name: 'owd-register-desktop-apps',
+  name: 'desktop-register-desktop-apps',
   dependsOn: ['pinia'],
   enforce: 'post',
   setup(nuxtApp) {

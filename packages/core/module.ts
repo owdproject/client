@@ -7,7 +7,7 @@ import {
   addPlugin
 } from '@nuxt/kit'
 import { deepMerge } from './runtime/utils/utilCommon'
-import { assertValidOwdUserConfig } from './runtime/utils/validateOwdUserConfig'
+import { assertValidDesktopUserConfig } from './runtime/utils/validateDesktopUserConfig'
 import {
   resolveDesktopConfigPath,
   warnLegacyDesktopConfig,
@@ -62,7 +62,7 @@ export default defineNuxtModule({
       )
     }
 
-    assertValidOwdUserConfig(clientConfig, resolvedConfig.file)
+    assertValidDesktopUserConfig(clientConfig, resolvedConfig.file)
 
     if (!clientConfig.theme) {
       clientConfig.theme = '@owdproject/theme-nova'
@@ -217,9 +217,8 @@ export default defineNuxtModule({
 
     {
       addPlugin(resolve('./runtime/plugins/resize.client.ts'))
-      addPlugin(resolve('./runtime/plugins/01.owd-dialogs-fallback.ts'))
       addPlugin(
-        resolve('./runtime/plugins/02.owd-register-desktop-apps.client.ts'),
+        resolve('./runtime/plugins/02.desktop-register-desktop-apps.client.ts'),
       )
 
       // add other files

@@ -25,9 +25,10 @@ This package does **not** ship UI components or filesystem primitives; see **`ki
 | **`useWorkspaceEdgeDrop`** | Drag a window to the left/right screen edge to move it to an adjacent virtual desktop (shared state + drop). |
 | **`useWorkspaceEdgeDropWindowHandlers`** | Wire `useWorkspaceEdgeDrop` to theme `Window.vue` (`@drag:start` / `@drag:end` on `CoreWindow`). |
 | **`WorkspaceEdgeHintsBase`** | Headless edge overlay; themes supply slots for labels/chrome. |
-| **`createPrimeVueOwdDialogs`** | Implement `OwdDialogProvider` with PrimeVue `useConfirm` (shared by themes that use PrimeVue confirm groups). |
+| **`createDesktopDialogs`** | Build a `DesktopDialogProvider` from a Confirm service (themes wire this in a client plugin). |
+| **`useDesktopDialogs`** | Resolve the active dialog provider (theme) or browser fallback. |
 
-Composables under `runtime/composables/` are **auto-imported** when the Nuxt module loads. `createPrimeVueOwdDialogs` lives under `runtime/dialogs/` and is **imported explicitly** in theme plugins.
+Composables under `runtime/composables/` are **auto-imported** when the Nuxt module loads. `createDesktopDialogs` lives under `runtime/dialogs/` and is **imported explicitly** in theme plugins.
 
 ### Relationship to `kit-fs` / `kit-explorer`
 
@@ -94,7 +95,7 @@ const { displayName, avatarUrl, userHome, setShellIdentity } = useDesktopShellId
 Wire core’s dialog provider in a **client plugin** after `useConfirm` is available:
 
 ```ts
-import { createPrimeVueOwdDialogs } from '@owdproject/kit-theme/runtime/dialogs/createPrimeVueOwdDialogs'
+import { createDesktopDialogs } from '@owdproject/kit-theme/runtime/dialogs/createDesktopDialogs'
 ```
 
 Themes still mount PrimeVue `<ConfirmDialog />` groups (`delete`, `about`, …) with their own styling.
@@ -102,7 +103,7 @@ Themes still mount PrimeVue `<ConfirmDialog />` groups (`delete`, `about`, …) 
 ### Integration notes
 
 - Keep **visual** and **copy** in the theme; keep **reusable shell mechanics** here when they repeat across themes.
-- Align **`@owdproject/core`** with the desktop app—this package depends on core dialog types (`OwdDialogProvider`).
+- Align **`@owdproject/core`** with the desktop app—dialog types live in this kit (`DesktopDialogProvider`).
 - **`defineDesktopConfig`** does not need to list `kit-theme` unless your orchestration expects it as an explicit module entry; **`installModule` from the theme `module.ts`** is the usual pattern.
 
 ## License

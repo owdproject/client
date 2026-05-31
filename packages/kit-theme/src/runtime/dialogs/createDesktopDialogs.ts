@@ -1,10 +1,10 @@
 import type { useConfirm } from 'primevue/useconfirm'
 import type {
-  OwdConfirmDialogOptions,
-  OwdDialogProvider,
-} from '@owdproject/core/runtime/dialogs/owdDialogProvider'
+  DesktopConfirmDialogOptions,
+  DesktopDialogProvider,
+} from './desktopDialogProvider'
 
-/** PrimeVue types `message` as string; OWD delete slots use `{ message, toTrash }`. */
+/** Confirm API message may be a string or a delete-slot payload `{ message, toTrash }`. */
 type DeleteConfirmRequireOptions = Parameters<
   ReturnType<typeof useConfirm>['require']
 >[0] & {
@@ -12,14 +12,14 @@ type DeleteConfirmRequireOptions = Parameters<
 }
 
 /**
- * Maps {@link OwdDialogProvider} onto PrimeVue Confirm — shared by any theme that uses PrimeVue dialogs.
- * Themes still mount `<ConfirmDialog />` groups (`delete`, `about`, …) with their own templates/CSS.
+ * Build a {@link DesktopDialogProvider} from a Confirm service instance.
+ * Themes mount `<ConfirmDialog />` groups (`delete`, `about`, …) with their own templates/CSS.
  */
-export function createPrimeVueOwdDialogs(
+export function createDesktopDialogs(
   confirm: ReturnType<typeof useConfirm>,
-): OwdDialogProvider {
+): DesktopDialogProvider {
   return {
-    confirm(opts: OwdConfirmDialogOptions): Promise<boolean> {
+    confirm(opts: DesktopConfirmDialogOptions): Promise<boolean> {
       return new Promise((resolve) => {
         const toTrash = opts.extras?.toTrash
         const message =

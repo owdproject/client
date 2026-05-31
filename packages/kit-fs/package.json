@@ -42,6 +42,7 @@
   },
   "peerDependencies": {
     "@owdproject/core": "^3.2.0",
+    "@owdproject/kit-theme": "^0.0.1",
     "@owdproject/module-fs": "^0.0.3",
     "nuxt": "^4.0.0",
     "vue": "^3.5.0"

@@ -3,6 +3,7 @@ import {
   createResolver,
   addComponentsDir,
   addImportsDir,
+  addPlugin,
 } from '@nuxt/kit'
 import { registerTailwindPath } from '@owdproject/core/runtime/utils/utilApp'
 
@@ -20,6 +21,8 @@ export default defineNuxtModule({
     })
 
     addImportsDir(resolve('./runtime/composables'))
+
+    addPlugin(resolve('./runtime/plugins/01.desktop-dialogs-fallback.client.ts'))
 
     registerTailwindPath(
       nuxt,

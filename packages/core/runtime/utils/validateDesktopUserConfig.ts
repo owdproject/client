@@ -2,7 +2,7 @@
  * Runtime validation for the object exported from `desktop.config.ts`
  * (or legacy `owd.config.ts`).
  */
-export function assertValidOwdUserConfig(
+export function assertValidDesktopUserConfig(
   config: unknown,
   configFile = 'desktop.config.ts',
 ): void {

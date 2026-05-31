@@ -1,14 +1,14 @@
-import { useOwdDialogs } from '@owdproject/core/runtime/composables/useOwdDialogs'
+import { useDesktopDialogs } from '@owdproject/kit-theme/runtime/composables/useDesktopDialogs'
 import { explorerEntryAbsolutePath } from '@owdproject/core/runtime/utils/explorerEntryPath'
 import type { ExternalFileEntry } from '@owdproject/module-fs/runtime/utils/utilExternalFileImport'
 import { isInvalidMoveTarget } from '@owdproject/module-fs/runtime/utils/utilExplorerMove'
 
 /**
  * Pass this factory as the second argument to {@link useFileSystemExplorer} (`module-fs`).
- * Uses {@link useOwdDialogs} and i18n keys `apps.explorer.*` for destructive operations.
+ * Uses {@link useDesktopDialogs} and i18n keys `apps.explorer.*` for destructive operations.
  */
 export default function createExplorerFsOperations(fsExplorer: any, t: (key: string, values?: Record<string, unknown>) => string) {
-  const dialogs = useOwdDialogs()
+  const dialogs = useDesktopDialogs()
 
   async function pasteClipboardFiles() {
     const files = fsExplorer.fsClipboard.clipboardFiles

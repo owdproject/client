@@ -1,33 +1,30 @@
 import type { InjectionKey } from 'vue'
 
 /** Options for a yes/no confirmation (theme renders labels and chrome). */
-export interface OwdConfirmDialogOptions {
+export interface DesktopConfirmDialogOptions {
   title?: string
   message: string
   danger?: boolean
   acceptLabel?: string
   rejectLabel?: string
   /**
-   * Theme-specific payload (e.g. Win95 delete dialog passes `toTrash` for slot templates).
+   * Theme-specific payload (e.g. delete dialog passes `toTrash` for slot templates).
    */
   extras?: Record<string, unknown>
 }
 
 /**
- * Cross-theme dialog API. Themes implement with PrimeVue, GNOME dialogs, etc.
+ * Cross-theme dialog API. Themes implement with PrimeVue, native dialogs, etc.
  * Callers pass user-facing strings (usually from i18n); implementations only render.
  */
-export interface OwdDialogProvider {
-  confirm(options: OwdConfirmDialogOptions): Promise<boolean>
+export interface DesktopDialogProvider {
+  confirm(options: DesktopConfirmDialogOptions): Promise<boolean>
   alert(message: string, options?: { title?: string }): Promise<void>
-  prompt(
-    message: string,
-    defaultValue?: string,
-  ): Promise<string | null>
+  prompt(message: string, defaultValue?: string): Promise<string | null>
 }
 
-export const OWD_DIALOG_PROVIDER_KEY: InjectionKey<OwdDialogProvider> =
-  Symbol('owd-dialog-provider')
+export const DESKTOP_DIALOG_PROVIDER_KEY: InjectionKey<DesktopDialogProvider> =
+  Symbol('desktop-dialog-provider')
 
 function browserGlobals(): {
   confirm: (message?: string) => boolean
@@ -55,7 +52,7 @@ function browserGlobals(): {
   }
 }
 
-export function createBrowserFallbackDialogProvider(): OwdDialogProvider {
+export function createBrowserFallbackDialogProvider(): DesktopDialogProvider {
   return {
     async confirm(opts) {
       if (import.meta.server) return false
