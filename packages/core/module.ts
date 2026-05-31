@@ -225,7 +225,6 @@ export default defineNuxtModule({
       // add other files
 
       addImportsDir(resolve('./runtime/composables'))
-      addImportsDir(resolve('./runtime/core'))
       addImportsDir(resolve('./runtime/stores'))
       addImportsDir(resolve('./runtime/utils'))
     }

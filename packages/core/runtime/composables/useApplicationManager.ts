@@ -1,5 +1,5 @@
 import { reactive, markRaw, computed } from 'vue'
-import { ApplicationController } from '../core/controllers/ApplicationController'
+import { ApplicationController } from '../internal/controllers/ApplicationController'
 import { normalizeApplicationConfig } from '../utils/utilApp'
 import { debugLog } from '../utils/utilDebug'
 import * as shellwords from 'shellwords'
