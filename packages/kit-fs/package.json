@@ -36,12 +36,12 @@
   "devDependencies": {
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.3.0",
-    "@owdproject/core": "^3.2.0",
+    "@owdproject/core": "^3.3.0",
     "nuxt": "^4.3.0",
     "typescript": "~5.9.3"
   },
   "peerDependencies": {
-    "@owdproject/core": "^3.2.0",
+    "@owdproject/core": "^3.3.0",
     "@owdproject/kit-theme": "^0.0.1",
     "@owdproject/module-fs": "^0.0.3",
     "nuxt": "^4.0.0",

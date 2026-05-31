@@ -16,7 +16,7 @@
     "dev:generate": "NUXT_APP_BASE_URL=${NUXT_APP_BASE_URL:-/app-fixture-valid/} nuxt generate playground"
   },
   "peerDependencies": {
-    "@owdproject/core": "^3.2.0"
+    "@owdproject/core": "^3.3.0"
   },
   "devDependencies": {
     "@nuxt/module-builder": "^1.0.2"
