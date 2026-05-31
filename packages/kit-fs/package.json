@@ -1,6 +1,6 @@
 {
   "name": "@owdproject/kit-fs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Neutral filesystem explorer UI primitives for OWD themes (not a ZenFS replacement; use @owdproject/module-fs for VFS integration).",
   "license": "MIT",
   "homepage": "https://github.com/owdproject/client#readme",
@@ -42,8 +42,8 @@
   },
   "peerDependencies": {
     "@owdproject/core": "^3.3.0",
-    "@owdproject/kit-theme": "^0.0.1",
-    "@owdproject/module-fs": "^0.0.3",
+    "@owdproject/kit-theme": "^0.0.2",
+    "@owdproject/module-fs": "^0.0.4",
     "nuxt": "^4.0.0",
     "vue": "^3.5.0"
   }

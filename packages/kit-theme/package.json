@@ -1,6 +1,6 @@
 {
   "name": "@owdproject/kit-theme",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Optional shared shell patterns for OWD themes (neutral composables, no visual chrome).",
   "license": "MIT",
   "homepage": "https://github.com/owdproject/client#readme",
