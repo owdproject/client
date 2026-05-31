@@ -3,9 +3,9 @@ import { useApplicationManager } from './useApplicationManager'
 import { useDesktopWorkspaceStore } from '../stores/storeDesktopWorkspace'
 
 /**
- * Keyboard + HTML5 drop handlers for workspace overview (move windows between desktops).
+ * Keyboard + HTML5 drop handlers for workspace management (move windows between desktops).
  */
-export function useWorkspaceOverview() {
+export function useWorkspaceManager() {
   const applicationManager = useApplicationManager()
   const desktopWorkspaceStore = useDesktopWorkspaceStore()
 
