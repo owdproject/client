@@ -87,9 +87,9 @@ export default defineNuxtModule({
       clientConfig
     )
 
-    {
-      await installModule('@pinia/nuxt')
-    }
+    // Pinia before theme/modules/apps so defineDesktopApp can use stores when
+    // published app plugins register on app:created.
+    await installModule('@pinia/nuxt')
 
     {
       // install open web desktop theme
@@ -155,12 +155,6 @@ export default defineNuxtModule({
       await installModule('@nuxtjs/tailwindcss', {
         viewer: false
       })
-    }
-
-    {
-      // install pinia
-
-      await installModule('@pinia/nuxt')
     }
 
     {
