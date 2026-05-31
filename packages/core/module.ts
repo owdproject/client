@@ -88,6 +88,10 @@ export default defineNuxtModule({
     )
 
     {
+      await installModule('@pinia/nuxt')
+    }
+
+    {
       // install open web desktop theme
 
       if (clientConfig.theme) {
@@ -220,6 +224,9 @@ export default defineNuxtModule({
     {
       addPlugin(resolve('./runtime/plugins/resize.client.ts'))
       addPlugin(resolve('./runtime/plugins/01.owd-dialogs-fallback.ts'))
+      addPlugin(
+        resolve('./runtime/plugins/02.owd-register-desktop-apps.client.ts'),
+      )
 
       // add other files
 

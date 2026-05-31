@@ -31,10 +31,8 @@ function matchesWorkspace(window: IWindowController): boolean {
 
 <template>
   <template v-for="[windowId, window] in windowEntries" :key="windowId">
-    <component
-      v-if="matchesWorkspace(window)"
-      :window="window"
-      :is="window.config.component"
-    />
+    <Suspense v-if="matchesWorkspace(window)">
+      <component :window="window" :is="window.config.component" />
+    </Suspense>
   </template>
 </template>
