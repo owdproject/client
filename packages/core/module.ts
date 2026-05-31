@@ -6,7 +6,7 @@ import {
   installModule,
   addPlugin
 } from '@nuxt/kit'
-import { deepMerge } from './runtime/utils/utilCommon'
+import { defu } from 'defu'
 import { assertValidDesktopUserConfig } from './runtime/utils/validateDesktopUserConfig'
 import {
   resolveDesktopConfigPath,
@@ -85,13 +85,9 @@ export default defineNuxtModule({
 
     // init desktop runtime config and define core version
 
-    _nuxt.options.runtimeConfig.public.desktop = {
-      coreVersion: pkg.version,
-    }
-
-    _nuxt.options.runtimeConfig.public.desktop = deepMerge(
-      _nuxt.options.runtimeConfig.public.desktop,
+    _nuxt.options.runtimeConfig.public.desktop = defu(
       desktopRuntime,
+      { coreVersion: pkg.version },
     )
 
     // Pinia before theme/modules/apps so defineDesktopApp can use stores when

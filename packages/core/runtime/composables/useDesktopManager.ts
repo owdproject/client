@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { useAppConfig } from 'nuxt/app'
-import { deepMerge } from '../utils/utilCommon'
+import { defu } from 'defu'
 import { useDesktopStore } from '../stores/storeDesktop'
 import { useDesktopDefaultAppsStore } from '../stores/storeDesktopDefaultApps'
 
@@ -17,9 +17,9 @@ export function useDesktopManager() {
    * Merges and sets the desktop config at runtime (shell geometry, feature flags, etc.).
    */
   function setConfig(newConfig: DesktopConfig) {
-    appConfig.desktop = deepMerge(
-      appConfig.desktop,
+    appConfig.desktop = defu(
       newConfig,
+      (appConfig.desktop ?? {}) as DesktopConfig,
     ) as DesktopConfig
   }
 
