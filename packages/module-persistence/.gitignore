@@ -1,8 +1,0 @@
-node_modules
-.nuxt
-.idea
-dist
-.output
-playground/.nuxt
-playground/node_modules
-._*
