@@ -1,3 +1,15 @@
+## 3.4.0 (2026-05-31)
+
+### ⚠️ Breaking Changes
+
+- Remove explorer from kernel: `DesktopExplorer*` components, `useDesktopExplorerStore`, and `explorer` slice in `useDesktopStore` moved to `@owdproject/kit-fs` (`useExplorerStore`, `KitFsExplorer*`).
+- `desktop.config.ts` is no longer spread onto `_nuxt.options`; only `runtimeConfig.public.desktop` / `appConfig.desktop` receive shell keys.
+
+### 🚀 Features
+
+- Add `splitDesktopUserConfig` with allowlist warnings for misconfigured keys.
+- Add window manager contract tests and [`DESKTOP_KERNEL.md`](DESKTOP_KERNEL.md).
+
 ## 3.3.0 (2026-05-23)
 
 ### ⚠️ Breaking Changes

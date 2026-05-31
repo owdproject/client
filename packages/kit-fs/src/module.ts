@@ -20,6 +20,7 @@ export default defineNuxtModule({
     })
 
     addImportsDir(resolve('./runtime/composables'))
+    addImportsDir(resolve('./runtime/stores'))
 
     registerTailwindPath(
       nuxt,

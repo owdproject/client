@@ -12,6 +12,7 @@ import {
   resolveDesktopConfigPath,
   warnLegacyDesktopConfig,
 } from './runtime/utils/resolveDesktopConfigPath'
+import { splitDesktopUserConfig } from './runtime/utils/splitDesktopUserConfig'
 import pkg from './package.json'
 
 export default defineNuxtModule({
@@ -68,23 +69,29 @@ export default defineNuxtModule({
       clientConfig.theme = '@owdproject/theme-nova'
     }
 
-    // extend nuxt.config.ts with desktop.config.ts
+    const {
+      theme: configTheme,
+      apps: configApps,
+      modules: configModules,
+      desktopRuntime,
+    } = splitDesktopUserConfig(
+      clientConfig as Record<string, unknown>,
+      resolvedConfig.file,
+    )
 
-    _nuxt.options = {
-      ..._nuxt.options,
-      ...clientConfig
-    }
+    clientConfig.theme = configTheme ?? clientConfig.theme
+    if (configApps) clientConfig.apps = configApps
+    if (configModules) clientConfig.modules = configModules
 
     // init desktop runtime config and define core version
 
     _nuxt.options.runtimeConfig.public.desktop = {
-      coreVersion: pkg.version
+      coreVersion: pkg.version,
     }
 
-    // assign open web desktop config to runtime config
     _nuxt.options.runtimeConfig.public.desktop = deepMerge(
       _nuxt.options.runtimeConfig.public.desktop,
-      clientConfig
+      desktopRuntime,
     )
 
     // Pinia before theme/modules/apps so defineDesktopApp can use stores when

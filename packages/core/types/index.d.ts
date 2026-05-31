@@ -360,29 +360,10 @@ interface DesktopConfig {
   name?: string
   defaultApps?: DefaultAppsConfig
   features?: string[]
-  explorer?: DesktopExplorerConfig
 
   systemBar?: DesktopSystemBarConfig
   dockBar?: DesktopDockBarConfig
   workspaces?: DesktopWorkspacesConfig
-}
-
-interface DesktopExplorerFolderConfig {
-  id: string
-  label: string
-  path: string
-  icon?: string
-}
-
-interface DesktopExplorerConfig {
-  quickAccess?: DesktopExplorerFolderConfig[]
-  quickAccessExtra?: DesktopExplorerFolderConfig[]
-  quickAccessOverride?: DesktopExplorerFolderConfig[]
-  specialFolders?: DesktopExplorerFolderConfig[]
-  specialFoldersExtra?: DesktopExplorerFolderConfig[]
-  specialFoldersOverride?: DesktopExplorerFolderConfig[]
-  /** Friendly labels for ZenFS mount points shown under “This PC” (paths → label). */
-  mountLabels?: Record<string, string>
 }
 
 interface DesktopWindowsConfig {

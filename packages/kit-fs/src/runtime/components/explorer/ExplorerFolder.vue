@@ -1,7 +1,7 @@
 <template>
-  <DesktopExplorerFile class="owd-explorer-folder">
+  <ExplorerFile class="owd-explorer-folder">
     <slot />
-  </DesktopExplorerFile>
+  </ExplorerFile>
 </template>
 
 <style scoped lang="scss">

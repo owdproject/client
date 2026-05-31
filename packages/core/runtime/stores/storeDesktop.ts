@@ -51,10 +51,6 @@ export const useDesktopStore = defineStore(
       window: {
         positionZ: number
       }
-      explorer: {
-        navExpandedKeys: string[]
-        quickAccessPins: { id: string; label: string; path: string; icon?: string }[]
-      }
       defaultApps: Record<string, { applicationId: string; entry: string }>
       personalization: DesktopPersonalization
     }>({
@@ -68,13 +64,6 @@ export const useDesktopStore = defineStore(
       },
       window: {
         positionZ: 0,
-      },
-      explorer: {
-        navExpandedKeys: [
-          'quickAccess',
-          'thisPc',
-        ],
-        quickAccessPins: [],
       },
       defaultApps: {},
       personalization: { ...defaultDesktopPersonalization },
