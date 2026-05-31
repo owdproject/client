@@ -60,7 +60,7 @@ Themes that ship their own Explorer UI (instead of only consuming `@owdproject/a
    await installModule('@owdproject/kit-explorer')
    ```
 
-   Do **not** duplicate `installModule('@owdproject/kit-fs')` unless you need `kit-fs` without `kit-explorer`; otherwise `kit-explorer` already installs it.
+   Do **not** duplicate `@owdproject/kit-fs` unless you need `kit-fs` without `kit-explorer`; `kit-explorer` declares it via **`moduleDependencies`**.
 
 Visual styling stays in the theme; generic interaction patterns stay in `kit-explorer` / `kit-fs`.
 

@@ -7,6 +7,7 @@ import {
   addPlugin
 } from '@nuxt/kit'
 import { defu } from 'defu'
+import type { Nuxt } from '@nuxt/schema'
 import { assertValidDesktopUserConfig } from './runtime/utils/validateDesktopUserConfig'
 import {
   resolveDesktopConfigPath,
@@ -14,6 +15,30 @@ import {
 } from './runtime/utils/resolveDesktopConfigPath'
 import { splitDesktopUserConfig } from './runtime/utils/splitDesktopUserConfig'
 import pkg from './package.json'
+
+function primevueModuleDependency(nuxt: Nuxt) {
+  const existing = nuxt.options.primevue ?? {}
+  const components = { ...(existing.components ?? {}) }
+  const include = components.include
+  if (
+    include &&
+    include !== '*' &&
+    Array.isArray(include) &&
+    !include.includes('ConfirmDialog')
+  ) {
+    components.include = [...include, 'ConfirmDialog']
+  }
+
+  return {
+    defaults: defu(
+      {
+        options: { theme: {} },
+        components,
+      },
+      existing,
+    ),
+  }
+}
 
 export default defineNuxtModule({
   meta: {
@@ -25,6 +50,21 @@ export default defineNuxtModule({
     apps: [],
     modules: [],
   },
+  moduleDependencies: (nuxt) => ({
+    '@pinia/nuxt': {},
+    '@primevue/nuxt-module': primevueModuleDependency(nuxt),
+    '@nuxt/fonts': {},
+    '@nuxt/icon': {
+      defaults: {
+        clientBundle: {
+          scan: true,
+          sizeLimitKb: 256,
+        },
+      },
+    },
+    '@vueuse/nuxt': {},
+    '@nuxtjs/i18n': {},
+  }),
   async setup(_options, _nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
@@ -90,10 +130,6 @@ export default defineNuxtModule({
       { coreVersion: pkg.version },
     )
 
-    // Pinia before theme/modules/apps so defineDesktopApp can use stores when
-    // published app plugins register on app:created.
-    await installModule('@pinia/nuxt')
-
     {
       // install open web desktop theme
 
@@ -125,26 +161,7 @@ export default defineNuxtModule({
     _nuxt.options.appConfig.desktop = _nuxt.options.runtimeConfig.public.desktop
 
     {
-      // install primevue
-
-      _nuxt.options.primevue = _nuxt.options.primevue || {}
-      _nuxt.options.primevue.options = _nuxt.options.primevue.options || {}
-      _nuxt.options.primevue.options.theme =
-        _nuxt.options.primevue.options.theme || {}
-      _nuxt.options.primevue.components =
-        _nuxt.options.primevue.components || {}
-      const include = _nuxt.options.primevue.components.include
-      if (include && include !== '*' && Array.isArray(include)) {
-        if (!include.includes('ConfirmDialog')) {
-          include.push('ConfirmDialog')
-        }
-      }
-
-      await installModule('@primevue/nuxt-module')
-    }
-
-    {
-      // install tailwind
+      // Tailwind after theme/apps so registerTailwindPath paths are collected first.
 
       const tailwindPaths =
         _nuxt.options.runtimeConfig.app.owd?.tailwindPaths || []
@@ -158,35 +175,6 @@ export default defineNuxtModule({
       await installModule('@nuxtjs/tailwindcss', {
         viewer: false
       })
-    }
-
-    {
-      // install @nuxt/fonts
-
-      await installModule('@nuxt/fonts')
-    }
-
-    {
-      // install @nuxt/icon
-
-      await installModule('@nuxt/icon', {
-        clientBundle: {
-          scan: true,
-          sizeLimitKb: 256
-        }
-      })
-    }
-
-    {
-      // install @vueuse/nuxt
-
-      await installModule('@vueuse/nuxt')
-    }
-
-    {
-      // install @nuxtjs/i18n
-
-      await installModule('@nuxtjs/i18n')
     }
 
     {

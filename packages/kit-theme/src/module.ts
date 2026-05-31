@@ -22,7 +22,10 @@ export default defineNuxtModule({
 
     addImportsDir(resolve('./runtime/composables'))
 
-    addPlugin(resolve('./runtime/plugins/01.desktop-dialogs-fallback.client.ts'))
+    addPlugin({
+      src: resolve('./runtime/plugins/01.desktop-dialogs-fallback.client'),
+      mode: 'client',
+    })
 
     registerTailwindPath(
       nuxt,

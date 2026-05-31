@@ -3,7 +3,6 @@ import {
   createResolver,
   addComponentsDir,
   addImportsDir,
-  installModule,
 } from '@nuxt/kit'
 import { registerTailwindPath } from '@owdproject/core/runtime/utils/utilApp'
 
@@ -12,10 +11,11 @@ export default defineNuxtModule({
     name: 'owd-kit-explorer',
     configKey: 'kitExplorer',
   },
-  async setup(_options, nuxt) {
+  moduleDependencies: {
+    '@owdproject/kit-fs': {},
+  },
+  setup(_options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
-
-    await installModule('@owdproject/kit-fs')
 
     addComponentsDir({
       path: resolve('./runtime/components'),

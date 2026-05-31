@@ -1,6 +1,6 @@
 {
   "name": "@owdproject/core",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Nuxt Desktop module for browser desktop experiences (windows, shell, apps)",
   "keywords": [
     "nuxt",
@@ -84,6 +84,7 @@
     "@primeuix/themes": "^2.0.3",
     "@primevue/forms": "^4.5.5",
     "@primevue/nuxt-module": "^4.5.5",
+    "primevue": "^4.5.5",
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
