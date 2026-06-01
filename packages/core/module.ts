@@ -13,7 +13,8 @@ import {
   resolveDesktopConfigPath,
   warnLegacyDesktopConfig,
 } from './runtime/utils/resolveDesktopConfigPath'
-import { splitDesktopUserConfig } from './runtime/utils/splitDesktopUserConfig'
+import { warnDesktopConfigKeys } from './runtime/utils/warnDesktopConfigKeys'
+import { installDesktopPackage } from './runtime/utils/installDesktopPackage'
 import pkg from './package.json'
 
 function primevueModuleDependency(nuxt: Nuxt) {
@@ -109,50 +110,36 @@ export default defineNuxtModule({
       clientConfig.theme = '@owdproject/theme-nova'
     }
 
-    const {
-      theme: configTheme,
-      apps: configApps,
-      modules: configModules,
-      desktopRuntime,
-    } = splitDesktopUserConfig(
-      clientConfig as Record<string, unknown>,
-      resolvedConfig.file,
-    )
+    const configRecord = clientConfig as Record<string, unknown>
+    warnDesktopConfigKeys(configRecord, resolvedConfig.file)
 
-    clientConfig.theme = configTheme ?? clientConfig.theme
-    if (configApps) clientConfig.apps = configApps
-    if (configModules) clientConfig.modules = configModules
+    const desktop = defu(configRecord, { coreVersion: pkg.version }) as Record<
+      string,
+      unknown
+    > & {
+      theme?: string
+      apps?: string[]
+      modules?: string[]
+    }
 
-    // init desktop runtime config and define core version
-
-    _nuxt.options.runtimeConfig.public.desktop = defu(
-      desktopRuntime,
-      { coreVersion: pkg.version },
-    )
+    _nuxt.options.runtimeConfig.public.desktop = desktop
 
     {
-      // install open web desktop theme
-
-      if (clientConfig.theme) {
-        await installModule(clientConfig.theme)
+      if (desktop.theme) {
+        await installDesktopPackage(_nuxt, desktop.theme, desktop)
       }
 
-      // install open web desktop modules
-
-      if (clientConfig.modules && Array.isArray(clientConfig.modules)) {
-        for (const modulePath of clientConfig.modules) {
-          await installModule(modulePath)
+      if (Array.isArray(desktop.modules)) {
+        for (const modulePath of desktop.modules) {
+          await installDesktopPackage(_nuxt, modulePath, desktop)
         }
       }
 
-      // install open web desktop apps
-
-      if (clientConfig.apps && Array.isArray(clientConfig.apps)) {
-        for (const appPath of clientConfig.apps) {
-          await installModule(appPath)
+      if (Array.isArray(desktop.apps)) {
+        for (const appPath of desktop.apps) {
+          await installDesktopPackage(_nuxt, appPath, desktop)
         }
       }
-
     }
 
     // assign runtimeConfig desktop prop to appConfig

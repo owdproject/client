@@ -4,6 +4,7 @@ import { useApplicationManager } from '../runtime/composables/useApplicationMana
 
 declare module 'nuxt/schema' {
   interface PublicRuntimeConfig {
+    desktop: DesktopConfig
     owd: {
       tailwindPaths: []
     }
@@ -351,6 +352,7 @@ interface DocsModuleConfig {
 }
 
 interface DesktopConfig {
+  coreVersion?: string
   theme?: string
   modules?: string[]
   apps?: string[]
@@ -416,5 +418,45 @@ interface DefaultAppConfig {
 export function defineDesktopApp(config: ApplicationConfig)
 export function defineDesktopConfig(config: DesktopConfig)
 export function registerTailwindPath(nuxt: Nuxt, path: string): void
+
+export function defineDesktopModule(
+  definition: import('@nuxt/kit').NuxtModule<
+    Record<string, unknown>,
+    Record<string, unknown>,
+    false
+  > & { meta: { name: string; configKey: string } },
+): ReturnType<typeof import('@nuxt/kit').defineNuxtModule>
+
+export function defineDesktopTheme(
+  definition: import('@nuxt/kit').NuxtModule<
+    Record<string, unknown>,
+    Record<string, unknown>,
+    false
+  >,
+): ReturnType<typeof import('@nuxt/kit').defineNuxtModule>
+
+export function setDesktopExtensionConfig(
+  nuxt: Nuxt,
+  configKey: string,
+  resolved: Record<string, unknown>,
+): void
+
+export function mergeDesktopExtensionConfig(
+  nuxt: Nuxt,
+  configKey: string,
+  partial: Record<string, unknown>,
+): void
+
+export function useDesktopConfig(): import('vue').ComputedRef<DesktopConfig>
+export function useDesktopExtension<K extends string>(
+  key: K,
+): import('vue').ComputedRef<unknown>
+export function hasDesktopModule(
+  pkg: string,
+): import('vue').ComputedRef<boolean>
+export function hasDesktopApp(pkg: string): import('vue').ComputedRef<boolean>
+export function hasDesktopExtension(
+  key: string,
+): import('vue').ComputedRef<boolean>
 
 export {}

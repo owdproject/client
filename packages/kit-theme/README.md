@@ -25,6 +25,8 @@ This package does **not** ship UI components or filesystem primitives; see **`ki
 | **`useWorkspaceEdgeDrop`** | Drag a window to the left/right screen edge to move it to an adjacent virtual desktop (shared state + drop). |
 | **`useWorkspaceEdgeDropWindowHandlers`** | Wire `useWorkspaceEdgeDrop` to theme `Window.vue` (`@drag:start` / `@drag:end` on `DesktopWindow`). |
 | **`WorkspaceEdgeHintsBase`** | Headless edge overlay; themes supply slots for labels/chrome. |
+| **`useWorkspaceOverviewLiveScale`** | Fit live DOM desktop roots into overview cards (`ResizeObserver` + dynamic `transform: scale`). |
+| **`useWorkspaceOverviewCapture`** | JPEG snapshots per workspace while overview is open (`html2canvas` optional dep). |
 | **`createDesktopDialogs`** | Build a `DesktopDialogProvider` from a Confirm service (themes wire this in a client plugin). |
 | **`useDesktopDialogs`** | Resolve the active dialog provider (theme) or browser fallback. |
 
@@ -99,6 +101,61 @@ import { createDesktopDialogs } from '@owdproject/kit-theme/runtime/dialogs/crea
 ```
 
 Themes still mount PrimeVue `<ConfirmDialog />` groups (`delete`, `about`, …) with their own styling.
+
+### Workspace overview (live vs snapshot)
+
+Use with core’s `useWorkspaceManager` for drop/keyboard behaviour in overview.
+
+**Live DOM (recommended for animated previews):** pass a ref to the shell stage (area under the system bar, above the dock):
+
+```ts
+import { useWorkspaceOverviewLiveScale } from '@owdproject/kit-theme/runtime/composables/useWorkspaceOverviewLiveScale'
+
+const shellStageRef = ref<HTMLElement | null>(null)
+const { innerOverviewStyle } = useWorkspaceOverviewLiveScale(shellStageRef)
+// On each card viewport: :style="innerOverviewStyle(viewportEl, { transformOrigin: 'top center' })"
+```
+
+**Static JPEG thumbnails:** `useWorkspaceOverviewCapture` + optional **`html2canvas`** in the desktop app.
+
+### Workspace overview thumbnails (snapshot path)
+
+```vue
+<script setup lang="ts">
+import { useTemplateRef } from 'vue'
+import { useWorkspaceManager } from '@owdproject/core'
+import { useWorkspaceOverviewCapture } from '@owdproject/kit-theme/runtime/composables/useWorkspaceOverviewCapture'
+import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
+
+const desktopWorkspaceStore = useDesktopWorkspaceStore()
+const { onWorkspaceDragOver, onWorkspaceDrop } = useWorkspaceManager()
+
+const workspaceRoots = useTemplateRef<Record<string, HTMLElement>>('workspaceRoots')
+
+const { thumbnails, thumbnailFor, isCapturing } = useWorkspaceOverviewCapture(
+  (workspaceId) => workspaceRoots.value?.[workspaceId] ?? null,
+)
+</script>
+
+<template>
+  <div v-if="desktopWorkspaceStore.overview" class="owd-workspace-overview">
+    <button
+      v-for="id in desktopWorkspaceStore.list"
+      :key="id"
+      type="button"
+      @click="desktopWorkspaceStore.setWorkspace(id)"
+      @dragover="onWorkspaceDragOver"
+      @drop="onWorkspaceDrop($event, id)"
+    >
+      <img v-if="thumbnailFor(id)" :src="thumbnailFor(id)" alt="" />
+      <span v-else-if="isCapturing">…</span>
+    </button>
+  </div>
+  <!-- One capture root per workspace (hidden or scaled); bind ref into workspaceRoots -->
+</template>
+```
+
+Low-level DOM capture lives in `runtime/utils/captureElementToCanvas.ts` (internal; prefer the composable).
 
 ### Integration notes
 

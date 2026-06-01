@@ -5,9 +5,10 @@ Public surface of `@owdproject/core` for themes, apps, and modules. Internal imp
 ## Bootstrap order
 
 1. Load `desktop.config.ts` (or legacy `owd.config.ts`) from the Nuxt root.
-2. Validate and **split** config: `theme` / `apps` / `modules` drive `installModule`; all other keys merge into `runtimeConfig.public.desktop` and `appConfig.desktop` only — never into `_nuxt.options`.
-3. Install **Pinia**, then **theme → modules → apps**.
-4. Client plugin `desktop-register-desktop-apps` flushes queued `defineDesktopApp` calls after Pinia is active.
+2. Validate config; warn only on keys that look like Nuxt options (`ssr`, `vite`, …).
+3. Merge the **full** export into `runtimeConfig.public.desktop` (plus `coreVersion`). Same object is assigned to `appConfig.desktop`. Never spread onto `_nuxt.options`.
+4. Install **Pinia**, then **theme → modules → apps** via `installDesktopPackage` (passes `desktop[configKey]` when a package declares `meta.configKey`).
+5. Client plugin `desktop-register-desktop-apps` flushes queued `defineDesktopApp` calls after Pinia is active.
 
 ## Public API
 
@@ -16,10 +17,14 @@ Public surface of `@owdproject/core` for themes, apps, and modules. Internal imp
 | Export | Use |
 |--------|-----|
 | `defineDesktopConfig({ theme, apps, modules, ... })` | Root `desktop.config.ts` |
-| `runtimeConfig.public.desktop` | Shell/runtime flags (`workspaces`, `systemBar`, `explorer`, …) |
-| `useDesktopManager().setConfig()` | Runtime shell overrides |
+| `defineDesktopModule` / `defineDesktopTheme` | Authoring extension modules and themes |
+| `runtimeConfig.public.desktop` | Full merged config (manifest + shell + extension namespaces) |
+| `useDesktopConfig()` | Reactive access to `public.desktop` |
+| `useDesktopExtension(key)` | One extension namespace (`fs`, `terminal`, …) |
+| `hasDesktopModule` / `hasDesktopApp` / `hasDesktopExtension` | Manifest and extension checks |
+| `useDesktopManager().setConfig()` | Runtime shell overrides on `appConfig.desktop` |
 
-Allowed `desktop.config.ts` shell keys include: `name`, `defaultApps`, `features`, `systemBar`, `dockBar`, `workspaces`, `explorer`, `docs`. Unknown keys are merged with a dev warning. Keys that look like Nuxt options (`ssr`, `vite`, …) are rejected from `_nuxt.options` with a warning — put them in `nuxt.config.ts`.
+Shell keys in core types: `name`, `defaultApps`, `features`, `systemBar`, `dockBar`, `workspaces`, `explorer`, `docs`. Extension keys (`fs`, `terminal`, …) are typed via **module augmentation** in each package (`types/desktop.d.ts`), not an allowlist in core.
 
 ### Applications
 
@@ -52,6 +57,8 @@ Themes expose **`Desktop.vue`** as the theme entry point (`app.vue` → `<Deskto
 | `useDesktopWindowStore` | Global z-index increment |
 | `useWorkspaceManager` | Overview keyboard + HTML5 drop between workspaces |
 
+Overview **live fit** (`useWorkspaceOverviewLiveScale`) and optional **snapshot capture** (`useWorkspaceOverviewCapture` / html2canvas) are **not** in core — use them from `@owdproject/kit-theme` in the theme. Edge drop while **not** in overview is also kit-theme (`useWorkspaceEdgeDrop`).
+
 Explorer UI state and components live in **`@owdproject/kit-fs`** (`useExplorerStore`, `KitFs*` explorer components), not in core.
 
 ### Window lifecycle (internal contract)
@@ -70,15 +77,17 @@ Contract tests: `packages/core/test/windowController.contract.test.ts`, `useWork
 2. Wrap kernel components; do not reimplement window manager logic in the theme.
 3. Use `provide/inject` for `windowController` only inside theme `Window*.vue` wrappers.
 4. Install `@owdproject/kit-fs` (and `@owdproject/module-fs` when needed) for filesystem explorer — not via core.
+5. Prefer `defineDesktopTheme` so shell defaults merge with `defu(public.desktop, themeDefaults)`.
 
 ## Extension packages
 
 | Package | Layer |
 |---------|--------|
-| `@owdproject/kit-theme` | Dialogs, workspace edge drop, shared shell composables |
+| `@owdproject/kit-theme` | Dialogs, workspace edge drop, overview thumbnail capture (`useWorkspaceOverviewCapture`), shared shell composables |
 | `@owdproject/kit-fs` | Explorer UI + `useExplorerStore` |
-| `@owdproject/module-fs` | ZenFS virtual filesystem |
+| `@owdproject/module-fs` | ZenFS virtual filesystem (`defineDesktopModule`, `configKey: 'fs'`) |
 | `@owdproject/module-persistence` | Pinia persistence (optional) |
+| `@owdproject/app-terminal` | Terminal app (`configKey: 'terminal'`) |
 
 ## Versioning
 

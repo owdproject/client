@@ -1,3 +1,25 @@
+## 3.3.2 (2026-06-01)
+
+### 🚀 Features
+
+- Add `defineDesktopModule`, `defineDesktopTheme`, `setDesktopExtensionConfig`, `installDesktopPackage` (core bootstrap), and `mergeDesktopExtensionConfig` for extension/theme authoring.
+- Add runtime composables: `useDesktopConfig`, `useDesktopExtension`, `hasDesktopModule`, `hasDesktopApp`, `hasDesktopExtension`.
+- Extension packages augment `DesktopConfig` via `types/desktop.d.ts` (`terminal`, `fs`, …) instead of hard-coding keys in core.
+
+### 🩹 Fixes
+
+- Merge the full `desktop.config.ts` export into `runtimeConfig.public.desktop` (including `theme`, `apps`, `modules`, and extension namespaces).
+- Remove misleading “unknown desktop key” warnings for valid extension keys (`fs`, `terminal`, custom app namespaces); only warn keys that look like Nuxt options (`ssr`, `vite`, …).
+- `app-terminal` no longer overwrites `desktop.config` `terminal` with module defaults only; UI reads `public.desktop.terminal`.
+
+### 📚 Documentation
+
+- Update `desktop-config` setup doc and `DESKTOP_KERNEL.md` for 3.3.2 merge and API (supersedes 3.3.0 `splitDesktopUserConfig` / allowlist description).
+
+### 🔧 Internal
+
+- Remove `splitDesktopUserConfig` (was not a public export).
+
 ## 3.3.0 (2026-05-31)
 
 ### ⚠️ Breaking Changes

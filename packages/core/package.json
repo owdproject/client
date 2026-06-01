@@ -1,6 +1,6 @@
 {
   "name": "@owdproject/core",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "Nuxt Desktop module for browser desktop experiences (windows, shell, apps)",
   "keywords": [
     "nuxt",
@@ -99,9 +99,6 @@
     "getopts": "^2.3.0",
     "defu": "^6.1.4",
     "neo-blessed": "^0.2.0"
-  },
-  "optionalDependencies": {
-    "html2canvas": "^1.4.1"
   },
   "devDependencies": {
     "@nuxt/devtools": "^3.2.4",

@@ -1,6 +1,6 @@
 /**
  * Renders a DOM subtree to a canvas via html2canvas (optional dependency).
- * Used for workspace thumbnails / previews; returns null if capture fails or html2canvas is missing.
+ * Used for workspace overview thumbnails; returns null if capture fails or html2canvas is missing.
  */
 export async function captureElementToCanvas(
   element: HTMLElement | null | undefined,

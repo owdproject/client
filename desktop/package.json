@@ -16,5 +16,8 @@
     "@owdproject/app-about": "0.1.3",
     "@owdproject/core": "workspace:*",
     "@owdproject/theme-nova": "workspace:*"
+  },
+  "optionalDependencies": {
+    "html2canvas": "^1.4.1"
   }
 }
