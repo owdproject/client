@@ -10,6 +10,7 @@ import { defu } from 'defu'
 import type { Nuxt } from '@nuxt/schema'
 import { assertValidDesktopUserConfig } from './runtime/utils/validateDesktopUserConfig'
 import {
+  DESKTOP_CONFIG_FILENAME,
   resolveDesktopConfigPath,
   warnLegacyDesktopConfig,
 } from './runtime/utils/resolveDesktopConfigPath'
@@ -92,6 +93,17 @@ export default defineNuxtModule({
     }
 
     warnLegacyDesktopConfig(resolvedConfig)
+
+    if (!resolvedConfig.legacy) {
+      _nuxt.options.watch ??= []
+      _nuxt.options.watch.push(resolvedConfig.path)
+
+      _nuxt.hook('builder:watch', (_event, path) => {
+        if (path.endsWith(DESKTOP_CONFIG_FILENAME)) {
+          _nuxt.callHook('restart', { hard: true })
+        }
+      })
+    }
 
     try {
       clientConfig = (await import(resolvedConfig.path)).default
