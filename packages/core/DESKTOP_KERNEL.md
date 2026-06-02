@@ -8,7 +8,8 @@ Public surface of `@owdproject/core` for themes, apps, and modules. Internal imp
 2. Validate config; warn only on keys that look like Nuxt options (`ssr`, `vite`, …).
 3. Merge the **full** export into `runtimeConfig.public.desktop` (plus `coreVersion`). Same object is assigned to `appConfig.desktop`. Never spread onto `_nuxt.options`.
 4. Install **Pinia**, then **theme → modules → apps** via `installDesktopPackage` (passes `desktop[configKey]` when a package declares `meta.configKey`).
-5. Client plugin `desktop-register-desktop-apps` flushes queued `defineDesktopApp` calls after Pinia is active.
+5. Client plugin **`desktop-shell-init`** binds Pinia, sets up workspaces, loads default apps, and merges shell keys onto `appConfig.desktop` (before `<Desktop />` renders).
+6. Client plugin **`desktop-register-desktop-apps`** flushes queued `defineDesktopApp` calls (`app:created`; legacy apps may still queue until flush).
 
 ## Public API
 
@@ -30,7 +31,7 @@ Shell keys in core types: `name`, `defaultApps`, `features`, `systemBar`, `dockB
 
 | Export | Use |
 |--------|-----|
-| `defineDesktopApp(config)` | App plugin (`app:created`, client-only) |
+| `defineDesktopApp(config)` | App plugin (`app:created` recommended; legacy sync `setup` still queues until flush) |
 | `useApplicationManager()` | Launch entries, list running apps, resolve open windows |
 
 Apps register via Nuxt modules listed in `desktop.config.ts` → `apps`.
@@ -46,7 +47,7 @@ Registered from `runtime/components` with `pathPrefix: false`:
 | `DesktopWindow` / `DesktopWindowNav` / `DesktopWindowContent` | Window chrome primitives |
 | `DesktopBackground` / `DesktopTime` | Optional shell utilities |
 
-Themes expose **`Desktop.vue`** as the theme entry point (`app.vue` → `<Desktop />`). Themes wrap `DesktopCore` and kernel window components with theme-specific chrome.
+Themes expose **`Desktop.vue`** or **`Desktop.client.vue`** as the theme entry point (`app.vue` → `<Desktop />`). Prefer **`Desktop.client.vue`** when the theme uses Pinia in shell chrome so the whole tree stays client-only. Themes wrap `DesktopCore` and kernel window components with theme-specific chrome.
 
 ### Stores & composables (auto-imported)
 
@@ -88,6 +89,10 @@ Contract tests: `packages/core/test/windowController.contract.test.ts`, `useWork
 | `@owdproject/module-fs` | ZenFS virtual filesystem (`defineDesktopModule`, `configKey: 'fs'`) |
 | `@owdproject/module-persistence` | Pinia persistence (optional) |
 | `@owdproject/app-terminal` | Terminal app (`configKey: 'terminal'`) |
+
+## Migrating packages (3.3.2)
+
+Themes, apps, and extension modules should adopt `defineDesktopTheme` / `defineDesktopModule`, module augmentation for `configKey`, and runtime composables. See **[MIGRATION_3.3.2.md](./MIGRATION_3.3.2.md)** and the full guide in `docs/content/6.setup/5.migrate-packages-3.3.2.md`.
 
 ## Versioning
 

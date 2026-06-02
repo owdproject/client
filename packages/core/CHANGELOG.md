@@ -15,6 +15,7 @@
 ### 📚 Documentation
 
 - Update `desktop-config` setup doc and `DESKTOP_KERNEL.md` for 3.3.2 merge and API (supersedes 3.3.0 `splitDesktopUserConfig` / allowlist description).
+- Add migration guide for themes, apps, and modules (`docs/content/6.setup/5.migrate-packages-3.3.2.md`, `MIGRATION_3.3.2.md`).
 
 ### 🔧 Internal
 

@@ -17,6 +17,8 @@ export function useDesktopManager() {
    * Merges and sets the desktop config at runtime (shell geometry, feature flags, etc.).
    */
   function setConfig(newConfig: DesktopConfig) {
+    if (!appConfig) return
+
     appConfig.desktop = defu(
       newConfig,
       (appConfig.desktop ?? {}) as DesktopConfig,

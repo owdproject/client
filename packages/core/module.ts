@@ -209,6 +209,9 @@ export default defineNuxtModule({
     {
       addPlugin(resolve('./runtime/plugins/resize.client.ts'))
       addPlugin(
+        resolve('./runtime/plugins/01.desktop-shell-init.client.ts'),
+      )
+      addPlugin(
         resolve('./runtime/plugins/02.desktop-register-desktop-apps.client.ts'),
       )
 
