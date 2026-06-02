@@ -17,6 +17,10 @@ export default defineNuxtPlugin({
       syncDesktopShellAppConfig()
     })
 
-    nuxtApp.provide('desktopShellReady', true)
+    return {
+      provide: {
+        desktopShellReady: true,
+      },
+    }
   },
 })
