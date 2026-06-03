@@ -52,3 +52,33 @@ const visible = computed(
     </div>
   </div>
 </template>
+
+<style scoped>
+.owd-workspace-edge-hints {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999998;
+}
+
+.owd-workspace-edge-hints__zone {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 72px;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.owd-workspace-edge-hints__zone--left {
+  left: 0;
+}
+
+.owd-workspace-edge-hints__zone--right {
+  right: 0;
+}
+
+.owd-workspace-edge-hints__zone--active {
+  opacity: 1;
+}
+</style>

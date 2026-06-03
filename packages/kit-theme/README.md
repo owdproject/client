@@ -23,8 +23,14 @@ This package does **not** ship UI components or filesystem primitives; see **`ki
 | **`useDesktopShellOptions`** | Read `runtimeConfig` / `appConfig` for `desktop.systemBar` (enabled, position, start button). |
 | **`useBlockNonInputContextMenu`** | Disable browser context menu on non-input elements (desktop shell–style). |
 | **`useWorkspaceEdgeDrop`** | Drag a window to the left/right screen edge to move it to an adjacent virtual desktop (shared state + drop). |
-| **`useWorkspaceEdgeDropWindowHandlers`** | Wire `useWorkspaceEdgeDrop` to theme `Window.vue` (`@drag:start` / `@drag:end` on `DesktopWindow`). |
+| **`useWorkspaceEdgeDropWindowHandlers`** | Edge-only drag wiring (legacy); prefer **`useDesktopWindowDragHandlersInjected`**. |
+| **`useDesktopWorkArea`** | Measure shell stage rect (work area under system bar / above dock). |
+| **`useWindowSnapDrop`** | Aero-style snap zones while dragging maximizable windows. |
+| **`useDesktopWindowDragHandlers` / `Injected`** | Combines workspace edge drop + snap on `@drag:start` / `@drag:end`. |
+| **`windowLayout` utils** | `computeSnapRect`, `applySnapToWindow`, `toggleWindowMaximizeLayout`. |
 | **`WorkspaceEdgeHintsBase`** | Headless edge overlay; themes supply slots for labels/chrome. |
+| **`WindowSnapHintsBase`** | Headless snap zone preview during window drag. |
+| **`provideDesktopShellStage` / `provideDesktopWorkArea`** | Inject shell stage ref and work area for window chrome. |
 | **`useWorkspaceOverviewLiveScale`** | Fit live DOM desktop roots into overview cards (`ResizeObserver` + dynamic `transform: scale`). |
 | **`useWorkspaceOverviewCapture`** | JPEG snapshots per workspace while overview is open (`html2canvas` optional dep). |
 | **`createDesktopDialogs`** | Build a `DesktopDialogProvider` from a Confirm service (themes wire this in a client plugin). |
@@ -156,6 +162,32 @@ const { thumbnails, thumbnailFor, isCapturing } = useWorkspaceOverviewCapture(
 ```
 
 Low-level DOM capture lives in `runtime/utils/captureElementToCanvas.ts` (internal; prefer the composable).
+
+### Window snap (work area + hints)
+
+1. In `Desktop.vue` / `Desktop.client.vue`, put a `ref` on the shell stage (area under the system bar where windows live).
+2. Call `useDesktopWorkArea(shellStageRef)`, then `provideDesktopShellStage` + `provideDesktopWorkArea`.
+3. Mount `<WindowSnapHintsBase>` (or a themed wrapper) next to workspace edge hints.
+4. In theme `Window.vue`, wire drag events:
+
+```ts
+import { useDesktopWindowDragHandlersInjected } from '@owdproject/kit-theme/runtime/composables/useDesktopWindowDragHandlers'
+
+const { onDragStart, onDragEnd } = useDesktopWindowDragHandlersInjected(
+  () => props.window,
+)
+```
+
+5. Maximize button / titlebar double-click should apply geometry, not only the flag:
+
+```ts
+import { useToggleWindowMaximize } from '@owdproject/kit-theme/runtime/composables/useToggleWindowMaximize'
+
+const toggleWindowMaximize = useToggleWindowMaximize()
+toggleWindowMaximize(windowController)
+```
+
+Snap zones: top → full work area; bottom → lower half; sides → halves (deferred when workspace edge drop is active); corners → quarters.
 
 ### Integration notes
 
