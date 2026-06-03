@@ -14,11 +14,7 @@
   },
   "dependencies": {
     "@owdproject/app-about": "0.1.3",
-    "@owdproject/app-todo": "workspace:*",
     "@owdproject/core": "workspace:*",
-    "@owdproject/theme-nova": "workspace:*",
-    "@owdproject/theme-paper": "workspace:*",
-    "@owdproject/theme-win95": "workspace:*",
-    "@owdproject/theme-win11": "workspace:*"
+    "@owdproject/theme-nova": "git+https://github.com/owdproject/theme-nova.git"
   }
 }
