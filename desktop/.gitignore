@@ -34,3 +34,8 @@ certs
 
 # Test zip file with module-fs
 public/test.zip
+
+# Local theme/apps overrides: git keeps Nova defaults in the index.
+# For win11 (or other) local desktop deps, run once:
+#   git update-index --skip-worktree package.json desktop.config.ts
+# Undo: git update-index --no-skip-worktree package.json desktop.config.ts

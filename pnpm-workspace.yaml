@@ -9,6 +9,7 @@ allowBuilds:
   '@owdproject/nx': true
 onlyBuiltDependencies:
   - '@owdproject/nx'
+  - '@owdproject/theme-nova'
   - '@parcel/watcher'
   - '@swc/core'
   - esbuild
