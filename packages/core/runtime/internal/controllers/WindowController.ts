@@ -331,6 +331,10 @@ export class WindowController implements IWindowController {
   }
 
   get isMaximized() {
+    if (this.state.layout === 'maximize') {
+      return true
+    }
+
     if (this.config.overridable?.maximized) {
       return !!this.state.maximized
     }
@@ -338,13 +342,73 @@ export class WindowController implements IWindowController {
     return !!this.config.maximized
   }
 
+  private parseSizeValue(value: WindowSizeValue | undefined, fallback: number): number {
+    if (typeof value === 'number') {
+      return value
+    }
+    if (typeof value === 'string') {
+      const parsed = Number.parseFloat(value)
+      if (!Number.isNaN(parsed)) {
+        return parsed
+      }
+    }
+    return fallback
+  }
+
+  public saveBoundsBeforeLayout() {
+    if (this.state.layout && this.state.layout !== 'normal') {
+      return
+    }
+
+    const pos = this.position
+    const size = this.size
+
+    this.state.boundsBeforeLayout = {
+      x: pos?.x ?? 0,
+      y: pos?.y ?? 0,
+      width: this.parseSizeValue(size.width, 400),
+      height: this.parseSizeValue(size.height, 300),
+    }
+  }
+
+  public setLayout(layout: WindowLayout) {
+    if (layout === 'normal') {
+      return this.clearLayout()
+    }
+
+    if (!this.isMaximizable) {
+      return false
+    }
+
+    this.saveBoundsBeforeLayout()
+    this.state.layout = layout
+    this.state.maximized = layout === 'maximize'
+    return true
+  }
+
+  public clearLayout() {
+    const bounds = this.state.boundsBeforeLayout
+    if (bounds) {
+      this.setPosition({ x: bounds.x, y: bounds.y })
+      this.setSize({ width: bounds.width, height: bounds.height })
+      delete this.state.boundsBeforeLayout
+    }
+
+    this.state.layout = 'normal'
+    this.state.maximized = false
+    return true
+  }
+
   public toggleMaximize() {
     if (!this.isMaximizable) {
       return false
     }
 
-    this.state.maximized = !this.state.maximized
-    return true
+    if (this.isMaximized) {
+      return this.clearLayout()
+    }
+
+    return this.setLayout('maximize')
   }
 
   public maximize() {
@@ -352,8 +416,7 @@ export class WindowController implements IWindowController {
       return false
     }
 
-    this.state.maximized = true
-    return true
+    return this.setLayout('maximize')
   }
 
   public unmaximize() {
@@ -361,8 +424,7 @@ export class WindowController implements IWindowController {
       return false
     }
 
-    this.state.maximized = false
-    return true
+    return this.clearLayout()
   }
 
   // destroy
@@ -447,6 +509,11 @@ export class WindowController implements IWindowController {
       toggleMaximize: this.toggleMaximize.bind(this),
       maximize: this.maximize.bind(this),
       unmaximize: this.unmaximize.bind(this),
+
+      // layout
+      setLayout: this.setLayout.bind(this),
+      clearLayout: this.clearLayout.bind(this),
+      saveBoundsBeforeLayout: this.saveBoundsBeforeLayout.bind(this),
 
       // destroy
       destroy: this.destroy.bind(this),

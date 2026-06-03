@@ -174,6 +174,11 @@ export interface IWindowController {
     maximize(): boolean
     unmaximize(): boolean
 
+    // layout (snap / tiled zones)
+    setLayout(layout: WindowLayout): boolean
+    clearLayout(): boolean
+    saveBoundsBeforeLayout(): void
+
     // destroy
     destroy(): boolean
 
@@ -290,6 +295,37 @@ interface WindowState {
 
   // draggable
   resizable?: boolean
+
+  /** Snap zone layout; `normal` is unset or explicit restore. */
+  layout?: WindowLayout
+
+  /** Bounds saved before first snap so restore can revert geometry. */
+  boundsBeforeLayout?: WindowBounds
+}
+
+export type WindowLayout =
+  | 'normal'
+  | 'maximize'
+  | 'bottom-half'
+  | 'left-half'
+  | 'right-half'
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right'
+
+export interface WindowBounds {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export interface DesktopWorkAreaRect {
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 interface WindowSize {

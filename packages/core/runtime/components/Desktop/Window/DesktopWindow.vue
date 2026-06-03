@@ -144,9 +144,13 @@ function onOverviewNativeDragStart(e: DragEvent) {
   }
 }
 
+const windowPositionMode = computed(
+  () => appConfig.desktop?.windows?.position ?? 'fixed',
+)
+
 /** `fit-parent` clamps drag/resize to the parent box — wrong for viewport-fixed shells (Win11, GNOME). */
 const shouldFitParent = computed(
-  () => appConfig.desktop.windows.position !== 'fixed',
+  () => windowPositionMode.value !== 'fixed',
 )
 </script>
 
@@ -183,11 +187,11 @@ const shouldFitParent = computed(
 <style scoped lang="scss">
 /* vue-resizable sets `.resizable-component { position: relative }` — override so desktop geometry stays consistent */
 .owd-window.resizable-component {
-  position: v-bind('appConfig.desktop.windows.position') !important;
+  position: v-bind('windowPositionMode') !important;
 }
 
 .owd-window {
-  position: v-bind('appConfig.desktop.windows.position');
+  position: v-bind('windowPositionMode');
 
   &--dragging,
   &--resizing {
