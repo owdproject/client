@@ -4,7 +4,9 @@ import NavIcon from "./NavIcon.vue";
 import Minimize from "./button/Minimize.vue";
 import Maximize from "./button/Maximize.vue";
 import Close from "./button/Close.vue";
+import { useToggleWindowMaximize } from "@owdproject/kit-theme/runtime/composables/useToggleWindowMaximize";
 const windowController = inject("windowController");
+const toggleWindowMaximize = useToggleWindowMaximize();
 const slots = useSlots();
 const hasCustomTitle = computed(() => typeof slots.title === "function");
 function onWindowMinimize() {
@@ -12,8 +14,7 @@ function onWindowMinimize() {
   windowController.actions.minimize();
 }
 function onWindowMaximize() {
-  if (!windowController?.instanced) return;
-  windowController.actions.toggleMaximize();
+  toggleWindowMaximize(windowController);
 }
 function onWindowNavDestroy() {
   if (!windowController?.instanced) return;

@@ -8,6 +8,14 @@ const props = defineProps({
   chromePadding: { type: Boolean, required: false, default: true },
   frameClass: { type: String, required: false }
 });
+defineEmits([
+  "drag:start",
+  "drag:move",
+  "drag:end",
+  "resize:start",
+  "resize:move",
+  "resize:end"
+]);
 defineOptions({ inheritAttrs: false });
 const attrs = useAttrs();
 const windowRootClass = computed(
@@ -31,6 +39,12 @@ const cardRootClass = computed(
     :window="props.window"
     :content="props.content"
     v-show="props.window?.state?.active ?? true"
+    @drag:start="$emit('drag:start', $event)"
+    @drag:move="$emit('drag:move', $event)"
+    @drag:end="$emit('drag:end', $event)"
+    @resize:start="$emit('resize:start', $event)"
+    @resize:move="$emit('resize:move', $event)"
+    @resize:end="$emit('resize:end', $event)"
   >
     <Card :pt:root="cardRootClass">
       <template #header>
