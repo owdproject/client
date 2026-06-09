@@ -15,7 +15,8 @@ describe('generateTemplate', () => {
     expect(TEMPLATE_NPM_FALLBACK_VERSIONS['@owdproject/theme-nova']).toBe('0.0.1')
   })
 
-  it('treats missing theme-nova on npm as optional', () => {
-    expect(fetchLatestVersion('@owdproject/theme-nova', { optional: true })).toBeNull()
+  it('resolves theme-nova from npm when published, or null when optional lookup fails', () => {
+    const version = fetchLatestVersion('@owdproject/theme-nova', { optional: true })
+    expect(version === null || /^\^[\d.]+/.test(version)).toBe(true)
   })
 })

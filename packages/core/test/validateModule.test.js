@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -27,6 +28,20 @@ describe('inferModuleKind', () => {
 })
 
 describe('validateOwdModule fixtures', () => {
+  beforeAll(() => {
+    const validDir = join(fixtures, 'valid')
+    const distModule = join(validDir, 'dist/module.mjs')
+    if (!existsSync(distModule)) {
+      const coreRoot = join(__dirname, '..')
+      const bin = join(coreRoot, '../../node_modules/.bin')
+      execSync('nuxt-module-build build --stub', {
+        cwd: validDir,
+        env: { ...process.env, PATH: `${bin}:${process.env.PATH}` },
+        stdio: 'pipe',
+      })
+    }
+  })
+
   it('passes a minimal valid app fixture (warnings allowed)', () => {
     const dir = join(fixtures, 'valid')
     const result = validateOwdModule(dir, { workspaceRoot: null, checkWorkspace: false })

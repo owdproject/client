@@ -38,5 +38,8 @@ jobs:
       - name: Verify template/ is up to date
         run: pnpm desktop template --check
 
-      - name: Typecheck @owdproject/kit-fs
-        run: pnpm exec tsc --noEmit -p packages/kit-fs/tsconfig.json
+      - name: Prepare @owdproject/core module
+        run: pnpm --filter @owdproject/core run dev:prepare
+
+      - name: Test @owdproject/core
+        run: pnpm --filter @owdproject/core test

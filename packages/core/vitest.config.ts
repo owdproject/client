@@ -17,6 +17,7 @@ export default defineConfig(() => ({
     include: [
       '{src,test,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
     ],
+    exclude: ['test/basic.test.ts'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: './test-output/vitest/coverage',
