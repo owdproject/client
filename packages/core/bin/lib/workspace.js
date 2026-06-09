@@ -109,12 +109,21 @@ export function isWorkspaceInstallMode(settings) {
   return normalizeInstallMode(settings?.installMode) === 'workspace'
 }
 
+/** @typedef {'updated' | 'name' | 'stars' | 'installed'} CatalogSortMode */
+
+export function normalizeCatalogSort(value) {
+  const modes = ['updated', 'name', 'stars', 'installed']
+  return modes.includes(value) ? /** @type {CatalogSortMode} */ (value) : 'updated'
+}
+
 export function loadSettings(workspaceRoot) {
   const defaults = {
     devPort: 3000,
     githubUser: null,
     githubOrgs: ['owdproject'],
     installMode: /** @type {InstallMode} */ ('npm'),
+    catalogSort: /** @type {CatalogSortMode} */ ('updated'),
+    catalogNewDays: 14,
   }
 
   try {
@@ -124,6 +133,11 @@ export function loadSettings(workspaceRoot) {
     }
     const merged = { ...defaults, ...detectGithubUser(), ...JSON.parse(readFileSync(path, 'utf8')) }
     merged.installMode = normalizeInstallMode(merged.installMode)
+    merged.catalogSort = normalizeCatalogSort(merged.catalogSort)
+    merged.catalogNewDays =
+      typeof merged.catalogNewDays === 'number' && merged.catalogNewDays > 0
+        ? merged.catalogNewDays
+        : 14
     return merged
   } catch {
     return { ...defaults, ...detectGithubUser(), installMode: 'npm' }

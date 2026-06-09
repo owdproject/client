@@ -54,6 +54,33 @@ export const useDesktopWorkspaceStore = defineStore(
       desktopStore.state.workspace.list.push(nanoid(8))
     }
 
+    /** Last workspace in list excluding the given id (window migration target). */
+    function resolveWorkspaceFallback(workspaceId: string): string | null {
+      const remaining = desktopStore.state.workspace.list.filter(
+        (id) => id !== workspaceId,
+      )
+      return remaining.at(-1) ?? null
+    }
+
+    function removeWorkspace(workspaceId: string): boolean {
+      const list = desktopStore.state.workspace.list
+      if (list.length <= 2) return false
+
+      const index = list.indexOf(workspaceId)
+      if (index === -1) return false
+
+      const fallbackId = resolveWorkspaceFallback(workspaceId)
+      if (!fallbackId) return false
+
+      list.splice(index, 1)
+
+      if (desktopStore.state.workspace.active === workspaceId) {
+        desktopStore.state.workspace.active = fallbackId
+      }
+
+      return true
+    }
+
     const workspaceActiveIndex = computed(() => {
       return desktopStore.state.workspace.list.findIndex(
         (workspace) => workspace === desktopStore.state.workspace.active,
@@ -70,6 +97,8 @@ export const useDesktopWorkspaceStore = defineStore(
       setOverview,
       setWorkspace,
       createWorkspace,
+      resolveWorkspaceFallback,
+      removeWorkspace,
     }
   },
 )

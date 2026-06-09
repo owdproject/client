@@ -193,8 +193,8 @@ export interface IWindowController {
   /** Payload restored with window state (e.g. explorer cwd in `path`). */
   get meta(): { path?: string } & Record<string, unknown>
 
-  /** Chrome menu model (e.g. PrimeVue Menubar). */
-  menu: unknown[]
+  /** Chrome menu model ({@link DesktopMenuItem}[]; Menubar-compatible). */
+  menu: import('../runtime/types/desktopMenu').DesktopMenuItem[]
 
   setMenu(menu: unknown[]): void
 
@@ -463,12 +463,18 @@ export function defineDesktopModule(
   > & { meta: { name: string; configKey: string } },
 ): ReturnType<typeof import('@nuxt/kit').defineNuxtModule>
 
+export type DefineDesktopThemeOptions = {
+  moduleUrl: string
+  tailwind?: boolean | string | string[]
+}
+
 export function defineDesktopTheme(
   definition: import('@nuxt/kit').NuxtModule<
     Record<string, unknown>,
     Record<string, unknown>,
     false
   >,
+  themeOptions?: string | DefineDesktopThemeOptions,
 ): ReturnType<typeof import('@nuxt/kit').defineNuxtModule>
 
 export function setDesktopExtensionConfig(

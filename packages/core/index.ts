@@ -1,7 +1,5 @@
-export {
-  defineDesktopApp,
-  defineDesktopConfig,
-} from './runtime/utils/utilDesktop'
+export { defineDesktopApp } from './runtime/utils/utilDesktop'
+export { defineDesktopConfig } from './runtime/utils/defineDesktopConfig'
 export { registerTailwindPath } from './runtime/utils/utilApp'
 export { defineDesktopModule } from './runtime/utils/defineDesktopModule'
 export { defineDesktopTheme } from './runtime/utils/defineDesktopTheme'

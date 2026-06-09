@@ -6,7 +6,7 @@ Full guide (checklists, before/after, pitfalls): **[docs/content/6.setup/5.migra
 
 ## Agent one-liner
 
-Extension/app `module.ts` → `defineDesktopModule` + `types/desktop.d.ts`; theme `module.ts` → `defineDesktopTheme`; keep `defineDesktopApp` in `plugin.ts`; read config via `public.desktop.<configKey>` or `useDesktopExtension`; import `defineDesktopModule` from `@owdproject/core/runtime/utils/defineDesktopModule`, not the root barrel.
+Extension/app `module.ts` → `defineDesktopModule` + `types/desktop.d.ts`; theme `module.ts` → `defineDesktopTheme(definition, import.meta.url)` (auto Tailwind for `runtime/components/**`; drop manual `registerTailwindPath` for that glob); keep `defineDesktopApp` in `plugin.ts`; read config via `public.desktop.<configKey>` or `useDesktopExtension`; import `defineDesktopModule` from `@owdproject/core/runtime/utils/defineDesktopModule`, not the root barrel.
 
 ## Reference packages (monorepo)
 

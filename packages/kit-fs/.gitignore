@@ -1,6 +1,0 @@
-node_modules
-.nuxt
-dist
-.output
-src/**/*.d.vue.ts
-src/**/*.vue.d.ts

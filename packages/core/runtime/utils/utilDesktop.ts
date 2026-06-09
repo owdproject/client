@@ -52,6 +52,3 @@ export async function flushPendingDesktopApps() {
   }
 }
 
-export function defineDesktopConfig(config: DesktopConfig) {
-  return config
-}

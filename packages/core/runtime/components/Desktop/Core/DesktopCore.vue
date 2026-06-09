@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, useAttrs, computed } from 'vue'
 import { useAppConfig } from 'nuxt/app'
-import { computed } from '@vue/reactivity'
+
+defineOptions({ inheritAttrs: false })
 
 defineProps<{
   windows?: DesktopWindowsConfig
@@ -11,6 +12,7 @@ defineProps<{
 }>()
 
 const appConfig = useAppConfig()
+const attrs = useAttrs()
 
 onMounted(() => window.addEventListener('resize', handleDesktopResize))
 onUnmounted(() => window.removeEventListener('resize', handleDesktopResize))
@@ -28,10 +30,13 @@ const classes = computed(() => {
 
   return list
 })
+
+const rootClass = computed(() => [classes.value, attrs.class])
+const rootStyle = computed(() => attrs.style)
 </script>
 
 <template>
-  <div :class="classes">
+  <div :class="rootClass" :style="rootStyle">
     <slot />
   </div>
 </template>

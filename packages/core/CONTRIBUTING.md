@@ -38,9 +38,11 @@ Full checklist, file templates, CI/Pages workflow: [`docs/agents/OWD_APP_MODULE_
 In `pnpm desktop`:
 
 1. Press **`m`** for the menu, or **`s`** start / **`x`** stop / **`R`** reboot the dev server.
-2. Press **`d`** → badge **`[DEV]`** (clone into `apps/`, `packages/`, `themes/`).
+2. Press **`d`** → install mode info (USER/DEV); **Enter** in the panel toggles mode.
 3. Press **`g`** → set GitHub username for forks.
-4. Select packages, **`w`** to save.
+4. **Modules** tab (default): discover community packages — **`[new]`** badge, **`o`** to sort (updated / name / stars / installed), **`r`** refresh from GitHub.
+5. **`t`** changes theme (one line in the catalog header); **`1`** / **`2`** switch Apps / Modules.
+6. Select packages, **`w`** to save — Nuxt restarts on its own when `desktop.config.ts` changes (same ℹ as `nuxt.config.ts` in the dev log). Use **`R`** only if the server is stuck.
 
 Or CLI: `desktop add app-todo --dev --from your-user`
 

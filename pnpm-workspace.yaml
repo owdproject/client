@@ -5,8 +5,18 @@ packages:
   - themes/*
   - plugins/*
 
+catalog:
+  typescript: ~6.0.3
+
 allowBuilds:
   '@owdproject/nx': true
+  '@owdproject/theme-nova': true
+  '@parcel/watcher': true
+  '@swc/core': true
+  better-sqlite3: true
+  esbuild: true
+  nx: true
+  unrs-resolver: true
 onlyBuiltDependencies:
   - '@owdproject/nx'
   - '@owdproject/theme-nova'

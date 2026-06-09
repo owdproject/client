@@ -145,12 +145,8 @@ export const configs = [
     playgroundExtraDevDeps: {
       '@owdproject/module-fs': '^0.0.4',
       '@owdproject/module-persistence': '^0.0.2',
-      '@owdproject/kit-fs': 'workspace:*',
-      '@owdproject/kit-explorer': 'workspace:*',
     },
     dependencies: {
-      '@owdproject/kit-explorer': 'workspace:*',
-      '@owdproject/kit-fs': 'workspace:*',
     },
     launch: {
       file: 'launch-explorer.client.ts',

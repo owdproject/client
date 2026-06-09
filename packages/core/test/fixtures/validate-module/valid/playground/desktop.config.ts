@@ -1,4 +1,4 @@
-import { defineDesktopConfig } from '@owdproject/core'
+import { defineDesktopConfig } from '@owdproject/core/runtime/utils/defineDesktopConfig'
 
 export default defineDesktopConfig({
   theme: '@owdproject/theme-nova',

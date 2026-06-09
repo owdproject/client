@@ -61,10 +61,13 @@ CONTROL PANEL (TUI)
   x                       Stop the Nuxt dev server
   R                       Reboot the Nuxt dev server (stop + start)
   w                       Save catalog/theme changes to desktop.config.ts
+  1 / 2                   Apps / Modules catalog tabs (Modules default)
+  o                       Cycle catalog sort (updated, name, stars, installed)
+  t                       Pick theme (inline overlay)
   i                       Open in-app docs (when module-docs is installed)
-  d                       Toggle User (npm) / Dev (git clone) install mode
+  d                       Install mode panel (USER/DEV); Enter toggles inside panel
   g                       Settings (GitHub username for fork clones)
-  r                       Refresh package list from GitHub
+  r                       Refresh package list from GitHub (detects new modules)
   b                       Run pnpm run generate
   q / Esc                 Quit
   ${name} init [dir]      Create a new OWD project (then opens the control panel)

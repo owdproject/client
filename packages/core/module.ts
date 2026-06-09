@@ -7,40 +7,14 @@ import {
   addPlugin
 } from '@nuxt/kit'
 import { defu } from 'defu'
-import type { Nuxt } from '@nuxt/schema'
 import { assertValidDesktopUserConfig } from './runtime/utils/validateDesktopUserConfig'
 import {
-  DESKTOP_CONFIG_FILENAME,
   resolveDesktopConfigPath,
   warnLegacyDesktopConfig,
 } from './runtime/utils/resolveDesktopConfigPath'
 import { warnDesktopConfigKeys } from './runtime/utils/warnDesktopConfigKeys'
 import { installDesktopPackage } from './runtime/utils/installDesktopPackage'
 import pkg from './package.json'
-
-function primevueModuleDependency(nuxt: Nuxt) {
-  const existing = nuxt.options.primevue ?? {}
-  const components = { ...(existing.components ?? {}) }
-  const include = components.include
-  if (
-    include &&
-    include !== '*' &&
-    Array.isArray(include) &&
-    !include.includes('ConfirmDialog')
-  ) {
-    components.include = [...include, 'ConfirmDialog']
-  }
-
-  return {
-    defaults: defu(
-      {
-        options: { theme: {} },
-        components,
-      },
-      existing,
-    ),
-  }
-}
 
 export default defineNuxtModule({
   meta: {
@@ -52,9 +26,8 @@ export default defineNuxtModule({
     apps: [],
     modules: [],
   },
-  moduleDependencies: (nuxt) => ({
+  moduleDependencies: {
     '@pinia/nuxt': {},
-    '@primevue/nuxt-module': primevueModuleDependency(nuxt),
     '@nuxt/fonts': {},
     '@nuxt/icon': {
       defaults: {
@@ -66,7 +39,7 @@ export default defineNuxtModule({
     },
     '@vueuse/nuxt': {},
     '@nuxtjs/i18n': {},
-  }),
+  },
   async setup(_options, _nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
@@ -94,16 +67,9 @@ export default defineNuxtModule({
 
     warnLegacyDesktopConfig(resolvedConfig)
 
-    if (!resolvedConfig.legacy) {
-      _nuxt.options.watch ??= []
-      _nuxt.options.watch.push(resolvedConfig.path)
-
-      _nuxt.hook('builder:watch', (_event, path) => {
-        if (path.endsWith(DESKTOP_CONFIG_FILENAME)) {
-          _nuxt.callHook('restart', { hard: true })
-        }
-      })
-    }
+    // Nuxt dev restart + ℹ log (same as nuxt.config.ts); avoid builder:watch + restart (silent / double).
+    _nuxt.options.watch ??= []
+    _nuxt.options.watch.push(resolvedConfig.path)
 
     try {
       clientConfig = (await import(resolvedConfig.path)).default
@@ -164,7 +130,7 @@ export default defineNuxtModule({
 
       const tailwindPaths =
         _nuxt.options.runtimeConfig.app.owd?.tailwindPaths || []
-      tailwindPaths.push('./runtime/components/**/*.{vue,mjs,ts}') // Aggiungi sempre questo al core
+      tailwindPaths.push('./runtime/components/**/*.{vue,mjs,ts}')
 
       _nuxt.options.tailwindcss = _nuxt.options.tailwindcss || {}
       _nuxt.options.tailwindcss.config = _nuxt.options.tailwindcss.config || {}

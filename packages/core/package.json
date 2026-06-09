@@ -1,6 +1,6 @@
 {
   "name": "@owdproject/core",
-  "version": "3.3.2",
+  "version": "3.4.0",
   "description": "Nuxt Desktop module for browser desktop experiences (windows, shell, apps)",
   "keywords": [
     "nuxt",
@@ -81,10 +81,6 @@
     "@nuxtjs/i18n": "^10.3.0",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.3",
-    "@primeuix/themes": "^2.0.3",
-    "@primevue/forms": "^4.5.5",
-    "@primevue/nuxt-module": "^4.5.5",
-    "primevue": "^4.5.5",
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
@@ -100,11 +96,14 @@
     "defu": "^6.1.4",
     "neo-blessed": "^0.2.0"
   },
+  "optionalDependencies": {
+    "html2canvas": "^1.4.1"
+  },
   "devDependencies": {
     "@nuxt/devtools": "^3.2.4",
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.4.4",
-    "typescript": "~5.8.3",
+    "typescript": "catalog:",
     "vue-tsc": "^2.2.10"
   }
 }

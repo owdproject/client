@@ -21,21 +21,42 @@ import { hasLocalWorkspaceSource } from './install.js'
 
 const CACHE_TTL_MS = 60 * 60 * 1000
 
+/** @typedef {'updated' | 'name' | 'stars' | 'installed'} CatalogSortMode */
+
+export const CATALOG_SORT_MODES = /** @type {const} */ ([
+  'updated',
+  'name',
+  'stars',
+  'installed',
+])
+
 function cachePath(workspaceRoot) {
   return join(desktopMetaDir(workspaceRoot), 'catalog-cache.json')
 }
 
-function readCache(workspaceRoot) {
+function readCacheFile(workspaceRoot) {
   const path = cachePath(workspaceRoot)
   if (!existsSync(path)) return null
   try {
-    const data = JSON.parse(readFileSync(path, 'utf8'))
-    if (Date.now() - data.fetchedAt > CACHE_TTL_MS) return null
-    const ageMin = Math.round((Date.now() - data.fetchedAt) / 60_000)
-    return { entries: data.entries, cacheAge: `${ageMin}m` }
+    return JSON.parse(readFileSync(path, 'utf8'))
   } catch {
     return null
   }
+}
+
+function readCache(workspaceRoot) {
+  const data = readCacheFile(workspaceRoot)
+  if (!data?.entries) return null
+  if (Date.now() - data.fetchedAt > CACHE_TTL_MS) return null
+  const ageMin = Math.round((Date.now() - data.fetchedAt) / 60_000)
+  return { entries: data.entries, cacheAge: `${ageMin}m` }
+}
+
+/** Names from last cache file (even expired) for isNew detection. */
+function readPreviousCatalogNames(workspaceRoot) {
+  const data = readCacheFile(workspaceRoot)
+  if (!data?.entries?.length) return new Set()
+  return new Set(data.entries.map((e) => e.shortName))
 }
 
 function formatCacheAge(fetchedAt) {
@@ -53,6 +74,56 @@ function writeCache(workspaceRoot, entries) {
   )
 }
 
+function mapGithubRepo(repo, org) {
+  return {
+    shortName: repo.name,
+    description: repo.description ?? '',
+    stars: repo.stargazers_count ?? 0,
+    htmlUrl: repo.html_url,
+    pushedAt: repo.pushed_at ?? null,
+    updatedAt: repo.updated_at ?? repo.pushed_at ?? null,
+    org: repo.owner?.login ?? org,
+    kind: inferKind(repo.name),
+  }
+}
+
+function localPackageUpdatedAt(packageDir) {
+  try {
+    return execSync(`git -C ${packageDir} log -1 --format=%cI`, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+  } catch {
+    const pkgPath = join(packageDir, 'package.json')
+    if (existsSync(pkgPath)) {
+      return new Date(statSync(pkgPath).mtime).toISOString()
+    }
+  }
+  return null
+}
+
+/**
+ * @param {object[]} entries
+ * @param {Set<string>} previousNames
+ * @param {number} newDays
+ */
+function annotateDiscoveryFlags(entries, previousNames, newDays) {
+  const cutoff = Date.now() - newDays * 24 * 60 * 60 * 1000
+  const now = new Date().toISOString()
+
+  return entries.map((entry) => {
+    const isNew = !previousNames.has(entry.shortName)
+    const pushedMs = entry.pushedAt ? new Date(entry.pushedAt).getTime() : 0
+    const isRecent = pushedMs > 0 && pushedMs >= cutoff
+    return {
+      ...entry,
+      firstSeenAt: isNew ? now : entry.firstSeenAt ?? now,
+      isNew,
+      isRecent: isNew || isRecent,
+    }
+  })
+}
+
 async function fetchTopic(topic, org) {
   const q = encodeURIComponent(`topic:${topic} org:${org}`)
   const url = `https://api.github.com/search/repositories?q=${q}&sort=stars&per_page=100`
@@ -67,14 +138,7 @@ async function fetchTopic(topic, org) {
   const res = await fetch(url, { headers })
   if (!res.ok) throw new Error(`GitHub API ${res.status} for ${org}/${topic}`)
   const json = await res.json()
-  return (json.items ?? []).map((repo) => ({
-    shortName: repo.name,
-    description: repo.description ?? '',
-    stars: repo.stargazers_count ?? 0,
-    htmlUrl: repo.html_url,
-    org: repo.owner?.login ?? org,
-    kind: inferKind(repo.name),
-  }))
+  return (json.items ?? []).map((repo) => mapGithubRepo(repo, org))
 }
 
 async function fetchUserRepos(user) {
@@ -92,14 +156,7 @@ async function fetchUserRepos(user) {
   const repos = await res.json()
   return repos
     .filter((repo) => /^(app|theme|module|kit)-/.test(repo.name))
-    .map((repo) => ({
-      shortName: repo.name,
-      description: repo.description ?? '',
-      stars: repo.stargazers_count ?? 0,
-      htmlUrl: repo.html_url,
-      org: repo.owner?.login ?? user,
-      kind: inferKind(repo.name),
-    }))
+    .map((repo) => mapGithubRepo(repo, user))
 }
 
 function scanLocal(workspaceRoot, kind) {
@@ -109,25 +166,29 @@ function scanLocal(workspaceRoot, kind) {
   return readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory())
     .map((d) => {
-      const pkgPath = join(dir, d.name, 'package.json')
+      const packageDir = join(dir, d.name)
+      const pkgPath = join(packageDir, 'package.json')
       if (!existsSync(pkgPath)) return null
       try {
         const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'))
         if (!pkg.name?.startsWith(SCOPE)) return null
         let remote = null
         try {
-          remote = execSync(`git -C ${join(dir, d.name)} remote get-url origin`, {
+          remote = execSync(`git -C ${packageDir} remote get-url origin`, {
             encoding: 'utf8',
             stdio: ['ignore', 'pipe', 'ignore'],
           }).trim()
         } catch {
           /* no git */
         }
+        const updatedAt = localPackageUpdatedAt(packageDir)
         return {
           shortName: shortName(pkg.name),
           description: pkg.description ?? '',
           stars: 0,
           htmlUrl: pkg.homepage ?? pkg.repository?.url ?? null,
+          pushedAt: updatedAt,
+          updatedAt,
           org: 'workspace',
           kind,
           localPath: join(KINDS[kind].workspaceDir, d.name),
@@ -141,8 +202,11 @@ function scanLocal(workspaceRoot, kind) {
     .filter(Boolean)
 }
 
-export async function loadCatalog(workspaceRoot, settings) {
-  const cached = readCache(workspaceRoot)
+export async function loadCatalog(workspaceRoot, settings, options = {}) {
+  const previousNames = readPreviousCatalogNames(workspaceRoot)
+  const newDays = settings.catalogNewDays ?? 14
+
+  const cached = options.force ? null : readCache(workspaceRoot)
   let remote = cached?.entries ?? null
   let cacheAge = cached?.cacheAge ?? null
 
@@ -170,15 +234,15 @@ export async function loadCatalog(workspaceRoot, settings) {
     }
 
     if (remote.length) {
-      const at = Date.now()
+      remote = annotateDiscoveryFlags(remote, previousNames, newDays)
       writeCache(workspaceRoot, remote)
-      cacheAge = formatCacheAge(at)
+      cacheAge = formatCacheAge(Date.now())
     }
   }
 
   const byName = new Map()
 
-  for (const item of remote) {
+  for (const item of remote ?? []) {
     byName.set(item.shortName, { ...item, sources: [item.org] })
   }
 
@@ -190,11 +254,18 @@ export async function loadCatalog(workspaceRoot, settings) {
           ...prev,
           ...item,
           localPath: item.localPath,
-          remote: item.remote ?? prev.htmlUrl,
+          remote: item.remote ?? prev.remote,
+          updatedAt: item.updatedAt ?? prev.updatedAt,
+          pushedAt: item.pushedAt ?? prev.pushedAt,
           sources: [...new Set([...(prev.sources ?? []), 'workspace'])],
         })
       } else {
-        byName.set(item.shortName, { ...item, sources: ['workspace'] })
+        byName.set(item.shortName, {
+          ...item,
+          sources: ['workspace'],
+          isNew: false,
+          isRecent: false,
+        })
       }
     }
   }
@@ -211,15 +282,78 @@ export async function loadCatalog(workspaceRoot, settings) {
   }
 }
 
-export function filterCatalog(catalog, kind) {
-  return catalog
+function updatedTimestamp(entry) {
+  const raw = entry.updatedAt ?? entry.pushedAt
+  if (!raw) return 0
+  const t = new Date(raw).getTime()
+  return Number.isFinite(t) ? t : 0
+}
+
+/**
+ * @param {object[]} entries
+ * @param {CatalogSortMode} mode
+ * @param {{ apps?: string[], modules?: string[], theme?: string } | null} [config]
+ */
+export function sortCatalog(entries, mode, config = null) {
+  const installedApps = new Set(config?.apps ?? [])
+  const installedModules = new Set(config?.modules ?? [])
+  const activeTheme = config?.theme
+
+  const isInstalled = (entry) => {
+    if (entry.kind === 'app') return installedApps.has(entry.name)
+    if (entry.kind === 'module') return installedModules.has(entry.name)
+    if (entry.kind === 'theme') return activeTheme === entry.name
+    return false
+  }
+
+  const sorted = [...entries]
+
+  sorted.sort((a, b) => {
+    if (mode === 'installed') {
+      const ai = isInstalled(a) ? 1 : 0
+      const bi = isInstalled(b) ? 1 : 0
+      if (bi !== ai) return bi - ai
+      const du = updatedTimestamp(b) - updatedTimestamp(a)
+      if (du !== 0) return du
+      return a.shortName.localeCompare(b.shortName)
+    }
+
+    if (mode === 'name') {
+      return a.shortName.localeCompare(b.shortName)
+    }
+
+    if (mode === 'stars') {
+      return (b.stars ?? 0) - (a.stars ?? 0) || a.shortName.localeCompare(b.shortName)
+    }
+
+    // updated (default)
+    const du = updatedTimestamp(b) - updatedTimestamp(a)
+    if (du !== 0) return du
+    return a.shortName.localeCompare(b.shortName)
+  })
+
+  return sorted
+}
+
+/**
+ * @param {CatalogSortMode} mode
+ */
+export function normalizeCatalogSort(mode) {
+  return CATALOG_SORT_MODES.includes(mode) ? mode : 'updated'
+}
+
+/**
+ * @param {object[]} catalog
+ * @param {'app' | 'module' | 'theme'} kind
+ * @param {{ sortMode?: CatalogSortMode, config?: { apps?: string[], modules?: string[], theme?: string } }} [options]
+ */
+export function filterCatalog(catalog, kind, options = {}) {
+  const sortMode = normalizeCatalogSort(options.sortMode ?? 'updated')
+  const filtered = catalog
     .filter((e) => e.kind === kind)
     .filter((e) => kind !== 'module' || isInstallableDesktopModule(e.name))
-    .sort((a, b) => {
-      if (a.org === 'workspace' && b.org !== 'workspace') return -1
-      if (b.org === 'workspace' && a.org !== 'workspace') return 1
-      return (b.stars ?? 0) - (a.stars ?? 0) || a.shortName.localeCompare(b.shortName)
-    })
+
+  return sortCatalog(filtered, sortMode, options.config ?? null)
 }
 
 export function mergeInstalled(catalog, config, deps, workspaceRoot) {
@@ -245,6 +379,18 @@ export function mergeInstalled(catalog, config, deps, workspaceRoot) {
       activeTheme: entry.kind === 'theme' && activeTheme === entry.name,
     }
   })
+}
+
+/** @param {string | null | undefined} iso */
+export function formatCatalogAge(iso) {
+  if (!iso) return ''
+  const ms = Date.now() - new Date(iso).getTime()
+  if (!Number.isFinite(ms) || ms < 0) return ''
+  const days = Math.floor(ms / 86_400_000)
+  if (days < 1) return '<1d'
+  if (days < 7) return `${days}d`
+  if (days < 30) return `${Math.floor(days / 7)}w`
+  return `${Math.floor(days / 30)}mo`
 }
 
 export function readThemeMeta(workspaceRoot, themePkgName) {
