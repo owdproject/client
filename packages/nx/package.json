@@ -22,7 +22,7 @@
     "ts-morph": "^25.0.1"
   },
   "devDependencies": {
-    "typescript": "~6.0.3"
+    "typescript": "catalog:"
   },
   "executors": "./executors.json",
   "files": [
