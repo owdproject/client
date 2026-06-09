@@ -1,7 +1,9 @@
 export { defineDesktopApp } from './kit/defineDesktopApp'
-export { defineDesktopConfig } from './kit/defineDesktopConfig'
-export { registerTailwindPath } from './kit/registerTailwindPath'
-export { defineDesktopModule } from './kit/defineDesktopModule'
-export { defineDesktopTheme } from './kit/defineDesktopTheme'
-export { setDesktopExtensionConfig } from './kit/setDesktopExtensionConfig'
-export { mergeDesktopExtensionConfig } from './kit/mergeDesktopExtensionConfig'
+export {
+  defineDesktopConfig,
+  defineDesktopModule,
+  defineDesktopTheme,
+  mergeDesktopExtensionConfig,
+  registerTailwindPath,
+  setDesktopExtensionConfig,
+} from './kit/authoring'

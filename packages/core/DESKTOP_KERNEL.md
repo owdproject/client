@@ -60,8 +60,8 @@ flowchart TB
 | # | Area | Kernel (core) | Theme / external modules | Key paths |
 |---|------|---------------|--------------------------|-----------|
 | 1 | **Bootstrap & shell init** | Pinia bind, workspace bootstrap, default-app load, shell key merge on `appConfig.desktop`. Plugins: `desktop-shell-init`, `desktop-register-desktop-apps`, `resize.client`. | Theme `Desktop.vue` mounts after `$desktopShellReady`. | `runtime/utils/initDesktopShell.ts`, `runtime/plugins/01.desktop-shell-init.client.ts`, `runtime/plugins/02.desktop-register-desktop-apps.client.ts` |
-| 2 | **Desktop configuration** | `defineDesktopConfig`, merge into `runtimeConfig.public.desktop` / `appConfig.desktop`, `useDesktopConfig`, `useDesktopExtension`, runtime overrides via `useDesktopManager().setConfig()`, config validation/warnings. | Theme defaults via `defineDesktopTheme` + `defu`. | `kit/defineDesktopConfig.ts`, `runtime/composables/useDesktopManager.ts`, `runtime/composables/useDesktopConfig.ts` |
-| 3 | **Package installation** | `defineDesktopTheme` / `defineDesktopModule`, `installDesktopPackage`, install order theme → modules → apps, per-package `configKey` namespace merge. | Each theme/app/module is its own Nuxt package. | `kit/installDesktopPackage.ts`, `kit/defineDesktopTheme.ts`, `kit/defineDesktopModule.ts` |
+| 2 | **Desktop configuration** | `defineDesktopConfig`, merge into `runtimeConfig.public.desktop` / `appConfig.desktop`, `useDesktopConfig`, `useDesktopExtension`, runtime overrides via `useDesktopManager().setConfig()`, config validation/warnings. | Theme defaults via `defineDesktopTheme` + `defu`. | `kit/authoring.ts`, `runtime/composables/useDesktopManager.ts`, `runtime/composables/useDesktopConfig.ts` |
+| 3 | **Package installation** | `defineDesktopTheme` / `defineDesktopModule`, `installDesktopPackage`, install order theme → modules → apps, per-package `configKey` namespace merge. | Each theme/app/module is its own Nuxt package. | `kit/authoring.ts` |
 | 4 | **Shell readiness & options** | `useDesktopShellReady` (`$desktopShellReady` after init). `useDesktopShellOptions` reads `systemBar` flags (`enabled`, `position`, `startButton`) — **config only**, no UI. | Theme renders taskbar/start button from those flags. | `runtime/composables/useDesktopShellReady.ts`, `runtime/composables/useDesktopShellOptions.ts` |
 | 5 | **Shell identity & session** | `useDesktopShellIdentity` (guest default, `userHome`, `setShellIdentity` for auth). `useDesktopSession` (`initiateShutdownToStart` → `/start`). | `/start`, `/boot` pages, shutdown/boot animations and styling. | `runtime/composables/useDesktopShellIdentity.ts`, `runtime/composables/useDesktopSession.ts` |
 | 6 | **Application registry** | `defineDesktopApp`, `flushPendingDesktopApps`, `useApplicationManager` (launch, running apps, open windows), `useApplicationEntries` (sorted/filtered launcher list), per-app meta store. | Theme launcher/grid consumes `useApplicationEntries`. | `kit/defineDesktopApp.ts`, `runtime/composables/useApplicationManager.ts`, `runtime/composables/useApplicationEntries.ts`, `runtime/stores/storeApplicationMeta.ts` |
@@ -101,7 +101,7 @@ flowchart TB
 
 | Export | Use |
 |--------|-----|
-| `defineDesktopConfig({ theme, apps, modules, ... })` | Root `desktop.config.ts` — `@owdproject/core/kit/defineDesktopConfig` |
+| `defineDesktopConfig({ theme, apps, modules, ... })` | Root `desktop.config.ts` — `@owdproject/core/kit/authoring` |
 | `defineDesktopModule` / `defineDesktopTheme` | Authoring extension modules and themes (`@owdproject/core/kit/*`); themes pass `import.meta.url` as the second argument to `defineDesktopTheme` to auto-register Tailwind content for `runtime/components/**` (override with `{ tailwind: '...' }` or `registerTailwindPath` for extra paths) |
 | `runtimeConfig.public.desktop` | Full merged config (manifest + shell + extension namespaces) |
 | `useDesktopConfig()` | Reactive access to `public.desktop` |

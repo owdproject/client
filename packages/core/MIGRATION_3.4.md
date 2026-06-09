@@ -55,9 +55,9 @@ Or rely on kit-primevue client plugin (no theme plugin needed).
 | `provideDesktopWorkArea` / `desktopWorkAreaKey` | `useDesktopWorkArea(shellStageRef)` → `useDesktopWindowStore.workArea` |
 | `useDesktopWindowDragHandlers` / `*Injected` | `useWindowDragHandlers` |
 | `useFileSystemExplorer` | `useExplorerWindow` |
-| `@owdproject/core/runtime/utils/defineDesktop*` | `@owdproject/core/kit/defineDesktop*` |
+| `@owdproject/core/runtime/utils/defineDesktop*` | `@owdproject/core/kit/authoring` |
 | `@owdproject/core/runtime/utils/utilDesktop` (`defineDesktopApp`) | `@owdproject/core/kit/defineDesktopApp` |
-| `@owdproject/core/runtime/utils/utilApp` (`registerTailwindPath`) | `@owdproject/core/kit/registerTailwindPath` |
+| `@owdproject/core/runtime/utils/utilApp` (`registerTailwindPath`) | `@owdproject/core/kit/authoring` |
 | `runtime/utils/utilHasDesktop` | `runtime/composables/useDesktopManifest` (`hasDesktop*`) |
 | `runtime/utils/windowMaximizeLayout` | `runtime/utils/utilWindowMaximizeLayout` |
 | `runtime/utils/utilWindow` | `runtime/utils/utilWindowControllerAdapter` |

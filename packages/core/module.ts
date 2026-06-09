@@ -7,13 +7,13 @@ import {
   addPlugin
 } from '@nuxt/kit'
 import { defu } from 'defu'
-import { assertValidDesktopUserConfig } from './kit/validateDesktopUserConfig'
 import {
+  assertValidDesktopUserConfig,
+  installDesktopPackage,
   resolveDesktopConfigPath,
+  warnDesktopConfigKeys,
   warnLegacyDesktopConfig,
-} from './kit/resolveDesktopConfigPath'
-import { warnDesktopConfigKeys } from './kit/warnDesktopConfigKeys'
-import { installDesktopPackage } from './kit/installDesktopPackage'
+} from './kit/authoring'
 import pkg from './package.json'
 
 export default defineNuxtModule({
