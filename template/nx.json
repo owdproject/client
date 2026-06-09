@@ -18,6 +18,7 @@
     },
     {
       "plugin": "@nx/js/typescript",
+      "exclude": ["**/playground/**"],
       "options": {
         "typecheck": {
           "targetName": "typecheck"

@@ -21,7 +21,7 @@
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",
     "prepare:stubs": "pnpm -r --filter \"./packages/kit-*\" --filter \"./apps/*\" --filter \"./themes/*\" exec nuxt-module-build build --stub",
-    "prepare:modules": "pnpm run prepare:stubs && pnpm -r --filter \"./packages/*\" --filter \"./apps/*\" --filter \"./themes/*\" --if-present run dev:prepare",
+    "prepare:modules": "pnpm run prepare:stubs && pnpm -r --filter \"!./packages/module-fs\" --filter \"!./themes/*\" --filter \"./packages/*\" --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
     "template:sync": "node ./packages/core/bin/desktop.js template",

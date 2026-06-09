@@ -5,7 +5,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "pnpm install && pnpm run dev"
+          "pnpm run dev"
         ],
         "cwd": "desktop"
       }
