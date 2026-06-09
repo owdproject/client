@@ -12,6 +12,8 @@ Open Web Desktop (OWD) is a framework designed to provide a simple environment f
 
 [Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA) · [Documentation](https://owdproject.org/)
 
+**Kernel contract:** see [`DESKTOP_KERNEL.md`](./DESKTOP_KERNEL.md). Migration guides: [`MIGRATION_3.4.md`](./MIGRATION_3.4.md), [`MIGRATION_3.3.2.md`](./MIGRATION_3.3.2.md).
+
 ## Features
 
 - Fully extendable through themes, apps, and modules

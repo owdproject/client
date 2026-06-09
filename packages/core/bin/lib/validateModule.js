@@ -6,14 +6,27 @@ import { findWorkspaceRoot } from './workspace.js'
 const SCOPE = '@owdproject/'
 
 export const DESKTOP_CORE_PACKAGE = '@owdproject/core'
+export const DESKTOP_KIT_PRIMEVUE_PACKAGE = '@owdproject/kit-primevue'
 
 const REQUIRED_SCRIPTS = ['dev', 'dev:prepare', 'dev:generate', 'prepack']
+const INFRASTRUCTURE_PLAYBOOK_SCRIPTS = ['dev:prepare', 'prepack']
 
 /**
  * @param {string} pkgName
  */
 export function isDesktopCorePackage(pkgName) {
   return pkgName === DESKTOP_CORE_PACKAGE
+}
+
+/**
+ * Published Nuxt modules without an app/theme playground (core, kit-primevue).
+ *
+ * @param {string} pkgName
+ */
+export function isDesktopInfrastructurePackage(pkgName) {
+  return (
+    pkgName === DESKTOP_CORE_PACKAGE || pkgName === DESKTOP_KIT_PRIMEVUE_PACKAGE
+  )
 }
 
 /**
@@ -214,14 +227,23 @@ export function validateOwdModule(packageDir, options = {}) {
   }
 
   const kind = inferModuleKind(pkgName)
-  const isCore = isDesktopCorePackage(pkgName)
+  const isInfrastructure = isDesktopInfrastructurePackage(pkgName)
 
   if (pkg.type !== 'module') {
     issue('error', 'type-module', 'package.json must set "type": "module"')
   }
 
-  if (isCore) {
+  if (isInfrastructure) {
     const scripts = /** @type {Record<string, string>} */ (pkg.scripts ?? {})
+    for (const script of INFRASTRUCTURE_PLAYBOOK_SCRIPTS) {
+      if (!scripts[script]) {
+        issue(
+          'error',
+          `script-${script}`,
+          `package.json scripts must include "${script}"`,
+        )
+      }
+    }
     if (!scripts['dev:prepare']?.includes('nuxt-module-build')) {
       issue(
         'error',
@@ -355,8 +377,22 @@ export function validateOwdModule(packageDir, options = {}) {
     issue('error', 'src-module', 'src/module.ts is required')
   } else {
     const moduleSrc = readFileSync(moduleTs, 'utf8')
-    if (!moduleSrc.includes('defineNuxtModule')) {
-      issue('error', 'define-nuxt-module', 'src/module.ts must use defineNuxtModule')
+    const hasModuleWrapper =
+      moduleSrc.includes('defineNuxtModule') ||
+      (kind === 'module' && moduleSrc.includes('defineDesktopModule')) ||
+      (kind === 'theme' && moduleSrc.includes('defineDesktopTheme'))
+    if (!hasModuleWrapper) {
+      const expected =
+        kind === 'module'
+          ? 'defineDesktopModule (or defineNuxtModule)'
+          : kind === 'theme'
+            ? 'defineDesktopTheme (or defineNuxtModule)'
+            : 'defineNuxtModule'
+      issue(
+        'error',
+        'define-nuxt-module',
+        `src/module.ts must use ${expected}`,
+      )
     }
     const hasKitTailwind =
       moduleSrc.includes('registerTailwindPath') ||
@@ -379,7 +415,7 @@ export function validateOwdModule(packageDir, options = {}) {
           'theme src/module.ts should call registerThemeTailwindPath from @owdproject/kit-primevue/kit/registerTailwindPath',
         )
       }
-    } else if (!hasKitTailwind) {
+    } else if (kind === 'app' && !hasKitTailwind) {
       issue(
         'warning',
         'tailwind-path',
@@ -542,7 +578,7 @@ export function validateOwdModule(packageDir, options = {}) {
         )
       } else if (!hasDesktopRegister && hasLegacyRegister) {
         issue(
-          'warning',
+          'error',
           'plugin-name-legacy',
           'plugin.ts uses deprecated name "owd-<slug>-register"; rename to "desktop-<slug>-register"',
         )

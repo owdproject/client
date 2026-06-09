@@ -27,7 +27,7 @@ pnpm run dev:generate   # static → playground/.output/public
 pnpm run validate       # desktop validate . — playbook layout checks
 ```
 
-Full checklist, file templates, CI/Pages workflow: [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](../../docs/agents/OWD_APP_MODULE_PLAYGROUND.md).
+Full checklist and file templates: [`PLAYGROUND.md`](./PLAYGROUND.md).
 
 **Validate all monorepo modules from client root:** `pnpm run validate:modules`
 

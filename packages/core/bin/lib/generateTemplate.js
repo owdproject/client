@@ -31,6 +31,7 @@ export const STARTER_DESKTOP_DEPS = [
 
 /** Used when a starter package is not on npm yet (before first publish). */
 export const TEMPLATE_NPM_FALLBACK_VERSIONS = {
+  '@owdproject/core': '3.4.0',
   '@owdproject/theme-nova': '0.0.1',
 }
 

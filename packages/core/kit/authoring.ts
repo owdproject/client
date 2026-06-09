@@ -109,6 +109,11 @@ export function warnLegacyDesktopConfig(
   }
 }
 
+/** Path used when creating or updating config from the CLI (always the new filename). */
+export function desktopConfigWritePath(desktopDir: string): string {
+  return join(desktopDir, DESKTOP_CONFIG_FILENAME)
+}
+
 /** Nuxt top-level option names — warn if present in desktop.config (likely misconfiguration). */
 const NUXT_OPTION_KEYS = new Set([
   'ssr',

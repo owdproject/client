@@ -36,7 +36,12 @@
     "index.ts",
     "module.ts",
     "package.json",
-    "README.md"
+    "README.md",
+    "DESKTOP_KERNEL.md",
+    "CHANGELOG.md",
+    "MIGRATION_3.3.2.md",
+    "MIGRATION_3.4.md",
+    "PLAYGROUND.md"
   ],
   "scripts": {
     "dev": "pnpm run dev:prepare",
@@ -44,7 +49,8 @@
     "build:module": "nuxt-module-build build",
     "prepack": "nuxt-module-build build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "exports": {
     ".": {
@@ -70,11 +76,47 @@
       "import": "./kit/*",
       "default": "./kit/*"
     },
-    "./runtime/*": {
-      "types": "./runtime/*",
-      "development": "./runtime/*",
-      "import": "./runtime/*",
-      "default": "./runtime/*"
+    "./runtime/composables/*": {
+      "types": "./runtime/composables/*",
+      "development": "./runtime/composables/*",
+      "import": "./runtime/composables/*",
+      "default": "./runtime/composables/*"
+    },
+    "./runtime/constants/*": {
+      "types": "./runtime/constants/*",
+      "development": "./runtime/constants/*",
+      "import": "./runtime/constants/*",
+      "default": "./runtime/constants/*"
+    },
+    "./runtime/dialogs/*": {
+      "types": "./runtime/dialogs/*",
+      "development": "./runtime/dialogs/*",
+      "import": "./runtime/dialogs/*",
+      "default": "./runtime/dialogs/*"
+    },
+    "./runtime/utils/*": {
+      "types": "./runtime/utils/*",
+      "development": "./runtime/utils/*",
+      "import": "./runtime/utils/*",
+      "default": "./runtime/utils/*"
+    },
+    "./runtime/stores/*": {
+      "types": "./runtime/stores/*",
+      "development": "./runtime/stores/*",
+      "import": "./runtime/stores/*",
+      "default": "./runtime/stores/*"
+    },
+    "./runtime/components/*": {
+      "types": "./runtime/components/*",
+      "development": "./runtime/components/*",
+      "import": "./runtime/components/*",
+      "default": "./runtime/components/*"
+    },
+    "./runtime/types/*": {
+      "types": "./runtime/types/*",
+      "development": "./runtime/types/*",
+      "import": "./runtime/types/*",
+      "default": "./runtime/types/*"
     }
   },
   "bin": {

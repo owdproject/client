@@ -212,6 +212,21 @@ Dialog and maximize contracts live in core (`runtime/dialogs/desktopDialogProvid
 
 Themes, apps, and extension modules should adopt `defineDesktopTheme` / `defineDesktopModule`, module augmentation for `configKey`, and runtime composables. See **[MIGRATION_3.3.2.md](./MIGRATION_3.3.2.md)** and the full guide in `docs/content/6.setup/5.migrate-packages-3.3.2.md`.
 
+## Package exports (semver-stable)
+
+Supported deep imports from `@owdproject/core`:
+
+- `@owdproject/core/kit/*` — authoring helpers (`defineDesktopConfig`, `defineDesktopModule`, …)
+- `@owdproject/core/runtime/composables/*`
+- `@owdproject/core/runtime/constants/*`
+- `@owdproject/core/runtime/dialogs/*`
+- `@owdproject/core/runtime/utils/*`
+- `@owdproject/core/runtime/stores/*`
+- `@owdproject/core/runtime/components/*`
+- `@owdproject/core/runtime/types/*`
+
+**Not supported:** `@owdproject/core/runtime/internal/*` (controllers and other implementation details). Importing internal paths is not part of the public contract and may break without a major release.
+
 ## Versioning
 
 Breaking changes to this contract require a semver major (or minor with explicit `BREAKING CHANGE` in changelog) and coordinated theme updates in separate repos.

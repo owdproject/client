@@ -41,5 +41,11 @@ jobs:
       - name: Prepare @owdproject/core module
         run: pnpm --filter @owdproject/core run dev:prepare
 
+      - name: Validate monorepo modules
+        run: pnpm run validate:modules
+
+      - name: Build @owdproject/core module
+        run: pnpm --filter @owdproject/core run build:module
+
       - name: Test @owdproject/core
         run: pnpm --filter @owdproject/core test

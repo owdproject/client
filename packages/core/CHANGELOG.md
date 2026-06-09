@@ -1,3 +1,21 @@
+## 3.4.0 (2026-06-10)
+
+### ⚠️ Breaking Changes
+
+- Core no longer installs PrimeVue or Tailwind. Use `@owdproject/kit-primevue` in themes; register Tailwind content via `registerTailwindPath` / `registerThemeTailwindPath` from the kit.
+- Headless explorer and ZenFS live in `@owdproject/module-fs`; optional PV explorer UI in `@owdproject/kit-primevue`.
+- Nuxt module `configKey` is `desktop` (was `owd`). App plugins should use `desktop-<slug>-register` (legacy `owd-<slug>-register` is rejected by validate).
+
+### 🚀 Features
+
+- `validateModule` accepts `defineDesktopModule` / `defineDesktopTheme`; infrastructure playbook for `@owdproject/kit-primevue`.
+- Nx install executors resolve `desktop.config.ts` with `owd.config.ts` fallback.
+
+### 📚 Documentation
+
+- Add `MIGRATION_3.4.md` (import paths, Tailwind contract, module naming).
+- Ship `DESKTOP_KERNEL.md` and migration guides in the npm package.
+
 ## 3.3.2 (2026-06-01)
 
 ### 🚀 Features
