@@ -6,7 +6,7 @@ import { useDesktopManager } from '../composables/useDesktopManager'
 import { useDesktopStore } from '../stores/storeDesktop'
 import { useDesktopWorkspaceStore } from '../stores/storeDesktopWorkspace'
 import { useDesktopDefaultAppsStore } from '../stores/storeDesktopDefaultApps'
-import { registerDesktopPluginPinia } from './utilDesktop'
+import { registerDesktopPluginPinia } from '../../kit/defineDesktopApp'
 
 /** Bind Nuxt's Pinia instance for store composables outside component setup timing. */
 export function bindDesktopPinia(pinia: Pinia | undefined) {

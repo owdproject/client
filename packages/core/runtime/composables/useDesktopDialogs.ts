@@ -1,6 +1,6 @@
 import { inject } from 'vue'
+import { DESKTOP_DIALOG_PROVIDER_KEY } from '../constants/desktopShellKeys'
 import {
-  DESKTOP_DIALOG_PROVIDER_KEY,
   createBrowserFallbackDialogProvider,
   type DesktopDialogProvider,
 } from '../dialogs/desktopDialogProvider'

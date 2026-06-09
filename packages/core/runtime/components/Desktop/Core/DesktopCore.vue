@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, useAttrs, computed } from 'vue'
+import { useAttrs, computed } from 'vue'
 import { useAppConfig } from 'nuxt/app'
 
 defineOptions({ inheritAttrs: false })
@@ -13,13 +13,6 @@ defineProps<{
 
 const appConfig = useAppConfig()
 const attrs = useAttrs()
-
-onMounted(() => window.addEventListener('resize', handleDesktopResize))
-onUnmounted(() => window.removeEventListener('resize', handleDesktopResize))
-
-function handleDesktopResize() {
-  //store.dispatch('core/window/windowsAdjustPosition')
-}
 
 const classes = computed(() => {
   const list = ['owd-desktop']

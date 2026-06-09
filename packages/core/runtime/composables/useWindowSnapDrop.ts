@@ -1,7 +1,7 @@
 import type { DesktopWorkAreaRect, IWindowController } from '@owdproject/core'
 import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
-import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
+import { useDesktopWorkspaceStore } from '../stores/storeDesktopWorkspace'
 import {
   detectSnapZone,
   type SnapZoneHint,

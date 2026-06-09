@@ -1,6 +1,5 @@
 import type { Nuxt } from '@nuxt/schema'
 import type { ShallowRef } from 'vue'
-import { useApplicationManager } from '../runtime/composables/useApplicationManager'
 
 declare module 'nuxt/schema' {
   interface PublicRuntimeConfig {
@@ -402,6 +401,7 @@ interface DesktopConfig {
   systemBar?: DesktopSystemBarConfig
   dockBar?: DesktopDockBarConfig
   workspaces?: DesktopWorkspacesConfig
+  windows?: DesktopWindowsConfig
 }
 
 interface DesktopWindowsConfig {

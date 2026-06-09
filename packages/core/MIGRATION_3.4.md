@@ -2,7 +2,7 @@
 
 ## Summary
 
-- **@owdproject/core** no longer installs PrimeVue. Shell composables, utils, and hint components use the flat Nuxt layout (`runtime/composables`, `runtime/utils`, `runtime/components/Desktop/`).
+- **@owdproject/core** no longer installs PrimeVue. Module-time authoring lives in `kit/` (not auto-imported). Shell composables, utils, and hint components use `runtime/` (`composables`, `utils`, `constants`, `components/Desktop/`).
 - **@owdproject/module-fs** — ZenFS virtual filesystem + headless explorer (composables, stores, utils; no `.vue`).
 - **@owdproject/kit-primevue** — Nuxt PrimeVue module, `createDesktopDialogs`, optional explorer UI (`DesktopExplorer*`; `{ explorer: false }` for dialogs only).
 - **@owdproject/kit-theme**, **kit-fs**, **kit-explorer** — deprecated (empty Nuxt modules). **No Vite import shims** — update sources to explicit paths below.
@@ -34,7 +34,7 @@ Remove `kit-theme`, `kit-explorer` from `package.json` / `installModule`. Keep m
 Dialog plugin example (core inject key):
 
 ```ts
-import { DESKTOP_DIALOG_PROVIDER_KEY } from '@owdproject/core/runtime/dialogs/desktopDialogProvider'
+import { DESKTOP_DIALOG_PROVIDER_KEY } from '@owdproject/core/runtime/constants/desktopShellKeys'
 import { createDesktopDialogs } from '@owdproject/kit-primevue/runtime/dialogs/createDesktopDialogs'
 ```
 
@@ -55,6 +55,12 @@ Or rely on kit-primevue client plugin (no theme plugin needed).
 | `provideDesktopWorkArea` / `desktopWorkAreaKey` | `useDesktopWorkArea(shellStageRef)` → `useDesktopWindowStore.workArea` |
 | `useDesktopWindowDragHandlers` / `*Injected` | `useWindowDragHandlers` |
 | `useFileSystemExplorer` | `useExplorerWindow` |
+| `@owdproject/core/runtime/utils/defineDesktop*` | `@owdproject/core/kit/defineDesktop*` |
+| `@owdproject/core/runtime/utils/utilDesktop` (`defineDesktopApp`) | `@owdproject/core/kit/defineDesktopApp` |
+| `@owdproject/core/runtime/utils/utilApp` (`registerTailwindPath`) | `@owdproject/core/kit/registerTailwindPath` |
+| `runtime/utils/utilHasDesktop` | `runtime/composables/useDesktopManifest` (`hasDesktop*`) |
+| `runtime/utils/windowMaximizeLayout` | `runtime/utils/utilWindowMaximizeLayout` |
+| `runtime/utils/utilWindow` | `runtime/utils/utilWindowControllerAdapter` |
 
 ## module-fs
 

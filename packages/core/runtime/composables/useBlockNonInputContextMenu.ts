@@ -1,5 +1,5 @@
 import { useEventListener } from '@vueuse/core'
-import { isDebugMode } from '@owdproject/core/runtime/utils/utilDebug'
+import { isDebugMode } from '../utils/utilDebug'
 
 /**
  * Blocks the browser context menu on non-input elements (typical desktop shell behaviour).

@@ -1,5 +1,5 @@
 import { defineNuxtPlugin } from 'nuxt/app'
-import { defineDesktopApp } from '@owdproject/core/runtime/utils/utilDesktop'
+import { defineDesktopApp } from '@owdproject/core/kit/defineDesktopApp'
 import config from './app.config'
 
 export default defineNuxtPlugin({

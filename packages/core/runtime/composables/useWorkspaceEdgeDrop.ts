@@ -1,9 +1,7 @@
 import type { IWindowController } from '@owdproject/core'
 import { computed, ref } from 'vue'
-import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
-
-/** Viewport band (px) where a window drag targets the adjacent workspace. */
-export const WORKSPACE_EDGE_DROP_PX = 72
+import { useDesktopWorkspaceStore } from '../stores/storeDesktopWorkspace'
+import { WORKSPACE_EDGE_DROP_PX } from '../constants/shellLayout'
 
 const edgeHint = ref<'left' | 'right' | null>(null)
 const isWindowDragActive = ref(false)

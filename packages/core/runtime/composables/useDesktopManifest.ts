@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useDesktopConfig } from '../composables/useDesktopConfig'
+import { useDesktopConfig } from './useDesktopConfig'
 
 export function hasDesktopModule(pkg: string) {
   const desktop = useDesktopConfig()

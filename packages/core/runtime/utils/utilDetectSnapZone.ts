@@ -1,9 +1,9 @@
 import type { DesktopWorkAreaRect, WindowLayout } from '@owdproject/core'
+import {
+  WINDOW_SNAP_EDGE_PX,
+  WORKSPACE_EDGE_DROP_PX,
+} from '../constants/shellLayout'
 import { workAreaBottom, workAreaRight } from './utilWindowLayout'
-import { WORKSPACE_EDGE_DROP_PX } from '../composables/useWorkspaceEdgeDrop'
-
-/** Viewport band (px) where a window drag targets a snap zone. */
-export const WINDOW_SNAP_EDGE_PX = 14
 
 export type SnapZoneHint = Exclude<WindowLayout, 'normal'>
 

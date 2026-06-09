@@ -2,7 +2,7 @@
 import { ref, provide } from 'vue'
 import { computed } from '@vue/reactivity'
 import { useAppConfig } from 'nuxt/app'
-import { handleWindowControllerProps } from '@owdproject/core/runtime/utils/utilWindow'
+import { handleWindowControllerProps } from '../../../utils/utilWindowControllerAdapter'
 import { useDesktopWorkspaceStore } from '../../../stores/storeDesktopWorkspace'
 
 const props = defineProps<{

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { warnDesktopConfigKeys } from '../runtime/utils/warnDesktopConfigKeys'
+import { warnDesktopConfigKeys } from '../kit/warnDesktopConfigKeys'
 
 describe('warnDesktopConfigKeys', () => {
   beforeEach(() => {

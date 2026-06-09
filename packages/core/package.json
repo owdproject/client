@@ -30,6 +30,7 @@
   "files": [
     "bin",
     "dist",
+    "kit",
     "runtime",
     "types",
     "index.ts",
@@ -63,6 +64,12 @@
       "default": "./module.ts"
     },
     "./package.json": "./package.json",
+    "./kit/*": {
+      "types": "./kit/*",
+      "development": "./kit/*",
+      "import": "./kit/*",
+      "default": "./kit/*"
+    },
     "./runtime/*": {
       "types": "./runtime/*",
       "development": "./runtime/*",

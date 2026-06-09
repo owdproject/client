@@ -1,16 +1,14 @@
-import type { InjectionKey } from 'vue'
 import { inject } from 'vue'
 import {
   useDesktopWindowStore,
 } from '../stores/storeDesktopWindow'
-import { toggleWindowMaximizeLayout } from '../utils/windowMaximizeLayout'
+import { toggleWindowMaximizeLayout } from '../utils/utilWindowMaximizeLayout'
+import {
+  DESKTOP_TOGGLE_WINDOW_MAXIMIZE_KEY,
+  type DesktopToggleWindowMaximizeFn,
+} from '../constants/desktopShellKeys'
 
-export type DesktopToggleWindowMaximizeFn = (
-  win: IWindowController | undefined,
-) => boolean
-
-export const DESKTOP_TOGGLE_WINDOW_MAXIMIZE_KEY: InjectionKey<DesktopToggleWindowMaximizeFn> =
-  Symbol('desktop-toggle-window-maximize')
+export type { DesktopToggleWindowMaximizeFn }
 
 /**
  * Maximize / restore a window. Themes may override via

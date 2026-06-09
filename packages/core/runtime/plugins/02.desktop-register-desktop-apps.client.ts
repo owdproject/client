@@ -1,5 +1,5 @@
 import { defineNuxtPlugin } from 'nuxt/app'
-import { flushPendingDesktopApps } from '../utils/utilDesktop'
+import { flushPendingDesktopApps } from '../../kit/defineDesktopApp'
 
 export default defineNuxtPlugin({
   name: 'desktop-register-desktop-apps',

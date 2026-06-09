@@ -1,4 +1,4 @@
-import { defineDesktopConfig } from '@owdproject/core/runtime/utils/defineDesktopConfig'
+import { defineDesktopConfig } from '@owdproject/core/kit/defineDesktopConfig'
 
 export default defineDesktopConfig({
   apps: ['@owdproject/app-about'],

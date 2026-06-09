@@ -1,6 +1,6 @@
 import { getActivePinia, setActivePinia } from 'pinia'
 import type { Pinia } from 'pinia'
-import { useApplicationManager } from '../composables/useApplicationManager'
+import { useApplicationManager } from '../runtime/composables/useApplicationManager'
 
 const pendingDesktopApps: ApplicationConfig[] = []
 
@@ -51,4 +51,3 @@ export async function flushPendingDesktopApps() {
     await applicationManager.defineApp(config.id, config)
   }
 }
-

@@ -1,5 +1,3 @@
-import type { InjectionKey } from 'vue'
-
 /** Options for a yes/no confirmation (theme renders labels and chrome). */
 export interface DesktopConfirmDialogOptions {
   title?: string
@@ -22,9 +20,6 @@ export interface DesktopDialogProvider {
   alert(message: string, options?: { title?: string }): Promise<void>
   prompt(message: string, defaultValue?: string): Promise<string | null>
 }
-
-export const DESKTOP_DIALOG_PROVIDER_KEY: InjectionKey<DesktopDialogProvider> =
-  Symbol('desktop-dialog-provider')
 
 function browserGlobals(): {
   confirm: (message?: string) => boolean

@@ -60,18 +60,18 @@ flowchart TB
 | # | Area | Kernel (core) | Theme / external modules | Key paths |
 |---|------|---------------|--------------------------|-----------|
 | 1 | **Bootstrap & shell init** | Pinia bind, workspace bootstrap, default-app load, shell key merge on `appConfig.desktop`. Plugins: `desktop-shell-init`, `desktop-register-desktop-apps`, `resize.client`. | Theme `Desktop.vue` mounts after `$desktopShellReady`. | `runtime/utils/initDesktopShell.ts`, `runtime/plugins/01.desktop-shell-init.client.ts`, `runtime/plugins/02.desktop-register-desktop-apps.client.ts` |
-| 2 | **Desktop configuration** | `defineDesktopConfig`, merge into `runtimeConfig.public.desktop` / `appConfig.desktop`, `useDesktopConfig`, `useDesktopExtension`, runtime overrides via `useDesktopManager().setConfig()`, config validation/warnings. | Theme defaults via `defineDesktopTheme` + `defu`. | `runtime/utils/defineDesktopConfig.ts`, `runtime/composables/useDesktopManager.ts`, `runtime/composables/useDesktopConfig.ts` |
-| 3 | **Package installation** | `defineDesktopTheme` / `defineDesktopModule`, `installDesktopPackage`, install order theme → modules → apps, per-package `configKey` namespace merge. | Each theme/app/module is its own Nuxt package. | `runtime/utils/installDesktopPackage.ts`, `runtime/utils/defineDesktopTheme.ts`, `runtime/utils/defineDesktopModule.ts` |
+| 2 | **Desktop configuration** | `defineDesktopConfig`, merge into `runtimeConfig.public.desktop` / `appConfig.desktop`, `useDesktopConfig`, `useDesktopExtension`, runtime overrides via `useDesktopManager().setConfig()`, config validation/warnings. | Theme defaults via `defineDesktopTheme` + `defu`. | `kit/defineDesktopConfig.ts`, `runtime/composables/useDesktopManager.ts`, `runtime/composables/useDesktopConfig.ts` |
+| 3 | **Package installation** | `defineDesktopTheme` / `defineDesktopModule`, `installDesktopPackage`, install order theme → modules → apps, per-package `configKey` namespace merge. | Each theme/app/module is its own Nuxt package. | `kit/installDesktopPackage.ts`, `kit/defineDesktopTheme.ts`, `kit/defineDesktopModule.ts` |
 | 4 | **Shell readiness & options** | `useDesktopShellReady` (`$desktopShellReady` after init). `useDesktopShellOptions` reads `systemBar` flags (`enabled`, `position`, `startButton`) — **config only**, no UI. | Theme renders taskbar/start button from those flags. | `runtime/composables/useDesktopShellReady.ts`, `runtime/composables/useDesktopShellOptions.ts` |
 | 5 | **Shell identity & session** | `useDesktopShellIdentity` (guest default, `userHome`, `setShellIdentity` for auth). `useDesktopSession` (`initiateShutdownToStart` → `/start`). | `/start`, `/boot` pages, shutdown/boot animations and styling. | `runtime/composables/useDesktopShellIdentity.ts`, `runtime/composables/useDesktopSession.ts` |
-| 6 | **Application registry** | `defineDesktopApp`, `flushPendingDesktopApps`, `useApplicationManager` (launch, running apps, open windows), `useApplicationEntries` (sorted/filtered launcher list), per-app meta store. | Theme launcher/grid consumes `useApplicationEntries`. | `runtime/utils/utilDesktop.ts`, `runtime/composables/useApplicationManager.ts`, `runtime/composables/useApplicationEntries.ts`, `runtime/stores/storeApplicationMeta.ts` |
+| 6 | **Application registry** | `defineDesktopApp`, `flushPendingDesktopApps`, `useApplicationManager` (launch, running apps, open windows), `useApplicationEntries` (sorted/filtered launcher list), per-app meta store. | Theme launcher/grid consumes `useApplicationEntries`. | `kit/defineDesktopApp.ts`, `runtime/composables/useApplicationManager.ts`, `runtime/composables/useApplicationEntries.ts`, `runtime/stores/storeApplicationMeta.ts` |
 | 7 | **Window lifecycle** | Internal `WindowController` / `ApplicationController`: focus, z-index, minimize, `setWorkspace`. Global z-index counter and work-area rect in `useDesktopWindowStore`. Per-app window map in `storeApplicationWindows`. | Theme `Window*.vue` wraps kernel primitives; `provide/inject` for `windowController`. See **Window lifecycle** below. | `runtime/stores/storeDesktopWindow.ts`, `runtime/stores/storeApplicationWindows.ts` |
-| 8 | **Layout, maximize, work area** | `useToggleWindowMaximize`, `windowMaximizeLayout`, `utilWindowLayout` (snap rects, bounds restore), `useDesktopWorkArea` writes measured stage rect to store. | Theme measures shell stage DOM and calls `useDesktopWorkArea`. | `runtime/composables/useToggleWindowMaximize.ts`, `runtime/utils/windowMaximizeLayout.ts`, `runtime/utils/utilWindowLayout.ts`, `runtime/composables/useDesktopWorkArea.ts` |
+| 8 | **Layout, maximize, work area** | `useToggleWindowMaximize`, `utilWindowMaximizeLayout`, `utilWindowLayout` (snap rects, bounds restore), `useDesktopWorkArea` writes measured stage rect to store. | Theme measures shell stage DOM and calls `useDesktopWorkArea`. | `runtime/composables/useToggleWindowMaximize.ts`, `runtime/utils/utilWindowMaximizeLayout.ts`, `runtime/utils/utilWindowLayout.ts`, `runtime/composables/useDesktopWorkArea.ts` |
 | 9 | **Drag, Aero snap, edge drop** | `useWindowDragHandlers`, `useWindowSnapDrop`, `utilDetectSnapZone`, `useWorkspaceEdgeDrop`, hint bases `DesktopWindowSnapHintsBase` / `DesktopWorkspaceEdgeHintsBase`. | Theme wires drag in `Window.vue`; styles snap/edge hints. | `runtime/composables/useWindowDragHandlers.ts`, `runtime/composables/useWindowSnapDrop.ts`, `runtime/utils/utilDetectSnapZone.ts`, `runtime/composables/useWorkspaceEdgeDrop.ts` |
 | 10 | **Workspaces — state & API** | `useDesktopStore` (overview flag, z-index seed, default-apps map). `useDesktopWorkspaceStore`: `list`, `active`, `overview`, `createWorkspace`, `removeWorkspace`, `resolveWorkspaceFallback`. `utilWorkspaceWindows` / `countWindowsOnWorkspace`. | Theme reads workspace list for tray, indicators, overview entry. | `runtime/stores/storeDesktop.ts`, `runtime/stores/storeDesktopWorkspace.ts`, `runtime/utils/utilWorkspaceWindows.ts` |
 | 11 | **Workspaces — interaction** | `useWorkspaceManager` (overview keyboard, HTML5 drop between desktops, `removeWorkspace` with window migration). `useWorkspaceOverviewLiveScale`, `useWorkspaceOverviewCapture`, `utilCaptureElementToCanvas`. | Theme overview UI (cards, wallpaper preview, remove button, scale shell). Workspace removal rules: see **Window lifecycle** below. | `runtime/composables/useWorkspaceManager.ts`, `runtime/composables/useWorkspaceOverviewLiveScale.ts`, `runtime/composables/useWorkspaceOverviewCapture.ts` |
 | 12 | **Kernel Vue components** | `DesktopCore`, `DesktopApplicationRender`, `DesktopApplicationWindowsRender`, `DesktopWindow` / `DesktopWindowNav` / `DesktopWindowContent`, `DesktopBackground`, `DesktopTime`, snap/edge hint bases. | `Desktop.vue` wraps `DesktopCore`; theme chrome around window primitives. | `runtime/components/Desktop/` |
-| 13 | **Dialogs** | Contract `desktopDialogProvider`, `useDesktopDialogs` (theme inject or browser fallback). | PV implementation: `@owdproject/kit-primevue` (`createDesktopDialogs`). | `runtime/dialogs/desktopDialogProvider.ts`, `runtime/composables/useDesktopDialogs.ts` |
+| 13 | **Dialogs** | Contract `desktopDialogProvider`, `useDesktopDialogs` (theme inject or browser fallback). Inject key: `runtime/constants/desktopShellKeys.ts`. | PV implementation: `@owdproject/kit-primevue` (`createDesktopDialogs`). | `runtime/dialogs/desktopDialogProvider.ts`, `runtime/composables/useDesktopDialogs.ts` |
 | 14 | **Secondary shell services** | `useDesktopDefaultAppsStore` + `useDesktopManager` default-app routing. `useDesktopVolumeStore` (master volume). `useTerminalManager` (command registry; `app-terminal` registers commands). | Theme volume control, terminal UI, “open with” flows. | `runtime/stores/storeDesktopDefaultApps.ts`, `runtime/stores/storeDesktopVolume.ts`, `runtime/composables/useTerminalManager.ts` |
 | 15 | **Global shell behaviour** | `useBlockNonInputContextMenu` (desktop-style context menu policy). `useDesktopStore` persistence when `@owdproject/module-persistence` is installed. | Theme chooses where to call context-menu blocking; boot/shutdown pages. | `runtime/composables/useBlockNonInputContextMenu.ts`, `runtime/stores/storeDesktop.ts` |
 
@@ -86,18 +86,27 @@ flowchart TB
 | VFS, paths, headless explorer APIs | `@owdproject/module-fs` |
 | Window titlebar, chrome buttons, shadows | Theme wrappers around `DesktopWindow*` |
 
+## Package layout
+
+| Path | Role | Auto-imported in apps? |
+|------|------|------------------------|
+| `kit/` | Module-time authoring (`defineDesktop*`, `installDesktopPackage`, validation) | No — import `@owdproject/core/kit/*` or root barrel |
+| `runtime/` | Client kernel (composables, stores, utils, components, plugins) | Composables, stores, utils only (via `addImportsDir`) |
+| `runtime/internal/` | Window/application controllers | No |
+| `runtime/constants/` | Shell layout bands, inject keys | No |
+
 ## Public API
 
 ### Configuration
 
 | Export | Use |
 |--------|-----|
-| `defineDesktopConfig({ theme, apps, modules, ... })` | Root `desktop.config.ts` |
-| `defineDesktopModule` / `defineDesktopTheme` | Authoring extension modules and themes; themes pass `import.meta.url` as the second argument to `defineDesktopTheme` to auto-register Tailwind content for `runtime/components/**` (override with `{ tailwind: '...' }` or `registerTailwindPath` for extra paths) |
+| `defineDesktopConfig({ theme, apps, modules, ... })` | Root `desktop.config.ts` — `@owdproject/core/kit/defineDesktopConfig` |
+| `defineDesktopModule` / `defineDesktopTheme` | Authoring extension modules and themes (`@owdproject/core/kit/*`); themes pass `import.meta.url` as the second argument to `defineDesktopTheme` to auto-register Tailwind content for `runtime/components/**` (override with `{ tailwind: '...' }` or `registerTailwindPath` for extra paths) |
 | `runtimeConfig.public.desktop` | Full merged config (manifest + shell + extension namespaces) |
 | `useDesktopConfig()` | Reactive access to `public.desktop` |
 | `useDesktopExtension(key)` | One extension namespace (`fs`, `terminal`, …) |
-| `hasDesktopModule` / `hasDesktopApp` / `hasDesktopExtension` | Manifest and extension checks (`runtime/utils/utilHasDesktop`) |
+| `hasDesktopModule` / `hasDesktopApp` / `hasDesktopExtension` | Manifest and extension checks (`runtime/composables/useDesktopManifest.ts`) |
 | `useDesktopManager().setConfig()` | Runtime shell overrides on `appConfig.desktop` |
 
 Shell keys in core types: `name`, `defaultApps`, `features`, `systemBar`, `dockBar`, `workspaces`, `explorer`, `docs`. Extension keys (`fs`, `terminal`, …) are typed via **module augmentation** in each package (`types/desktop.d.ts`), not an allowlist in core.

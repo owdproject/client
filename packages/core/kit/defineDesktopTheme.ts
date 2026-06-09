@@ -1,7 +1,7 @@
 import { createResolver, defineNuxtModule, type NuxtModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
-import { registerTailwindPath } from './utilApp'
+import { registerTailwindPath } from './registerTailwindPath'
 
 type DesktopThemeDefinition = NuxtModule<
   Record<string, unknown>,

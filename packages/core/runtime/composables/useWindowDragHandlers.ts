@@ -1,6 +1,6 @@
 import type { IWindowController } from '@owdproject/core'
-import { useDesktopWindowStore } from '@owdproject/core/runtime/stores/storeDesktopWindow'
-import { useDesktopWorkspaceStore } from '@owdproject/core/runtime/stores/storeDesktopWorkspace'
+import { useDesktopWindowStore } from '../stores/storeDesktopWindow'
+import { useDesktopWorkspaceStore } from '../stores/storeDesktopWorkspace'
 import { useWorkspaceEdgeDrop } from './useWorkspaceEdgeDrop'
 import { useWindowSnapDrop } from './useWindowSnapDrop'
 
