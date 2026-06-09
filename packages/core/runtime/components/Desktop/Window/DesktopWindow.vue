@@ -203,6 +203,7 @@ const shouldFitParent = computed(
   :deep(.owd-window__content) {
     overflow-y: auto;
     height: 100%;
+    min-height: 0;
   }
 }
 </style>

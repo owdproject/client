@@ -4,6 +4,5 @@ export {
   defineDesktopModule,
   defineDesktopTheme,
   mergeDesktopExtensionConfig,
-  registerTailwindPath,
   setDesktopExtensionConfig,
 } from './kit/authoring'

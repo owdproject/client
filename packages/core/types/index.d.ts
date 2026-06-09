@@ -4,9 +4,6 @@ import type { ShallowRef } from 'vue'
 declare module 'nuxt/schema' {
   interface PublicRuntimeConfig {
     desktop: DesktopConfig
-    owd: {
-      tailwindPaths: []
-    }
   }
 }
 
@@ -453,8 +450,6 @@ interface DefaultAppConfig {
 
 export function defineDesktopApp(config: ApplicationConfig)
 export function defineDesktopConfig(config: DesktopConfig)
-export function registerTailwindPath(nuxt: Nuxt, path: string): void
-
 export function defineDesktopModule(
   definition: import('@nuxt/kit').NuxtModule<
     Record<string, unknown>,
@@ -463,18 +458,12 @@ export function defineDesktopModule(
   > & { meta: { name: string; configKey: string } },
 ): ReturnType<typeof import('@nuxt/kit').defineNuxtModule>
 
-export type DefineDesktopThemeOptions = {
-  moduleUrl: string
-  tailwind?: boolean | string | string[]
-}
-
 export function defineDesktopTheme(
   definition: import('@nuxt/kit').NuxtModule<
     Record<string, unknown>,
     Record<string, unknown>,
     false
   >,
-  themeOptions?: string | DefineDesktopThemeOptions,
 ): ReturnType<typeof import('@nuxt/kit').defineNuxtModule>
 
 export function setDesktopExtensionConfig(

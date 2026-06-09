@@ -6,7 +6,7 @@ Full guide (checklists, before/after, pitfalls): **[docs/content/6.setup/5.migra
 
 ## Agent one-liner
 
-Extension/app `module.ts` → `defineDesktopModule` + `types/desktop.d.ts`; theme `module.ts` → `defineDesktopTheme(definition, import.meta.url)` (auto Tailwind for `runtime/components/**`; drop manual `registerTailwindPath` for that glob); keep `defineDesktopApp` in `plugin.ts`; read config via `public.desktop.<configKey>` or `useDesktopExtension`; import authoring helpers from `@owdproject/core/kit/*` (e.g. `defineDesktopModule`), not the root barrel.
+Extension/app `module.ts` → `defineDesktopModule` + `types/desktop.d.ts`; theme `module.ts` → `defineDesktopTheme(definition)` + `installModule('@owdproject/kit-primevue')` + `registerThemeTailwindPath` from kit-primevue (see MIGRATION_3.4.md — the second `import.meta.url` argument was removed in 3.4); keep `defineDesktopApp` in `plugin.ts`; read config via `public.desktop.<configKey>` or `useDesktopExtension`; import authoring helpers from `@owdproject/core/kit/*` (e.g. `defineDesktopModule`), not the root barrel.
 
 ## Reference packages (monorepo)
 

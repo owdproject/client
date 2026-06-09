@@ -2,7 +2,6 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 
 import {
-  createResolver,
   defineNuxtModule,
   installModule,
   type NuxtModule,
@@ -185,16 +184,6 @@ export function mergeDesktopExtensionConfig(
   desktop[configKey] = defu(partial, base)
 }
 
-export function registerTailwindPath(nuxt: Nuxt, path: string) {
-  nuxt.options.runtimeConfig.app.owd = nuxt.options.runtimeConfig.app.owd || {}
-  nuxt.options.runtimeConfig.app.owd.tailwindPaths =
-    nuxt.options.runtimeConfig.app.owd.tailwindPaths || []
-
-  if (!nuxt.options.runtimeConfig.app.owd.tailwindPaths.includes(path)) {
-    nuxt.options.runtimeConfig.app.owd.tailwindPaths.push(path)
-  }
-}
-
 type ModuleLike = {
   meta?: { configKey?: string }
   default?: { meta?: { configKey?: string } }
@@ -292,60 +281,16 @@ type DesktopThemeDefinition = NuxtModule<
   false
 >
 
-export type DefineDesktopThemeOptions = {
-  moduleUrl: string
-  tailwind?: boolean | string | string[]
-}
-
-const DEFAULT_THEME_TAILWIND_GLOB = './runtime/components/**/*.{vue,mjs,ts}'
-
-function resolveThemeOptions(
-  themeOptions?: string | DefineDesktopThemeOptions,
-): { moduleUrl?: string; tailwind: boolean | string | string[] } {
-  if (!themeOptions) {
-    return { moduleUrl: undefined, tailwind: false }
-  }
-  if (typeof themeOptions === 'string') {
-    return { moduleUrl: themeOptions, tailwind: true }
-  }
-  return {
-    moduleUrl: themeOptions.moduleUrl,
-    tailwind: themeOptions.tailwind ?? true,
-  }
-}
-
-function registerThemeTailwindPaths(
-  nuxt: Nuxt,
-  moduleUrl: string,
-  tailwind: boolean | string | string[],
-) {
-  if (tailwind === false) return
-
-  const { resolve } = createResolver(moduleUrl)
-  const globs =
-    tailwind === true
-      ? [DEFAULT_THEME_TAILWIND_GLOB]
-      : Array.isArray(tailwind)
-        ? tailwind
-        : [tailwind]
-
-  for (const glob of globs) {
-    registerTailwindPath(nuxt, resolve(glob))
-  }
-}
-
 /**
  * Nuxt module wrapper for desktop themes.
  * Merges theme shell defaults into `runtimeConfig.public.desktop` (user desktop.config wins).
  *
- * Pass `import.meta.url` (or `{ moduleUrl, tailwind? }`) as the second argument to register
- * Tailwind content for theme components automatically.
+ * Tailwind content for theme Vue templates is registered via
+ * `@owdproject/kit-primevue/kit/registerTailwindPath` after installing kit-primevue.
  */
 export function defineDesktopTheme(
   definition: DesktopThemeDefinition,
-  themeOptions?: string | DefineDesktopThemeOptions,
 ): ReturnType<typeof defineNuxtModule> {
-  const { moduleUrl, tailwind } = resolveThemeOptions(themeOptions)
   const userSetup = definition.setup
 
   return defineNuxtModule({
@@ -362,10 +307,6 @@ export function defineDesktopTheme(
         (pub.desktop ?? {}) as Record<string, unknown>,
         options as Record<string, unknown>,
       )
-
-      if (moduleUrl) {
-        registerThemeTailwindPaths(nuxt, moduleUrl, tailwind)
-      }
 
       if (typeof userSetup === 'function') {
         return userSetup(options, nuxt)

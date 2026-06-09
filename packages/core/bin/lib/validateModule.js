@@ -358,11 +358,32 @@ export function validateOwdModule(packageDir, options = {}) {
     if (!moduleSrc.includes('defineNuxtModule')) {
       issue('error', 'define-nuxt-module', 'src/module.ts must use defineNuxtModule')
     }
-    if (!moduleSrc.includes('registerTailwindPath')) {
+    const hasKitTailwind =
+      moduleSrc.includes('registerTailwindPath') ||
+      moduleSrc.includes('registerThemeTailwindPath')
+    const hasKitPrimevue =
+      moduleSrc.includes("installModule('@owdproject/kit-primevue'") ||
+      moduleSrc.includes('installModule("@owdproject/kit-primevue"')
+    if (kind === 'theme') {
+      if (!hasKitPrimevue) {
+        issue(
+          'warning',
+          'kit-primevue',
+          'theme src/module.ts should install @owdproject/kit-primevue for PrimeVue + Tailwind',
+        )
+      }
+      if (!hasKitTailwind) {
+        issue(
+          'warning',
+          'tailwind-path',
+          'theme src/module.ts should call registerThemeTailwindPath from @owdproject/kit-primevue/kit/registerTailwindPath',
+        )
+      }
+    } else if (!hasKitTailwind) {
       issue(
         'warning',
         'tailwind-path',
-        'src/module.ts should call registerTailwindPath for Vue components',
+        'src/module.ts should call registerTailwindPath from @owdproject/kit-primevue/kit/registerTailwindPath for Vue components',
       )
     }
   }

@@ -102,7 +102,7 @@ flowchart TB
 | Export | Use |
 |--------|-----|
 | `defineDesktopConfig({ theme, apps, modules, ... })` | Root `desktop.config.ts` — `@owdproject/core/kit/authoring` |
-| `defineDesktopModule` / `defineDesktopTheme` | Authoring extension modules and themes (`@owdproject/core/kit/*`); themes pass `import.meta.url` as the second argument to `defineDesktopTheme` to auto-register Tailwind content for `runtime/components/**` (override with `{ tailwind: '...' }` or `registerTailwindPath` for extra paths) |
+| `defineDesktopModule` / `defineDesktopTheme` | Authoring extension modules and themes (`@owdproject/core/kit/*`); Tailwind v3 + `tailwindcss-primeui` live in `@owdproject/kit-primevue` — themes call `registerThemeTailwindPath` / `registerTailwindPath` from `@owdproject/kit-primevue/kit/registerTailwindPath` after `installModule('@owdproject/kit-primevue')` |
 | `runtimeConfig.public.desktop` | Full merged config (manifest + shell + extension namespaces) |
 | `useDesktopConfig()` | Reactive access to `public.desktop` |
 | `useDesktopExtension(key)` | One extension namespace (`fs`, `terminal`, …) |

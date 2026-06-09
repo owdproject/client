@@ -126,23 +126,6 @@ export default defineNuxtModule({
     _nuxt.options.appConfig.desktop = _nuxt.options.runtimeConfig.public.desktop
 
     {
-      // Tailwind after theme/apps so registerTailwindPath paths are collected first.
-
-      const tailwindPaths =
-        _nuxt.options.runtimeConfig.app.owd?.tailwindPaths || []
-      tailwindPaths.push('./runtime/components/**/*.{vue,mjs,ts}')
-
-      _nuxt.options.tailwindcss = _nuxt.options.tailwindcss || {}
-      _nuxt.options.tailwindcss.config = _nuxt.options.tailwindcss.config || {}
-      // @ts-ignore
-      _nuxt.options.tailwindcss.config.content = tailwindPaths
-
-      await installModule('@nuxtjs/tailwindcss', {
-        viewer: false
-      })
-    }
-
-    {
       // configure scss for vite
 
       _nuxt.hook('vite:extendConfig', (viteConfig) => {

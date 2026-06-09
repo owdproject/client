@@ -86,7 +86,6 @@
     "@nuxt/icon": "^2.2.1",
     "@nuxt/kit": "^4.4.4",
     "@nuxtjs/i18n": "^10.3.0",
-    "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.3",
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",

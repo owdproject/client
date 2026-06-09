@@ -4,7 +4,8 @@
 
 - **@owdproject/core** no longer installs PrimeVue. Module-time authoring lives in `kit/` (not auto-imported). Shell composables, utils, and hint components use `runtime/` (`composables`, `utils`, `constants`, `components/Desktop/`).
 - **@owdproject/module-fs** — ZenFS virtual filesystem + headless explorer (composables, stores, utils; no `.vue`).
-- **@owdproject/kit-primevue** — Nuxt PrimeVue module, `createDesktopDialogs`, optional explorer UI (`DesktopExplorer*`; `{ explorer: false }` for dialogs only).
+- **@owdproject/kit-primevue** — Nuxt PrimeVue module, Tailwind v3 + `tailwindcss-primeui`, `createDesktopDialogs`, optional explorer UI (`DesktopExplorer*`; `{ explorer: false }` for dialogs only).
+- **Tailwind** — no longer installed by core; `@owdproject/kit-primevue` (`desktop-kit-primevue`) installs `@nuxtjs/tailwindcss` during kit `setup` and merges registered content globs on the `tailwindcss:config` hook (after theme/apps have called `registerTailwindPath`).
 - **@owdproject/kit-theme**, **kit-fs**, **kit-explorer** — deprecated (empty Nuxt modules). **No Vite import shims** — update sources to explicit paths below.
 
 ## Stacks (what is optional)
@@ -57,10 +58,22 @@ Or rely on kit-primevue client plugin (no theme plugin needed).
 | `useFileSystemExplorer` | `useExplorerWindow` |
 | `@owdproject/core/runtime/utils/defineDesktop*` | `@owdproject/core/kit/authoring` |
 | `@owdproject/core/runtime/utils/utilDesktop` (`defineDesktopApp`) | `@owdproject/core/kit/defineDesktopApp` |
-| `@owdproject/core/runtime/utils/utilApp` (`registerTailwindPath`) | `@owdproject/core/kit/authoring` |
+| `registerTailwindPath` from core | `@owdproject/kit-primevue/kit/registerTailwindPath` (same function names; import path only) |
+| `defineDesktopTheme(definition, import.meta.url)` (auto Tailwind) | `defineDesktopTheme(definition)` + `registerThemeTailwindPath(nuxt, import.meta.url)` after kit-primevue |
 | `runtime/utils/utilHasDesktop` | `runtime/composables/useDesktopManifest` (`hasDesktop*`) |
 | `runtime/utils/windowMaximizeLayout` | `runtime/utils/utilWindowMaximizeLayout` |
 | `runtime/utils/utilWindow` | `runtime/utils/utilWindowControllerAdapter` |
+
+### Tailwind content registration
+
+`@nuxtjs/tailwindcss` is installed by kit-primevue during kit `setup` (not by core). Register globs during each module's `setup`; kit merges them on `tailwindcss:config` when Tailwind loads its config (after all module setups, on `modules:done`).
+
+| Caller | API |
+|--------|-----|
+| Theme `module.ts` (after `installModule('@owdproject/kit-primevue')`) | `registerThemeTailwindPath(nuxt, import.meta.url)` — defaults to `runtime/components/**` and `runtime/apps/**` |
+| Built-in theme apps, extension apps/modules with utility classes | `registerTailwindPath(nuxt, resolve('./path/to/glob'))` from `@owdproject/kit-primevue/kit/registerTailwindPath` |
+
+Kit-primevue merges registered paths into `content.files` (not a plain array — that breaks the generated PostCSS template). Duplicate globs are deduplicated. In dev, `[desktop-kit-primevue] Tailwind content: N paths` is logged when the config hook runs.
 
 ## module-fs
 
@@ -72,4 +85,4 @@ Headless explorer: `useExplorerTabs`, `createExplorerWindowMenuItems`, `useExplo
 
 ## Shell identity
 
-See client `DESKTOP_KERNEL.md` (`useDesktopShellIdentity`) and the docs site page **Shell identity** (`packages/docs/content/7.internals/6.shell-identity.md` — publish from the docs repo only; do not commit `packages/docs` into the client repo if that is your policy).
+See `DESKTOP_KERNEL.md` (`useDesktopShellIdentity`).
