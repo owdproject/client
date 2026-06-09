@@ -8,9 +8,6 @@ packages:
 catalog:
   typescript: ~6.0.3
 
-overrides:
-  tailwindcss: 3.4.19
-
 allowBuilds:
   '@owdproject/nx': true
   '@owdproject/theme-nova': true
