@@ -1,6 +1,4 @@
 export default defineNuxtConfig({
-  workspaceDir: '../../',
-
   ssr: false,
 
   modules: ['@owdproject/core'],
