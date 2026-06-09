@@ -2,8 +2,8 @@
 import { ref, provide } from 'vue'
 import { computed } from '@vue/reactivity'
 import { useAppConfig } from 'nuxt/app'
-import { handleWindowControllerProps } from '../../../utils/utilWindowControllerAdapter'
-import { useDesktopWorkspaceStore } from '../../../stores/storeDesktopWorkspace'
+import { handleWindowControllerProps } from '../../utils/utilWindowControllerAdapter'
+import { useDesktopWorkspaceStore } from '../../stores/storeDesktopWorkspace'
 
 const props = defineProps<{
   window?: IWindowController

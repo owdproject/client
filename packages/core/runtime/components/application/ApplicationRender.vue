@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useApplicationManager } from '../../../composables/useApplicationManager'
+import { useApplicationManager } from '../../composables/useApplicationManager'
 
 defineProps<{
   workspaceFilter?: string

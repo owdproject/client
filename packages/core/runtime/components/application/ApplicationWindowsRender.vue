@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useDesktopWorkspaceStore } from '../../../stores/storeDesktopWorkspace'
+import { useDesktopWorkspaceStore } from '../../stores/storeDesktopWorkspace'
 
 const props = defineProps<{
   workspaceFilter?: string

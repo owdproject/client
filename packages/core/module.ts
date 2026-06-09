@@ -149,7 +149,7 @@ export default defineNuxtModule({
 
       addComponentsDir({
         path: resolve('./runtime/components'),
-        prefix: '',
+        prefix: 'Desktop',
         pathPrefix: false,
         global: true
       })

@@ -98,3 +98,6 @@ Runtime identifiers use the `desktop-` prefix. The npm scope `@owdproject/*` and
 | App/module `meta.name` | `desktop-app-<slug>` / `desktop-module-<slug>` | `owd-app-*` / `owd-module-*` |
 | Theme `meta.name` | `desktop-theme-<slug>` | `owd-theme-*` |
 | Desktop manifest file | `desktop.config.ts` | `owd.config.ts` |
+| Kernel Vue source files | `runtime/components/<area>/<Name>.vue` + `prefix: 'Desktop'` | `runtime/components/Desktop/<area>/Desktop<Name>.vue` |
+
+Global component names (`DesktopWindow`, `DesktopCore`, …) are unchanged. Deep imports of hint bases: `runtime/components/workspace/WorkspaceEdgeHintsBase.vue`, `runtime/components/window/WindowSnapHintsBase.vue`.
