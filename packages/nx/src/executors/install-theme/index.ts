@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import { join } from 'path';
 import { InstallThemeExecutorSchema } from './schema';
 
-import { addToDesktopConfig } from '../../utils/utilConfig';
+import { addToDesktopConfig, resolveDesktopConfigPath } from '../../utils/utilConfig';
 
 export default async function runExecutor(
   options: InstallThemeExecutorSchema,
@@ -15,7 +15,7 @@ export default async function runExecutor(
   try {
     // you can change this to "npm install" or "yarn add" if you prefer
     const desktopPath = join(context.root, 'desktop');
-    const configPath = join(desktopPath, 'owd.config.ts');
+    const configPath = resolveDesktopConfigPath(desktopPath);
 
     // run the package manager command to add the package to the desktop workspace
     execSync(`pnpm add ${name}`, {
@@ -25,7 +25,7 @@ export default async function runExecutor(
 
     console.log(`✅ Package ${name} installed successfully.`);
 
-    // now proceed with updating the owd.config.ts file
+    // now proceed with updating desktop.config.ts
     addToDesktopConfig(configPath, 'theme', name);
 
     return { success: true };

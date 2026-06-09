@@ -19,7 +19,7 @@ import pkg from './package.json'
 export default defineNuxtModule({
   meta: {
     name: 'desktop',
-    configKey: 'owd',
+    configKey: 'desktop',
   },
   defaults: {
     theme: '@owdproject/theme-nova',

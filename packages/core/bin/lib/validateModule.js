@@ -528,11 +528,23 @@ export function validateOwdModule(packageDir, options = {}) {
       if (!pluginSrc.includes('defineDesktopApp')) {
         issue('error', 'define-desktop-app', 'plugin.ts must call defineDesktopApp')
       }
-      if (!/name\s*:\s*['"]owd-[^'"]+-register['"]/.test(pluginSrc)) {
+      const hasDesktopRegister = /name\s*:\s*['"]desktop-[^'"]+-register['"]/.test(
+        pluginSrc,
+      )
+      const hasLegacyRegister = /name\s*:\s*['"]owd-[^'"]+-register['"]/.test(
+        pluginSrc,
+      )
+      if (!hasDesktopRegister && !hasLegacyRegister) {
         issue(
           'error',
           'plugin-name',
-          'plugin.ts must set name: "owd-<slug>-register" for dependsOn ordering',
+          'plugin.ts must set name: "desktop-<slug>-register" for dependsOn ordering',
+        )
+      } else if (!hasDesktopRegister && hasLegacyRegister) {
+        issue(
+          'warning',
+          'plugin-name-legacy',
+          'plugin.ts uses deprecated name "owd-<slug>-register"; rename to "desktop-<slug>-register"',
         )
       }
       if (!pluginSrc.includes('import.meta.server')) {

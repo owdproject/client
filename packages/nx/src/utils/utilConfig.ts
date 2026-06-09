@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   Project,
   SyntaxKind,
@@ -6,9 +8,32 @@ import {
   PropertyAssignment
 } from 'ts-morph';
 
+const DESKTOP_CONFIG_FILENAME = 'desktop.config.ts';
+const LEGACY_DESKTOP_CONFIG_FILENAME = 'owd.config.ts';
+
+/**
+ * Resolve desktop config under a Nuxt project folder (prefers desktop.config.ts).
+ */
+export function resolveDesktopConfigPath(desktopDir: string): string {
+  const desktopPath = join(desktopDir, DESKTOP_CONFIG_FILENAME);
+  const legacyPath = join(desktopDir, LEGACY_DESKTOP_CONFIG_FILENAME);
+
+  if (existsSync(desktopPath)) {
+    return desktopPath;
+  }
+
+  if (existsSync(legacyPath)) {
+    return legacyPath;
+  }
+
+  throw new Error(
+    `Cannot find ${DESKTOP_CONFIG_FILENAME} (or legacy ${LEGACY_DESKTOP_CONFIG_FILENAME}) in ${desktopDir}`,
+  );
+}
+
 /**
  * Adds a value to a key ('apps', 'modules') or replaces it if key is 'theme'
- * @param configPath Absolute path to `owd.config.ts`
+ * @param configPath Absolute path to desktop.config.ts (or legacy owd.config.ts)
  * @param key Target key in config ('apps' | 'modules' | 'theme')
  * @param value String value to add (e.g. '@owdproject/app-debug')
  */

@@ -86,3 +86,15 @@ Headless explorer: `useExplorerTabs`, `createExplorerWindowMenuItems`, `useExplo
 ## Shell identity
 
 See `DESKTOP_KERNEL.md` (`useDesktopShellIdentity`).
+
+## Module naming (3.4)
+
+Runtime identifiers use the `desktop-` prefix. The npm scope `@owdproject/*` and CSS classes/tokens (`.owd-*`, `--owd-*`) are unchanged.
+
+| Surface | 3.4 convention | Legacy (warn only) |
+|---------|----------------|-------------------|
+| Core Nuxt module `configKey` | `desktop` | `owd` (nuxt.config module options) |
+| App `plugin.ts` `name` | `desktop-<slug>-register` | `owd-<slug>-register` |
+| App/module `meta.name` | `desktop-app-<slug>` / `desktop-module-<slug>` | `owd-app-*` / `owd-module-*` |
+| Theme `meta.name` | `desktop-theme-<slug>` | `owd-theme-*` |
+| Desktop manifest file | `desktop.config.ts` | `owd.config.ts` |
