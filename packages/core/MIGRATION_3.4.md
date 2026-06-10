@@ -101,3 +101,25 @@ Runtime identifiers use the `desktop-` prefix. The npm scope `@owdproject/*` and
 | Kernel Vue source files | `runtime/components/<area>/<Name>.vue` + `prefix: 'Desktop'` | `runtime/components/Desktop/<area>/Desktop<Name>.vue` |
 
 Global component names (`DesktopWindow`, `DesktopCore`, …) are unchanged. Deep imports of hint bases: `runtime/components/workspace/WorkspaceEdgeHintsBase.vue`, `runtime/components/window/WindowSnapHintsBase.vue`.
+
+## Pinia store ids (3.4.1)
+
+Pinia store ids were renamed to match the `desktop-*` runtime naming. CSS classes (`.owd-*`) and npm scope (`@owdproject/*`) are unchanged.
+
+| Legacy id | New id |
+|-----------|--------|
+| `owd/desktop` | `desktop` |
+| `owd/desktop/workspace` | `desktop/workspace` |
+| `owd/desktop/window` | `desktop/window` |
+| `owd/desktop/volume` | `desktop/volume` |
+| `owd/desktop/defaultApps` | `desktop/defaultApps` |
+| `owd/application/${appId}/windows` | `desktop/application/${appId}/windows` |
+| `owd/application/${appId}/meta` | `desktop/application/${appId}/meta` |
+
+When `@owdproject/module-persistence` is installed, persisted state is migrated automatically on the first client boot (`desktop-shell-init` runs `migratePersistedStoreIds` before Pinia hydration). No app or theme code changes are required.
+
+**Breaking only for tools that read raw localStorage keys** (e.g. custom debug scripts expecting `owd/desktop`). In-browser state is preserved via migration.
+
+`pnpm validate:modules` (or `desktop validate`) warns when a package still uses legacy `meta.name: "owd-*"` or Pinia `defineStore` ids containing `owd/`.
+
+Extension modules with their own persisted stores should use the `desktop/<module>/…` id pattern (e.g. `@owdproject/module-fs` explorer: `desktop/module-fs/explorer`). Core migrates only kernel ids (`owd/desktop`, `owd/application/*`); extension packages may omit a localStorage migration — users who already had legacy keys may see a one-time reset of that module's persisted prefs.

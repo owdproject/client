@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDesktopStore } from './storeDesktop'
+import { DESKTOP_WORKSPACE_STORE_ID } from './storeIds'
 import { nanoid } from 'nanoid'
 
 export const useDesktopWorkspaceStore = defineStore(
-  'owd/desktop/workspace',
+  DESKTOP_WORKSPACE_STORE_ID,
   () => {
     const desktopStore = useDesktopStore()
 

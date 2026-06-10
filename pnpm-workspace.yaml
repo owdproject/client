@@ -10,7 +10,6 @@ catalog:
 
 allowBuilds:
   '@owdproject/nx': true
-  '@owdproject/theme-nova': true
   '@parcel/watcher': true
   '@swc/core': true
   better-sqlite3: true
@@ -19,7 +18,6 @@ allowBuilds:
   unrs-resolver: true
 onlyBuiltDependencies:
   - '@owdproject/nx'
-  - '@owdproject/theme-nova'
   - '@parcel/watcher'
   - '@swc/core'
   - esbuild

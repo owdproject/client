@@ -73,7 +73,7 @@ flowchart TB
 | 12 | **Kernel Vue components** | `DesktopCore`, `DesktopApplicationRender`, `DesktopApplicationWindowsRender`, `DesktopWindow` / `DesktopWindowNav` / `DesktopWindowContent`, `DesktopBackground`, `DesktopTime`, snap/edge hint bases. | `Desktop.vue` wraps `DesktopCore`; theme chrome around window primitives. | `runtime/components/` (`prefix: 'Desktop'` in core `module.ts`; source files e.g. `window/Window.vue`) |
 | 13 | **Dialogs** | Contract `desktopDialogProvider`, `useDesktopDialogs` (theme inject or browser fallback). Inject key: `runtime/constants/desktopShellKeys.ts`. | PV implementation: `@owdproject/kit-primevue` (`createDesktopDialogs`). | `runtime/dialogs/desktopDialogProvider.ts`, `runtime/composables/useDesktopDialogs.ts` |
 | 14 | **Secondary shell services** | `useDesktopDefaultAppsStore` + `useDesktopManager` default-app routing. `useDesktopVolumeStore` (master volume). `useTerminalManager` (command registry; `app-terminal` registers commands). | Theme volume control, terminal UI, “open with” flows. | `runtime/stores/storeDesktopDefaultApps.ts`, `runtime/stores/storeDesktopVolume.ts`, `runtime/composables/useTerminalManager.ts` |
-| 15 | **Global shell behaviour** | `useBlockNonInputContextMenu` (desktop-style context menu policy). `useDesktopStore` persistence when `@owdproject/module-persistence` is installed. | Theme chooses where to call context-menu blocking; boot/shutdown pages. | `runtime/composables/useBlockNonInputContextMenu.ts`, `runtime/stores/storeDesktop.ts` |
+| 15 | **Global shell behaviour** | `useBlockNonInputContextMenu` (desktop-style context menu policy). `useDesktopStore` persistence when `@owdproject/module-persistence` is installed. Pinia ids: `desktop`, `desktop/workspace`, `desktop/window`, `desktop/volume`, `desktop/defaultApps`, `desktop/application/${appId}/windows`, `desktop/application/${appId}/meta`. Legacy `owd/*` keys are migrated once on client boot via `migratePersistedStoreIds`. | Theme chooses where to call context-menu blocking; boot/shutdown pages. | `runtime/composables/useBlockNonInputContextMenu.ts`, `runtime/stores/storeDesktop.ts`, `runtime/stores/storeIds.ts`, `runtime/utils/migratePersistedStoreIds.ts` |
 
 ### Out of core (by user-facing area)
 
@@ -139,7 +139,7 @@ Themes expose **`Desktop.vue`** or **`Desktop.client.vue`** as the theme entry p
 
 | Symbol | Role |
 |--------|------|
-| `useDesktopStore` | Shell state (workspace overview flag, z-index counter, default-apps map); persisted with `module-persistence` |
+| `useDesktopStore` | Shell state (workspace overview flag, z-index counter, default-apps map); Pinia id `desktop`; persisted with `module-persistence` |
 | `useDesktopWorkspaceStore` | Active workspace, overview mode, `createWorkspace` / `removeWorkspace`, `resolveWorkspaceFallback` |
 | `useDesktopWindowStore` | Global z-index increment + measured work area (`workArea`, `setWorkArea`) |
 | `useDesktopDefaultAppsStore` | Feature → default app/entry mapping (`getDefaultApp`, `setDefaultApp`) |

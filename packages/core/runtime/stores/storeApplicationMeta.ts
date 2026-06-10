@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { applicationMetaStoreId } from './storeIds'
 
 const metaStoreRegistry = new Map<string, ReturnType<typeof defineStore>>()
 /** Store ids created by the generic fallback (only `meta`), replaceable when an app registers real state. */
@@ -20,7 +21,7 @@ export const useApplicationMetaStore = (
   appId: string,
   states?: MetaStoreSetup,
 ) => {
-  const id = `owd/application/${appId}/meta`
+  const id = applicationMetaStoreId(appId)
 
   if (
     states !== undefined &&

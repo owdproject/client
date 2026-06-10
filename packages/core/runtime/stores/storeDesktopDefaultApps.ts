@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { useDesktopStore } from './storeDesktop'
+import { DESKTOP_DEFAULT_APPS_STORE_ID } from './storeIds'
 
 export const useDesktopDefaultAppsStore = defineStore(
-  'owd/desktop/defaultApps',
+  DESKTOP_DEFAULT_APPS_STORE_ID,
   () => {
     const desktopStore = useDesktopStore()
 

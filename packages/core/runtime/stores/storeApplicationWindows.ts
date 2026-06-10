@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { applicationWindowsStoreId } from './storeIds'
 
 export const useApplicationWindowsStore = (appId: string) => {
   return defineStore(
-    `owd/application/${appId}/windows`,
+    applicationWindowsStoreId(appId),
     () => {
       const windows: Ref<{ [windowId: string]: WindowStoredState }> = ref({})
 

@@ -1,3 +1,14 @@
+## 3.4.1 (2026-06-09)
+
+### 🚀 Features
+
+- Pinia store ids use `desktop/*` and `desktop/application/*` instead of legacy `owd/desktop/*` and `owd/application/*`.
+- Automatic one-shot localStorage migration on first client boot when `@owdproject/module-persistence` is installed (legacy keys are copied then removed).
+
+### 📚 Documentation
+
+- Document Pinia store id changes in `MIGRATION_3.4.md` and `DESKTOP_KERNEL.md`.
+
 ## 3.4.0 (2026-06-10)
 
 ### ⚠️ Breaking Changes

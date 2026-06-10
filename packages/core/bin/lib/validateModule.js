@@ -136,6 +136,89 @@ function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+/** @param {string} moduleSrc */
+export function findLegacyModuleMetaName(moduleSrc) {
+  const match = moduleSrc.match(
+    /meta\s*:\s*\{[\s\S]*?\bname\s*:\s*['"](owd-[^'"]+)['"]/,
+  )
+  return match?.[1] ?? null
+}
+
+/**
+ * @param {string} content
+ * @returns {string[]}
+ */
+export function findLegacyPiniaStoreIdSnippets(content) {
+  /** @type {string[]} */
+  const hits = []
+  const patterns = [
+    /defineStore\s*\(\s*['"]owd\/[^'"]+['"]/g,
+    /defineStore\s*\(\s*`owd\/[^`]+`/g,
+    /(?:const|let)\s+\w*id\w*\s*=\s*['"]owd\/[^'"]+['"]/gi,
+    /(?:const|let)\s+\w*id\w*\s*=\s*`owd\/[^`]+`/gi,
+  ]
+
+  for (const pattern of patterns) {
+    for (const match of content.matchAll(pattern)) {
+      const snippet = match[0].replace(/\s+/g, ' ').trim()
+      if (!hits.includes(snippet)) {
+        hits.push(snippet)
+      }
+    }
+  }
+
+  return hits
+}
+
+/**
+ * @param {string} packageDir
+ * @returns {{ file: string, snippets: string[] }[]}
+ */
+export function scanLegacyPiniaStoreIds(packageDir) {
+  const srcDir = join(packageDir, 'src')
+  if (!existsSync(srcDir)) return []
+
+  /** @type {{ file: string, snippets: string[] }[]} */
+  const findings = []
+
+  /** @param {string} current */
+  const walk = (current) => {
+    for (const entry of readdirSync(current)) {
+      const full = join(current, entry)
+      let stat
+      try {
+        stat = statSync(full)
+      } catch {
+        continue
+      }
+      if (stat.isDirectory()) {
+        walk(full)
+        continue
+      }
+      if (!/\.(ts|js|mjs|vue)$/i.test(entry)) continue
+      if (
+        /storeIds\.ts$/i.test(entry) ||
+        /migrate[A-Za-z]*\.ts$/i.test(entry) ||
+        /migrate[A-Za-z]*\.js$/i.test(entry)
+      ) {
+        continue
+      }
+
+      const content = readFileSync(full, 'utf8')
+      const snippets = findLegacyPiniaStoreIdSnippets(content)
+      if (snippets.length > 0) {
+        findings.push({
+          file: relative(packageDir, full).replace(/\\/g, '/'),
+          snippets,
+        })
+      }
+    }
+  }
+
+  walk(srcDir)
+  return findings
+}
+
 /**
  * @param {string} workspaceYaml
  * @param {string} playgroundRel
@@ -420,6 +503,25 @@ export function validateOwdModule(packageDir, options = {}) {
         'warning',
         'tailwind-path',
         'src/module.ts should call registerTailwindPath from @owdproject/kit-primevue/kit/registerTailwindPath for Vue components',
+      )
+    }
+
+    const legacyMetaName = findLegacyModuleMetaName(moduleSrc)
+    if (legacyMetaName) {
+      issue(
+        'warning',
+        'module-meta-name-legacy',
+        `src/module.ts meta.name is "${legacyMetaName}"; migrate to desktop-<kind>-<slug> (see MIGRATION_3.4.md)`,
+      )
+    }
+  }
+
+  if (!isInfrastructure) {
+    for (const finding of scanLegacyPiniaStoreIds(dir)) {
+      issue(
+        'warning',
+        'pinia-store-id-legacy',
+        `${finding.file}: Pinia store id still uses legacy "owd/" (${finding.snippets.join('; ')}); migrate to "desktop/" ids`,
       )
     }
   }

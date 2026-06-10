@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { DESKTOP_STORE_ID } from './storeIds'
 
 export const useDesktopStore = defineStore(
-  'owd/desktop',
+  DESKTOP_STORE_ID,
   () => {
     const state = ref<{
       workspace: {

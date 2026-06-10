@@ -10,6 +10,8 @@ import {
   discoverOwdModulePackages,
   findModulePackageRoot,
   isDesktopCorePackage,
+  findLegacyModuleMetaName,
+  findLegacyPiniaStoreIdSnippets,
 } from '../bin/lib/validateModule.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -18,6 +20,34 @@ const clientRoot = join(__dirname, '../../..')
 const corePackageDir = join(__dirname, '..')
 const appAboutDir = join(clientRoot, 'apps/app-about')
 const hasAppAbout = existsSync(join(appAboutDir, 'package.json'))
+
+describe('3.4 legacy naming detectors', () => {
+  it('detects legacy module meta.name', () => {
+    expect(
+      findLegacyModuleMetaName(`export default defineNuxtModule({
+  meta: { name: 'owd-app-about' },
+})`),
+    ).toBe('owd-app-about')
+    expect(
+      findLegacyModuleMetaName(`export default defineNuxtModule({
+  meta: { name: 'desktop-app-about' },
+})`),
+    ).toBeNull()
+  })
+
+  it('detects legacy Pinia store ids', () => {
+    const snippets = findLegacyPiniaStoreIdSnippets(`
+      export const useFooStore = defineStore('owd/desktop/foo', () => ({}))
+      const id = \`owd/application/\${appId}/windows\`
+    `)
+    expect(snippets.some((s) => s.includes("defineStore('owd/desktop/foo'"))).toBe(
+      true,
+    )
+    expect(snippets.some((s) => s.includes('owd/application/${appId}/windows'))).toBe(
+      true,
+    )
+  })
+})
 
 describe('inferModuleKind', () => {
   it('classifies app, theme, and module names', () => {
