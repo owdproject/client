@@ -1238,15 +1238,15 @@ export async function runTui(commandName = 'desktop') {
   function getShowcaseItems() {
     const items = [
       `{bold}Discord Server{/} · Join the community for help: https://discord.gg/owd`,
-      `{bold}TUI Tip{/} · Press {${C.accent}-fg}Space{/} on any app or module to toggle installation/removal`,
-      `{bold}TUI Tip{/} · Press {${C.accent}-fg}1{/}, {${C.accent}-fg}2{/}, or {${C.accent}-fg}3{/} keys to switch catalog tabs`,
-      `{bold}TUI Tip{/} · Press {${C.accent}-fg}w{/} to review changes and launch the package install wizard`,
-      `{bold}TUI Tip{/} · Press {${C.accent}-fg}g{/} to configure your GitHub user for forks/clones`,
-      `{bold}TUI Tip{/} · Press {${C.accent}-fg}o{/} to cycle catalog sorting, or {${C.accent}-fg}O{/} for sort menu`,
-      `{bold}TUI Tip{/} · Press {${C.accent}-fg}m{/} to open the command action menu`,
-      `{bold}TUI Tip{/} · Click anywhere on the bottom status bar to force-refresh catalog`,
-      `{bold}TUI Tip{/} · Press {${C.accent}-fg}s{/} to start dev server, {${C.accent}-fg}x{/} to stop, and {${C.accent}-fg}R{/} to reboot`,
-      `{bold}TUI Tip{/} · Press {${C.accent}-fg}l{/} to focus Logs; press {${C.accent}-fg}Esc{/} to return to Catalog`,
+      `{bold}Tip{/} · Press {${C.accent}-fg}Space{/} on any app or module to toggle installation/removal`,
+      `{bold}Tip{/} · Press {${C.accent}-fg}1{/}, {${C.accent}-fg}2{/}, or {${C.accent}-fg}3{/} keys to switch catalog tabs`,
+      `{bold}Tip{/} · Press {${C.accent}-fg}w{/} to review changes and launch the package install wizard`,
+      `{bold}Tip{/} · Press {${C.accent}-fg}g{/} to configure your GitHub user for forks/clones`,
+      `{bold}Tip{/} · Press {${C.accent}-fg}o{/} to cycle catalog sorting, or {${C.accent}-fg}O{/} for sort menu`,
+      `{bold}Tip{/} · Press {${C.accent}-fg}m{/} to open the command action menu`,
+      `{bold}Tip{/} · Click anywhere on the bottom status bar to force-refresh catalog`,
+      `{bold}Tip{/} · Press {${C.accent}-fg}s{/} to start dev server, {${C.accent}-fg}x{/} to stop, and {${C.accent}-fg}R{/} to reboot`,
+      `{bold}Tip{/} · Press {${C.accent}-fg}l{/} to focus Logs; press {${C.accent}-fg}Esc{/} to return to Catalog`,
       `{bold}Feature{/} · Playground environments are automatically detected at startup`,
       `{bold}Feature{/} · Workspace materialization targets symlinks before cloning`,
     ]
@@ -1296,31 +1296,42 @@ export async function runTui(commandName = 'desktop') {
       items.push(`{bold}NPM Stats{/} · {bold}{${C.accent}-fg}${topDownloadItem.shortName}{/}{/} is top with ${topDownloadCount} weekly downloads`)
     }
 
+    const maxDescLen = 25
+
     if (apps.length > 0) {
       const app = apps[showcaseIndex % apps.length]
       const name = app.org && app.org !== 'workspace' ? `@${app.org}/${app.shortName}` : app.shortName
       const dls = npmDownloads[name]
-      const dlsStr = dls !== undefined ? ` · ${dls} weekly downloads` : ''
+      const dlsStr = dls !== undefined ? ` · ${dls} downloads/wk` : ''
       const starsStr = app.stars > 0 ? ` · ★${app.stars}` : ''
-      items.push(`{bold}App Spotlight{/} · {bold}{${C.accent}-fg}${app.shortName}{/}{/}${starsStr}${dlsStr}`)
+      const descStr = app.description
+        ? ` · {${C.muted}-fg}${app.description.length > maxDescLen ? app.description.slice(0, maxDescLen) + '...' : app.description}{/}`
+        : ''
+      items.push(`{bold}App Spotlight{/} · {bold}{${C.accent}-fg}${app.shortName}{/}{/}${starsStr}${dlsStr}${descStr}`)
     }
 
     if (mods.length > 0) {
       const mod = mods[showcaseIndex % mods.length]
       const name = mod.org && mod.org !== 'workspace' ? `@${mod.org}/${mod.shortName}` : mod.shortName
       const dls = npmDownloads[name]
-      const dlsStr = dls !== undefined ? ` · ${dls} weekly downloads` : ''
+      const dlsStr = dls !== undefined ? ` · ${dls} downloads/wk` : ''
       const starsStr = mod.stars > 0 ? ` · ★${mod.stars}` : ''
-      items.push(`{bold}Module Spotlight{/} · {bold}{${C.accent}-fg}${mod.shortName}{/}{/}${starsStr}${dlsStr}`)
+      const descStr = mod.description
+        ? ` · {${C.muted}-fg}${mod.description.length > maxDescLen ? mod.description.slice(0, maxDescLen) + '...' : mod.description}{/}`
+        : ''
+      items.push(`{bold}Module Spotlight{/} · {bold}{${C.accent}-fg}${mod.shortName}{/}{/}${starsStr}${dlsStr}${descStr}`)
     }
 
     if (themes.length > 0) {
       const theme = themes[showcaseIndex % themes.length]
       const name = theme.org && theme.org !== 'workspace' ? `@${theme.org}/${theme.shortName}` : theme.shortName
       const dls = npmDownloads[name]
-      const dlsStr = dls !== undefined ? ` · ${dls} weekly downloads` : ''
+      const dlsStr = dls !== undefined ? ` · ${dls} downloads/wk` : ''
       const starsStr = theme.stars > 0 ? ` · ★${theme.stars}` : ''
-      items.push(`{bold}Theme Spotlight{/} · {bold}{${C.accent}-fg}${theme.shortName}{/}{/}${starsStr}${dlsStr}`)
+      const descStr = theme.description
+        ? ` · {${C.muted}-fg}${theme.description.length > maxDescLen ? theme.description.slice(0, maxDescLen) + '...' : theme.description}{/}`
+        : ''
+      items.push(`{bold}Theme Spotlight{/} · {bold}{${C.accent}-fg}${theme.shortName}{/}{/}${starsStr}${dlsStr}${descStr}`)
     }
 
     return items
