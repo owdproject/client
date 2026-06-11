@@ -1,0 +1,59 @@
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
+import {
+  padCell,
+  selectionMarker,
+  sourceSlots,
+  formatCatalogRowPlain,
+  formatLegendLine,
+} from '../bin/lib/tuiFormat.js'
+
+describe('tuiFormat', () => {
+  it('padCell truncates and pads', () => {
+    assert.equal(padCell('hi', 5), 'hi   ')
+    assert.equal(padCell('toolongname', 4), 'tool')
+  })
+
+  it('selectionMarker reflects pending and installed', () => {
+    assert.equal(selectionMarker({ pending: true, installed: false }), '[+]')
+    assert.equal(selectionMarker({ pending: false, installed: true }), '[-]')
+    assert.equal(selectionMarker({ installed: true }), '[*]')
+    assert.equal(selectionMarker({ installed: false }), '[ ]')
+  })
+
+  it('sourceSlots shows NPM GIT LOC when available', () => {
+    const slots = sourceSlots({
+      sourcesMeta: { npm: { version: '^1.0.0' } },
+      htmlUrl: 'https://github.com/owdproject/app-a',
+      localSource: true,
+    })
+    assert.equal(slots.npm, 'NPM')
+    assert.equal(slots.git, 'GIT')
+    assert.equal(slots.loc, 'LOC')
+  })
+
+  it('formatCatalogRowPlain includes package name and source columns', () => {
+    const row = formatCatalogRowPlain({
+      shortName: 'app-about',
+      pending: true,
+      installed: false,
+      sourcesMeta: { npm: { version: '^0.1.0' } },
+      htmlUrl: 'https://github.com/owdproject/app-about',
+      org: 'owdproject',
+      stars: 12,
+      updatedAt: '2026-06-01',
+      trusted: true,
+    })
+    assert.match(row, /app-about/)
+    assert.match(row, /NPM/)
+    assert.match(row, /GIT/)
+    assert.match(row, /\[.*?\+.*?\]/)
+  })
+
+  it('formatLegendLine documents markers', () => {
+    const legend = formatLegendLine()
+    assert.match(legend, /\[\+\]/)
+    assert.match(legend, /NPM/)
+    assert.match(legend, /WRN/)
+  })
+})
