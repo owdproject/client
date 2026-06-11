@@ -18,6 +18,7 @@ import {
   desktopMetaDir,
 } from './workspace.js'
 import { hasLocalWorkspaceSource } from './install.js'
+import { enrichCatalogEntries, isTrustedPublisher } from './packageSources.js'
 
 const CACHE_TTL_MS = 60 * 60 * 1000
 
@@ -29,6 +30,53 @@ export const CATALOG_SORT_MODES = /** @type {const} */ ([
   'stars',
   'installed',
 ])
+
+/** @type {Record<CatalogSortMode, string>} */
+export const CATALOG_SORT_LABELS = {
+  updated: 'Updated',
+  name: 'Name',
+  stars: 'Stars',
+  installed: 'Installed',
+}
+
+/** @type {Record<CatalogSortMode, string>} */
+export const CATALOG_SORT_DESCRIPTIONS = {
+  updated: 'Recent GitHub activity',
+  name: 'A-Z package name',
+  stars: 'GitHub star count',
+  installed: 'On desktop first',
+}
+
+/**
+ * @param {{ apps?: string[], modules?: string[], theme?: string }} config
+ * @param {Map<string, boolean>} [pendingPackages]
+ * @param {string | null | undefined} [pendingTheme]
+ */
+export function effectiveInstalledSets(config, pendingPackages = new Map(), pendingTheme) {
+  const apps = new Set(config?.apps ?? [])
+  const modules = new Set(config?.modules ?? [])
+  let theme = pendingTheme ?? config?.theme ?? null
+
+  for (const [name, on] of pendingPackages) {
+    const kind = inferKind(shortName(name))
+    if (kind === 'app') {
+      if (on) apps.add(name)
+      else apps.delete(name)
+    } else if (kind === 'module') {
+      if (on) modules.add(name)
+      else modules.delete(name)
+    } else if (kind === 'theme') {
+      if (on) theme = name
+      else if (theme === name) theme = config?.theme ?? null
+    }
+  }
+
+  return {
+    apps: [...apps],
+    modules: [...modules],
+    theme,
+  }
+}
 
 function cachePath(workspaceRoot) {
   return join(desktopMetaDir(workspaceRoot), 'catalog-cache.json')
@@ -270,11 +318,14 @@ export async function loadCatalog(workspaceRoot, settings, options = {}) {
     }
   }
 
-  const entries = [...byName.values()].map((entry) => ({
+  let entries = [...byName.values()].map((entry) => ({
     ...entry,
     name: fullName(entry.shortName),
     kind: entry.kind ?? inferKind(entry.shortName),
+    trusted: isTrustedPublisher(entry, settings),
   }))
+
+  entries = await enrichCatalogEntries(entries, workspaceRoot, settings)
 
   return {
     entries,

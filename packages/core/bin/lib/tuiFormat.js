@@ -1,15 +1,52 @@
 import { formatCatalogAge } from './catalog.js'
 import { githubHtmlUrl } from './packageSources.js'
 
-/** @typedef {{ pending?: boolean | undefined, colors?: Record<string, string> }} RowContext */
+/** @typedef {{ pending?: boolean | undefined, colors?: Record<string, string>, columns?: Record<string, number> }} RowContext */
 
 const COL = {
   sel: 3,
-  name: 20,
+  name: 28,
   sources: 7,
-  publisher: 16,
-  meta: 12,
+  publisher: 20,
+  meta: 14,
 }
+
+export function getColumnWidths(targetWidth) {
+  const fixed = 3 + 7 + 14 + 4 // 28 (sel, sources, meta plus 4 spaces)
+  const remaining = targetWidth - fixed
+
+  let nameWidth = 28
+  let pubWidth = 20
+
+  if (remaining < 48) {
+    const minName = 15
+    const minPub = 10
+    const minTotal = minName + minPub // 25
+    if (remaining <= minTotal) {
+      nameWidth = minName
+      pubWidth = minPub
+    } else {
+      const ratio = (remaining - minTotal) / (48 - minTotal)
+      nameWidth = Math.floor(minName + ratio * (28 - minName))
+      pubWidth = remaining - nameWidth
+    }
+  } else {
+    const extra = remaining - 48
+    const extraName = Math.floor(extra * 0.6)
+    const extraPub = extra - extraName
+    nameWidth = 28 + extraName
+    pubWidth = 20 + extraPub
+  }
+
+  return {
+    sel: 3,
+    name: nameWidth,
+    sources: 7,
+    publisher: pubWidth,
+    meta: 14,
+  }
+}
+
 
 const DEFAULT_COLORS = {
   npm: '#7ee787',
@@ -77,6 +114,7 @@ export function formatSelectionMarker(item, colors = DEFAULT_COLORS) {
  */
 export function formatCatalogRowPlain(item, ctx = {}) {
   const colors = { ...DEFAULT_COLORS, ...ctx.colors }
+  const columns = { ...COL, ...ctx.columns }
   const slots = sourceSlots(item)
   const publisher = item.org && item.org !== 'workspace' ? item.org : 'owdproject'
   const stars = item.stars > 0 ? `*${item.stars}` : ''
@@ -85,9 +123,9 @@ export function formatCatalogRowPlain(item, ctx = {}) {
   // 1. Status / Selection Marker (3 chars)
   const selTag = formatSelectionMarker(item, colors)
 
-  // 2. Name Column (20 chars)
+  // 2. Name Column (columns.name chars)
   const badgeText = (item.isNew || item.isRecent) ? ' new' : ''
-  const maxNameLen = COL.name - badgeText.length
+  const maxNameLen = columns.name - badgeText.length
   let namePart = item.shortName
   if (namePart.length > maxNameLen) {
     namePart = namePart.slice(0, maxNameLen)
@@ -96,7 +134,7 @@ export function formatCatalogRowPlain(item, ctx = {}) {
   if (badgeText) {
     nameTag += `{${colors.warn}-fg}${badgeText}{/}`
   }
-  const namePadLen = COL.name - namePart.length - badgeText.length
+  const namePadLen = columns.name - namePart.length - badgeText.length
   if (namePadLen > 0) {
     nameTag += ' '.repeat(namePadLen)
   }
@@ -108,39 +146,39 @@ export function formatCatalogRowPlain(item, ctx = {}) {
     slots.git === 'GIT' ? `{${colors.git}-fg}${slots.git}{/}` : `{${colors.muted}-fg}${slots.git}{/}`
   const sources = `${srcNpm} ${srcGit}`
 
-  // 4. Publisher Column (16 chars)
+  // 4. Publisher Column (columns.publisher chars)
   let pubPart = publisher
-  if (pubPart.length > COL.publisher) {
-    pubPart = pubPart.slice(0, COL.publisher)
+  if (pubPart.length > columns.publisher) {
+    pubPart = pubPart.slice(0, columns.publisher)
   }
   const pubColor = item.trusted === false ? colors.warn : colors.muted
   let pubTag = `{${pubColor}-fg}${pubPart}{/}`
-  const pubPadLen = COL.publisher - pubPart.length
+  const pubPadLen = columns.publisher - pubPart.length
   if (pubPadLen > 0) {
     pubTag += ' '.repeat(pubPadLen)
   }
 
-  // 5. Meta Column (12 chars)
+  // 5. Meta Column (columns.meta chars)
   let finalStars = stars
   let finalAge = age
   const metaText = [stars, age].filter(Boolean).join(' ')
-  if (metaText.length > COL.meta) {
+  if (metaText.length > columns.meta) {
     if (stars && age) {
-      const allowedAgeLen = COL.meta - stars.length - 1
+      const allowedAgeLen = columns.meta - stars.length - 1
       if (allowedAgeLen > 0) {
         finalAge = age.slice(0, allowedAgeLen)
       } else {
         finalAge = ''
-        finalStars = stars.slice(0, COL.meta)
+        finalStars = stars.slice(0, columns.meta)
       }
     } else if (stars) {
-      finalStars = stars.slice(0, COL.meta)
+      finalStars = stars.slice(0, columns.meta)
     } else if (age) {
-      finalAge = age.slice(0, COL.meta)
+      finalAge = age.slice(0, columns.meta)
     }
   }
   const finalMetaText = [finalStars, finalAge].filter(Boolean).join(' ')
-  const metaPadLen = Math.max(0, COL.meta - finalMetaText.length)
+  const metaPadLen = Math.max(0, columns.meta - finalMetaText.length)
   let metaTag = ' '.repeat(metaPadLen)
   if (finalStars && finalAge) {
     metaTag += `{yellow-fg}${finalStars}{/} {${colors.muted}-fg}${finalAge}{/}`
@@ -176,8 +214,9 @@ export function formatLegendLine(colors = DEFAULT_COLORS) {
  * @param {object} item
  * @param {string} targetDir
  * @param {Record<string, string>} [colors]
+ * @param {number} [width]
  */
-export function formatDetailPanel(item, targetDir, colors = DEFAULT_COLORS) {
+export function formatDetailPanel(item, targetDir, colors = DEFAULT_COLORS, width = 76) {
   const c = { ...DEFAULT_COLORS, ...colors }
   const owner = item.org && item.org !== 'workspace' ? item.org : 'owdproject'
   const lines = [`{bold}{${c.accent}-fg}${item.shortName}{/}{/}`]
@@ -191,31 +230,40 @@ export function formatDetailPanel(item, targetDir, colors = DEFAULT_COLORS) {
   if (item.localSource) {
     sourceParts.push(`{${c.local}-fg}LOC{/} ${targetDir}/`)
   }
-  lines.push(`  Sources .... ${sourceParts.join('   ')}`)
+  lines.push(`  Sources ..... ${sourceParts.join('   ')}`)
 
   const pub =
     item.trusted === false
       ? `{${c.warn}-fg}${owner} (untrusted){/}`
       : owner
-  lines.push(`  Publisher .. ${pub}`)
+  lines.push(`  Publisher ... ${pub}`)
+
+  const starsStr = item.stars > 0 ? `{yellow-fg}★${item.stars}{/}` : '0'
+  const dateStr = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : '—'
+  const kindStr = item.kind ? item.kind.toUpperCase() : '—'
+  lines.push(`  Stats ....... Stars: ${starsStr}   ·   Updated: ${dateStr}   ·   Type: ${kindStr}`)
 
   if (!item.localSource) {
-    lines.push(`  {${c.muted}-fg}Clone ....... ${targetDir}/{/}`)
+    const cloneText = `  Clone ....... ${targetDir}/`
+    const maxCloneLen = Math.max(15, width - 2)
+    const truncatedCloneText = cloneText.length > maxCloneLen ? cloneText.slice(0, maxCloneLen - 3) + '...' : cloneText
+    lines.push(`  {${c.muted}-fg}${truncatedCloneText}{/}`)
   }
 
   if (item.description) {
-    lines.push(`  {${c.muted}-fg}${item.description.slice(0, 100)}{/}`)
+    const maxDescLen = Math.max(15, width - 4)
+    lines.push(`  {${c.muted}-fg}${item.description.slice(0, maxDescLen)}{/}`)
   }
 
   return lines.join('\n')
 }
 
-export function formatHeaderLine(colors = DEFAULT_COLORS) {
-  const status = 'ST'.padEnd(3, ' ') + ' '
-  const name = 'NAME'.padEnd(20, ' ') + ' '
-  const sources = 'SOURCES'.padEnd(7, ' ') + ' '
-  const publisher = 'PUBLISHER'.padEnd(16, ' ') + ' '
-  const meta = 'STARS/AGE'.padStart(12, ' ')
+export function formatHeaderLine(colors = DEFAULT_COLORS, columns = COL) {
+  const status = ' '.repeat(columns.sel || 3) + ' '
+  const name = 'NAME'.padEnd(columns.name || 28, ' ') + ' '
+  const sources = 'SOURCES'.padEnd(columns.sources || 7, ' ') + ' '
+  const publisher = 'PUBLISHER'.padEnd(columns.publisher || 20, ' ') + ' '
+  const meta = 'STARS/AGE'.padStart(columns.meta || 14, ' ')
   return `{bold}${status}${name}${sources}${publisher}${meta}{/}`
 }
 
