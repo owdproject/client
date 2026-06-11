@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process'
-import { watch, existsSync, statSync, openSync, readSync, closeSync, writeFileSync } from 'node:fs'
+import { watch, existsSync, statSync, openSync, readSync, closeSync, writeFileSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import blessed from 'neo-blessed'
@@ -225,6 +225,47 @@ export async function runTui(commandName = 'desktop') {
   let settings = loadSettings(workspaceRoot)
   let config = readDesktopConfig(paths.config, workspaceRoot)
   let deps = readDesktopDependencies(paths.packageJson)
+
+  function getGitStatus(root) {
+    try {
+      const branch = execSync('git rev-parse --abbrev-ref HEAD', {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim()
+
+      const porcelain = execSync('git status --porcelain', {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim()
+
+      if (!porcelain) {
+        return { branch, status: 'clean' }
+      }
+
+      const lines = porcelain.split('\n').filter(Boolean)
+      const modifiedCount = lines.filter(l => !l.startsWith('??')).length
+      const untrackedCount = lines.filter(l => l.startsWith('??')).length
+
+      const parts = []
+      if (modifiedCount > 0) parts.push(`${modifiedCount} mod`)
+      if (untrackedCount > 0) parts.push(`${untrackedCount} untracked`)
+      return { branch, status: parts.join(', ') || 'clean' }
+    } catch {
+      return { branch: '—', status: 'unknown' }
+    }
+  }
+
+  let nuxtVersion = '—'
+  let pnpmVersion = '—'
+  try {
+    const pkg = JSON.parse(readFileSync(join(workspaceRoot, 'package.json'), 'utf8'))
+    nuxtVersion = pkg.devDependencies?.nuxt || pkg.dependencies?.nuxt || '—'
+    pnpmVersion = (pkg.packageManager || '').replace('pnpm@', '') || '—'
+  } catch {
+    // Ignore
+  }
 
   let isWritingConfig = false
   let configWatcher = null
@@ -1206,7 +1247,6 @@ export async function runTui(commandName = 'desktop') {
       `{bold}TUI Tip{/} · Click anywhere on the bottom status bar to force-refresh catalog`,
       `{bold}TUI Tip{/} · Press {${C.accent}-fg}s{/} to start dev server, {${C.accent}-fg}x{/} to stop, and {${C.accent}-fg}R{/} to reboot`,
       `{bold}TUI Tip{/} · Press {${C.accent}-fg}l{/} to focus Logs; press {${C.accent}-fg}Esc{/} to return to Catalog`,
-      `{bold}Feature{/} · Offline mode uses local catalog cache for instant startup (<100ms)`,
       `{bold}Feature{/} · Playground environments are automatically detected at startup`,
       `{bold}Feature{/} · Workspace materialization targets symlinks before cloning`,
     ]
@@ -1337,9 +1377,13 @@ export async function runTui(commandName = 'desktop') {
         : null
 
     const workspaceShortPath = workspaceRoot.replace(process.env.HOME || '', '~')
-    const activeThemeName = (pendingTheme ?? config.theme ?? '—').replace('@owdproject/', '')
-    const activeAppsCount = (config.apps ?? []).length
-    const activeModulesCount = (config.modules ?? []).length
+
+    // Git info
+    const gitInfo = getGitStatus(workspaceRoot)
+    const gitText = `branch: ${gitInfo.branch}  ·  status: ${gitInfo.status}`
+
+    // Versions
+    const versionsText = `Node ${process.version}  ·  Nuxt ${nuxtVersion}  ·  PNPM ${pnpmVersion}`
 
     const workspaceLine = configRestartLine
       ? configRestartLine
@@ -1351,7 +1395,8 @@ export async function runTui(commandName = 'desktop') {
       extraLine,
       '',
       workspaceLine,
-      `  {${C.muted}-fg}Active{/}     ${activeAppsCount} apps · ${activeModulesCount} modules · theme: ${activeThemeName}`,
+      `  {${C.muted}-fg}Git{/}        ${gitText}`,
+      `  {${C.muted}-fg}Versions{/}   ${versionsText}`,
       '',
     ]
 
