@@ -1,8 +1,11 @@
 packages:
   - desktop
   - apps/*
+  - '!apps/*/playground'
   - packages/*
+  - '!packages/*/playground'
   - themes/*
+  - '!themes/*/playground'
   - plugins/*
 
 catalog:
