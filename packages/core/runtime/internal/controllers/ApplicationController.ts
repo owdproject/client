@@ -82,9 +82,11 @@ export class ApplicationController implements IApplicationController {
 
     if (this.config.commands) {
       for (const commandKey of Object.keys(this.config.commands)) {
+        const meta = this.config.terminal?.[commandKey] ?? {}
         this.terminalManager.addCommand({
           applicationId: this.id,
           name: commandKey,
+          ...meta,
         })
       }
     }
@@ -155,14 +157,18 @@ export class ApplicationController implements IApplicationController {
 
   /** Ensure a single focused window after restore or stale persisted state. */
   private normalizeWindowFocus() {
-    if (this.windows.size === 0) {
+    const allWindows = this.applicationManager?.windowsOpened?.value
+      ? Array.from(this.applicationManager.windowsOpened.value.values())
+      : Array.from(this.windows.values())
+
+    if (allWindows.length === 0) {
       return
     }
 
     let topWindow: IWindowController | undefined
     let topZ = -Infinity
 
-    for (const window of this.windows.values()) {
+    for (const window of allWindows) {
       window.setFocus(false)
       const z = window.state.position?.z ?? 0
       if (z >= topZ) {

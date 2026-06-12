@@ -58,6 +58,7 @@ interface ApplicationConfig {
   windows?: { [key: string]: WindowConfig }
   entries: { [key: string]: ApplicationEntry }
   commands?: { [key: string]: ApplicationCommand }
+  terminal?: { [commandName: string]: Omit<TerminalCommand, 'name' | 'applicationId'> }
 
   onReady?(app: IApplicationController): void | Promise<void>
 
@@ -422,13 +423,36 @@ interface DesktopWorkspacesConfig {
 
 // TERMINAL
 
+type TerminalCommandArg = {
+  name: string
+  description?: string
+  required?: boolean
+}
+
+type TerminalCommandOption = {
+  flag: string
+  description?: string
+}
+
 type TerminalCommand = {
   name: string
   applicationId: string
+  description?: string
+  usage?: string
+  args?: TerminalCommandArg[]
+  options?: TerminalCommandOption[]
+}
+
+interface ITerminalManager {
+  addCommand(command: TerminalCommand): void
+  listCommands(): string[]
+  getCommand(name: string): TerminalCommand | undefined
+  getAllCommands(): TerminalCommand[]
+  execCommand(input: string): Promise<CommandOutput | void>
 }
 
 interface CommandOutput {
-  text: string
+  message: string
   isError?: boolean
 }
 
