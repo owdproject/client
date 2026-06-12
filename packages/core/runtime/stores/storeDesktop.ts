@@ -18,6 +18,11 @@ export const useDesktopStore = defineStore(
         positionZ: number
       }
       defaultApps: Record<string, { applicationId: string; entry: string }>
+      personalization: {
+        windowSurface: 'acrylic' | 'solid'
+        windowTint: string
+        appearance: 'dark' | 'light'
+      }
     }>({
       workspace: {
         overview: false,
@@ -31,10 +36,30 @@ export const useDesktopStore = defineStore(
         positionZ: 0,
       },
       defaultApps: {},
+      personalization: {
+        windowSurface: 'acrylic',
+        windowTint: '#2d2d30',
+        appearance: 'dark',
+      },
     })
+
+    function setWindowSurface(value: 'acrylic' | 'solid') {
+      state.value.personalization.windowSurface = value
+    }
+
+    function setWindowTint(value: string) {
+      state.value.personalization.windowTint = value
+    }
+
+    function setAppearance(value: 'dark' | 'light') {
+      state.value.personalization.appearance = value
+    }
 
     return {
       state,
+      setWindowSurface,
+      setWindowTint,
+      setAppearance,
     }
   },
   {
