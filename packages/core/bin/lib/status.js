@@ -225,7 +225,8 @@ export function startDev(target) {
 }
 
 export function stopDev(workspaceRoot, pid) {
-  const targets = new Set([pid, readPidFile(workspaceRoot)].filter(Boolean))
+  const fromPg = findDevProcess()
+  const targets = new Set([pid, fromPg?.pid, readPidFile(workspaceRoot)].filter(Boolean))
 
   for (const p of targets) {
     try {
@@ -247,6 +248,16 @@ export function stopDev(workspaceRoot, pid) {
 
   devChild = null
   return targets.size > 0
+}
+
+export async function waitForDevStop(workspaceRoot, port, timeoutMs = 10_000) {
+  const started = Date.now()
+  while (Date.now() - started < timeoutMs) {
+    const status = await getClientStatus(workspaceRoot, port)
+    if (!status.running && !status.http.up) return status
+    await sleep(500)
+  }
+  return getClientStatus(workspaceRoot, port)
 }
 
 export async function waitForDev(workspaceRoot, port, timeoutMs = 90_000) {

@@ -10,6 +10,10 @@ import {
   inferKind,
 } from './workspace.js'
 import {
+  githubCloneUrl,
+  resolveForkUser,
+} from './packageSources.js'
+import {
   resolveDesktopConfigPath,
   desktopConfigWritePath,
 } from './desktopConfig.js'
@@ -119,30 +123,68 @@ export function hasLocalWorkspaceSource(workspaceRoot, pkgName) {
   return existsSync(join(workspaceRoot, KINDS[kind].workspaceDir, pkgShort, 'package.json'))
 }
 
-export async function resolveForkUser(githubUser, pkgShortName) {
-  if (!githubUser || githubUser === 'owdproject') return 'owdproject'
+export { resolveForkUser } from './packageSources.js'
 
-  try {
-    const res = await fetch(`https://api.github.com/repos/${githubUser}/${pkgShortName}`, {
-      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'owd-desktop-cli' },
-    })
-    if (res.ok) return githubUser
-  } catch {
-    /* ignore */
-  }
+/**
+ * @typedef {import('./packageSources.js').InstallSourceChoice} InstallSourceChoice
+ */
 
-  return 'owdproject'
+/**
+ * @param {InstallSourceChoice} sourceChoice
+ * @param {string} pkgShort
+ */
+export function sourceChoiceToGitUrl(sourceChoice, pkgShort) {
+  if (sourceChoice.type !== 'git') return null
+  return githubCloneUrl(sourceChoice.owner, pkgShort, sourceChoice.protocol)
 }
 
 /**
  * @param {string} pkgName full @owdproject/name
- * @param {import('./workspace.js').InstallMode extends infer M ? { installMode?: M, githubUser?: string | null } : never} settings
+ * @param {{ installMode?: string, githubUser?: string | null }} settings
  * @param {string | null} workspaceRoot
+ * @param {InstallSourceChoice} [sourceChoice]
  */
-export async function resolveInstallPlan(pkgName, settings, workspaceRoot) {
+export async function resolveInstallPlan(pkgName, settings, workspaceRoot, sourceChoice) {
   const pkgShort = toShortName(pkgName)
   const kind = inferKind(pkgShort)
   const inMonorepo = Boolean(workspaceRoot)
+
+  if (sourceChoice) {
+    if (sourceChoice.type === 'npm') {
+      return {
+        mode: 'npm',
+        pkgName,
+        shortName: pkgShort,
+        kind,
+        label: 'npm registry',
+        sourceChoice,
+      }
+    }
+
+    if (!inMonorepo) {
+      return {
+        error: 'Git clone requires an OWD monorepo (apps/, packages/, themes/).',
+      }
+    }
+
+    const gitUrl = sourceChoiceToGitUrl(sourceChoice, pkgShort)
+    const owner = sourceChoice.owner
+    return {
+      mode: 'workspace',
+      pkgName,
+      shortName: pkgShort,
+      kind,
+      from: owner,
+      source: {
+        mode: 'workspace',
+        gitUrl,
+        label: `${sourceChoice.protocol === 'ssh' ? 'SSH' : 'HTTPS'} github.com/${owner}/${pkgShort}`,
+      },
+      targetDir: join(KINDS[kind].workspaceDir, pkgShort),
+      label: `github.com/${owner}/${pkgShort}`,
+      sourceChoice,
+    }
+  }
 
   if (!isWorkspaceInstallMode(settings)) {
     return {
@@ -185,7 +227,12 @@ export async function resolveInstallPlan(pkgName, settings, workspaceRoot) {
  * @param {{ stdio?: 'inherit' | 'pipe' }} [options]
  */
 export async function installPackage(pkgName, settings, workspaceRoot, options = {}) {
-  const plan = await resolveInstallPlan(pkgName, settings, workspaceRoot)
+  const plan = await resolveInstallPlan(
+    pkgName,
+    settings,
+    workspaceRoot,
+    options.sourceChoice,
+  )
   if (plan.error) throw new Error(plan.error)
 
   const stdio = options.stdio ?? 'inherit'
@@ -193,6 +240,15 @@ export async function installPackage(pkgName, settings, workspaceRoot, options =
 
   if (plan.mode === 'npm') {
     args.push('--npm')
+  } else if (plan.sourceChoice?.type === 'git') {
+    const { owner, protocol } = plan.sourceChoice
+    if (protocol === 'ssh') {
+      args.push('--from', githubCloneUrl(owner, plan.shortName, 'ssh'))
+    } else if (owner !== 'owdproject') {
+      args.push('--from', owner)
+    } else {
+      args.push('--dev')
+    }
   } else if (plan.from && plan.from !== 'owdproject') {
     args.push('--from', plan.from)
   } else {
@@ -366,10 +422,15 @@ export function runNpmInstall(kind, pkgName, workspaceRoot, stdio = 'inherit') {
  * @param {{ stdio?: 'inherit' | 'pipe' }} [options]
  */
 export async function materializeToWorkspace(pkgName, settings, workspaceRoot, options = {}) {
-  const plan = await resolveInstallPlan(pkgName, settings, workspaceRoot)
+  const plan = await resolveInstallPlan(
+    pkgName,
+    settings,
+    workspaceRoot,
+    options.sourceChoice,
+  )
   if (plan.error) throw new Error(plan.error)
   if (plan.mode !== 'workspace') {
-    throw new Error(`Cannot materialize ${pkgName}: install mode is not DEV (workspace).`)
+    throw new Error(`Cannot materialize ${pkgName}: source is not a git workspace clone.`)
   }
 
   if (hasLocalWorkspaceSource(workspaceRoot, pkgName)) {
@@ -395,14 +456,11 @@ export function catalogListTag(item) {
   return 'catalog'
 }
 
-export function installTag(settings, item) {
+export function installTag(_settings, item) {
   const tag = catalogListTag(item)
   if (tag === 'catalog') {
-    if (isWorkspaceInstallMode(settings)) {
-      const user = settings.githubUser
-      return user && user !== 'owdproject' ? 'git fork' : 'git'
-    }
-    return 'npm'
+    if (item.sourcesMeta?.npm?.version) return 'npm+git'
+    return 'git'
   }
   return tag
 }

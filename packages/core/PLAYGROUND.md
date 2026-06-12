@@ -66,3 +66,14 @@ pnpm run validate:modules
 ```
 
 See [`MIGRATION_3.4.md`](./MIGRATION_3.4.md) for import path changes (kit-primevue, module-fs).
+
+## Desktop control panel (TUI)
+
+Run `pnpm desktop` from the client monorepo root.
+
+- Toggle apps/modules in the catalog (tabs `1`/`2`), pick a theme in tab `3`, then press `w` to review installs.
+- Each **new** package opens an install wizard: choose **npm**, **GitHub HTTPS**, or **GitHub SSH** (when SSH auth is detected).
+- Catalog columns: `[+]` add, `[-]` remove, `[*]` on desktop; `NPM` / `GIT` / `LOC` source slots; yellow publisher = untrusted.
+- Sort: `o` cycle, `O` open sort picker (Updated, Name, Stars, Installed). Pending toggles affect Installed sort.
+- Settings (`g`): GitHub username (fork clones), trusted orgs list, SSH test (`t`).
+- CLI: `desktop add <pkg> --npm`, `--dev`, `--from <user>`, `--protocol ssh`.

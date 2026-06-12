@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process'
-import { watch, existsSync, statSync, openSync, readSync, closeSync, writeFileSync, readFileSync } from 'node:fs'
+import { watch, existsSync, statSync, openSync, readSync, closeSync, writeFileSync, readFileSync, readdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import blessed from 'neo-blessed'
@@ -62,6 +62,7 @@ import {
   startDev,
   stopDev,
   waitForDev,
+  waitForDevStop,
   devLogPath,
   formatSparkline,
 } from './lib/status.js'
@@ -207,6 +208,34 @@ function stripAnsi(str) {
   return str.replace(ansiRegex, '')
 }
 
+function truncateFormatted(str, maxLen) {
+  let result = ''
+  let visibleCount = 0
+  let i = 0
+  let truncated = false
+  while (i < str.length) {
+    if (str[i] === '{') {
+      const closeIdx = str.indexOf('}', i)
+      if (closeIdx !== -1) {
+        result += str.slice(i, closeIdx + 1)
+        i = closeIdx + 1
+        continue
+      }
+    }
+    if (visibleCount >= maxLen) {
+      truncated = true
+      break
+    }
+    result += str[i]
+    visibleCount++
+    i++
+  }
+  if (truncated) {
+    result += '...{/}'
+  }
+  return result
+}
+
 /** @param {string} commandName */
 export async function runTui(commandName = 'desktop') {
   const workspaceRoot = findWorkspaceRoot()
@@ -223,7 +252,14 @@ export async function runTui(commandName = 'desktop') {
     paths.configLegacy ? { legacy: true, file: 'owd.config.ts' } : null,
   )
   let settings = loadSettings(workspaceRoot)
-  let config = readDesktopConfig(paths.config, workspaceRoot)
+  let configError = null
+  let config = null
+  try {
+    config = readDesktopConfig(paths.config, workspaceRoot)
+  } catch (err) {
+    configError = err.message
+    config = { apps: [], modules: [], theme: null }
+  }
   let deps = readDesktopDependencies(paths.packageJson)
 
   function getGitStatus(root) {
@@ -255,6 +291,99 @@ export async function runTui(commandName = 'desktop') {
     } catch {
       return { branch: '—', status: 'unknown' }
     }
+  }
+
+  function getMissingGitWarnings(root) {
+    const warnings = []
+    const checkDirs = ['apps', 'themes', 'packages']
+    
+    for (const dirName of checkDirs) {
+      const fullDir = join(root, dirName)
+      if (!existsSync(fullDir)) continue
+      
+      try {
+        const subdirs = readdirSync(fullDir, { withFileTypes: true })
+        for (const subdir of subdirs) {
+          if (!subdir.isDirectory()) continue
+          const name = subdir.name
+          if (name.startsWith('.')) continue
+          
+          // Exclude exclusions
+          if (dirName === 'packages') {
+            if (name.startsWith('core') || name.startsWith('nx') || name.startsWith('kit-')) {
+              continue
+            }
+          }
+          
+          const gitPath = join(fullDir, name, '.git')
+          if (!existsSync(gitPath)) {
+            warnings.push(subdir.name)
+          }
+        }
+      } catch {
+        // Ignore read errors
+      }
+    }
+    
+    return warnings
+  }
+
+  function getWorkspaceGitChanges(root) {
+    // Returns { added, modified, deleted } summed across the main repo
+    // and all sub-repos in apps/, packages/, themes/ that have a .git folder.
+    const sumChanges = (dir) => {
+      let added = 0, modified = 0, deleted = 0
+      try {
+        const porcelain = execSync('git status --porcelain', {
+          cwd: dir,
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+        }).trim()
+        if (!porcelain) return { added: 0, modified: 0, deleted: 0 }
+        for (const line of porcelain.split('\n').filter(Boolean)) {
+          if (line.startsWith('??')) { added++; continue }
+          const xy = line.slice(0, 2)
+          if (xy.includes('A')) added++
+          else if (xy.includes('D')) deleted++
+          else modified++
+        }
+      } catch { /* no git or not a repo */ }
+      return { added, modified, deleted }
+    }
+
+    let totalAdded = 0, totalModified = 0, totalDeleted = 0
+
+    // Main workspace repo
+    const main = sumChanges(root)
+    totalAdded += main.added
+    totalModified += main.modified
+    totalDeleted += main.deleted
+
+    // Sub-repos
+    const checkDirs = ['apps', 'themes', 'packages']
+    for (const dirName of checkDirs) {
+      const fullDir = join(root, dirName)
+      if (!existsSync(fullDir)) continue
+      try {
+        const subdirs = readdirSync(fullDir, { withFileTypes: true })
+        for (const subdir of subdirs) {
+          if (!subdir.isDirectory()) continue
+          const name = subdir.name
+          if (name.startsWith('.')) continue
+          if (dirName === 'packages') {
+            if (name.startsWith('core') || name.startsWith('nx') || name.startsWith('kit-')) continue
+          }
+          const subGit = join(fullDir, name, '.git')
+          if (!existsSync(subGit)) continue
+          const sub = sumChanges(join(fullDir, name))
+          totalAdded += sub.added
+          totalModified += sub.modified
+          totalDeleted += sub.deleted
+        }
+      } catch { /* ignore */ }
+    }
+
+    return { added: totalAdded, modified: totalModified, deleted: totalDeleted }
   }
 
   let nuxtVersion = '—'
@@ -331,8 +460,8 @@ export async function runTui(commandName = 'desktop') {
 
   const HEADER_ROWS = 0
   const MAIN_TOP = 0
-  const CLIENT_PANEL_H = 11
-  const PANELS_TOP = MAIN_TOP + CLIENT_PANEL_H + 1
+  const CLIENT_PANEL_H = 9
+  const PANELS_TOP = MAIN_TOP + CLIENT_PANEL_H
 
   const clientBox = blessed.box({
     parent: screen,
@@ -354,8 +483,8 @@ export async function runTui(commandName = 'desktop') {
     height: CLIENT_PANEL_H,
     tags: true,
     border: { type: 'line' },
-    style: panelStyle(C.borderDim),
-    label: cardLabel('Metrics'),
+    style: panelStyle(C.border),
+    label: ' Metrics ',
   })
 
   const catalogBox = blessed.box({
@@ -397,6 +526,7 @@ export async function runTui(commandName = 'desktop') {
     tags: true,
     content: '',
     style: flatStyle(),
+    mouse: true,
   })
 
   const headerBar = blessed.box({
@@ -548,7 +678,7 @@ export async function runTui(commandName = 'desktop') {
     height: 6,
     tags: true,
     border: { type: 'line' },
-    label: cardLabel('Status & Shortcuts'),
+    label: ' Status & Shortcuts ',
     style: panelStyle(C.borderDim, C.muted),
   })
 
@@ -910,9 +1040,10 @@ export async function runTui(commandName = 'desktop') {
     if (configWatchTimeout) {
       clearTimeout(configWatchTimeout)
     }
-    configWatchTimeout = setTimeout(() => {
+    configWatchTimeout = setTimeout(async () => {
       try {
         const newConfig = readDesktopConfig(paths.config, workspaceRoot)
+        configError = null
         if (!areConfigsEqual(config, newConfig)) {
           config = newConfig
           deps = readDesktopDependencies(paths.packageJson)
@@ -930,8 +1061,13 @@ export async function runTui(commandName = 'desktop') {
 
           renderAll()
           setStatus('Configuration reloaded from disk', 'ok')
+          await syncDependenciesWithConfig()
+        } else {
+          renderAll()
         }
       } catch (err) {
+        configError = err.message
+        renderAll()
         setStatus(`Error reading config: ${err.message}`, 'error')
       }
     }, 200)
@@ -1237,7 +1373,7 @@ export async function runTui(commandName = 'desktop') {
 
   function getShowcaseItems() {
     const items = [
-      `{bold}Discord Server{/} · Join the community for help: https://discord.gg/owd`,
+      `{bold}Discord Server{/} · Join the community: https://discord.gg/owdproject`,
       `{bold}Tip{/} · Press {${C.accent}-fg}Space{/} on any app or module to toggle installation/removal`,
       `{bold}Tip{/} · Press {${C.accent}-fg}1{/}, {${C.accent}-fg}2{/}, or {${C.accent}-fg}3{/} keys to switch catalog tabs`,
       `{bold}Tip{/} · Press {${C.accent}-fg}w{/} to review changes and launch the package install wizard`,
@@ -1247,8 +1383,6 @@ export async function runTui(commandName = 'desktop') {
       `{bold}Tip{/} · Click anywhere on the bottom status bar to force-refresh catalog`,
       `{bold}Tip{/} · Press {${C.accent}-fg}s{/} to start dev server, {${C.accent}-fg}x{/} to stop, and {${C.accent}-fg}R{/} to reboot`,
       `{bold}Tip{/} · Press {${C.accent}-fg}l{/} to focus Logs; press {${C.accent}-fg}Esc{/} to return to Catalog`,
-      `{bold}Feature{/} · Playground environments are automatically detected at startup`,
-      `{bold}Feature{/} · Workspace materialization targets symlinks before cloning`,
     ]
 
     const apps = catalog.filter((e) => e.kind === 'app')
@@ -1361,6 +1495,10 @@ export async function runTui(commandName = 'desktop') {
     }
 
     clientBox.style.border.fg = serverRunning ? C.focus : C.border
+    metricsBox.style.border.fg = serverRunning ? C.focus : C.border
+
+    const boxWidth = clientBox.width || 50
+    const maxValLen = Math.max(10, boxWidth - 16)
 
     const serverDetails = clientStatus.pid
       ? `  PID ${clientStatus.pid}   ${clientStatus.stats.memMb} MiB   ${clientStatus.stats.threads} threads`
@@ -1382,43 +1520,54 @@ export async function runTui(commandName = 'desktop') {
       extraLine = `  System: ready`
     }
 
+    const configRestartText = 'desktop.config.ts updated — Nuxt is restarting (see dev server log)'
+    const maxRestartLen = Math.max(10, boxWidth - 8)
+    const configRestartDisplay = configRestartText.length > maxRestartLen
+      ? configRestartText.slice(0, maxRestartLen - 3) + '...'
+      : configRestartText
     const configRestartLine =
       configRestartHintUntil > Date.now() && serverRunning
-        ? `  {${C.devMode}-fg}ℹ{/} {${C.muted}-fg}desktop.config.ts updated — Nuxt is restarting (see dev server log){/}`
+        ? `  {${C.devMode}-fg}ℹ{/} {${C.muted}-fg}${configRestartDisplay}{/}`
         : null
 
     const workspaceShortPath = workspaceRoot.replace(process.env.HOME || '', '~')
+    const workspaceDisplayPath = workspaceShortPath.length > maxValLen
+      ? '...' + workspaceShortPath.slice(-(maxValLen - 3))
+      : workspaceShortPath
 
     // Git info
     const gitInfo = getGitStatus(workspaceRoot)
     const gitText = `branch: ${gitInfo.branch}  ·  status: ${gitInfo.status}`
+    const gitDisplay = gitText.length > maxValLen
+      ? gitText.slice(0, maxValLen - 3) + '...'
+      : gitText
 
     // Versions
     const versionsText = `Node ${process.version}  ·  Nuxt ${nuxtVersion}  ·  PNPM ${pnpmVersion}`
+    const versionsDisplay = versionsText.length > maxValLen
+      ? versionsText.slice(0, maxValLen - 3) + '...'
+      : versionsText
 
-    const workspaceLine = configRestartLine
-      ? configRestartLine
-      : `  {${C.muted}-fg}Workspace{/}  ${workspaceShortPath}`
+    const configErrorMsg = configError ? configError.split('\n')[0] : ''
+    const configErrorDisplay = configErrorMsg.length > maxValLen
+      ? configErrorMsg.slice(0, maxValLen - 3) + '...'
+      : configErrorMsg
+
+    const workspaceLine = configError
+      ? `  {${C.err}-fg}⚠️ Config Error:{/} {${C.warn}-fg}${configErrorDisplay}{/}`
+      : configRestartLine
+        ? configRestartLine
+        : `  {${C.muted}-fg}Workspace{/}  ${workspaceDisplayPath}`
 
     const contentLines = [
       `  {${dotColor}-fg}${dotChar}{/} {bold}${stateLabel}{/}  http://127.0.0.1:${settings.devPort}`,
-      serverDetails,
-      extraLine,
+      truncateFormatted(serverDetails, boxWidth - 4),
+      truncateFormatted(extraLine, boxWidth - 4),
       '',
       workspaceLine,
-      `  {${C.muted}-fg}Git{/}        ${gitText}`,
-      `  {${C.muted}-fg}Versions{/}   ${versionsText}`,
-      '',
+      `  {${C.muted}-fg}Git{/}        ${gitDisplay}`,
+      `  {${C.muted}-fg}Versions{/}   ${versionsDisplay}`,
     ]
-
-    const showcaseItems = getShowcaseItems()
-    if (showcaseItems.length > 0) {
-      const showcaseItem = showcaseItems[showcaseIndex % showcaseItems.length]
-      const boxWidth = clientBox.width || 50
-      const borderLine = ` {${C.borderDim}-fg}${ '─'.repeat(Math.max(10, boxWidth - 4)) }{/}`
-      contentLines.push(borderLine)
-      contentLines.push(`  ${showcaseItem}`)
-    }
 
     clientBox.setContent(contentLines.join('\n'))
 
@@ -1469,20 +1618,78 @@ export async function runTui(commandName = 'desktop') {
         ? `  {${C.warn}-fg}${unsaved}{/} {${C.muted}-fg}unsaved — ${keyHint('w')} save`
         : null
 
-    metricsBox.setContent(
-      [
-        `  {${C.muted}-fg}Memory{/} {bold}${memLabel}{/}`,
-        `  {${C.accent}-fg}${spark}{/}`,
-        '',
-        `  {${C.muted}-fg}${tabLabel}{/}  {bold}${onDesktop}{/} {${C.muted}-fg}on desktop{/}`,
-        '',
-        `  {${C.muted}-fg}Theme{/} {bold}${themeShort}{/}${themePending}  ·  ${apps} apps · ${mods} modules`,
-        unsavedLine ? '' : null,
-        unsavedLine,
-      ]
-        .filter((x) => x !== null)
-        .join('\n'),
-    )
+    const gitWarnings = getMissingGitWarnings(workspaceRoot)
+    const gitWarningLine = gitWarnings.length > 0
+      ? `  {yellow-fg}⚠️ Git Missing:{/} {${C.warn}-fg}${gitWarnings.join(', ')}{/}`
+      : null
+
+    const gitChanges = getWorkspaceGitChanges(workspaceRoot)
+    const hasChanges = gitChanges.added > 0 || gitChanges.modified > 0 || gitChanges.deleted > 0
+    const gitChangesLine = hasChanges
+      ? (() => {
+          const parts = []
+          if (gitChanges.added > 0) parts.push(`{${C.add}-fg}+${gitChanges.added}{/}`)
+          if (gitChanges.modified > 0) parts.push(`{${C.warn}-fg}~${gitChanges.modified}{/}`)
+          if (gitChanges.deleted > 0) parts.push(`{${C.remove}-fg}-${gitChanges.deleted}{/}`)
+          return `  {${C.muted}-fg}Changes{/}  ${parts.join(' ')}`
+        })()
+      : null
+
+    const extraLines = [unsavedLine, gitChangesLine, gitWarningLine].filter(Boolean)
+    
+    // Compute local stats
+    let localAppsCount = 0
+    let localModulesCount = 0
+    let localThemesCount = 0
+    try {
+      localAppsCount = readdirSync(join(workspaceRoot, 'apps')).filter(d => !d.startsWith('.')).length
+    } catch {}
+    try {
+      localModulesCount = readdirSync(join(workspaceRoot, 'packages')).filter(d => !d.startsWith('.') && !d.startsWith('core') && !d.startsWith('nx') && !d.startsWith('kit-')).length
+    } catch {}
+    try {
+      localThemesCount = readdirSync(join(workspaceRoot, 'themes')).filter(d => !d.startsWith('.')).length
+    } catch {}
+
+    // Compute registry stats
+    const totalStars = catalog.reduce((acc, item) => acc + (item.stars ?? 0), 0)
+    let totalCatalogDownloads = 0
+    for (const item of catalog) {
+      const name = item.org && item.org !== 'workspace' ? `@${item.org}/${item.shortName}` : item.shortName
+      const dls = npmDownloads[name]
+      if (dls !== undefined) {
+        totalCatalogDownloads += dls
+      }
+    }
+
+    const maxInnerLines = 7
+    const baseLines = [
+      `  {${C.muted}-fg}Memory{/}   {bold}${memLabel}{/}  {${C.accent}-fg}${spark}{/}`,
+      `  {${C.muted}-fg}Local{/}    {bold}${localAppsCount}{/} apps · {bold}${localModulesCount}{/} modules · {bold}${localThemesCount}{/} themes`,
+      `  {${C.muted}-fg}Registry{/} {bold}${totalStars}{/} stars · {bold}${totalCatalogDownloads.toLocaleString('en-US')}{/} dls/wk`,
+    ]
+    if (extraLines.length > 0) {
+      baseLines.push(...extraLines)
+    }
+
+    const metricsLines = [...baseLines]
+
+    const showcaseItems = getShowcaseItems()
+    if (showcaseItems.length > 0) {
+      const showcaseItem = showcaseItems[showcaseIndex % showcaseItems.length]
+      const boxWidth = metricsBox.width || 40
+      const borderLine = ` {${C.borderDim}-fg}${ '─'.repeat(Math.max(10, boxWidth - 4)) }{/}`
+      
+      const padCount = maxInnerLines - baseLines.length - 2
+      for (let i = 0; i < padCount; i++) {
+        metricsLines.push('')
+      }
+      
+      metricsLines.push(borderLine)
+      metricsLines.push(`  ${truncateFormatted(showcaseItem, boxWidth - 4)}`)
+    }
+
+    metricsBox.setContent(metricsLines.join('\n'))
   }
 
   function formatCatalogRow(item) {
@@ -1498,7 +1705,7 @@ export async function runTui(commandName = 'desktop') {
           installed: selected && !pendingChange,
           pending: pendingChange ? true : undefined,
         },
-        { colors: FORMAT_COLORS },
+        { colors: FORMAT_COLORS, columns: currentColumns },
       )
     }
 
@@ -1510,7 +1717,7 @@ export async function runTui(commandName = 'desktop') {
         isNew: activeTab === 'module' && item.isNew,
         isRecent: activeTab === 'module' && item.isRecent,
       },
-      { colors: FORMAT_COLORS },
+      { colors: FORMAT_COLORS, columns: currentColumns },
     )
   }
 
@@ -1553,7 +1760,7 @@ export async function runTui(commandName = 'desktop') {
   function renderAll() {
     layoutCatalogPanel()
     renderLegendBar()
-    headerBar.setContent(` ${formatHeaderLine(FORMAT_COLORS, currentColumns)}`)
+    headerBar.setContent(formatHeaderLine(FORMAT_COLORS, currentColumns))
     applyFocusStyles()
     renderClient()
     renderMetrics()
@@ -1875,7 +2082,13 @@ export async function runTui(commandName = 'desktop') {
       pendingPackages.clear()
       installChoices.clear()
       paths.config = resolveConfigPathForWrite(paths)
-      config = readDesktopConfig(paths.config, workspaceRoot)
+      try {
+        config = readDesktopConfig(paths.config, workspaceRoot)
+        configError = null
+      } catch (err) {
+        configError = err.message
+        config = { apps: [], modules: [], theme: null }
+      }
       deps = readDesktopDependencies(paths.packageJson)
       pendingTheme = config.theme
       saveProgress = null
@@ -1924,6 +2137,63 @@ export async function runTui(commandName = 'desktop') {
     await executeInstallPlan()
   }
 
+  async function syncDependenciesWithConfig() {
+    const declared = [
+      ...(config.apps ?? []),
+      ...(config.modules ?? []),
+      config.theme,
+    ].filter(Boolean)
+
+    const installedDeps = readDesktopDependencies(paths.packageJson)
+    
+    const missing = declared.filter(pkg => !installedDeps.includes(pkg))
+    const extra = installedDeps.filter(pkg => !declared.includes(pkg))
+
+    if (missing.length === 0 && extra.length === 0) {
+      return // Already synced!
+    }
+
+    setStatus('Synchronizing dependencies with config…')
+    startSpinner('Syncing package.json…')
+    screen.render()
+
+    try {
+      // Run pnpm install first
+      try {
+        execSync('pnpm install', { cwd: workspaceRoot, stdio: 'pipe' })
+      } catch {
+        // Ignore general install errors
+      }
+
+      // 1. Add missing dependencies
+      for (const pkg of missing) {
+        setStatus(`Installing missing package ${shortName(pkg)}…`)
+        screen.render()
+        await installPackage(pkg, settings, workspaceRoot, { stdio: 'pipe' })
+      }
+
+      // 2. Remove extra dependencies
+      for (const pkg of extra) {
+        setStatus(`Removing extra package ${shortName(pkg)}…`)
+        screen.render()
+        execSync(`pnpm remove ${pkg}`, { cwd: paths.desktop, stdio: 'pipe' })
+      }
+
+      // 3. Rerun prepare modules
+      runPrepareModules(workspaceRoot, 'pipe')
+
+      // Reload dependencies
+      deps = readDesktopDependencies(paths.packageJson)
+      renderAll()
+      setStatus('Dependencies synced successfully', 'ok')
+    } catch (err) {
+      setStatus(`Sync failed: ${err.message}`, 'error')
+    } finally {
+      stopSpinner()
+      screen.render()
+    }
+  }
+
   async function startDevServer() {
     if (devPhase === 'starting') {
       setStatus('Dev server is already starting…')
@@ -1933,6 +2203,8 @@ export async function runTui(commandName = 'desktop') {
       setStatus(`Dev server already running — ${keyHint('m')} menu to stop or reboot`, 'info')
       return
     }
+
+    await syncDependenciesWithConfig()
 
     devPhase = 'starting'
     startSpinner('Starting dev server…')
@@ -1966,11 +2238,13 @@ export async function runTui(commandName = 'desktop') {
       return
     }
 
+    startSpinner('Stopping dev server…')
     stopDev(workspaceRoot, clientStatus.pid)
     devPhase = 'stopped'
     stopLogWatcher()
     memHistory.length = 0
-    clientStatus = await getClientStatus(workspaceRoot, settings.devPort)
+    clientStatus = await waitForDevStop(workspaceRoot, settings.devPort)
+    stopSpinner()
     renderAll()
     setStatus(`Dev server stopped — press ${keyHint('s')} to start`, 'ok')
   }
@@ -1992,7 +2266,7 @@ export async function runTui(commandName = 'desktop') {
     renderAll()
     stopDev(workspaceRoot, clientStatus.pid)
     memHistory.length = 0
-    await new Promise((r) => setTimeout(r, 800))
+    await waitForDevStop(workspaceRoot, settings.devPort)
     startDev(devTarget)
     startLogWatcher()
     clientStatus = await waitForDev(workspaceRoot, settings.devPort)
@@ -2018,7 +2292,13 @@ export async function runTui(commandName = 'desktop') {
       const result = await loadCatalog(workspaceRoot, settings, { force })
       catalog = result.entries
       catalogCacheAge = result.cacheAge ?? ''
-      config = readDesktopConfig(paths.config, workspaceRoot)
+      try {
+        config = readDesktopConfig(paths.config, workspaceRoot)
+        configError = null
+      } catch (err) {
+        configError = err.message
+        config = { apps: [], modules: [], theme: null }
+      }
       deps = readDesktopDependencies(paths.packageJson)
       pendingTheme = pendingTheme ?? config.theme
       stopSpinner()
@@ -2156,30 +2436,47 @@ export async function runTui(commandName = 'desktop') {
     if (!overlayBlocksKeys()) openSortPicker()
   })
 
+  function changeTab(tabName) {
+    activeTab = tabName
+    if (tabName === 'theme') {
+      focusCatalog()
+      renderCatalogList()
+      restoreCatalogListSelection(catalogEntries(), pendingTheme ?? config.theme)
+      renderLegendBar()
+      applyFocusStyles()
+      renderMetrics()
+      renderDetail()
+      renderTabs()
+      screen.render()
+    } else {
+      focusCatalog()
+      renderAll()
+    }
+  }
+
   screen.key(['1'], () => {
     if (overlayBlocksKeys()) return
-    activeTab = 'app'
-    focusCatalog()
-    renderAll()
+    changeTab('app')
   })
   screen.key(['2'], () => {
     if (overlayBlocksKeys()) return
-    activeTab = 'module'
-    focusCatalog()
-    renderAll()
+    changeTab('module')
   })
   screen.key(['3'], () => {
     if (overlayBlocksKeys()) return
-    activeTab = 'theme'
-    focusCatalog()
-    renderCatalogList()
-    restoreCatalogListSelection(catalogEntries(), pendingTheme ?? config.theme)
-    renderLegendBar()
-    applyFocusStyles()
-    renderMetrics()
-    renderDetail()
-    renderTabs()
-    screen.render()
+    changeTab('theme')
+  })
+
+  tabBar.on('click', (data) => {
+    if (overlayBlocksKeys()) return
+    const relativeX = data.x - tabBar.aleft
+    if (relativeX >= 1 && relativeX <= 5) {
+      changeTab('app')
+    } else if (relativeX >= 8 && relativeX <= 15) {
+      changeTab('module')
+    } else if (relativeX >= 18 && relativeX <= 24) {
+      changeTab('theme')
+    }
   })
 
   githubInput.key(['enter'], () => saveSettingsFromOverlay())

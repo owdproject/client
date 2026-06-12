@@ -61,12 +61,10 @@ CONTROL PANEL (TUI)
   x                       Stop the Nuxt dev server
   R                       Reboot the Nuxt dev server (stop + start)
   w                       Save catalog/theme changes to desktop.config.ts
-  1 / 2                   Apps / Modules catalog tabs (Modules default)
-  o                       Cycle catalog sort (updated, name, stars, installed)
-  t                       Pick theme (inline overlay)
+  1 / 2 / 3               Apps / Modules / Themes catalog tabs
+  o / O                   Cycle sort (o) or open sort picker (O)
   i                       Open in-app docs (when module-docs is installed)
-  d                       Install mode panel (USER/DEV); Enter toggles inside panel
-  g                       Settings (GitHub username for fork clones)
+  g                       Settings (GitHub user, SSH, trusted orgs)
   r                       Refresh package list from GitHub (detects new modules)
   b                       Run pnpm run generate
   q / Esc                 Quit
@@ -89,9 +87,10 @@ VALIDATE
   --strict                    Treat warnings as failures
   --smoke                     Run dev:prepare + nuxt build playground (slow, CI)
 
-INSTALL MODES
-  User (default)        npm registry — for end users and generated projects
-  Dev                   clone into apps/, packages/, or themes/ in the monorepo
+INSTALL SOURCES (control panel or CLI)
+  npm                   registry (default for desktop add)
+  --dev                 clone github.com/owdproject/<package>
+  --from <user>         clone from GitHub user or full git URL (SSH supported)
 
 EXAMPLES
   pnpm ${name}            # control panel
@@ -114,6 +113,7 @@ OPTIONS
   --branch <name>   Git branch to clone
   --npm             Install from npm (default when --from is omitted)
   --dev, --workspace  Clone from github.com/owdproject/<package>
+  --protocol https|ssh  With --from <user>, use HTTPS (default) or SSH clone URL
   --dry-run         Print the plan without changing anything
   -h, --help        Show this help
 
@@ -238,12 +238,13 @@ export async function runCli(name, argv, options = {}) {
   const parsed = getopts(argv, {
     alias: { h: 'help', b: 'branch' },
     boolean: ['help', 'npm', 'dry-run', 'dev', 'workspace', 'playground', 'json', 'strict', 'smoke', 'check'],
-    string: ['from', 'branch', 'fork', 'repo'],
+    string: ['from', 'branch', 'fork', 'repo', 'protocol'],
   })
 
   const { _, help, npm: npmFlag } = parsed
   const dryRun = parsed['dry-run'] === true
   const { from, branch, npm: npmFromLegacy, dev: devFlag } = mapLegacyFlags(parsed)
+  const protocol = parsed.protocol === 'ssh' ? 'ssh' : 'https'
   const useNpm = npmFlag || npmFromLegacy || (!from && !devFlag)
 
   if (help || _[0] === 'help') {
@@ -362,7 +363,19 @@ export async function runCli(name, argv, options = {}) {
 
   const { pkgName, shortName, kind } = pkgInfo
   const inMonorepo = Boolean(workspaceRoot)
-  const source = resolveSource(useNpm ? 'npm' : from, shortName, inMonorepo, {
+  let resolvedFrom = useNpm ? 'npm' : from
+  if (
+    !useNpm &&
+    resolvedFrom &&
+    resolvedFrom !== 'npm' &&
+    resolvedFrom !== 'owdproject' &&
+    resolvedFrom !== 'official' &&
+    protocol === 'ssh' &&
+    !/[@/]/.test(resolvedFrom)
+  ) {
+    resolvedFrom = `git@github.com:${resolvedFrom}/${shortName}.git`
+  }
+  const source = resolveSource(resolvedFrom, shortName, inMonorepo, {
     npm: useNpm,
     dev: devFlag,
   })
