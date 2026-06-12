@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, provide } from 'vue'
+import { ref, provide, onMounted } from 'vue'
 import { computed } from '@vue/reactivity'
 import { useAppConfig } from 'nuxt/app'
 import { handleWindowControllerProps } from '../../utils/utilWindowControllerAdapter'
@@ -40,6 +40,12 @@ provide<WindowContent>('windowContent', props.content ?? {})
 
 const isDragging = ref(false)
 const isResizing = ref(false)
+
+onMounted(() => {
+  if (windowController?.state?.focused) {
+    windowController.actions.bringToFront()
+  }
+})
 
 function onWindowPointerDown() {
   windowController?.actions?.setActive(true)

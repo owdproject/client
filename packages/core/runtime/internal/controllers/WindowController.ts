@@ -1,7 +1,7 @@
 import { useApplicationManager } from '../../composables/useApplicationManager'
 import { useDesktopWindowStore } from '../../stores/storeDesktopWindow'
 import { deepClone } from '../../utils/utilCommon'
-import { markRaw } from '@vue/reactivity'
+import { markRaw, reactive } from '@vue/reactivity'
 import { defineAsyncComponent } from 'vue'
 
 export class WindowController implements IWindowController {
@@ -46,7 +46,7 @@ export class WindowController implements IWindowController {
     resizable: true,
   }
 
-  public override: WindowOverride = {}
+  public override: WindowOverride = reactive({})
 
   private storedState: WindowStoredState
 

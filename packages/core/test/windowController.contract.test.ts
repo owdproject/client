@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { computed } from 'vue'
 import { WindowController } from '../runtime/internal/controllers/WindowController'
 import { useDesktopWindowStore } from '../runtime/stores/storeDesktopWindow'
 
@@ -145,5 +146,24 @@ describe('WindowController contract', () => {
     expect(window.actions.toggleMaximize()).toBe(true)
     expect(window.state.layout).toBe('normal')
     expect(window.isMaximized).toBe(false)
+  })
+
+  it('title override is reactive', () => {
+    const app = createMockApplication()
+    const window = new WindowController(
+      app,
+      'main',
+      { title: 'Original Title' },
+      createWindowStoredState('win-override-reactivity'),
+    )
+
+    const computedTitle = computed(() => window.title)
+    expect(computedTitle.value).toBe('Original Title')
+
+    window.actions.setTitleOverride('New Title')
+    expect(computedTitle.value).toBe('New Title')
+
+    window.actions.resetTitleOverride()
+    expect(computedTitle.value).toBe('Original Title')
   })
 })
