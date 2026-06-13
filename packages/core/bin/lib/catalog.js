@@ -402,7 +402,7 @@ export function filterCatalog(catalog, kind, options = {}) {
   const sortMode = normalizeCatalogSort(options.sortMode ?? 'updated')
   const filtered = catalog
     .filter((e) => e.kind === kind)
-    .filter((e) => kind !== 'module' || isInstallableDesktopModule(e.name))
+    .filter((e) => kind !== 'module' || (isInstallableDesktopModule(e.name) && e.shortName.startsWith('module-')))
 
   return sortCatalog(filtered, sortMode, options.config ?? null)
 }
