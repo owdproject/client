@@ -4,12 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-catalogs:
-  default:
-    typescript:
-      specifier: ~6.0.3
-      version: 6.0.3
-
 importers:
 
   .:
@@ -324,21 +318,12 @@ importers:
       '@owdproject/app-about':
         specifier: workspace:*
         version: link:../apps/app-about
-      '@owdproject/app-classic-audioplayer':
-        specifier: workspace:*
-        version: link:../apps/app-classic-audioplayer
-      '@owdproject/app-classic-videoplayer':
-        specifier: workspace:*
-        version: link:../apps/app-classic-videoplayer
       '@owdproject/app-terminal':
         specifier: workspace:*
         version: link:../apps/app-terminal
       '@owdproject/module-fs':
         specifier: workspace:*
         version: link:../packages/module-fs
-      '@owdproject/theme-win11':
-        specifier: workspace:*
-        version: link:../themes/theme-win11
       '@owdproject/theme-win95':
         specifier: workspace:*
         version: link:../themes/theme-win95
@@ -525,49 +510,30 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  themes/theme-win11:
+  themes/theme-paper:
     dependencies:
       '@nuxt/kit':
-        specifier: ^4.4.4
+        specifier: ^4.4.6
         version: 4.4.7(magicast@0.5.3)
       '@owdproject/kit-primevue':
         specifier: workspace:*
         version: link:../../packages/kit-primevue
-      defu:
-        specifier: ^6.1.4
-        version: 6.1.7
-      vuedraggable:
-        specifier: ^4.1.0
-        version: 4.1.0(vue@3.5.35(typescript@6.0.3))
     devDependencies:
-      '@nuxt/devtools':
-        specifier: ^3.2.4
-        version: 3.2.4(vite@8.0.16(@types/node@25.9.3)(esbuild@0.28.0)(jiti@2.7.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.35(typescript@6.0.3))
       '@nuxt/module-builder':
         specifier: ^1.0.2
         version: 1.0.2(@nuxt/cli@3.35.2(@nuxt/schema@4.4.7)(cac@6.7.14)(magicast@0.5.3))(@vue/compiler-core@3.5.35)(esbuild@0.28.0)(sass@1.100.0)(typescript@6.0.3)(vue-tsc@3.3.4(typescript@6.0.3))(vue@3.5.35(typescript@6.0.3))
-      '@nuxt/schema':
-        specifier: ^4.4.4
-        version: 4.4.7
       '@owdproject/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@owdproject/module-fs':
-        specifier: workspace:*
-        version: link:../../packages/module-fs
       nuxt:
-        specifier: ^4.4.4
+        specifier: ^4.4.6
         version: 4.4.7(@babel/plugin-proposal-decorators@7.29.7(@babel/core@7.29.7))(@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.29.7))(@babel/plugin-syntax-typescript@7.29.7(@babel/core@7.29.7))(@parcel/watcher@2.5.6)(@types/node@25.9.3)(@vue/compiler-sfc@3.5.35)(better-sqlite3@12.10.0)(cac@6.7.14)(db0@0.3.4(better-sqlite3@12.10.0))(eslint@10.4.1(jiti@2.6.1))(idb-keyval@6.2.5)(ioredis@5.11.1)(lightningcss@1.32.0)(magicast@0.5.3)(optionator@0.9.4)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3)))(rolldown@1.0.3)(rollup-plugin-visualizer@7.0.1(rolldown@1.0.3)(rollup@4.61.1))(rollup@4.61.1)(sass@1.100.0)(srvx@0.11.16)(terser@5.48.0)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.28.0)(jiti@2.7.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(vue-tsc@3.3.4(typescript@6.0.3))(yaml@2.9.0)
       typescript:
-        specifier: ~6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
-    optionalDependencies:
-      '@owdproject/app-classic-audioplayer':
-        specifier: 0.0.4
-        version: link:../../apps/app-classic-audioplayer
-      '@owdproject/module-persistence':
-        specifier: 0.0.2
-        version: 0.0.2(@owdproject/core@packages+core)(magicast@0.5.3)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3)))
+      vue-tsc:
+        specifier: ^3.3.3
+        version: 3.3.4(typescript@6.0.3)
 
   themes/theme-win95:
     dependencies:
@@ -2784,12 +2750,6 @@ packages:
   '@opentelemetry/api@1.9.1':
     resolution: {integrity: sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q==}
     engines: {node: '>=8.0.0'}
-
-  '@owdproject/module-persistence@0.0.2':
-    resolution: {integrity: sha512-yzufty5JA19BKOV2r0N+t9AvdzJkmEu0KJOOyiOzlGI8FhlEFcYknpFny4haLjoBoiIttjFkS2GxJZ8N9zErGA==}
-    peerDependencies:
-      '@owdproject/core': ^3.2.0
-      pinia: ^3.0.0
 
   '@oxc-minify/binding-android-arm-eabi@0.133.0':
     resolution: {integrity: sha512-D8M1+nqwLaACHZsld/t6f+cE4N97XOu5iQ88f1ZaYH4ptFzFrXo5N7wUKACTI4xmNUD+6W0Y4Apk5U2r8HLdBQ==}
@@ -7709,11 +7669,6 @@ packages:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
     engines: {node: '>=0.10.0'}
 
-  pinia-plugin-persistedstate-2@2.0.32:
-    resolution: {integrity: sha512-QI7XtFc9PWxdiDOCSgkA1QesbuXJ2pPmeDJFsWtI3CA1KTIdA11g4kfzdfU4s1amgQobd42s3JWUuYc7V7OjWQ==}
-    peerDependencies:
-      pinia: ^2.3.0 || ^3.0.0
-
   pinia@3.0.4:
     resolution: {integrity: sha512-l7pqLUFTI/+ESXn6k3nu30ZIzW5E2WZF/LaHJEpoq6ElcLD+wduZoB2kBN19du6K/4FDpPMazY2wJr+IndBtQw==}
     peerDependencies:
@@ -8498,9 +8453,6 @@ packages:
   shellwords@1.1.1:
     resolution: {integrity: sha512-LzESUkEHUuFbjaE7j8uyIjKvySfSFvCF6G4WOygjwSwQj3VuX8hr+v4M252B3twEct6XTWrrNSFu74mTlx4uAQ==}
 
-  shvl@3.0.0:
-    resolution: {integrity: sha512-5IomAM3ykE/g9K9L6lhODc+TpCuN03rrhlboegeKyyfh66DDdpRD5JN37DYhNHH+RaYjiIDx64K/Ms/xQYOR5w==}
-
   side-channel-list@1.0.1:
     resolution: {integrity: sha512-mjn/0bi/oUURjc5Xl7IaWi/OJJJumuoJFQJfDDyO46+hBWsfaVM65TBHq2eoZBhzl9EchxOijpkbRC8SVBQU0w==}
     engines: {node: '>= 0.4'}
@@ -8566,9 +8518,6 @@ packages:
   sort-keys@1.1.2:
     resolution: {integrity: sha512-vzn8aSqKgytVik0iwdBEi+zevbTYZogewTUM6dtpmGwEcdzbub/TX4bCzRhebDCRC3QzXgJsLRKB2V/Oof7HXg==}
     engines: {node: '>=0.10.0'}
-
-  sortablejs@1.14.0:
-    resolution: {integrity: sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -9508,11 +9457,6 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
-
-  vuedraggable@4.1.0:
-    resolution: {integrity: sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww==}
-    peerDependencies:
-      vue: ^3.0.1
 
   w3c-xmlserializer@5.0.0:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
@@ -13399,17 +13343,6 @@ snapshots:
   '@one-ini/wasm@0.1.1': {}
 
   '@opentelemetry/api@1.9.1':
-    optional: true
-
-  '@owdproject/module-persistence@0.0.2(@owdproject/core@packages+core)(magicast@0.5.3)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3)))':
-    dependencies:
-      '@nuxt/kit': 4.4.7(magicast@0.5.3)
-      '@owdproject/core': link:packages/core
-      idb-keyval: 6.2.5
-      pinia: 3.0.4(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3))
-      pinia-plugin-persistedstate-2: 2.0.32(pinia@3.0.4(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3)))
-    transitivePeerDependencies:
-      - magicast
     optional: true
 
   '@oxc-minify/binding-android-arm-eabi@0.133.0':
@@ -19750,12 +19683,6 @@ snapshots:
 
   pify@2.3.0: {}
 
-  pinia-plugin-persistedstate-2@2.0.32(pinia@3.0.4(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3))):
-    dependencies:
-      pinia: 3.0.4(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3))
-      shvl: 3.0.0
-    optional: true
-
   pinia@3.0.4(typescript@6.0.3)(vue@3.5.35(typescript@6.0.3)):
     dependencies:
       '@vue/devtools-api': 7.7.9
@@ -20563,9 +20490,6 @@ snapshots:
 
   shellwords@1.1.1: {}
 
-  shvl@3.0.0:
-    optional: true
-
   side-channel-list@1.0.1:
     dependencies:
       es-errors: 1.3.0
@@ -20643,8 +20567,6 @@ snapshots:
   sort-keys@1.1.2:
     dependencies:
       is-plain-obj: 1.1.0
-
-  sortablejs@1.14.0: {}
 
   source-map-js@1.2.1: {}
 
@@ -22129,11 +22051,6 @@ snapshots:
       '@vue/shared': 3.5.35
     optionalDependencies:
       typescript: 6.0.3
-
-  vuedraggable@4.1.0(vue@3.5.35(typescript@6.0.3)):
-    dependencies:
-      sortablejs: 1.14.0
-      vue: 3.5.35(typescript@6.0.3)
 
   w3c-xmlserializer@5.0.0:
     dependencies:
