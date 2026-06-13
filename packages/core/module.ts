@@ -104,18 +104,33 @@ export default defineNuxtModule({
 
     {
       if (desktop.theme) {
-        await installDesktopPackage(_nuxt, desktop.theme, desktop)
+        try {
+          await installDesktopPackage(_nuxt, desktop.theme, desktop)
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e)
+          console.warn(`[@owdproject/core] Warning: Could not load theme "${desktop.theme}". Details: ${msg}`)
+        }
       }
 
       if (Array.isArray(desktop.modules)) {
         for (const modulePath of desktop.modules) {
-          await installDesktopPackage(_nuxt, modulePath, desktop)
+          try {
+            await installDesktopPackage(_nuxt, modulePath, desktop)
+          } catch (e) {
+            const msg = e instanceof Error ? e.message : String(e)
+            console.warn(`[@owdproject/core] Warning: Could not load module "${modulePath}". Details: ${msg}`)
+          }
         }
       }
 
       if (Array.isArray(desktop.apps)) {
         for (const appPath of desktop.apps) {
-          await installDesktopPackage(_nuxt, appPath, desktop)
+          try {
+            await installDesktopPackage(_nuxt, appPath, desktop)
+          } catch (e) {
+            const msg = e instanceof Error ? e.message : String(e)
+            console.warn(`[@owdproject/core] Warning: Could not load app "${appPath}". Details: ${msg}`)
+          }
         }
       }
     }
