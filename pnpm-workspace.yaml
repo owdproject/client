@@ -20,10 +20,4 @@ allowBuilds:
   esbuild: true
   nx: true
   unrs-resolver: true
-onlyBuiltDependencies:
-  - '@owdproject/nx'
-  - '@parcel/watcher'
-  - '@swc/core'
-  - esbuild
-  - nx
-  - unrs-resolver
+
