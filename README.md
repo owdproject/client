@@ -17,13 +17,14 @@ Open Web Desktop (OWD) is a framework designed to provide a simple environment f
 - Fully extendable through apps, modules and themes
 - Bundled with popular Vue.js libraries like Pinia and VueUse
 - Designed to make the most of the Nuxt.js ecosystem
-- Styled with PrimeVue and Tailwind for a consistent UI
+- Styling-agnostic (Tailwind, PrimeVue, and other styling frameworks can be used optionally)
 - Fully localizable with nuxt-i18n support
+- Dynamic Terminal User Interface (TUI) for managing the workspace, packages, and dev server
 
 ## Repository layout
 
 - **`desktop/`** — monorepo dev desktop (workspace apps, modules, themes). Use `pnpm run dev` from the repo root.
-- **`template/`** — scaffold copied by `npm create owd` / `desktop init`. **Do not edit by hand**; regenerate with `pnpm desktop template` (or `pnpm template:sync`) after changing the starter desktop or publishing `@owdproject/*` packages. Blueprint sources live in `packages/core/template-blueprint/`.
+- **`template/`** — scaffold copied by `npm create owd` / `pnpm desktop init`. **Do not edit by hand**; regenerate with `pnpm desktop template` (or `pnpm template:sync`) after changing the starter desktop or publishing `@owdproject/*` packages. Blueprint sources live in `packages/core/template-blueprint/`.
 
 ## Getting started
 
@@ -33,13 +34,18 @@ Bootstrap a new project by running:
 npm create owd
 ```
 
-Once the process is done, you can start to develop:
+Once the process is done, you can start the control panel (TUI) to manage your workspace and dev server:
 
 ```bash
 cd owd-client
-
-# Run the dev server with hot-reload
 pnpm install
+pnpm desktop
+```
+
+Within the TUI, press `d` to start/stop the dev server, toggle packages, and inspect logs. Alternatively, you can run the dev server or production build directly:
+
+```bash
+# Run the dev server directly
 pnpm run dev
 
 # Build for production
@@ -48,7 +54,7 @@ pnpm run generate
 
 ## Extend your desktop
 
-Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and ensure a consistent look across all apps. Each theme defines its own style, making your desktop both cohesive and uniquely yours.
+You can create custom apps, modules, and themes to extend your desktop. Themes can define their own styling (e.g. using PrimeVue, Tailwind, vanilla CSS, etc.), making your desktop environment cohesive and uniquely yours.
 
 **Developing apps/themes in isolation:** publishable packages use a `playground/` mini-desktop and `nuxt-module-build` — see [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agents/OWD_APP_MODULE_PLAYGROUND.md) (examples: [app-about](https://owdproject.github.io/app-about/), [app-wasmboy](https://owdproject.github.io/app-wasmboy/)).
 
@@ -61,12 +67,12 @@ Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) ta
 For example, to add the To-do app:
 
 ```bash
-desktop add app-todo
+pnpm desktop add app-todo
 # from npm only:
-desktop add app-todo --npm
+pnpm desktop add app-todo --npm
 ```
 
-This installs (or clones) the package and registers it in `desktop/desktop.config.ts`. The `owd` command is a deprecated alias for `desktop`.
+This installs (or clones) the package and registers it in `desktop/desktop.config.ts`.
 
 ### 🧩 Install a module
 
@@ -75,20 +81,17 @@ Discover modules by searching the [owd-modules](https://github.com/topics/owd-mo
 For example, to add Pinia persistence backed by IndexedDB (`idb-keyval`):
 
 ```bash
-desktop add module-persistence
+pnpm desktop add module-persistence
 # or your fork:
-desktop add module-persistence --from your-github-user
+pnpm desktop add module-persistence --from your-github-user
 ```
 
 ### 🖥️ Install a theme
 
-Themes are full desktop environments that style all UI components independently, using [PrimeVue](https://primevue.org/).  
-Each theme provides a unique look and feel while maintaining consistent functionality across applications.
-
 Discover themes by searching the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
 
 ```bash
-desktop add theme-gnome
+pnpm desktop add theme-gnome
 ```
 
 ## License
