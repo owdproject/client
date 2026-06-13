@@ -249,16 +249,6 @@ export function buildSourceOptions(metadata, settings, sshAuth = {}) {
   /** @type {SourceOption[]} */
   const options = []
 
-  if (metadata.npm?.version) {
-    options.push({
-      id: 'npm',
-      kind: 'npm',
-      label: `npm ${metadata.pkgName} ${metadata.npm.version}`,
-      url: npmPackageUrl(metadata.pkgName),
-      choice: { type: 'npm' },
-    })
-  }
-
   const official = metadata.github.official
   if (official?.owner) {
     options.push({
@@ -284,7 +274,15 @@ export function buildSourceOptions(metadata, settings, sshAuth = {}) {
   }
 
   const fork = metadata.github.fork
-  if (fork?.exists && fork.owner) {
+  const officialOwnerLower = official?.owner?.toLowerCase()
+  const forkOwnerLower = fork?.owner?.toLowerCase()
+  const userLower = settings.githubUser?.toLowerCase()
+  // Skip fork options when fork owner is the same as the official repo owner
+  // (the official options already cover that user)
+  const forkIsSameAsOfficial = forkOwnerLower && forkOwnerLower === officialOwnerLower
+  const forkMissingIsSameAsOfficial = userLower && userLower === officialOwnerLower
+
+  if (fork?.exists && fork.owner && !forkIsSameAsOfficial) {
     options.push({
       id: 'git-https-fork',
       kind: 'git',
@@ -305,15 +303,15 @@ export function buildSourceOptions(metadata, settings, sshAuth = {}) {
         choice: { type: 'git', protocol: 'ssh', owner: fork.owner },
       })
     }
-  } else if (settings.githubUser && settings.githubUser !== 'owdproject' && !fork?.exists) {
+  }
+
+  if (metadata.npm?.version) {
     options.push({
-      id: 'git-https-fork-missing',
-      kind: 'git',
-      protocol: 'https',
-      owner: settings.githubUser,
-      label: `GitHub HTTPS — ${settings.githubUser}/${metadata.shortName} (fork not found — may fail)`,
-      url: githubCloneUrl(settings.githubUser, metadata.shortName, 'https'),
-      choice: { type: 'git', protocol: 'https', owner: settings.githubUser },
+      id: 'npm',
+      kind: 'npm',
+      label: `npm — ${metadata.pkgName}@${metadata.npm.version}`,
+      url: npmPackageUrl(metadata.pkgName),
+      choice: { type: 'npm' },
     })
   }
 

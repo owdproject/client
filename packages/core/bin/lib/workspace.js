@@ -33,17 +33,23 @@ export function docsBasePathFromConfig(config) {
 
 /** Theme-internal UI kits — pulled in by themes, not listed as desktop modules. */
 export function isDesktopKitPackage(pkgName) {
-  const short = pkgName.startsWith(SCOPE) ? pkgName.slice(SCOPE.length) : pkgName
+  const isScoped = pkgName.startsWith(SCOPE)
+  const short = isScoped ? pkgName.slice(SCOPE.length) : pkgName
+  if (!isScoped && !pkgName.startsWith('kit-')) return false
   return short.startsWith('kit-')
 }
 
 /** Scaffold / blueprint packages — not loadable desktop modules. */
 export function isDesktopTemplatePackage(pkgName) {
-  const short = pkgName.startsWith(SCOPE) ? pkgName.slice(SCOPE.length) : pkgName
+  const isScoped = pkgName.startsWith(SCOPE)
+  const short = isScoped ? pkgName.slice(SCOPE.length) : pkgName
+  if (!isScoped && !pkgName.endsWith('-template')) return false
   return short.endsWith('-template')
 }
 
 export function isInstallableDesktopModule(pkgName) {
+  const isScoped = pkgName.startsWith(SCOPE)
+  if (!isScoped && !pkgName.startsWith('module-')) return false
   return (
     !DESKTOP_NON_INSTALLABLE.has(pkgName) &&
     !isDesktopKitPackage(pkgName) &&
@@ -194,3 +200,20 @@ export function inferKind(shortName) {
   if (shortName.startsWith('theme-')) return 'theme'
   return 'module'
 }
+
+export function getPackagesRequiredByTheme(workspaceRoot, themeName) {
+  if (!themeName) return []
+  const themeShort = shortName(themeName)
+  const pkgJsonPath = join(workspaceRoot, 'themes', themeShort, 'package.json')
+  if (!existsSync(pkgJsonPath)) return []
+  try {
+    const pkgJson = JSON.parse(readFileSync(pkgJsonPath, 'utf8'))
+    const themeDeps = { ...pkgJson.dependencies, ...pkgJson.devDependencies }
+    return Object.keys(themeDeps).filter(
+      (dep) => isDesktopKitPackage(dep) || isInstallableDesktopModule(dep)
+    )
+  } catch {
+    return []
+  }
+}
+

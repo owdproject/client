@@ -22,6 +22,35 @@ const require = createRequire(import.meta.url)
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const desktopBin = join(__dirname, '..', 'desktop.js')
 
+/**
+ * Runs a shell command asynchronously without blocking the event loop.
+ * Resolves when the process exits with code 0, rejects otherwise.
+ * @param {string} cmd
+ * @param {string[]} args
+ * @param {{ cwd?: string, stdio?: 'pipe' | 'inherit' | 'ignore' }} [options]
+ */
+export function spawnAsync(cmd, args, options = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, args, {
+      cwd: options.cwd,
+      stdio: options.stdio ?? 'pipe',
+      shell: process.platform === 'win32',
+    })
+    let out = ''
+    let err = ''
+    if (child.stdout) child.stdout.on('data', (d) => { out += d.toString() })
+    if (child.stderr) child.stderr.on('data', (d) => { err += d.toString() })
+    child.on('error', reject)
+    child.on('close', (code) => {
+      if (code === 0) resolve()
+      else {
+        const combined = [err.trim(), out.trim()].filter(Boolean).join('\n')
+        reject(new Error(combined || `Process exited with code ${code}`))
+      }
+    })
+  })
+}
+
 const SCOPE = '@owdproject/'
 
 /**
@@ -235,8 +264,7 @@ export async function installPackage(pkgName, settings, workspaceRoot, options =
   )
   if (plan.error) throw new Error(plan.error)
 
-  const stdio = options.stdio ?? 'inherit'
-  const args = ['add', plan.shortName]
+  const args = [desktopBin, 'add', plan.shortName]
 
   if (plan.mode === 'npm') {
     args.push('--npm')
@@ -255,17 +283,14 @@ export async function installPackage(pkgName, settings, workspaceRoot, options =
     args.push('--dev')
   }
 
-  execSync(
-    `node ${JSON.stringify(desktopBin)} ${args.map((a) => JSON.stringify(a)).join(' ')}`,
-    { cwd: workspaceRoot, stdio },
-  )
+  await spawnAsync(process.execPath, args, { cwd: workspaceRoot })
 
   return plan
 }
 
-export function runPrepareModules(workspaceRoot, stdio = 'inherit') {
+export async function runPrepareModules(workspaceRoot, _stdio = 'inherit') {
   try {
-    execSync('pnpm run prepare:modules', { cwd: workspaceRoot, stdio })
+    await spawnAsync('pnpm', ['run', 'prepare:modules'], { cwd: workspaceRoot })
   } catch {
     /* optional in minimal workspaces */
   }
@@ -316,9 +341,8 @@ export function printNextSteps({ targetDir, dryRun }) {
  * @param {string} workspaceRoot
  * @param {{ stdio?: 'inherit' | 'pipe' | 'ignore', quiet?: boolean }} [options]
  */
-export function cloneRepo(targetDir, gitUrl, branch, workspaceRoot, options = {}) {
-  const stdio = options.stdio ?? 'inherit'
-  const quiet = options.quiet ?? stdio !== 'inherit'
+export async function cloneRepo(targetDir, gitUrl, branch, workspaceRoot, options = {}) {
+  const quiet = options.quiet ?? true
   const absoluteTarget = join(workspaceRoot, targetDir)
 
   if (existsSync(join(absoluteTarget, 'package.json'))) {
@@ -332,29 +356,22 @@ export function cloneRepo(targetDir, gitUrl, branch, workspaceRoot, options = {}
     )
   }
 
-  const branchArg = branch ? `-b ${JSON.stringify(branch)} ` : ''
+  const args = ['clone']
+  if (branch) args.push('-b', branch)
+  args.push(gitUrl, absoluteTarget)
+
   if (!quiet) console.log(`Cloning into ${targetDir}/ …\n`)
-  execSync(
-    `git clone ${branchArg}${JSON.stringify(gitUrl)} ${JSON.stringify(absoluteTarget)}`,
-    { stdio, cwd: workspaceRoot },
-  )
+  await spawnAsync('git', args, { cwd: workspaceRoot })
 }
 
-function linkWorkspacePackage(desktopPath, pkgName, stdio = 'inherit') {
-  execSync(`pnpm add ${pkgName}@workspace:*`, {
-    stdio,
-    cwd: desktopPath,
-  })
+async function linkWorkspacePackage(desktopPath, pkgName) {
+  await spawnAsync('pnpm', ['add', `${pkgName}@workspace:*`], { cwd: desktopPath })
 }
 
-function runDevPrepare(workspaceRoot, pkgName, options = {}) {
-  const stdio = options.stdio ?? 'inherit'
-  const quiet = options.quiet ?? stdio !== 'inherit'
+async function runDevPrepare(workspaceRoot, pkgName, options = {}) {
+  const quiet = options.quiet ?? true
   try {
-    execSync(`pnpm --filter "${pkgName}" run dev:prepare`, {
-      stdio,
-      cwd: workspaceRoot,
-    })
+    await spawnAsync('pnpm', ['--filter', pkgName, 'run', 'dev:prepare'], { cwd: workspaceRoot })
   } catch {
     if (!quiet) console.log('(no dev:prepare script — ok for some packages)\n')
   }
@@ -389,13 +406,13 @@ export async function runWorkspaceInstall({
     return
   }
 
-  cloneRepo(targetDir, source.gitUrl, branch, workspaceRoot)
-  linkWorkspacePackage(desktopPath, pkgName)
+  await cloneRepo(targetDir, source.gitUrl, branch, workspaceRoot)
+  await linkWorkspacePackage(desktopPath, pkgName)
 
   const { addToDesktopConfig } = loadConfigUtil(workspaceRoot)
   addToDesktopConfig(configPath, KINDS[kind].configKey, pkgName)
 
-  runDevPrepare(workspaceRoot, pkgName)
+  await runDevPrepare(workspaceRoot, pkgName)
 
   console.log(`✓ ${pkgName} is ready.\n`)
   printNextSteps({ targetDir, dryRun: false })
@@ -437,13 +454,11 @@ export async function materializeToWorkspace(pkgName, settings, workspaceRoot, o
     return { skipped: true, plan }
   }
 
-  const stdio = options.stdio ?? 'inherit'
-  const quiet = stdio !== 'inherit'
   const desktopPath = join(workspaceRoot, 'desktop')
 
-  cloneRepo(plan.targetDir, plan.source.gitUrl, undefined, workspaceRoot, { stdio, quiet })
-  linkWorkspacePackage(desktopPath, pkgName, stdio)
-  runDevPrepare(workspaceRoot, pkgName, { stdio, quiet })
+  await cloneRepo(plan.targetDir, plan.source.gitUrl, undefined, workspaceRoot, { quiet: true })
+  await linkWorkspacePackage(desktopPath, pkgName)
+  await runDevPrepare(workspaceRoot, pkgName, { quiet: true })
 
   return { skipped: false, plan }
 }

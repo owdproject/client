@@ -157,10 +157,24 @@ export async function getClientStatus(workspaceRoot, port) {
 
   const pid = fromPg?.pid ?? portPid ?? fromFile ?? null
   const stats = pid ? readProcessStats(pid) : { memMb: 0, threads: 0 }
-  const running = http.up || Boolean(fromPg) || Boolean(portPid) || Boolean(fromFile)
+
+  const isPidRunning = (p) => {
+    if (!p) return false
+    try {
+      process.kill(p, 0)
+      return true
+    } catch (err) {
+      return err.code === 'EPERM'
+    }
+  }
+
+  const running = http.up || 
+    (fromPg && isPidRunning(fromPg.pid)) || 
+    (portPid && isPidRunning(portPid)) || 
+    (fromFile && isPidRunning(fromFile))
 
   return {
-    running,
+    running: Boolean(running),
     pid,
     http,
     stats,
@@ -265,6 +279,9 @@ export async function waitForDev(workspaceRoot, port, timeoutMs = 90_000) {
   while (Date.now() - started < timeoutMs) {
     const status = await getClientStatus(workspaceRoot, port)
     if (status.http.up) return status
+    if (Date.now() - started > 5000 && !status.running) {
+      return status
+    }
     await sleep(1500)
   }
   return getClientStatus(workspaceRoot, port)

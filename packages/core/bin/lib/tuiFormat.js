@@ -7,12 +7,13 @@ const COL = {
   sel: 3,
   name: 28,
   sources: 7,
+  dir: 4,
   publisher: 20,
   meta: 14,
 }
 
 export function getColumnWidths(targetWidth) {
-  const fixed = 3 + 7 + 14 + 4 // 28 (sel, sources, meta plus 4 spaces)
+  const fixed = 3 + 7 + 4 + 14 + 5 // 33 (sel, sources, dir, meta plus 5 spaces)
   const remaining = targetWidth - fixed
 
   let nameWidth = 28
@@ -42,6 +43,7 @@ export function getColumnWidths(targetWidth) {
     sel: 3,
     name: nameWidth,
     sources: 7,
+    dir: 4,
     publisher: pubWidth,
     meta: 14,
   }
@@ -146,6 +148,17 @@ export function formatCatalogRowPlain(item, ctx = {}) {
     slots.git === 'GIT' ? `{${colors.git}-fg}${slots.git}{/}` : `{${colors.muted}-fg}${slots.git}{/}`
   const sources = `${srcNpm} ${srcGit}`
 
+  // 3.5 DIR Column (4 chars)
+  let dirTag = ''
+  const isMissing = item.installed && !item.localSource
+  if (isMissing) {
+    dirTag = `{red-fg}MISS{/}`
+  } else if (item.localSource) {
+    dirTag = `{${colors.npm}-fg}OK{/}  `
+  } else {
+    dirTag = `{${colors.muted}-fg}---{/} `
+  }
+
   // 4. Publisher Column (columns.publisher chars)
   let pubPart = publisher
   if (pubPart.length > columns.publisher) {
@@ -189,7 +202,7 @@ export function formatCatalogRowPlain(item, ctx = {}) {
   }
 
   // Join columns with exactly one space (matching header format)
-  return `${selTag} ${nameTag} ${sources} ${pubTag} ${metaTag}`
+  return `${selTag} ${nameTag} ${sources} ${dirTag} ${pubTag} ${metaTag}`
 }
 
 /**
@@ -206,7 +219,8 @@ export function formatLegendLine(colors = DEFAULT_COLORS) {
     `{${c.git}-fg}GIT{/} repo`,
     `{${c.local}-fg}LOC{/} workspace`,
     '|',
-    `{${c.warn}-fg}WRN{/} untrusted publisher`,
+    `{${c.npm}-fg}OK{/} folder exists`,
+    `{red-fg}MISS{/} folder missing`,
   ].join('  ')
 }
 
@@ -255,6 +269,11 @@ export function formatDetailPanel(item, targetDir, colors = DEFAULT_COLORS, widt
     lines.push(`  {${c.muted}-fg}${item.description.slice(0, maxDescLen)}{/}`)
   }
 
+  const isMissing = item.installed && !item.localSource
+  if (isMissing) {
+    lines.push(`  {red-fg}{bold}⚠ WARNING: Local workspace folder is missing!{/}{/}`)
+  }
+
   return lines.join('\n')
 }
 
@@ -262,9 +281,10 @@ export function formatHeaderLine(colors = DEFAULT_COLORS, columns = COL) {
   const status = ' '.repeat(columns.sel || 3) + ' '
   const name = 'NAME'.padEnd(columns.name || 28, ' ') + ' '
   const sources = 'SOURCES'.padEnd(columns.sources || 7, ' ') + ' '
+  const dir = 'DIR'.padEnd(columns.dir || 4, ' ') + ' '
   const publisher = 'PUBLISHER'.padEnd(columns.publisher || 20, ' ') + ' '
   const meta = 'STARS/AGE'.padStart(columns.meta || 14, ' ')
-  return `{bold}${status}${name}${sources}${publisher}${meta}{/}`
+  return `{bold}${status}${name}${sources}${dir}${publisher}${meta}{/}`
 }
 
 export { COL as TUI_COLUMN_WIDTHS }
