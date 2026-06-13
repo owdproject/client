@@ -133,7 +133,7 @@ export function launchControlPanel(targetDir, commandName = 'desktop') {
  */
 export async function scaffoldProject(options = {}) {
   const cwd = options.cwd ?? process.cwd()
-  const dir = (options.dir ?? 'owd-client').trim()
+  const dir = (options.dir ?? 'client').trim()
   const commandName = options.commandName ?? 'desktop'
 
   if (!dir) {
@@ -169,19 +169,12 @@ export async function scaffoldProject(options = {}) {
   console.log('\n✓ Project ready\n')
 
   if (!options.skipUi) {
-    const launched = launchControlPanel(targetDir, commandName)
-    if (launched) {
-      console.log(`\nLater: cd ${dir} && pnpm run dev · pnpm desktop\n`)
-    } else {
-      console.log(`  cd ${dir}`)
-      console.log('  pnpm desktop       # control panel ([m] menu, [s] start, [x] stop, [R] reboot)')
-      console.log('  pnpm run dev       # Nuxt dev server\n')
-    }
-  } else {
-    console.log(`  cd ${dir}`)
-    console.log('  pnpm desktop')
-    console.log('  pnpm run dev\n')
+    launchControlPanel(targetDir, commandName)
   }
+
+  console.log(`  cd ${dir}\n`)
+  console.log('  pnpm install')
+  console.log('  pnpm desktop\n')
 
   return { targetDir, dir }
 }
