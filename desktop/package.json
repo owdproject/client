@@ -13,9 +13,6 @@
     "desktop": "desktop"
   },
   "dependencies": {
-    "@owdproject/app-about": "workspace:*",
-    "@owdproject/app-terminal": "workspace:*",
-    "@owdproject/module-fs": "workspace:*",
-    "@owdproject/theme-win95": "workspace:*"
+    "@owdproject/core": "workspace:*"
   }
 }
