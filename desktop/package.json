@@ -13,6 +13,8 @@
     "desktop": "desktop"
   },
   "dependencies": {
-    "@owdproject/core": "workspace:*"
+    "@owdproject/app-about": "^0.1.3",
+    "@owdproject/core": "workspace:*",
+    "@owdproject/theme-nova": "^0.0.1"
   }
 }
