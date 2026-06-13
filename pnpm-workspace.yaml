@@ -12,6 +12,7 @@ catalog:
   typescript: ~6.0.3
 
 allowBuilds:
+  '@owdproject/*': true
   '@owdproject/nx': true
   '@parcel/watcher': true
   '@swc/core': true
