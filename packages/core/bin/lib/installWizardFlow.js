@@ -20,6 +20,7 @@ import {
   resolveInstallPlan,
   cloneRepo,
   hasLocalWorkspaceSource,
+  linkWorkspacePackage,
 } from './install.js'
 import {
   mergeInstalled,
@@ -50,17 +51,40 @@ export async function executeInstallPlan(ctx) {
   const installChoices = ctx.getInstallChoices()
   const paths = ctx.getPaths()
 
+  const currentDeps = readDesktopDependencies(paths.packageJson)
+
   const wizardSet = new Set([...packagesToInstall, ...packagesToMaterialize])
-  const confirmed = (pkg) => !wizardSet.has(pkg) || installChoices.has(pkg)
+  const confirmed = (pkg) =>
+    !wizardSet.has(pkg) ||
+    installChoices.has(pkg) ||
+    currentDeps.includes(pkg) ||
+    hasLocalWorkspaceSource(workspaceRoot, pkg)
+
   nextApps = nextApps.filter(confirmed)
   nextModules = nextModules.filter(confirmed)
-  if (nextTheme && wizardSet.has(nextTheme) && !installChoices.has(nextTheme)) {
+  if (
+    nextTheme &&
+    wizardSet.has(nextTheme) &&
+    !installChoices.has(nextTheme) &&
+    !currentDeps.includes(nextTheme) &&
+    !hasLocalWorkspaceSource(workspaceRoot, nextTheme)
+  ) {
     nextTheme = config.theme
     ctx.setPendingTheme(config.theme)
   }
 
   const toInstall = packagesToInstall.filter((pkg) => installChoices.has(pkg))
   const toMaterialize = packagesToMaterialize.filter((pkg) => installChoices.has(pkg))
+
+  const activePackages = [...nextApps, ...nextModules, nextTheme].filter(Boolean)
+  const toLink = []
+  for (const pkgName of activePackages) {
+    if (!currentDeps.includes(pkgName)) {
+      if (hasLocalWorkspaceSource(workspaceRoot, pkgName)) {
+        toLink.push(pkgName)
+      }
+    }
+  }
 
   const gitPackages = [...toInstall, ...toMaterialize].filter(
     (pkg) => installChoices.get(pkg)?.type === 'git'
@@ -72,11 +96,12 @@ export async function executeInstallPlan(ctx) {
   })
 
   const gitToInstall = toInstall.filter((pkg) => installChoices.get(pkg)?.type === 'git')
-  const expectedClonedPackages = [...gitToInstall, ...actualMaterialize]
+  const expectedClonedPackages = [...gitToInstall, ...actualMaterialize, ...toLink]
   const willClone = expectedClonedPackages.length > 0
 
   let calculatedTotal = 1 // Initializing
   calculatedTotal += gitPackages.length // Pre-clonings
+  calculatedTotal += toLink.length // Linking loop
   calculatedTotal += toInstall.length // Installing loop
   calculatedTotal += actualMaterialize.length // Cloning loop
   if (willClone) {
@@ -107,7 +132,7 @@ export async function executeInstallPlan(ctx) {
     } else if (label.startsWith('Installing ') && label !== 'Installing dependencies…') {
       displayLabel = `Installing: ${label.slice(11).replace(/…$/, '')}`
     } else if (label.startsWith('Preparing ') && label !== 'Preparing…') {
-      displayLabel = `Preparing: ${label.slice(10).replace(/…$/, '')}`
+      displayLabel = `Preparing: ${label.slice(10).replace(/—$/, '')}`
     }
 
     ctx.installProgressContent.setContent(
@@ -143,7 +168,7 @@ export async function executeInstallPlan(ctx) {
       } else if (displayLabel.startsWith('Installing ') && displayLabel !== 'Installing dependencies…') {
         displayLabel = `Installing: ${displayLabel.slice(11).replace(/…$/, '')}`
       } else if (displayLabel.startsWith('Preparing ') && displayLabel !== 'Preparing…') {
-        displayLabel = `Preparing: ${displayLabel.slice(10).replace(/…$/, '')}`
+        displayLabel = `Preparing: ${displayLabel.slice(10).replace(/—$/, '')}`
       }
       ctx.installProgressContent.setContent(
         [
@@ -178,6 +203,28 @@ export async function executeInstallPlan(ctx) {
     }
 
     const clonedPackages = []
+
+    if (toLink.length > 0) {
+      for (const pkg of toLink) {
+        bump(`Linking ${shortName(pkg)}…`)
+        try {
+          await linkWorkspacePackage(paths.desktop, pkg)
+          clonedPackages.push(pkg)
+          didClone = true
+        } catch (err) {
+          const msg = err.message?.split('\n').find(l => l.trim()) ?? String(err)
+          failures.push({ pkg, error: msg })
+          nextApps = nextApps.filter((p) => p !== pkg)
+          nextModules = nextModules.filter((p) => p !== pkg)
+          if (nextTheme === pkg) {
+            nextTheme = config.theme
+            ctx.setPendingTheme(config.theme)
+          }
+          ctx.setStatus(`${shortName(pkg)}: ${msg}`, 'error')
+          ctx.screen.render()
+        }
+      }
+    }
 
     for (const pkg of toInstall) {
       const choice = installChoices.get(pkg)
@@ -420,9 +467,20 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
     ctx.setPendingTheme(config.theme)
   }
 
-  const round1Confirmed = round1Queue.filter((pkg) => installChoices.has(pkg))
+  const activePackages = [...nextApps, ...nextModules, activeTheme].filter(Boolean)
+  const toLink = []
+  for (const pkgName of activePackages) {
+    if (!deps.includes(pkgName)) {
+      if (hasLocalWorkspaceSource(workspaceRoot, pkgName)) {
+        toLink.push(pkgName)
+      }
+    }
+  }
 
-  let dynTotal = round1Confirmed.length
+  const round1Confirmed = round1Queue.filter((pkg) => installChoices.has(pkg))
+  const failedLinks = new Set()
+
+  let dynTotal = round1Confirmed.length + toLink.length
   let step = 0
   const syncProgress = { step: 0, total: Math.max(dynTotal, 1), label: 'Initializing…' }
 
@@ -471,7 +529,7 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
     ctx.screen.render()
   }
 
-  const hasWork = round1Confirmed.length > 0
+  const hasWork = round1Confirmed.length > 0 || toLink.length > 0
   if (hasWork) {
     openProgress()
     installSpinnerTimer = setInterval(() => {
@@ -483,6 +541,22 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
   }
 
   try {
+    if (toLink.length > 0) {
+      for (const pkg of toLink) {
+        bump(`Linking ${shortName(pkg)}…`)
+        try {
+          await linkWorkspacePackage(paths.desktop, pkg)
+          allCloned.push(pkg)
+          didClone = true
+        } catch (err) {
+          const msg = err.message?.split('\n').find(l => l.trim()) ?? String(err)
+          failedLinks.add(pkg)
+          ctx.setStatus(`${shortName(pkg)}: ${msg}`, 'error')
+          ctx.screen.render()
+        }
+      }
+    }
+
     for (const pkg of round1Confirmed) {
       bump(`Cloning ${shortName(pkg)}…`)
       await cloneOrInstallPkg(pkg)
@@ -569,11 +643,14 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
   }
 
   nextApps = (plan.nextApps ?? []).filter(
-    (pkg) => !installChoices.has(pkg) || installChoices.get(pkg) !== null
+    (pkg) => (!installChoices.has(pkg) || installChoices.get(pkg) !== null) && !failedLinks.has(pkg)
   )
   nextModules = (plan.nextModules ?? []).filter(
-    (pkg) => !installChoices.has(pkg) || installChoices.get(pkg) !== null
+    (pkg) => (!installChoices.has(pkg) || installChoices.get(pkg) !== null) && !failedLinks.has(pkg)
   )
+  if (failedLinks.has(activeTheme)) {
+    activeTheme = config.theme
+  }
   nextTheme = activeTheme ?? nextTheme
 
   ctx.setWritingConfig(true)

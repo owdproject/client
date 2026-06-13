@@ -364,7 +364,7 @@ export async function cloneRepo(targetDir, gitUrl, branch, workspaceRoot, option
   await spawnAsync('git', args, { cwd: workspaceRoot })
 }
 
-async function linkWorkspacePackage(desktopPath, pkgName) {
+export async function linkWorkspacePackage(desktopPath, pkgName) {
   await spawnAsync('pnpm', ['add', `${pkgName}@workspace:*`], { cwd: desktopPath })
 }
 
