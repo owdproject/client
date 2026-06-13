@@ -108,6 +108,36 @@ function readMonorepoPackageJson(workspaceRoot) {
   return JSON.parse(readFileSync(path, 'utf8'))
 }
 
+function resolveCatalogVersion(workspaceRoot, name, specifier) {
+  if (specifier !== 'catalog:') return specifier
+
+  const yamlPath = join(workspaceRoot, 'pnpm-workspace.yaml')
+  if (!existsSync(yamlPath)) return specifier
+
+  const content = readFileSync(yamlPath, 'utf8')
+  const lines = content.split('\n')
+  let insideCatalog = false
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (trimmed === 'catalog:') {
+      insideCatalog = true
+      continue
+    }
+    if (insideCatalog) {
+      if (line.match(/^\s+/)) {
+        const match = trimmed.match(/^([^:]+):\s*(.+)$/)
+        if (match && match[1].trim() === name) {
+          return match[2].trim()
+        }
+      } else if (trimmed) {
+        insideCatalog = false
+      }
+    }
+  }
+
+  return specifier
+}
+
 /**
  * @param {string} workspaceRoot
  * @param {{ useCache?: boolean }} [options]
@@ -127,6 +157,12 @@ export async function resolveTemplateVersions(workspaceRoot, options = {}) {
 
   /** @type {Record<string, string>} */
   const versions = { ...monorepoDevDeps, ...npmLatest }
+  for (const name of Object.keys(versions)) {
+    if (versions[name] === 'catalog:') {
+      versions[name] = resolveCatalogVersion(workspaceRoot, name, versions[name])
+    }
+  }
+
   for (const name of STARTER_DESKTOP_DEPS) {
     versions[name] =
       npmLatest[name] ?? TEMPLATE_NPM_FALLBACK_VERSIONS[name] ?? monorepoDevDeps[name]
