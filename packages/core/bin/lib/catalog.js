@@ -173,7 +173,7 @@ function annotateDiscoveryFlags(entries, previousNames, newDays) {
 }
 
 async function fetchTopic(topic, org) {
-  const q = encodeURIComponent(`topic:${topic} org:${org}`)
+  const q = encodeURIComponent(`topic:${topic} user:${org}`)
   const url = `https://api.github.com/search/repositories?q=${q}&sort=stars&per_page=100`
   const headers = {
     Accept: 'application/vnd.github+json',

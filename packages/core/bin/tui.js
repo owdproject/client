@@ -2809,6 +2809,31 @@ export async function runTui(commandName = 'desktop') {
     changeTab('theme')
   })
 
+  const TABS = ['app', 'module', 'theme']
+
+  function cycleTab(direction) {
+    const currentIndex = TABS.indexOf(activeTab)
+    if (currentIndex === -1) return
+    let nextIndex = currentIndex + direction
+    if (nextIndex < 0) nextIndex = TABS.length - 1
+    if (nextIndex >= TABS.length) nextIndex = 0
+    changeTab(TABS[nextIndex])
+  }
+
+  screen.key(['left'], () => {
+    if (overlayBlocksKeys()) return
+    if (screen.focused === catalogList) {
+      cycleTab(-1)
+    }
+  })
+
+  screen.key(['right'], () => {
+    if (overlayBlocksKeys()) return
+    if (screen.focused === catalogList) {
+      cycleTab(1)
+    }
+  })
+
   tabBar.on('click', (data) => {
     if (overlayBlocksKeys()) return
     const relativeX = data.x - tabBar.aleft
