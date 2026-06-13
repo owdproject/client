@@ -16,7 +16,7 @@
     "url": "https://github.com/owdproject"
   },
   "scripts": {
-    "postinstall": "pnpm run prepare:stubs",
+    "postinstall": "pnpm run prepare:stubs && node -e \"console.log('\\n✓ Ready. Run \\x1b[36mpnpm desktop\\x1b[0m\\n')\"",
     "desktop": "node ./packages/core/bin/desktop.js",
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",
