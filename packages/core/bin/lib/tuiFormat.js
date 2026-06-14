@@ -20,7 +20,8 @@ const COL = {
 export function getColumnWidths(targetWidth) {
   const showChanges = targetWidth >= 110
   const changesWidth = showChanges ? 8 : 0
-  const fixed = 3 + 7 + 4 + 14 + 5 + changesWidth
+  const spaces = showChanges ? 6 : 5
+  const fixed = 3 + 7 + 4 + 14 + spaces + changesWidth
   const remaining = targetWidth - fixed
 
   let nameWidth = 28
