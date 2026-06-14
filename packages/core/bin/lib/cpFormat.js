@@ -20,7 +20,7 @@ const COL = {
 
 export function getColumnWidths(targetWidth) {
   const showChanges = targetWidth >= 110
-  const changesWidth = showChanges ? 8 : 0
+  const changesWidth = showChanges ? 10 : 0
   const spaces = showChanges ? 6 : 5
   const fixed = 3 + 7 + 4 + 14 + spaces + changesWidth
   const remaining = targetWidth - fixed
@@ -140,7 +140,12 @@ export function formatCatalogRowPlain(item, ctx = {}) {
   if (ctx.packageUpdates && ctx.packageUpdates.has(item.shortName)) {
     const updateInfo = ctx.packageUpdates.get(item.shortName)
     if (updateInfo && updateInfo.hasUpdate) {
-      const upLabel = updateInfo.behindCount ? ` ↑${updateInfo.behindCount}` : ' ↑'
+      let upLabel = ''
+      if (updateInfo.localGit) {
+        upLabel = updateInfo.behindCount ? ` ↓${updateInfo.behindCount}` : ' ↓'
+      } else if (updateInfo.npm) {
+        upLabel = ' ↑'
+      }
       badgeText = upLabel + badgeText
     }
   }
@@ -220,19 +225,32 @@ export function formatCatalogRowPlain(item, ctx = {}) {
 
   let changesTag = ''
   if (columns.changes > 0) {
+    const parts = []
+
+    // Local Git changes
     if (item.localSource && ctx.localGitChanges && ctx.localGitChanges.has(item.shortName)) {
       const ch = ctx.localGitChanges.get(item.shortName)
-      const parts = []
       if (ch.added > 0) parts.push(`{${colors.add}-fg}+${ch.added}{/}`)
       if (ch.modified > 0) parts.push(`{${colors.warn}-fg}~${ch.modified}{/}`)
       if (ch.deleted > 0) parts.push(`{${colors.remove}-fg}-${ch.deleted}{/}`)
-
-      const txt = parts.join(' ')
-      const rawLen = stripTags(txt).length
-      changesTag = txt + ' '.repeat(Math.max(0, columns.changes - rawLen))
-    } else {
-      changesTag = ' '.repeat(columns.changes)
     }
+
+    // Upstream Updates
+    if (ctx.packageUpdates && ctx.packageUpdates.has(item.shortName)) {
+      const updateInfo = ctx.packageUpdates.get(item.shortName)
+      if (updateInfo && updateInfo.hasUpdate) {
+        if (updateInfo.localGit) {
+          const count = updateInfo.behindCount ? `${updateInfo.behindCount}` : ''
+          parts.push(`{cyan-fg}↓${count}{/}`)
+        } else if (updateInfo.npm) {
+          parts.push(`{${colors.npm}-fg}↑{/}`)
+        }
+      }
+    }
+
+    const txt = parts.join(' ')
+    const rawLen = stripTags(txt).length
+    changesTag = txt + ' '.repeat(Math.max(0, columns.changes - rawLen))
   }
 
   // Join columns with exactly one space (matching header format)
@@ -260,6 +278,9 @@ export function formatLegendLine(colors = DEFAULT_COLORS) {
     '|',
     `{${c.npm}-fg}OK{/} folder exists`,
     `{red-fg}MISS{/} folder missing`,
+    '|',
+    `{cyan-fg}↓{/} git pull`,
+    `{${c.npm}-fg}↑{/} npm update`,
   ].join('  ')
 }
 
@@ -296,6 +317,10 @@ export function formatDetailPanel(item, targetDir, colors = DEFAULT_COLORS, widt
   const kindStr = item.kind ? item.kind.toUpperCase() : '—'
   lines.push(`  Stats ....... Stars: ${starsStr}   ·   Updated: ${dateStr}   ·   Type: ${kindStr}`)
 
+  if (item.localSource) {
+    // Show update/change status in details if available
+  }
+
   if (!item.localSource) {
     const cloneText = `  Clone ....... ${targetDir}/`
     const maxCloneLen = Math.max(15, width - 2)
@@ -321,7 +346,7 @@ export function formatHeaderLine(colors = DEFAULT_COLORS, columns = COL) {
   const name = 'NAME'.padEnd(columns.name || 28, ' ') + ' '
   const sources = 'SOURCES'.padEnd(columns.sources || 7, ' ') + ' '
   const dir = 'DIR'.padEnd(columns.dir || 4, ' ') + ' '
-  const changes = columns.changes > 0 ? 'CHANGES'.padEnd(columns.changes, ' ') + ' ' : ''
+  const changes = columns.changes > 0 ? 'SYNC'.padEnd(columns.changes, ' ') + ' ' : ''
   const publisher = 'PUBLISHER'.padEnd(columns.publisher || 20, ' ') + ' '
   const meta = 'STARS/AGE'.padStart(columns.meta || 14, ' ')
   return `{bold}${status}${name}${sources}${dir}${changes}${publisher}${meta}{/}`

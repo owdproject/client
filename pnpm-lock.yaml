@@ -588,18 +588,15 @@ importers:
       '@owdproject/app-terminal':
         specifier: workspace:*
         version: link:../apps/app-terminal
+      '@owdproject/app-todo':
+        specifier: workspace:*
+        version: link:../apps/app-todo
       '@owdproject/module-fs':
         specifier: workspace:*
         version: link:../packages/module-fs
       '@owdproject/theme-gnome':
         specifier: workspace:*
         version: link:../themes/theme-gnome
-      '@owdproject/theme-nova':
-        specifier: workspace:*
-        version: link:../themes/theme-nova
-      '@owdproject/theme-win11':
-        specifier: workspace:*
-        version: link:../themes/theme-win11
       '@owdproject/theme-win95':
         specifier: workspace:*
         version: link:../themes/theme-win95

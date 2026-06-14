@@ -249,6 +249,7 @@ function truncateFormatted(str, maxLen) {
 
 /** @param {string} commandName */
 export async function runCp(commandName = 'desktop') {
+  process.title = 'Desktop'
   const workspaceRoot = findWorkspaceRoot()
   if (!workspaceRoot) {
     console.error('Not inside an OWD workspace.')
@@ -448,6 +449,7 @@ export async function runCp(commandName = 'desktop') {
   let statusLine = ''
   let lastTone = 'info'
   let confirmDialogOpen = false
+  let activeTaskMessage = null
   let devPhase = 'idle'
   let clientStatus = await getClientStatus(workspaceRoot, settings.devPort)
   /** @type {number[]} */
@@ -1549,6 +1551,7 @@ export async function runCp(commandName = 'desktop') {
 
   function startSpinner(message, showProgressOverlay = false) {
     stopSpinner()
+    activeTaskMessage = message
     spinnerFrame = 0
     setStatus(message)
     spinnerTimer = setInterval(() => {
@@ -1569,15 +1572,17 @@ export async function runCp(commandName = 'desktop') {
         )
       }
 
-      screen.render()
+      renderAll()
     }, 150)
   }
 
   function stopSpinner() {
+    activeTaskMessage = null
     if (spinnerTimer) {
       clearInterval(spinnerTimer)
       spinnerTimer = null
     }
+    renderAll()
   }
 
   function renderSettingsPanel() {
@@ -1877,6 +1882,8 @@ export async function runCp(commandName = 'desktop') {
 
       setStatus('All updates applied successfully!', 'ok')
       packageUpdates.clear()
+      updateLocalChanges()
+      checkForUpdates({ silent: true })
     } catch (err) {
       hasInstallError = true
       setStatus(`Update Wizard failed: ${err.message}`, 'error')
@@ -2218,13 +2225,31 @@ export async function runCp(commandName = 'desktop') {
       devPhase = 'stopped'
     }
 
+    const stateUrl = `http://127.0.0.1:${settings.devPort}`
+    const hostPort = `localhost:${settings.devPort}`
+
+    if (isInstalling) {
+      screen.title = 'Installing'
+    } else if (checkingUpdates) {
+      screen.title = 'Checking'
+    } else if (activeTaskMessage?.toLowerCase().includes('catalog')) {
+      screen.title = 'Loading'
+    } else if (activeTaskMessage) {
+      screen.title = 'Working'
+    } else if (isStartingServer || devPhase === 'starting') {
+      screen.title = `[~] ${hostPort}`
+    } else if (serverRunning) {
+      screen.title = `[#] ${hostPort}`
+    } else {
+      screen.title = '[ ] Desktop'
+    }
+
     clientBox.style.border.fg = serverRunning ? C.focus : C.border
     metricsBox.style.border.fg = serverRunning ? C.focus : C.border
 
     const boxWidth = clientBox.width || 50
     const maxValLen = Math.max(10, boxWidth - 16)
 
-    const stateUrl = `http://127.0.0.1:${settings.devPort}`
     let stateLine
     if (devPhase === 'starting') {
       stateLine = `  {${C.warn}-fg}…{/} {bold}STARTING{/}  ${stateUrl}`
