@@ -427,6 +427,7 @@ export async function runCp(commandName = 'desktop') {
   let isWritingConfig = false
   let ignoreNextConfigWatch = false
   let isInstalling = false
+  let hasInstallError = false
   let isStartingServer = false
   let configWatcher = null
   let configWatchTimeout = null
@@ -620,7 +621,7 @@ export async function runCp(commandName = 'desktop') {
     const cols = screen.width ?? 80
     const rows = screen.height ?? 24
 
-    const showLogs = (isDevServerUp() || isInstalling) && cols >= 120
+    const showLogs = (isDevServerUp() || isInstalling || hasInstallError) && cols >= 120
 
     if (showLogs) {
       logsBox.show()
@@ -919,8 +920,9 @@ export async function runCp(commandName = 'desktop') {
     setInstalling: (val) => {
       isInstalling = val
       if (val) {
+        hasInstallError = false
         startLogWatcher()
-      } else if (!isDevServerUp()) {
+      } else if (!isDevServerUp() && !hasInstallError) {
         stopLogWatcher()
       }
       layoutCatalogPanel()
@@ -1781,8 +1783,7 @@ export async function runCp(commandName = 'desktop') {
       setStatus('Install/update process already running.', 'error')
       return
     }
-    isInstalling = true
-    startLogWatcher()
+    setInstalling(true)
 
     // Determine steps to execute and compute totalSteps
     const stepsToExecute = []
@@ -1864,14 +1865,12 @@ export async function runCp(commandName = 'desktop') {
       setStatus('All updates applied successfully!', 'ok')
       packageUpdates.clear()
     } catch (err) {
+      hasInstallError = true
       setStatus(`Update Wizard failed: ${err.message}`, 'error')
     } finally {
-      isInstalling = false
       saveProgress = null
       installProgressOverlay.hide()
-      if (!isDevServerUp()) {
-        stopLogWatcher()
-      }
+      setInstalling(false)
       stopSpinner()
       focusCatalog()
       renderAll()
@@ -2894,16 +2893,10 @@ export async function runCp(commandName = 'desktop') {
 
     setStatus('Synchronizing dependencies with config…')
     startSpinner('Syncing package.json…')
+    setInstalling(true)
     screen.render()
 
     try {
-      // Run pnpm install first
-      try {
-        await spawnAsync('pnpm', ['install'], { cwd: workspaceRoot })
-      } catch {
-        // Ignore general install errors
-      }
-
       // 1. Add missing dependencies
       for (const pkg of missing) {
         setStatus(`Installing missing package ${shortName(pkg)}…`)
@@ -2926,8 +2919,10 @@ export async function runCp(commandName = 'desktop') {
       renderAll()
       setStatus('Dependencies synced successfully', 'ok')
     } catch (err) {
+      hasInstallError = true
       setStatus(`Sync failed: ${err.message}`, 'error')
     } finally {
+      setInstalling(false)
       stopSpinner()
       screen.render()
     }
