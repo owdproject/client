@@ -2,8 +2,9 @@ import { formatCatalogAge } from './catalog.js'
 import { githubHtmlUrl } from './packageSources.js'
 
 const ansiRegex = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
-function stripAnsi(str) {
-  return String(str).replace(ansiRegex, '')
+function stripTags(str) {
+  const cleanAnsi = String(str).replace(ansiRegex, '')
+  return cleanAnsi.replace(/\{[^{}]+\}/g, '')
 }
 
 /** @typedef {{ pending?: boolean | undefined, colors?: Record<string, string>, columns?: Record<string, number> }} RowContext */
@@ -227,7 +228,7 @@ export function formatCatalogRowPlain(item, ctx = {}) {
       if (ch.deleted > 0) parts.push(`{${colors.remove}-fg}-${ch.deleted}{/}`)
 
       const txt = parts.join(' ')
-      const rawLen = stripAnsi(txt).length
+      const rawLen = stripTags(txt).length
       changesTag = txt + ' '.repeat(Math.max(0, columns.changes - rawLen))
     } else {
       changesTag = ' '.repeat(columns.changes)
