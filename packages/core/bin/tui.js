@@ -954,6 +954,109 @@ export async function runTui(commandName = 'desktop') {
   }
 
 
+  // Custom update selection dialog in the style of the install wizard
+  function showUpdateSelectionDialog({ title, updates }) {
+    return new Promise((resolve) => {
+      confirmDialogOpen = true
+      updateCatalogKeysState()
+
+      const innerHeight = Math.max(12, 8 + updates.length)
+
+      const dialogBox = blessed.box({
+        parent: screen,
+        border: 'line',
+        height: innerHeight,
+        width: 68,
+        top: 'center',
+        left: 'center',
+        label: cardLabel(` ${title} `),
+        style: panelStyle(C.accent),
+        tags: true,
+        keys: true,
+      })
+
+      const headerBox = blessed.box({
+        parent: dialogBox,
+        top: 1,
+        left: 2,
+        width: '100%-4',
+        height: updates.length + 2,
+        tags: true,
+        style: flatStyle(C.muted),
+      })
+
+      const updatesText = updates.map(([name, info]) => {
+        if (info.latestVersion) {
+          return ` • {bold}${name}{/} (${info.localVersion} -> {green-fg}${info.latestVersion}{/}) {${C.npm}-fg}[NPM]{/}`
+        } else {
+          const suffix = info.behindCount > 0 ? ` (${info.behindCount} commit${info.behindCount > 1 ? 's' : ''} behind)` : ''
+          return ` • {bold}${name}{/}${suffix} {${C.git}-fg}[GIT]{/}`
+        }
+      }).join('\n')
+
+      headerBox.setContent(
+        `{bold}Updates are available for packages:{/}\n` +
+        updatesText
+      )
+
+      const choiceList = blessed.list({
+        parent: dialogBox,
+        top: updates.length + 3,
+        left: 2,
+        width: '100%-4',
+        height: 3,
+        tags: true,
+        keys: true,
+        vi: true,
+        mouse: true,
+        scrollbar: LIST_SCROLLBAR,
+        style: LIST_STYLE,
+        items: [
+          ` {${C.accent}-fg}▶{/} Run Update Wizard `,
+          ` {${C.muted}-fg}▷{/} Skip updates `,
+        ]
+      })
+
+      blessed.box({
+        parent: dialogBox,
+        bottom: 1,
+        left: 2,
+        width: '100%-4',
+        height: 1,
+        tags: true,
+        style: flatStyle(C.muted),
+        content: `{${C.muted}-fg}Enter select · Esc cancel{/}`
+      })
+
+      function close(value) {
+        confirmDialogOpen = false
+        updateCatalogKeysState()
+        dialogBox.destroy()
+        focusCatalog()
+        screen.render()
+        resolve(value)
+      }
+
+      choiceList.on('select', () => {
+        close(choiceList.selected === 0)
+      })
+
+      dialogBox.key(['escape', 'q'], () => {
+        close(false)
+      })
+
+      choiceList.key(['escape', 'q'], () => {
+        close(false)
+      })
+
+      choiceList.select(0)
+      dialogBox.setFront()
+      choiceList.focus()
+      screen.render()
+    })
+  }
+
+
   // Custom reusable navigable confirm dialog (with arrow key navigation, mouse support, and vertical stacking)
   function showCustomConfirm({ title, message, yesText, noText, cancelText, height = 11, width = 'half' }) {
     return new Promise((resolve) => {
@@ -1434,7 +1537,7 @@ export async function runTui(commandName = 'desktop') {
     renderAll()
   }
 
-  function startSpinner(message) {
+  function startSpinner(message, showProgressOverlay = false) {
     stopSpinner()
     spinnerFrame = 0
     setStatus(message)
@@ -1442,6 +1545,20 @@ export async function runTui(commandName = 'desktop') {
       spinnerFrame = (spinnerFrame + 1) % spinnerFrameCount
       statusLine = `${radarSpinner(spinnerFrame)} ${message}`
       renderHelp('info')
+
+      if (showProgressOverlay && saveProgress) {
+        const bar = `[${progressTrack(saveProgress.step, saveProgress.total, 0, 36)}]`
+        const spin = radarSpinner(spinnerFrame)
+        installProgressContent.setContent(
+          [
+            `  {bold}${spin} ${saveProgress.label}{/}`,
+            '',
+            `  {cyan-fg}${bar}{/}`,
+            `  Step ${saveProgress.step} of ${saveProgress.total}`,
+          ].join('\n')
+        )
+      }
+
       screen.render()
     }, 150)
   }
@@ -1658,38 +1775,82 @@ export async function runTui(commandName = 'desktop') {
     }
     isInstalling = true
     startLogWatcher()
-    startSpinner('Running Update Wizard…')
+
+    // Determine steps to execute and compute totalSteps
+    const stepsToExecute = []
+    let needInstall = false
+
+    for (const [name, updateInfo] of updates) {
+      if (name === 'client') {
+        stepsToExecute.push({
+          label: 'Updating client itself via git pull…',
+          action: async () => {
+            await spawnAsync('git', ['pull'], { cwd: workspaceRoot })
+          }
+        })
+        needInstall = true
+        continue
+      }
+
+      const entry = catalog.find(e => e.shortName === name || e.name === name)
+      if (entry) {
+        if (entry.localSource) {
+          const kind = entry.kind
+          const localDir = join(workspaceRoot, KINDS[kind].workspaceDir, name)
+          stepsToExecute.push({
+            label: `Updating ${name} via git pull…`,
+            action: async () => {
+              await spawnAsync('git', ['pull'], { cwd: localDir })
+            }
+          })
+          needInstall = true
+        } else {
+          const latestVer = updateInfo.latestVersion
+          stepsToExecute.push({
+            label: `Updating ${entry.name} to ${latestVer} via npm…`,
+            action: async () => {
+              await spawnAsync('pnpm', ['--filter', 'desktop', 'add', `${entry.name}@${latestVer}`], { cwd: workspaceRoot })
+            }
+          })
+        }
+      }
+    }
+
+    if (needInstall) {
+      stepsToExecute.push({
+        label: 'Running pnpm install to update dependencies…',
+        action: async () => {
+          await spawnAsync('pnpm', ['install'], { cwd: workspaceRoot })
+        }
+      })
+    }
+
+    const totalSteps = stepsToExecute.length
+    let currentStepIndex = 0
+
+    // Configure and show progress overlay
+    installProgressOverlay.setLabel(cardLabel(' Syncing Workspace '))
+    installProgressOverlay.show()
+    installProgressOverlay.setFront()
+    installProgressOverlay.focus()
+
+    const updateProgress = (label) => {
+      saveProgress = {
+        step: Math.min(currentStepIndex + 1, totalSteps),
+        total: totalSteps,
+        label
+      }
+      setStatus(label)
+    }
+
+    startSpinner('Running Update Wizard…', true)
     renderAll()
 
     try {
-      let needInstall = false
-      for (const [name, updateInfo] of updates) {
-        if (name === 'client') {
-          setStatus('Updating client itself via git pull…', 'info')
-          await spawnAsync('git', ['pull'], { cwd: workspaceRoot })
-          needInstall = true
-          continue
-        }
-
-        const entry = catalog.find(e => e.shortName === name || e.name === name)
-        if (entry) {
-          if (entry.localSource) {
-            setStatus(`Updating ${name} via git pull…`, 'info')
-            const kind = entry.kind
-            const localDir = join(workspaceRoot, KINDS[kind].workspaceDir, name)
-            await spawnAsync('git', ['pull'], { cwd: localDir })
-            needInstall = true
-          } else {
-            const latestVer = updateInfo.latestVersion
-            setStatus(`Updating ${entry.name} to ${latestVer} via npm…`, 'info')
-            await spawnAsync('pnpm', ['--filter', 'desktop', 'add', `${entry.name}@${latestVer}`], { cwd: workspaceRoot })
-          }
-        }
-      }
-
-      if (needInstall) {
-        setStatus('Running pnpm install to update dependencies…', 'info')
-        await spawnAsync('pnpm', ['install'], { cwd: workspaceRoot })
+      for (const step of stepsToExecute) {
+        updateProgress(step.label)
+        await step.action()
+        currentStepIndex++
       }
 
       setStatus('All updates applied successfully!', 'ok')
@@ -1698,10 +1859,13 @@ export async function runTui(commandName = 'desktop') {
       setStatus(`Update Wizard failed: ${err.message}`, 'error')
     } finally {
       isInstalling = false
+      saveProgress = null
+      installProgressOverlay.hide()
       if (!isDevServerUp()) {
         stopLogWatcher()
       }
       stopSpinner()
+      focusCatalog()
       renderAll()
     }
   }
@@ -1746,7 +1910,10 @@ export async function runTui(commandName = 'desktop') {
         ...repos.map(async (repo) => {
           const res = await checkRepoUpdate(repo.dir)
           if (res.hasUpdate) {
-            packageUpdates.set(repo.name, res)
+            packageUpdates.set(repo.name, {
+              ...res,
+              localGit: true
+            })
           } else {
             packageUpdates.delete(repo.name)
           }
@@ -1778,33 +1945,14 @@ export async function runTui(commandName = 'desktop') {
       if (!silent) stopSpinner()
 
       if (updateCount > 0) {
-        if (silent) {
-          const updatesList = [...packageUpdates.keys()].join(', ')
-          showCustomConfirm({
-            title: 'Updates Available',
-            message: `\n Updates are available for:\n ${updatesList}\n\n Do you want to run the Update Wizard?`,
-            yesText: ' Run Update Wizard ',
-            noText: ' Skip ',
-            height: 12
-          }).then((runWizard) => {
-            if (runWizard) {
-              runUpdateWizard([...packageUpdates.entries()])
-            }
-          })
-        } else {
-          setStatus(`Updates found for ${updateCount} repo(s) / package(s)!`, 'ok')
-          showCustomConfirm({
-            title: 'Updates Available',
-            message: `\n Updates found. Do you want to run the Update Wizard?`,
-            yesText: ' Run Wizard ',
-            noText: ' Close ',
-            height: 11
-          }).then((runWizard) => {
-            if (runWizard) {
-              runUpdateWizard([...packageUpdates.entries()])
-            }
-          })
-        }
+        showUpdateSelectionDialog({
+          title: 'Updates Available',
+          updates: [...packageUpdates.entries()]
+        }).then((runWizard) => {
+          if (runWizard) {
+            runUpdateWizard([...packageUpdates.entries()])
+          }
+        })
       } else {
         if (!silent) {
           setStatus('All repositories and packages are up-to-date.', 'ok')
