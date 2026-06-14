@@ -1783,7 +1783,7 @@ export async function runCp(commandName = 'desktop') {
       setStatus('Install/update process already running.', 'error')
       return
     }
-    setInstalling(true)
+    ctx.setInstalling(true)
 
     // Determine steps to execute and compute totalSteps
     const stepsToExecute = []
@@ -1870,7 +1870,7 @@ export async function runCp(commandName = 'desktop') {
     } finally {
       saveProgress = null
       installProgressOverlay.hide()
-      setInstalling(false)
+      ctx.setInstalling(false)
       stopSpinner()
       focusCatalog()
       renderAll()
@@ -2893,7 +2893,7 @@ export async function runCp(commandName = 'desktop') {
 
     setStatus('Synchronizing dependencies with config…')
     startSpinner('Syncing package.json…')
-    setInstalling(true)
+    ctx.setInstalling(true)
     screen.render()
 
     try {
@@ -2919,7 +2919,7 @@ export async function runCp(commandName = 'desktop') {
       hasInstallError = true
       setStatus(`Sync failed: ${err.message}`, 'error')
     } finally {
-      setInstalling(false)
+      ctx.setInstalling(false)
       stopSpinner()
       screen.render()
     }
