@@ -13,6 +13,9 @@ node_modules
 /desktop/certs
 /apps
 /themes
+/packages/*
+!/packages/core
+!/packages/nx
 
 /legacy
 
