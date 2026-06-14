@@ -1278,7 +1278,7 @@ export async function runTui(commandName = 'desktop') {
       [
         msgLine,
         `  Legend: {${C.add}-fg}[+]{/} add  {${C.remove}-fg}[-]{/} remove  {${C.accent}-fg}[*]{/} on desktop  |  {${C.npm}-fg}NPM{/} registry  {${C.git}-fg}GIT{/} repo  {${C.local}-fg}LOC{/} workspace  |  {${C.warn}-fg}WRN{/} untrusted`,
-        `  Shortcuts: ↑↓ Space toggle  ${keyHint('1')}${keyHint('2')}${keyHint('3')} tabs  ${saveShortcut}  ${keyHint('d')} server  ${keyHint('O')} sort  ${keyHint('m')} menu  ${keyHint('u')} updates  ${keyHint('q')} quit  ${keyHint('r')} refresh`,
+        `  Shortcuts: ↑↓ Space toggle  ${keyHint('1')}${keyHint('2')}${keyHint('3')} tabs  ${saveShortcut}  ${keyHint('d')} server  ${keyHint('O')} sort  ${keyHint('m')} menu  ${keyHint('u')} updates  ${keyHint('r')} refresh  ${keyHint('q')} quit`,
       ].join('\n'),
     )
   }
