@@ -1,5 +1,5 @@
 import { execSync, spawn } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, appendFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -36,10 +36,54 @@ export function spawnAsync(cmd, args, options = {}) {
       stdio: options.stdio ?? 'pipe',
       shell: process.platform === 'win32',
     })
+
+    let logFile = null
+    if (options.cwd) {
+      const candidate1 = join(options.cwd, '.desktop', 'dev.log')
+      const candidate2 = join(dirname(options.cwd), '.desktop', 'dev.log')
+      if (existsSync(dirname(candidate1))) {
+        logFile = candidate1
+      } else if (existsSync(dirname(candidate2))) {
+        logFile = candidate2
+      }
+    }
+
+    if (logFile) {
+      try {
+        appendFileSync(logFile, `\n[installer] $ ${cmd} ${args.join(' ')}\n`)
+      } catch {
+        /* ignore */
+      }
+    }
+
     let out = ''
     let err = ''
-    if (child.stdout) child.stdout.on('data', (d) => { out += d.toString() })
-    if (child.stderr) child.stderr.on('data', (d) => { err += d.toString() })
+    if (child.stdout) {
+      child.stdout.on('data', (d) => {
+        const text = d.toString()
+        out += text
+        if (logFile) {
+          try {
+            appendFileSync(logFile, text)
+          } catch {
+            /* ignore */
+          }
+        }
+      })
+    }
+    if (child.stderr) {
+      child.stderr.on('data', (d) => {
+        const text = d.toString()
+        err += text
+        if (logFile) {
+          try {
+            appendFileSync(logFile, text)
+          } catch {
+            /* ignore */
+          }
+        }
+      })
+    }
     child.on('error', reject)
     child.on('close', (code) => {
       if (code === 0) resolve()

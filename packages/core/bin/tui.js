@@ -614,7 +614,7 @@ export async function runTui(commandName = 'desktop') {
     const cols = screen.width ?? 80
     const rows = screen.height ?? 24
 
-    const showLogs = isDevServerUp() && cols >= 120
+    const showLogs = (isDevServerUp() || isInstalling) && cols >= 120
 
     if (showLogs) {
       logsBox.show()
@@ -910,10 +910,14 @@ export async function runTui(commandName = 'desktop') {
     getPendingPackages: () => pendingPackages,
     getInstallChoices: () => installChoices,
     isInstalling: () => isInstalling,
-    setInstalling: (val) => { isInstalling = val },
+    setInstalling: (val) => {
+      isInstalling = val
+      layoutCatalogPanel()
+    },
     isWritingConfig: () => isWritingConfig,
     setWritingConfig: (val) => { isWritingConfig = val },
     isDevServerUp: () => isDevServerUp(),
+    clearLogs: () => clearLogsBox(),
     getConfigError: () => configError,
     setConfigError: (val) => { configError = val },
     getConfigRestartHintUntil: () => configRestartHintUntil,
@@ -1377,7 +1381,7 @@ export async function runTui(commandName = 'desktop') {
     } catch {
       /* ignore */
     }
-    logsBox.setContent('{gray-fg}Waiting for dev server logs...{/}')
+    logsBox.setContent('{gray-fg}Waiting for logs...{/}')
     logsBox.setScrollPerc(0)
     screen.render()
   }

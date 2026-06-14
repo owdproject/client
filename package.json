@@ -2,9 +2,9 @@
   "name": "owd-client",
   "private": true,
   "description": "Open Web Desktop client",
-  "homepage": "https://github.com/owdproject/client#readme",
+  "homepage": "https://github.com/dxlliv/client#readme",
   "bugs": {
-    "url": "https://github.com/owdproject/client/issues"
+    "url": "https://github.com/dxlliv/client/issues"
   },
   "repository": {
     "type": "git",

@@ -262,24 +262,35 @@ export async function loadCatalog(workspaceRoot, settings, options = {}) {
     remote = []
     const orgs = [...new Set([...(settings.githubOrgs ?? ['owdproject']), settings.githubUser].filter(Boolean))]
 
+    const promises = []
+
     for (const org of orgs) {
       for (const kind of Object.keys(KINDS)) {
-        try {
-          const items = await fetchTopic(KINDS[kind].topic, org)
-          remote.push(...items)
-        } catch {
-          /* offline — use local only */
-        }
+        promises.push(
+          fetchTopic(KINDS[kind].topic, org)
+            .then((items) => {
+              remote.push(...items)
+            })
+            .catch(() => {
+              /* offline — use local only */
+            })
+        )
       }
     }
 
     if (settings.githubUser && !orgs.includes(settings.githubUser)) {
-      try {
-        remote.push(...(await fetchUserRepos(settings.githubUser)))
-      } catch {
-        /* ignore */
-      }
+      promises.push(
+        fetchUserRepos(settings.githubUser)
+          .then((items) => {
+            remote.push(...items)
+          })
+          .catch(() => {
+            /* ignore */
+          })
+      )
     }
+
+    await Promise.all(promises)
 
     if (remote.length) {
       remote = annotateDiscoveryFlags(remote, previousNames, newDays)

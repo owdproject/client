@@ -190,6 +190,7 @@ export async function executeInstallPlan(ctx) {
     if (gitPackages.length > 0) {
       for (const pkg of gitPackages) {
         bump(`Cloning ${shortName(pkg)}…`)
+        ctx.clearLogs()
         const choice = installChoices.get(pkg)
         const plan = await resolveInstallPlan(pkg, settings, workspaceRoot, choice)
         if (!plan.error && plan.targetDir && plan.source?.gitUrl) {
@@ -207,6 +208,7 @@ export async function executeInstallPlan(ctx) {
     if (toLink.length > 0) {
       for (const pkg of toLink) {
         bump(`Linking ${shortName(pkg)}…`)
+        ctx.clearLogs()
         try {
           await linkWorkspacePackage(paths.desktop, pkg)
           clonedPackages.push(pkg)
@@ -229,6 +231,7 @@ export async function executeInstallPlan(ctx) {
     for (const pkg of toInstall) {
       const choice = installChoices.get(pkg)
       bump(`Installing ${shortName(pkg)}…`)
+      ctx.clearLogs()
       try {
         await installPackage(pkg, settings, workspaceRoot, {
           stdio: 'pipe',
@@ -256,6 +259,7 @@ export async function executeInstallPlan(ctx) {
       const choice = installChoices.get(pkg)
       if (!choice || choice.type === 'npm') continue
       bump(`Cloning ${shortName(pkg)}…`)
+      ctx.clearLogs()
       try {
         await materializeToWorkspace(pkg, settings, workspaceRoot, {
           stdio: 'pipe',
@@ -273,6 +277,7 @@ export async function executeInstallPlan(ctx) {
 
     if (didClone) {
       bump('Installing dependencies…')
+      ctx.clearLogs()
       try {
         await spawnAsync('pnpm', ['install'], { cwd: workspaceRoot })
       } catch {
@@ -281,6 +286,7 @@ export async function executeInstallPlan(ctx) {
 
       for (const pkg of clonedPackages) {
         bump(`Preparing ${shortName(pkg)}…`)
+        ctx.clearLogs()
         try {
           await spawnAsync('pnpm', ['--filter', pkg, 'run', 'dev:prepare'], { cwd: workspaceRoot })
         } catch {
@@ -289,6 +295,7 @@ export async function executeInstallPlan(ctx) {
       }
 
       bump('Finalizing workspace…')
+      ctx.clearLogs()
       await runPrepareModules(workspaceRoot, 'pipe')
     }
 
@@ -544,6 +551,7 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
     if (toLink.length > 0) {
       for (const pkg of toLink) {
         bump(`Linking ${shortName(pkg)}…`)
+        ctx.clearLogs()
         try {
           await linkWorkspacePackage(paths.desktop, pkg)
           allCloned.push(pkg)
@@ -559,6 +567,7 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
 
     for (const pkg of round1Confirmed) {
       bump(`Cloning ${shortName(pkg)}…`)
+      ctx.clearLogs()
       await cloneOrInstallPkg(pkg)
     }
 
@@ -594,6 +603,7 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
 
           for (const kit of kitConfirmed) {
             bump(`Cloning ${shortName(kit)}…`)
+            ctx.clearLogs()
             await cloneOrInstallPkg(kit)
           }
         }
@@ -618,6 +628,7 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
       }
 
       bump('Installing dependencies…')
+      ctx.clearLogs()
       try {
         await spawnAsync('pnpm', ['install'], { cwd: workspaceRoot })
       } catch {
@@ -626,6 +637,7 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
 
       for (const pkg of allCloned) {
         bump(`Preparing ${shortName(pkg)}…`)
+        ctx.clearLogs()
         try {
           await spawnAsync('pnpm', ['--filter', pkg, 'run', 'dev:prepare'], { cwd: workspaceRoot })
         } catch {
@@ -634,6 +646,7 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
       }
 
       bump('Finalizing workspace…')
+      ctx.clearLogs()
       await runPrepareModules(workspaceRoot, 'pipe')
     }
   } catch (err) {
