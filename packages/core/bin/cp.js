@@ -1792,7 +1792,7 @@ export async function runCp(commandName = 'desktop') {
     for (const [name, updateInfo] of updates) {
       if (name === 'client') {
         stepsToExecute.push({
-          label: 'Updating client itself via git pull…',
+          label: 'Updating client (Git)…',
           action: async () => {
             await spawnAsync('git', ['pull'], { cwd: workspaceRoot })
           }
@@ -1802,32 +1802,45 @@ export async function runCp(commandName = 'desktop') {
       }
 
       const entry = catalog.find(e => e.shortName === name || e.name === name)
-      if (entry) {
-        if (entry.localSource) {
-          const kind = entry.kind
-          const localDir = join(workspaceRoot, KINDS[kind].workspaceDir, name)
+      const isGitUpdate = updateInfo.localGit || (entry && entry.localSource)
+
+      if (isGitUpdate) {
+        let localDir = null
+        if (entry && entry.kind) {
+          localDir = join(workspaceRoot, KINDS[entry.kind].workspaceDir, name)
+        } else {
+          if (existsSync(join(workspaceRoot, 'apps', name))) {
+            localDir = join(workspaceRoot, 'apps', name)
+          } else if (existsSync(join(workspaceRoot, 'themes', name))) {
+            localDir = join(workspaceRoot, 'themes', name)
+          } else if (existsSync(join(workspaceRoot, 'packages', name))) {
+            localDir = join(workspaceRoot, 'packages', name)
+          }
+        }
+
+        if (localDir) {
           stepsToExecute.push({
-            label: `Updating ${name} via git pull…`,
+            label: `Updating ${name} (Git)…`,
             action: async () => {
               await spawnAsync('git', ['pull'], { cwd: localDir })
             }
           })
           needInstall = true
-        } else {
-          const latestVer = updateInfo.latestVersion
-          stepsToExecute.push({
-            label: `Updating ${entry.name} to ${latestVer} via npm…`,
-            action: async () => {
-              await spawnAsync('pnpm', ['--filter', 'desktop', 'add', `${entry.name}@${latestVer}`], { cwd: workspaceRoot })
-            }
-          })
         }
+      } else if (entry) {
+        const latestVer = updateInfo.latestVersion
+        stepsToExecute.push({
+          label: `Updating ${shortName(entry.name)} to ${latestVer} (NPM)…`,
+          action: async () => {
+            await spawnAsync('pnpm', ['--filter', 'desktop', 'add', `${entry.name}@${latestVer}`], { cwd: workspaceRoot })
+          }
+        })
       }
     }
 
     if (needInstall) {
       stepsToExecute.push({
-        label: 'Running pnpm install to update dependencies…',
+        label: 'Updating dependencies (pnpm)…',
         action: async () => {
           await spawnAsync('pnpm', ['install'], { cwd: workspaceRoot })
         }
