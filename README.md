@@ -23,7 +23,7 @@ Open Web Desktop (OWD) is a framework designed to provide a simple environment f
 ## Repository layout
 
 - **`desktop/`** — dev desktop (workspace apps, modules, themes). Use `pnpm run dev` from the repo root.
-- **`template/`** — scaffold copied by `npm create owd` / `pnpm desktop init`. <br /><br />**Do not edit by hand**; regenerate with `pnpm desktop template` (or `pnpm template:sync`) after changing the starter desktop or publishing `@owdproject/*` packages. Blueprint sources live in `packages/core/template-blueprint/`.
+- **`template/`** — scaffold copied by `npm create owd@latest` / `pnpm desktop init`. <br /><br />**Do not edit by hand**; regenerate with `pnpm desktop template` (or `pnpm template:sync`) after changing the starter desktop or publishing `@owdproject/*` packages. Blueprint sources live in `packages/core/template-blueprint/`.
 
 ## Getting Started
 

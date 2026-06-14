@@ -27,7 +27,7 @@ Open Web Desktop (OWD) is a framework designed to provide a simple environment f
 Bootstrap a new project by running:
 
 ```bash
-npm create owd
+npm create owd@latest
 ```
 
 Once the process is done, you can start to develop:
