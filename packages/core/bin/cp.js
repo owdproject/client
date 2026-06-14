@@ -61,13 +61,13 @@ import {
   formatDetailPanel,
   formatHeaderLine,
   getColumnWidths,
-} from './lib/tuiFormat.js'
+} from './lib/cpFormat.js'
 import {
   radarSpinner,
   progressTrack,
   statusPrefix,
   spinnerFrameCount,
-} from './lib/tuiAscii.js'
+} from './lib/cpAscii.js'
 import {
   getClientStatus,
   startDev,
@@ -248,7 +248,7 @@ function truncateFormatted(str, maxLen) {
 }
 
 /** @param {string} commandName */
-export async function runTui(commandName = 'desktop') {
+export async function runCp(commandName = 'desktop') {
   const workspaceRoot = findWorkspaceRoot()
   if (!workspaceRoot) {
     console.error('Not inside an OWD workspace.')
@@ -425,6 +425,7 @@ export async function runTui(commandName = 'desktop') {
   }
 
   let isWritingConfig = false
+  let ignoreNextConfigWatch = false
   let isInstalling = false
   let isStartingServer = false
   let configWatcher = null
@@ -926,7 +927,10 @@ export async function runTui(commandName = 'desktop') {
     },
     isWritingConfig: () => isWritingConfig,
     setWritingConfig: (val) => { isWritingConfig = val },
+    getIgnoreNextConfigWatch: () => ignoreNextConfigWatch,
+    setIgnoreNextConfigWatch: (val) => { ignoreNextConfigWatch = val },
     isDevServerUp: () => isDevServerUp(),
+    rebootDevServer: () => rebootDevServer(),
     clearLogs: () => clearLogsBox(),
     getConfigError: () => configError,
     setConfigError: (val) => { configError = val },
@@ -1441,6 +1445,10 @@ export async function runTui(commandName = 'desktop') {
           setTimeout(startConfigWatcher, 100)
         }
         if (eventType === 'change' || eventType === 'rename') {
+          if (ignoreNextConfigWatch) {
+            ignoreNextConfigWatch = false
+            return
+          }
           handleExternalConfigChange()
         }
       })
@@ -2911,7 +2919,7 @@ export async function runTui(commandName = 'desktop') {
       }
 
       // 3. Rerun prepare modules
-      runPrepareModules(workspaceRoot, 'pipe')
+      await runPrepareModules(workspaceRoot, 'pipe')
 
       // Reload dependencies
       deps = readDesktopDependencies(paths.packageJson)

@@ -5,9 +5,9 @@ import {
   radarSpinner,
   progressTrack,
   statusPrefix,
-} from '../bin/lib/tuiAscii.js'
+} from '../bin/lib/cpAscii.js'
 
-describe('tuiAscii', () => {
+describe('cpAscii', () => {
   it('radarSpinner uses cli-spinners dots frames', () => {
     assert.equal(radarSpinner(0), spinners.dots.frames[0])
     assert.equal(radarSpinner(1), spinners.dots.frames[1])

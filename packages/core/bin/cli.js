@@ -132,8 +132,8 @@ LEGACY (still supported)
 }
 
 async function openControlPanel(name) {
-  const { runTui } = await import('./tui.js')
-  await runTui(name)
+  const { runCp } = await import('./cp.js')
+  await runCp(name)
 }
 
 function fail(message, hint) {

@@ -29,7 +29,7 @@ import {
   progressTrack,
   radarSpinner,
   spinnerFrameCount,
-} from './tuiAscii.js'
+} from './cpAscii.js'
 function keyHint(key) {
   return `{green-fg}[${key}]{/}`
 }
@@ -300,6 +300,7 @@ export async function executeInstallPlan(ctx) {
     }
 
     bump('Updating configuration…')
+    ctx.setIgnoreNextConfigWatch(true)
     ctx.setWritingConfig(true)
     writeDesktopConfig(resolveConfigPathForWrite(paths), workspaceRoot, {
       theme: nextTheme,
@@ -344,13 +345,17 @@ export async function executeInstallPlan(ctx) {
       ctx.setConfigRestartHintTimer(null)
     }
     if (ctx.isDevServerUp()) {
-      ctx.setConfigRestartHintUntil(Date.now() + 5000)
-      ctx.setConfigRestartHintTimer(setTimeout(() => {
-        ctx.setConfigRestartHintUntil(0)
-        ctx.setConfigRestartHintTimer(null)
-        ctx.renderClient()
-        ctx.screen.render()
-      }, 5000))
+      if (nextTheme !== config.theme) {
+        ctx.rebootDevServer()
+      } else {
+        ctx.setConfigRestartHintUntil(Date.now() + 5000)
+        ctx.setConfigRestartHintTimer(setTimeout(() => {
+          ctx.setConfigRestartHintUntil(0)
+          ctx.setConfigRestartHintTimer(null)
+          ctx.renderClient()
+          ctx.screen.render()
+        }, 5000))
+      }
     }
 
     ctx.renderAll()
@@ -666,6 +671,7 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
   }
   nextTheme = activeTheme ?? nextTheme
 
+  ctx.setIgnoreNextConfigWatch(true)
   ctx.setWritingConfig(true)
   try {
     writeDesktopConfig(resolveConfigPathForWrite(paths), workspaceRoot, {
@@ -711,13 +717,17 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
       ctx.setConfigRestartHintTimer(null)
     }
     if (ctx.isDevServerUp()) {
-      ctx.setConfigRestartHintUntil(Date.now() + 5000)
-      ctx.setConfigRestartHintTimer(setTimeout(() => {
-        ctx.setConfigRestartHintUntil(0)
-        ctx.setConfigRestartHintTimer(null)
-        ctx.renderClient()
-        ctx.screen.render()
-      }, 5000))
+      if (nextTheme !== config.theme) {
+        ctx.rebootDevServer()
+      } else {
+        ctx.setConfigRestartHintUntil(Date.now() + 5000)
+        ctx.setConfigRestartHintTimer(setTimeout(() => {
+          ctx.setConfigRestartHintUntil(0)
+          ctx.setConfigRestartHintTimer(null)
+          ctx.renderClient()
+          ctx.screen.render()
+        }, 5000))
+      }
     }
 
     ctx.renderAll()

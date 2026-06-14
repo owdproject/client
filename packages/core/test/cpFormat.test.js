@@ -6,9 +6,9 @@ import {
   sourceSlots,
   formatCatalogRowPlain,
   formatLegendLine,
-} from '../bin/lib/tuiFormat.js'
+} from '../bin/lib/cpFormat.js'
 
-describe('tuiFormat', () => {
+describe('cpFormat', () => {
   it('padCell truncates and pads', () => {
     assert.equal(padCell('hi', 5), 'hi   ')
     assert.equal(padCell('toolongname', 4), 'tool')
