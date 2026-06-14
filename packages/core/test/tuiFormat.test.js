@@ -54,6 +54,25 @@ describe('tuiFormat', () => {
     const legend = formatLegendLine()
     assert.match(legend, /\[\+\]/)
     assert.match(legend, /NPM/)
-    assert.match(legend, /WRN/)
+    assert.match(legend, /MISS/)
+  })
+
+  it('formatCatalogRowPlain renders update badge when packageUpdates has update', () => {
+    const row = formatCatalogRowPlain({
+      shortName: 'app-about',
+      pending: null,
+      installed: true,
+      sourcesMeta: {},
+      htmlUrl: 'https://github.com/owdproject/app-about',
+      org: 'owdproject',
+      stars: 0,
+      updatedAt: '2026-06-01',
+      trusted: true,
+    }, {
+      packageUpdates: new Map([
+        ['app-about', { hasUpdate: true, behindCount: 3 }]
+      ])
+    })
+    assert.match(row, /app-about.*?↑3/)
   })
 })

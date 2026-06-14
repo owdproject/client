@@ -431,6 +431,9 @@ export async function runTui(commandName = 'desktop') {
   let configWatchTimeout = null
   let logWatcher = null
 
+  const packageUpdates = new Map()
+  let checkingUpdates = false
+
   let catalog = []
   let catalogCacheAge = ''
   let activeTab = 'app'
@@ -477,6 +480,7 @@ export async function runTui(commandName = 'desktop') {
     { id: 'reboot', label: 'Reboot dev server', key: 'R' },
     { id: 'save', label: 'Save catalog / theme', key: 'w' },
     { id: 'refresh', label: 'Refresh package list', key: 'r' },
+    { id: 'check-updates', label: 'Check GitHub/NPM updates', key: 'u' },
     { id: 'docs', label: 'Open documentation', key: 'i' },
     { id: 'settings', label: 'Settings', key: 'g' },
     { id: 'build', label: 'Build (pnpm generate)', key: 'b' },
@@ -1268,7 +1272,7 @@ export async function runTui(commandName = 'desktop') {
       [
         msgLine,
         `  Legend: {${C.add}-fg}[+]{/} add  {${C.remove}-fg}[-]{/} remove  {${C.accent}-fg}[*]{/} on desktop  |  {${C.npm}-fg}NPM{/} registry  {${C.git}-fg}GIT{/} repo  {${C.local}-fg}LOC{/} workspace  |  {${C.warn}-fg}WRN{/} untrusted`,
-        `  Shortcuts: ↑↓ Space toggle  ${keyHint('1')}${keyHint('2')}${keyHint('3')} tabs  ${saveShortcut}  ${keyHint('d')} server  ${keyHint('O')} sort  ${keyHint('m')} menu  ${keyHint('q')} quit  ${keyHint('r')} refresh`,
+        `  Shortcuts: ↑↓ Space toggle  ${keyHint('1')}${keyHint('2')}${keyHint('3')} tabs  ${saveShortcut}  ${keyHint('d')} server  ${keyHint('O')} sort  ${keyHint('m')} menu  ${keyHint('u')} updates  ${keyHint('q')} quit  ${keyHint('r')} refresh`,
       ].join('\n'),
     )
   }
@@ -1508,6 +1512,257 @@ export async function runTui(commandName = 'desktop') {
     screen.render()
   }
 
+  function getLocalVersion(entry) {
+    const short = shortName(entry.name)
+    const kind = entry.kind
+    if (entry.localSource) {
+      const pkgJsonPath = join(workspaceRoot, KINDS[kind].workspaceDir, short, 'package.json')
+      if (existsSync(pkgJsonPath)) {
+        try {
+          return JSON.parse(readFileSync(pkgJsonPath, 'utf8')).version
+        } catch {}
+      }
+    } else {
+      const nodeModulesPath = join(workspaceRoot, 'desktop', 'node_modules', entry.name, 'package.json')
+      if (existsSync(nodeModulesPath)) {
+        try {
+          return JSON.parse(readFileSync(nodeModulesPath, 'utf8')).version
+        } catch {}
+      }
+      try {
+        const desktopPkg = JSON.parse(readFileSync(join(workspaceRoot, 'desktop', 'package.json'), 'utf8'))
+        const versionSpec = desktopPkg.dependencies?.[entry.name] || desktopPkg.devDependencies?.[entry.name]
+        if (versionSpec) {
+          return versionSpec.replace(/[\^~]/g, '')
+        }
+      } catch {}
+    }
+    return null
+  }
+
+  function semverCompare(v1, v2) {
+    const parse = (v) => String(v).replace(/^[^\d]+/, '').split('.').map(Number)
+    const a = parse(v1)
+    const b = parse(v2)
+    for (let i = 0; i < Math.max(a.length, b.length); i++) {
+      const na = a[i] || 0
+      const nb = b[i] || 0
+      if (na < nb) return -1
+      if (na > nb) return 1
+    }
+    return 0
+  }
+
+  async function checkRepoUpdate(dir) {
+    try {
+      await spawnAsync('git', ['fetch'], {
+        cwd: dir,
+        env: { ...process.env, GIT_TERMINAL_PROMPT: '0', SSH_ASKPASS: '', DISPLAY: '' }
+      })
+
+      const behind = execSync('git rev-list --count HEAD..@{u}', {
+        cwd: dir,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim()
+
+      const count = parseInt(behind, 10)
+      return {
+        hasUpdate: !isNaN(count) && count > 0,
+        behindCount: isNaN(count) ? 0 : count,
+      }
+    } catch {
+      try {
+        const branch = execSync('git rev-parse --abbrev-ref HEAD', {
+          cwd: dir,
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+        }).trim()
+        if (!branch || branch === 'HEAD') return { hasUpdate: false, behindCount: 0 }
+
+        const behind = execSync(`git rev-list --count HEAD..origin/${branch}`, {
+          cwd: dir,
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+        }).trim()
+
+        const count = parseInt(behind, 10)
+        return {
+          hasUpdate: !isNaN(count) && count > 0,
+          behindCount: isNaN(count) ? 0 : count,
+        }
+      } catch {
+        return { hasUpdate: false, behindCount: 0 }
+      }
+    }
+  }
+
+  async function runUpdateWizard(updates) {
+    if (isInstalling) {
+      setStatus('Install/update process already running.', 'error')
+      return
+    }
+    isInstalling = true
+    startSpinner('Running Update Wizard…')
+    renderAll()
+
+    try {
+      let needInstall = false
+      for (const [name, updateInfo] of updates) {
+        if (name === 'client') {
+          setStatus('Updating client itself via git pull…', 'info')
+          await spawnAsync('git', ['pull'], { cwd: workspaceRoot })
+          needInstall = true
+          continue
+        }
+
+        const entry = catalog.find(e => e.shortName === name || e.name === name)
+        if (entry) {
+          if (entry.localSource) {
+            setStatus(`Updating ${name} via git pull…`, 'info')
+            const kind = entry.kind
+            const localDir = join(workspaceRoot, KINDS[kind].workspaceDir, name)
+            await spawnAsync('git', ['pull'], { cwd: localDir })
+            needInstall = true
+          } else {
+            const latestVer = updateInfo.latestVersion
+            setStatus(`Updating ${entry.name} to ${latestVer} via npm…`, 'info')
+            await spawnAsync('pnpm', ['--filter', 'desktop', 'add', `${entry.name}@${latestVer}`], { cwd: workspaceRoot })
+          }
+        }
+      }
+
+      if (needInstall) {
+        setStatus('Running pnpm install to update dependencies…', 'info')
+        await spawnAsync('pnpm', ['install'], { cwd: workspaceRoot })
+      }
+
+      setStatus('All updates applied successfully!', 'ok')
+      packageUpdates.clear()
+    } catch (err) {
+      setStatus(`Update Wizard failed: ${err.message}`, 'error')
+    } finally {
+      isInstalling = false
+      stopSpinner()
+      renderAll()
+    }
+  }
+
+  async function checkForUpdates({ silent = false } = {}) {
+    if (checkingUpdates) return
+    checkingUpdates = true
+    if (!silent) {
+      startSpinner('Checking for GitHub & NPM updates…')
+      renderAll()
+    }
+
+    try {
+      const repos = []
+      // 1. Client itself
+      repos.push({ name: 'client', dir: workspaceRoot })
+
+      // 2. Sub-repositories
+      const checkDirs = ['apps', 'themes', 'packages']
+      for (const dirName of checkDirs) {
+        const fullDir = join(workspaceRoot, dirName)
+        if (!existsSync(fullDir)) continue
+        try {
+          const subdirs = readdirSync(fullDir, { withFileTypes: true })
+          for (const subdir of subdirs) {
+            if (!subdir.isDirectory()) continue
+            const name = subdir.name
+            if (name.startsWith('.')) continue
+            const subGit = join(fullDir, name, '.git')
+            if (existsSync(subGit)) {
+              repos.push({ name, dir: join(fullDir, name) })
+            }
+          }
+        } catch {}
+      }
+
+      // 3. NPM packages from catalog
+      const npmPackages = catalog.filter(e => e.installed && !e.localSource)
+
+      // Run parallel checks
+      await Promise.all([
+        ...repos.map(async (repo) => {
+          const res = await checkRepoUpdate(repo.dir)
+          if (res.hasUpdate) {
+            packageUpdates.set(repo.name, res)
+          } else {
+            packageUpdates.delete(repo.name)
+          }
+        }),
+        ...npmPackages.map(async (item) => {
+          const localVer = getLocalVersion(item)
+          if (!localVer) return
+          try {
+            const res = await fetch(`https://registry.npmjs.org/${encodeURIComponent(item.name)}/latest`)
+            if (res.ok) {
+              const json = await res.json()
+              const latestVer = json.version
+              if (latestVer && semverCompare(localVer, latestVer) < 0) {
+                packageUpdates.set(item.shortName, {
+                  hasUpdate: true,
+                  behindCount: 0,
+                  localVersion: localVer,
+                  latestVersion: latestVer
+                })
+                return
+              }
+            }
+          } catch {}
+          packageUpdates.delete(item.shortName)
+        })
+      ])
+
+      const updateCount = packageUpdates.size
+      if (!silent) stopSpinner()
+
+      if (updateCount > 0) {
+        if (silent) {
+          const updatesList = [...packageUpdates.keys()].join(', ')
+          showCustomConfirm({
+            title: 'Updates Available',
+            message: `\n Updates are available for:\n ${updatesList}\n\n Do you want to run the Update Wizard?`,
+            yesText: ' Run Update Wizard ',
+            noText: ' Skip ',
+            height: 12
+          }).then((runWizard) => {
+            if (runWizard) {
+              runUpdateWizard([...packageUpdates.entries()])
+            }
+          })
+        } else {
+          setStatus(`Updates found for ${updateCount} repo(s) / package(s)!`, 'ok')
+          showCustomConfirm({
+            title: 'Updates Available',
+            message: `\n Updates found. Do you want to run the Update Wizard?`,
+            yesText: ' Run Wizard ',
+            noText: ' Close ',
+            height: 11
+          }).then((runWizard) => {
+            if (runWizard) {
+              runUpdateWizard([...packageUpdates.entries()])
+            }
+          })
+        }
+      } else {
+        if (!silent) {
+          setStatus('All repositories and packages are up-to-date.', 'ok')
+        }
+      }
+    } catch (err) {
+      if (!silent) {
+        stopSpinner()
+        setStatus(`Failed to check updates: ${err.message}`, 'error')
+      }
+    } finally {
+      checkingUpdates = false
+      renderAll()
+    }
+  }
+
   async function runMenuAction(id) {
     closeMenu()
     switch (id) {
@@ -1525,6 +1780,9 @@ export async function runTui(commandName = 'desktop') {
         break
       case 'refresh':
         await refreshCatalog()
+        break
+      case 'check-updates':
+        await checkForUpdates()
         break
       case 'docs':
         openDocsInBrowser()
@@ -1792,6 +2050,12 @@ export async function runTui(commandName = 'desktop') {
     const gitChanges = getWorkspaceGitChanges(workspaceRoot)
     const hasChanges = gitChanges.added > 0 || gitChanges.modified > 0 || gitChanges.deleted > 0
 
+    // Check if client repo has an update
+    const clientUpdate = packageUpdates.get('client')
+    const updateStr = (clientUpdate && clientUpdate.hasUpdate)
+      ? `  ·  {yellow-fg}update available (↑${clientUpdate.behindCount}){/}`
+      : ''
+
     let gitDisplayText
     if (hasChanges) {
       const parts = []
@@ -1806,9 +2070,9 @@ export async function runTui(commandName = 'desktop') {
       if (gitChanges.themesRepos > 0) repoParts.push(`${gitChanges.themesRepos} tem`)
 
       const repoStr = repoParts.length > 0 ? ` (in ${repoParts.join(', ')})` : ''
-      gitDisplayText = `branch: ${gitInfo.branch}${gitWarningBadge}  ·  changes: ${parts.join(' ')}${repoStr}`
+      gitDisplayText = `branch: ${gitInfo.branch}${gitWarningBadge}  ·  changes: ${parts.join(' ')}${repoStr}${updateStr}`
     } else {
-      gitDisplayText = `branch: ${gitInfo.branch}${gitWarningBadge}  ·  status: clean`
+      gitDisplayText = `branch: ${gitInfo.branch}${gitWarningBadge}  ·  status: clean${updateStr}`
     }
 
     const gitDisplay = gitDisplayText.length > maxValLen
@@ -1952,7 +2216,7 @@ export async function runTui(commandName = 'desktop') {
           installed: selected && !pendingChange,
           pending: pendingChange ? true : undefined,
         },
-        { colors: FORMAT_COLORS, columns: currentColumns },
+        { colors: FORMAT_COLORS, columns: currentColumns, packageUpdates },
       )
     }
 
@@ -1964,7 +2228,7 @@ export async function runTui(commandName = 'desktop') {
         isNew: activeTab === 'module' && item.isNew,
         isRecent: activeTab === 'module' && item.isRecent,
       },
-      { colors: FORMAT_COLORS, columns: currentColumns },
+      { colors: FORMAT_COLORS, columns: currentColumns, packageUpdates },
     )
   }
 
@@ -2774,6 +3038,9 @@ export async function runTui(commandName = 'desktop') {
   screen.key(['r'], () => {
     if (!overlayBlocksKeys()) refreshCatalog()
   })
+  screen.key(['u', 'U'], () => {
+    if (!overlayBlocksKeys()) checkForUpdates()
+  })
 
   screen.key(['o'], () => {
     if (!overlayBlocksKeys()) cycleCatalogSort()
@@ -2947,6 +3214,7 @@ export async function runTui(commandName = 'desktop') {
     startLogWatcher()
   }
   renderAll()
+  checkForUpdates({ silent: true })
 
   screen.on('destroy', () => {
     if (configWatcher) {
@@ -2958,7 +3226,7 @@ export async function runTui(commandName = 'desktop') {
   startConfigWatcher()
 
   setStatus(
-    `Select packages · ${keyHint('s')} opens install wizard · ${keyHint('g')} settings · ${keyHint('d')} server`,
+    `Select packages · ${keyHint('s')} opens install wizard · ${keyHint('u')} updates · ${keyHint('g')} settings · ${keyHint('d')} server`,
     'info',
   )
 

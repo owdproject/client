@@ -126,7 +126,14 @@ export function formatCatalogRowPlain(item, ctx = {}) {
   const selTag = formatSelectionMarker(item, colors)
 
   // 2. Name Column (columns.name chars)
-  const badgeText = (item.isNew || item.isRecent) ? ' new' : ''
+  let badgeText = (item.isNew || item.isRecent) ? ' new' : ''
+  if (ctx.packageUpdates && ctx.packageUpdates.has(item.shortName)) {
+    const updateInfo = ctx.packageUpdates.get(item.shortName)
+    if (updateInfo && updateInfo.hasUpdate) {
+      const upLabel = updateInfo.behindCount ? ` ↑${updateInfo.behindCount}` : ' ↑'
+      badgeText = upLabel + badgeText
+    }
+  }
   const maxNameLen = columns.name - badgeText.length
   let namePart = item.shortName
   if (namePart.length > maxNameLen) {
