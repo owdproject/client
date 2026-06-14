@@ -4,6 +4,12 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    typescript:
+      specifier: ~6.0.3
+      version: 6.0.3
+
 importers:
 
   .:
@@ -588,6 +594,9 @@ importers:
       '@owdproject/theme-win11':
         specifier: workspace:*
         version: link:../themes/theme-win11
+      '@owdproject/theme-win95':
+        specifier: workspace:*
+        version: link:../themes/theme-win95
 
   packages/core:
     dependencies:
