@@ -1465,7 +1465,7 @@ export async function runCp(commandName = 'desktop') {
   function readLogs() {
     const logFile = devLogPath(workspaceRoot)
     if (!existsSync(logFile)) {
-      logsBox.setContent('{gray-fg}No logs available.{/}')
+      logsBox.setContent('')
       screen.render()
       return
     }
@@ -1473,7 +1473,7 @@ export async function runCp(commandName = 'desktop') {
       const stats = statSync(logFile)
       const streamSize = Math.min(stats.size, 10000)
       if (streamSize === 0) {
-        logsBox.setContent('{gray-fg}Logs are empty.{/}')
+        logsBox.setContent('')
         screen.render()
         return
       }
@@ -2911,9 +2911,6 @@ export async function runCp(commandName = 'desktop') {
         await spawnAsync('pnpm', ['remove', pkg], { cwd: paths.desktop })
       }
 
-      // 3. Rerun prepare modules
-      await runPrepareModules(workspaceRoot, 'pipe')
-
       // Reload dependencies
       deps = readDesktopDependencies(paths.packageJson)
       renderAll()
@@ -2985,6 +2982,16 @@ export async function runCp(commandName = 'desktop') {
       }
 
       await syncDependenciesWithConfig()
+
+      // Compile stubs before dev server boots
+      startSpinner('Preparing workspace modules…')
+      renderAll()
+      try {
+        await runPrepareModules(workspaceRoot, 'pipe')
+      } catch (err) {
+        // Log error but attempt to start server anyway so the user can inspect Nuxt log details
+        setStatus(`Preparing modules failed: ${err.message}`, 'error')
+      }
 
       devPhase = 'starting'
       startSpinner('Starting dev server…')

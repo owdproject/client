@@ -591,6 +591,9 @@ importers:
       '@owdproject/module-fs':
         specifier: workspace:*
         version: link:../packages/module-fs
+      '@owdproject/theme-nova':
+        specifier: workspace:*
+        version: link:../themes/theme-nova
       '@owdproject/theme-win11':
         specifier: workspace:*
         version: link:../themes/theme-win11

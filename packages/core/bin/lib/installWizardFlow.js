@@ -283,20 +283,6 @@ export async function executeInstallPlan(ctx) {
       } catch {
         // Non-fatal
       }
-
-      for (const pkg of clonedPackages) {
-        bump(`Preparing ${shortName(pkg)}…`)
-        ctx.clearLogs()
-        try {
-          await spawnAsync('pnpm', ['--filter', pkg, 'run', 'dev:prepare'], { cwd: workspaceRoot })
-        } catch {
-          // Non-fatal
-        }
-      }
-
-      bump('Finalizing workspace…')
-      ctx.clearLogs()
-      await runPrepareModules(workspaceRoot, 'pipe')
     }
 
     bump('Updating configuration…')
@@ -639,20 +625,6 @@ export async function runStartupInstallFlow(ctx, { isStartup = false } = {}) {
       } catch {
         // Non-fatal
       }
-
-      for (const pkg of allCloned) {
-        bump(`Preparing ${shortName(pkg)}…`)
-        ctx.clearLogs()
-        try {
-          await spawnAsync('pnpm', ['--filter', pkg, 'run', 'dev:prepare'], { cwd: workspaceRoot })
-        } catch {
-          // Non-fatal
-        }
-      }
-
-      bump('Finalizing workspace…')
-      ctx.clearLogs()
-      await runPrepareModules(workspaceRoot, 'pipe')
     }
   } catch (err) {
     ctx.setStatus(`Install failed: ${err.message}`, 'error')
