@@ -8,7 +8,7 @@
 
 ## Overview
 
-Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with Vue.js & TypeScript, and it leverages the extensible Nuxt.js architecture.
+Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences and digital gardens. It's built with Vue & TypeScript, and it leverages the extensible Nuxt.js architecture.
 
 [Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA) · [Documentation](https://owdproject.org/)
 
@@ -29,13 +29,6 @@ Open Web Desktop (OWD) is a framework designed to provide a simple environment f
 
 We recommend cloning the monorepo workspace to develop and build with Open Web Desktop.
 
-> [!TIP]
-> **Feeling adventurous?**
-> You can bootstrap a standalone client project from the latest template using our installer:
-> ```bash
-> npm create owd
-> ```
-> *Note: This installation method is currently a Work in Progress (WIP). Once the framework reaches a fully stable release, bootstrapping will become the recommended standard.*
 
 ### 1. Clone the repository
 

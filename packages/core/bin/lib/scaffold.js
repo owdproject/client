@@ -59,6 +59,17 @@ export function copyTemplate(templatePath, targetDir) {
  * @param {{ repo?: string, templatePath?: string | null, cwd?: string }} [options]
  */
 export async function cloneTemplate(targetDir, options = {}) {
+  const setupType = options.setupType ?? 'template'
+
+  if (setupType === 'clone') {
+    const repo = options.repo ?? DEFAULT_CLIENT_REPO
+    console.log()
+    execSync(`git clone --depth 1 ${JSON.stringify(repo)} ${JSON.stringify(targetDir)}`, {
+      stdio: 'inherit',
+    })
+    return { source: 'git', path: repo }
+  }
+
   const localTemplate = options.templatePath ?? resolveLocalTemplatePath(options.cwd)
 
   if (localTemplate) {
@@ -71,6 +82,7 @@ export async function cloneTemplate(targetDir, options = {}) {
   const tempClone = join(tempParent, 'client')
 
   try {
+    console.log()
     execSync(`git clone --depth 1 ${JSON.stringify(repo)} ${JSON.stringify(tempClone)}`, {
       stdio: 'inherit',
     })
@@ -129,12 +141,13 @@ export function launchControlPanel(targetDir, commandName = 'desktop') {
 }
 
 /**
- * @param {{ dir?: string, cwd?: string, commandName?: string, skipInstall?: boolean, skipUi?: boolean, repo?: string }} [options]
+ * @param {{ dir?: string, cwd?: string, commandName?: string, skipInstall?: boolean, skipUi?: boolean, repo?: string, setupType?: 'template' | 'clone' }} [options]
  */
 export async function scaffoldProject(options = {}) {
   const cwd = options.cwd ?? process.cwd()
   const dir = (options.dir ?? 'client').trim()
   const commandName = options.commandName ?? 'desktop'
+  const setupType = options.setupType ?? 'template'
 
   if (!dir) {
     throw new Error('Project directory name is required.')
@@ -149,12 +162,14 @@ export async function scaffoldProject(options = {}) {
     throw new Error(`Directory "${dir}" already exists.`)
   }
 
-  mkdirSync(targetDir, { recursive: true })
+  if (setupType !== 'clone') {
+    mkdirSync(targetDir, { recursive: true })
+  }
 
-  console.log(`\nScaffolding Open Web Desktop project in ${dir}/…\n`)
   const cloneResult = await cloneTemplate(targetDir, {
     repo: options.repo,
     cwd,
+    setupType,
   })
 
   if (cloneResult.source === 'local') {

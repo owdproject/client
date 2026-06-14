@@ -10,7 +10,7 @@ const runningApps = applicationManager.appsRunning
 </script>
 
 <template>
-  <DesktopApplicationWindowsRender
+  <DesktopCoreApplicationWindowsRender
     v-for="app of runningApps"
     :key="app.id"
     :workspace-filter="workspaceFilter"
