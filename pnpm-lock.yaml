@@ -4,6 +4,12 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    typescript:
+      specifier: ~6.0.3
+      version: 6.0.3
+
 importers:
 
   .:
@@ -585,9 +591,9 @@ importers:
       '@owdproject/module-fs':
         specifier: workspace:*
         version: link:../packages/module-fs
-      '@owdproject/theme-gnome':
+      '@owdproject/theme-nova':
         specifier: workspace:*
-        version: link:../themes/theme-gnome
+        version: link:../themes/theme-nova
 
   packages/core:
     dependencies:

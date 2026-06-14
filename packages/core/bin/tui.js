@@ -432,6 +432,7 @@ export async function runTui(commandName = 'desktop') {
   let logWatcher = null
 
   const packageUpdates = new Map()
+  const localGitChanges = new Map()
   let checkingUpdates = false
 
   let catalog = []
@@ -1517,6 +1518,54 @@ export async function runTui(commandName = 'desktop') {
     screen.render()
   }
 
+  function getLocalGitChanges(dir) {
+    try {
+      const porcelain = execSync('git status --porcelain', {
+        cwd: dir,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim()
+      if (!porcelain) return null
+
+      let added = 0, modified = 0, deleted = 0
+      for (const line of porcelain.split('\n').filter(Boolean)) {
+        if (line.startsWith('??')) { added++; continue }
+        const xy = line.slice(0, 2)
+        if (xy.includes('A')) added++
+        else if (xy.includes('D')) deleted++
+        else modified++
+      }
+      return { added, modified, deleted }
+    } catch {
+      return null
+    }
+  }
+
+  function updateLocalChanges() {
+    const checkDirs = ['apps', 'themes', 'packages']
+    for (const dirName of checkDirs) {
+      const fullDir = join(workspaceRoot, dirName)
+      if (!existsSync(fullDir)) continue
+      try {
+        const subdirs = readdirSync(fullDir, { withFileTypes: true })
+        for (const subdir of subdirs) {
+          if (!subdir.isDirectory()) continue
+          const name = subdir.name
+          if (name.startsWith('.')) continue
+          const subGit = join(fullDir, name, '.git')
+          if (existsSync(subGit)) {
+            const changes = getLocalGitChanges(join(fullDir, name))
+            if (changes) {
+              localGitChanges.set(name, changes)
+            } else {
+              localGitChanges.delete(name)
+            }
+          }
+        }
+      } catch {}
+    }
+  }
+
   function getLocalVersion(entry) {
     const short = shortName(entry.name)
     const kind = entry.kind
@@ -2225,7 +2274,7 @@ export async function runTui(commandName = 'desktop') {
           installed: selected && !pendingChange,
           pending: pendingChange ? true : undefined,
         },
-        { colors: FORMAT_COLORS, columns: currentColumns, packageUpdates },
+        { colors: FORMAT_COLORS, columns: currentColumns, packageUpdates, localGitChanges },
       )
     }
 
@@ -2237,7 +2286,7 @@ export async function runTui(commandName = 'desktop') {
         isNew: activeTab === 'module' && item.isNew,
         isRecent: activeTab === 'module' && item.isRecent,
       },
-      { colors: FORMAT_COLORS, columns: currentColumns, packageUpdates },
+      { colors: FORMAT_COLORS, columns: currentColumns, packageUpdates, localGitChanges },
     )
   }
 
@@ -3216,6 +3265,7 @@ export async function runTui(commandName = 'desktop') {
   })
 
   await refreshCatalog({ force: false })
+  updateLocalChanges()
   clientStatus = await getClientStatus(workspaceRoot, settings.devPort)
   devPhase = clientStatus.running ? 'running' : 'stopped'
   focusCatalog()
@@ -3240,12 +3290,19 @@ export async function runTui(commandName = 'desktop') {
   )
 
   let lastShowcaseTime = Date.now()
+  let gitScanCycle = 0
 
   setInterval(async () => {
     const now = Date.now()
     if (now - lastShowcaseTime >= 5000) {
       showcaseIndex++
       lastShowcaseTime = now
+    }
+
+    gitScanCycle++
+    if (gitScanCycle % 3 === 0 && !isInstalling) {
+      updateLocalChanges()
+      renderCatalogList()
     }
 
     if (devPhase !== 'starting' && !settingsOpen && !overlayBlocksKeys()) {

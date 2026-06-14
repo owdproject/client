@@ -75,4 +75,26 @@ describe('tuiFormat', () => {
     })
     assert.match(row, /app-about.*?↑3/)
   })
+
+  it('formatCatalogRowPlain renders changes column when localGitChanges has modifications', () => {
+    const row = formatCatalogRowPlain({
+      shortName: 'app-about',
+      pending: null,
+      installed: true,
+      sourcesMeta: {},
+      htmlUrl: 'https://github.com/owdproject/app-about',
+      org: 'owdproject',
+      stars: 0,
+      updatedAt: '2026-06-01',
+      trusted: true,
+      localSource: true,
+    }, {
+      columns: { sel: 3, name: 20, sources: 7, dir: 4, changes: 8, publisher: 15, meta: 14 },
+      localGitChanges: new Map([
+        ['app-about', { added: 1, modified: 2, deleted: 0 }]
+      ])
+    })
+    assert.match(row, /\+1/)
+    assert.match(row, /~2/)
+  })
 })

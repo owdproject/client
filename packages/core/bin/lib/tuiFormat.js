@@ -1,6 +1,11 @@
 import { formatCatalogAge } from './catalog.js'
 import { githubHtmlUrl } from './packageSources.js'
 
+const ansiRegex = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+function stripAnsi(str) {
+  return String(str).replace(ansiRegex, '')
+}
+
 /** @typedef {{ pending?: boolean | undefined, colors?: Record<string, string>, columns?: Record<string, number> }} RowContext */
 
 const COL = {
@@ -13,7 +18,9 @@ const COL = {
 }
 
 export function getColumnWidths(targetWidth) {
-  const fixed = 3 + 7 + 4 + 14 + 5 // 33 (sel, sources, dir, meta plus 5 spaces)
+  const showChanges = targetWidth >= 110
+  const changesWidth = showChanges ? 8 : 0
+  const fixed = 3 + 7 + 4 + 14 + 5 + changesWidth
   const remaining = targetWidth - fixed
 
   let nameWidth = 28
@@ -44,6 +51,7 @@ export function getColumnWidths(targetWidth) {
     name: nameWidth,
     sources: 7,
     dir: 4,
+    changes: changesWidth,
     publisher: pubWidth,
     meta: 14,
   }
@@ -208,8 +216,30 @@ export function formatCatalogRowPlain(item, ctx = {}) {
     metaTag += `{${colors.muted}-fg}${finalAge}{/}`
   }
 
+  let changesTag = ''
+  if (columns.changes > 0) {
+    if (item.localSource && ctx.localGitChanges && ctx.localGitChanges.has(item.shortName)) {
+      const ch = ctx.localGitChanges.get(item.shortName)
+      const parts = []
+      if (ch.added > 0) parts.push(`{${colors.add}-fg}+${ch.added}{/}`)
+      if (ch.modified > 0) parts.push(`{${colors.warn}-fg}~${ch.modified}{/}`)
+      if (ch.deleted > 0) parts.push(`{${colors.remove}-fg}-${ch.deleted}{/}`)
+
+      const txt = parts.join(' ')
+      const rawLen = stripAnsi(txt).length
+      changesTag = txt + ' '.repeat(Math.max(0, columns.changes - rawLen))
+    } else {
+      changesTag = ' '.repeat(columns.changes)
+    }
+  }
+
   // Join columns with exactly one space (matching header format)
-  return `${selTag} ${nameTag} ${sources} ${dirTag} ${pubTag} ${metaTag}`
+  const cols = [selTag, nameTag, sources, dirTag]
+  if (columns.changes > 0) {
+    cols.push(changesTag)
+  }
+  cols.push(pubTag, metaTag)
+  return cols.join(' ')
 }
 
 /**
@@ -289,9 +319,10 @@ export function formatHeaderLine(colors = DEFAULT_COLORS, columns = COL) {
   const name = 'NAME'.padEnd(columns.name || 28, ' ') + ' '
   const sources = 'SOURCES'.padEnd(columns.sources || 7, ' ') + ' '
   const dir = 'DIR'.padEnd(columns.dir || 4, ' ') + ' '
+  const changes = columns.changes > 0 ? 'CHANGES'.padEnd(columns.changes, ' ') + ' ' : ''
   const publisher = 'PUBLISHER'.padEnd(columns.publisher || 20, ' ') + ' '
   const meta = 'STARS/AGE'.padStart(columns.meta || 14, ' ')
-  return `{bold}${status}${name}${sources}${dir}${publisher}${meta}{/}`
+  return `{bold}${status}${name}${sources}${dir}${changes}${publisher}${meta}{/}`
 }
 
 export { COL as TUI_COLUMN_WIDTHS }
