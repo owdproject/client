@@ -916,6 +916,11 @@ export async function runTui(commandName = 'desktop') {
     isInstalling: () => isInstalling,
     setInstalling: (val) => {
       isInstalling = val
+      if (val) {
+        startLogWatcher()
+      } else if (!isDevServerUp()) {
+        stopLogWatcher()
+      }
       layoutCatalogPanel()
     },
     isWritingConfig: () => isWritingConfig,
@@ -1603,6 +1608,7 @@ export async function runTui(commandName = 'desktop') {
       return
     }
     isInstalling = true
+    startLogWatcher()
     startSpinner('Running Update Wizard…')
     renderAll()
 
@@ -1643,6 +1649,9 @@ export async function runTui(commandName = 'desktop') {
       setStatus(`Update Wizard failed: ${err.message}`, 'error')
     } finally {
       isInstalling = false
+      if (!isDevServerUp()) {
+        stopLogWatcher()
+      }
       stopSpinner()
       renderAll()
     }
