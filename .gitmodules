@@ -1,9 +1,9 @@
 [submodule "packages/core"]
 	path = packages/core
-	url = git@github.com:owdproject/core.git
+	url = ../core.git
 [submodule "packages/cli"]
 	path = packages/cli
-	url = git@github.com:owdproject/cli.git
+	url = ../cli.git
 [submodule "packages/nx"]
 	path = packages/nx
-	url = git@github.com:owdproject/nx.git
+	url = ../nx.git
