@@ -1,8 +1,0 @@
-{
-  "name": "@owdproject/app-fixture-legacy",
-  "type": "module",
-  "main": "./module.ts",
-  "scripts": {
-    "dev": "nuxt dev"
-  }
-}
