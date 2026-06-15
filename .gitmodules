@@ -4,3 +4,6 @@
 [submodule "packages/cli"]
 	path = packages/cli
 	url = git@github.com:owdproject/cli.git
+[submodule "packages/nx"]
+	path = packages/nx
+	url = git@github.com:owdproject/nx.git

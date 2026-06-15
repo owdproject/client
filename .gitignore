@@ -15,6 +15,7 @@ node_modules
 /themes
 /packages/*
 !/packages/core
+!/packages/cli
 !/packages/nx
 
 /legacy
