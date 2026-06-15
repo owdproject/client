@@ -1,7 +1,9 @@
 export default defineNuxtConfig({
   ssr: false,
 
-  modules: ['@owdproject/core'],
+  modules: [
+    '@owdproject/core'
+  ],
 
   i18n: {
     strategy: 'no_prefix',

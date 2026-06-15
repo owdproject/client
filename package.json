@@ -17,17 +17,17 @@
   },
   "scripts": {
     "postinstall": "pnpm run prepare:stubs",
-    "desktop": "node ./packages/cli/bin/desktop.js",
+    "desktop": "desktop",
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",
     "prepare:stubs": "pnpm -r --filter \"./packages/kit-*\" --filter \"./packages/module-*\" --filter \"./apps/*\" --filter \"./themes/*\" exec nuxt-module-build build --stub",
     "prepare:modules": "pnpm run prepare:stubs && pnpm -r --filter \"!./packages/module-fs\" --filter \"!./themes/*\" --filter \"!./packages/*\" --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
-    "template:sync": "node ./packages/cli/bin/desktop.js template",
-    "validate:modules": "node ./packages/cli/bin/desktop.js validate"
-  },
-  "devDependencies": {
+    "template:sync": "desktop template",
+    "validate:modules": "desktop validate"
+    },
+    "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@nuxt/devtools": "^3.2.4",
@@ -44,6 +44,7 @@
     "@nx/vite": "22.7.1",
     "@nx/web": "22.7.1",
     "@nx/workspace": "22.7.1",
+    "@owdproject/cli": "workspace:*",
     "@owdproject/nx": "workspace:*",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "~0.8.1",
