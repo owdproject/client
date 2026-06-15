@@ -62,6 +62,9 @@ importers:
       '@nx/workspace':
         specifier: 22.7.1
         version: 22.7.1(@swc-node/register@1.11.1(@swc/core@1.15.40(@swc/helpers@0.5.23))(@swc/types@0.1.26)(typescript@6.0.3))(@swc/core@1.15.40(@swc/helpers@0.5.23))
+      '@owdproject/cli':
+        specifier: workspace:*
+        version: link:packages/cli
       '@owdproject/nx':
         specifier: workspace:*
         version: link:packages/nx
@@ -585,18 +588,12 @@ importers:
       '@owdproject/app-about':
         specifier: workspace:*
         version: link:../apps/app-about
-      '@owdproject/app-terminal':
-        specifier: workspace:*
-        version: link:../apps/app-terminal
       '@owdproject/app-todo':
         specifier: workspace:*
         version: link:../apps/app-todo
-      '@owdproject/module-fs':
+      '@owdproject/core':
         specifier: workspace:*
-        version: link:../packages/module-fs
-      '@owdproject/theme-gnome':
-        specifier: workspace:*
-        version: link:../themes/theme-gnome
+        version: link:../packages/core
       '@owdproject/theme-win95':
         specifier: workspace:*
         version: link:../themes/theme-win95
