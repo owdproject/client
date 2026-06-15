@@ -16,7 +16,8 @@
     "url": "https://github.com/owdproject"
   },
   "scripts": {
-    "postinstall": "git submodule update --init --recursive && pnpm run prepare:stubs",
+    "preinstall": "git submodule update --init --recursive || true",
+    "postinstall": "pnpm run prepare:stubs",
     "desktop": "desktop",
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",
