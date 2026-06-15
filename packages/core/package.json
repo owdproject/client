@@ -12,13 +12,13 @@
     "owd",
     "open-web-desktop"
   ],
-  "homepage": "https://github.com/owdproject/client#readme",
+  "homepage": "https://github.com/owdproject/core#readme",
   "bugs": {
-    "url": "https://github.com/owdproject/client/issues"
+    "url": "https://github.com/owdproject/core/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/owdproject/client.git"
+    "url": "git+https://github.com/owdproject/core.git"
   },
   "license": "MIT",
   "author": {
@@ -28,7 +28,6 @@
   "type": "module",
   "types": "types/index.d.ts",
   "files": [
-    "bin",
     "dist",
     "kit",
     "runtime",
@@ -119,10 +118,6 @@
       "default": "./runtime/types/*"
     }
   },
-  "bin": {
-    "desktop": "bin/desktop.js",
-    "owd": "bin/owd.js"
-  },
   "dependencies": {
     "@nuxt/fonts": "^0.14.0",
     "@nuxt/icon": "^2.2.1",
@@ -132,28 +127,13 @@
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
-    "cli-spinners": "^2.9.2",
     "defu": "^6.1.4",
-    "getopts": "^2.3.0",
-    "log-symbols": "^4.1.0",
     "mitt": "^3.0.1",
     "nanoid": "^5.1.11",
-    "neo-blessed": "^0.2.0",
     "nuxt": "^4.4.4",
     "pinia": "^3.0.4",
     "sanitize.css": "^13.0.0",
     "sass": "^1.99.0",
-    "shellwords": "^1.1.1",
     "vue-resizable": "^2.1.7"
-  },
-  "optionalDependencies": {
-    "html2canvas": "^1.4.1"
-  },
-  "devDependencies": {
-    "@nuxt/devtools": "^3.2.4",
-    "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.4.4",
-    "typescript": "catalog:",
-    "vue-tsc": "^2.2.10"
   }
 }

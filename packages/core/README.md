@@ -1,91 +1,22 @@
-<p align="center">
-  <img width="160" height="160" src="https://avatars.githubusercontent.com/u/65117737?s=160&v=4" />
-</p>
-<h1 align="center">Open Web Desktop</h1>
-<h3 align="center">
-  A modular framework for building web-based desktop experiences.
-</h3>
+# 📦 OWD Core
 
-## Overview
+> The kernel and runtime engine for Open Web Desktop
 
-Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences. It's built with TypeScript on top of the Nuxt.js framework.
-
-[Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA) · [Documentation](https://owdproject.org/)
-
-**Kernel contract:** see [`DESKTOP_KERNEL.md`](./DESKTOP_KERNEL.md). Migration guides: [`MIGRATION_3.4.md`](./MIGRATION_3.4.md), [`MIGRATION_3.3.2.md`](./MIGRATION_3.3.2.md).
+This package provides the core logic, Vue components, and Nuxt module required to run an Open Web Desktop experience.
 
 ## Features
 
-- Fully extendable through themes, apps, and modules
-- Bundled with popular Vue.js libraries like Pinia and VueUse
-- Designed to make the most of the Nuxt.js ecosystem
-- Styled with PrimeVue and Tailwind for a consistent UI
-- Fully localizable with nuxt-i18n support
+- **Window Management**: Z-index handling, focusing, and lifecycle.
+- **Runtime Components**: \`DesktopCore\`, \`DesktopWindow\`, and more.
+- **State Management**: Pinia stores for workspaces, applications, and settings.
+- **Nuxt Integration**: Seamless module for Nuxt 3/4.
 
-## Getting started
+## Installation
 
-Bootstrap a new project by running:
+\`\`\`bash
+pnpm add @owdproject/core
+\`\`\`
 
-```bash
-npm create owd@latest
-```
+---
 
-Once the process is done, you can start to develop:
-
-```bash
-cd owd-client
-
-# Run the dev server with hot-reload
-pnpm install
-pnpm run dev
-
-# Build for production
-pnpm run generate
-```
-
-## Extend your desktop
-
-Thanks to Tailwind and PrimeVue, you can create custom themes from scratch and ensure a consistent look across all apps. Each theme defines its own style, making your desktop both cohesive and uniquely yours.
-
-[Applications](https://github.com/topics/owd-apps) · [Modules](https://github.com/topics/owd-modules) · [Themes](https://github.com/topics/owd-themes)
-
-### 🧩 Install an app
-
-Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) tag on GitHub.
-
-For example, to add the To-do app:
-
-```bash
-desktop add app-todo
-```
-
-Shipped with `@owdproject/core` (`bin/desktop.js`). The `owd` binary is a deprecated alias.
-
-### 🧩 Install a module
-
-Discover modules by searching the [owd-modules](https://github.com/topics/owd-modules) tag on GitHub.
-
-For example, to add Pinia persistence backed by IndexedDB (`idb-keyval`):
-
-```bash
-desktop add module-pinia-idb
-```
-
-### 🖥️ Install a theme
-
-Themes are full desktop environments that style all UI components independently, using [PrimeVue](https://primevue.org/).  
-Each theme provides a unique look and feel while maintaining consistent functionality across all applications.
-
-Discover themes by searching the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
-
-```bash
-desktop add theme-gnome
-```
-
-## Sponsors
-
-Be the first to support this project and help us keep it growing! [Sponsor the project](https://github.com/sponsors/owdproject)
-
-## License
-
-Open Web Desktop is released under the [MIT License](LICENSE).
+Licensed under [MIT](./LICENSE)
