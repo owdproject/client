@@ -34,3 +34,6 @@ certs
 
 # Test zip file with module-fs
 public/test.zip
+
+# Generated during ATProto OAuth setup (desktop.config writeClientMetadata)
+public/client-metadata.json
