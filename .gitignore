@@ -70,7 +70,6 @@ vitest.config.*.timestamp*
 .pnpm-store/
 pnpm-debug.log*
 pnpm-lock.yaml
-pnpm-workspace.yaml
 
 # Local overrides (never commit secrets)
 .env.local

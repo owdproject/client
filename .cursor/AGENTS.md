@@ -219,3 +219,12 @@ See the full playbook. In brief:
 - Document **theme × module × app** compatibility (e.g. FS + explorer + classic themes).
 
 Update this file when conventions change so agents and contributors share one source of truth.
+
+---
+
+## Workspace & Override Rules (CRITICAL FOR AGENTS)
+
+* **No ad-hoc overrides in `pnpm-workspace.yaml`**: The OWD client repository is designed to be cloned empty of optional extension packages, themes, and apps (containing only `@owdproject/core`, `@owdproject/cli`, and `@owdproject/nx` by default).
+* Do **NOT** add overrides (e.g. forcing `workspace:*` for optional packages like `@owdproject/module-persistence` or other modules/apps/themes) in `pnpm-workspace.yaml` or other core configuration files.
+* Downstream projects and developers should be able to install and load external/optional packages dynamically without requiring modifications to the client skeleton/workspace files.
+* If a package is being resolved from the npm registry instead of a local path during development, the correct approach is to run `pnpm install` or use the `workspace:` protocol in the specific test/theme `package.json` that requires it, rather than setting up workspace-wide overrides.

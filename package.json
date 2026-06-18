@@ -21,14 +21,14 @@
     "desktop": "desktop",
     "dev": "nx run desktop:serve",
     "generate": "nx run desktop:generate",
-    "prepare:stubs": "pnpm -r --filter \"./packages/kit-*\" --filter \"./packages/module-*\" --filter \"./apps/*\" --filter \"./themes/*\" exec nuxt-module-build build --stub",
+    "prepare:stubs": "pnpm -r --parallel --filter \"./packages/kit-*\" --filter \"./packages/module-*\" --filter \"./apps/*\" --filter \"./themes/*\" exec nuxt-module-build build --stub",
     "prepare:modules": "pnpm run prepare:stubs && pnpm -r --filter \"!./packages/module-fs\" --filter \"!./themes/*\" --filter \"!./packages/*\" --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
     "template:sync": "desktop template",
     "validate:modules": "desktop validate"
-    },
-    "devDependencies": {
+  },
+  "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@nuxt/devtools": "^3.2.4",
@@ -75,5 +75,5 @@
     "vue-router": "^5.0.6",
     "vue-tsc": "^3.2.7"
   },
-  "packageManager": "pnpm@10.33.2"
+  "packageManager": "pnpm@11.7.0"
 }

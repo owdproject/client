@@ -11,6 +11,8 @@ packages:
 catalog:
   typescript: ~6.0.3
 
+blockExoticSubdeps: false
+
 allowBuilds:
   '@owdproject/*': true
   '@owdproject/nx': true
