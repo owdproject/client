@@ -7,12 +7,3 @@
 [submodule "packages/nx"]
 	path = packages/nx
 	url = ../nx.git
-[submodule "packages/kit-tailwind"]
-	path = packages/kit-tailwind
-	url = git@github.com:owdproject/kit-tailwind.git
-[submodule "packages/kit-nuxt-ui"]
-	path = packages/kit-nuxt-ui
-	url = git@github.com:owdproject/kit-nuxt-ui.git
-[submodule "themes/theme-nuxt"]
-	path = themes/theme-nuxt
-	url = git@github.com:owdproject/theme-nuxt.git
