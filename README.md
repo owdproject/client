@@ -10,33 +10,33 @@
 
 Open Web Desktop (OWD) is a framework designed to provide a simple environment for building web-based desktop experiences and digital gardens. It's built with Vue & TypeScript, and it leverages the extensible Nuxt.js architecture.
 
-[Demo](https://atproto-os.pages.dev/) · [Community](https://discord.gg/zPNaN2HAaA) · [Documentation](https://owdproject.org/)
+[Demo](https://atproto-os.pages.dev/) · [Documentation](https://owdproject.org/) · [Support](https://github.com/sponsors/owdproject) · [Discussions](https://github.com/orgs/owdproject/discussions)
 
 ## Features
 
-- Fully extendable through apps, modules and themes
+- Desktop extendable through apps, modules, and themes
 - Bundled with popular libraries like Pinia and VueUse
 - Designed to make the most of the Nuxt.js ecosystem
-- Can support any UI kit as PrimeVue, Vuetify and Quasar
+- Supports any UI kit, such as PrimeVue, Nuxt UI, and Vuetify
 - Fully localizable with nuxt-i18n support
+- Easy to learn and extend via `pnpm desktop`
 
 ## Repository layout
 
-- **`desktop/`** — dev desktop (workspace apps, modules, themes). Use `pnpm run dev` from the repo root.
-- **`template/`** — scaffold copied by `npm create owd@latest` / `pnpm desktop init`. <br /><br />**Do not edit by hand**; regenerate with `pnpm desktop template` (or `pnpm template:sync`) after changing the starter desktop or publishing `@owdproject/*` packages. Blueprint sources live in `packages/core/template-blueprint/`.
+- **`desktop/`** — dev desktop (workspace apps, modules, themes)
+- **`template/`** — scaffold copied by `npm create owd@latest` / `pnpm desktop init`. <br /><br />**Do not edit "template" by hand**; regenerate with `pnpm desktop template` after changing the starter desktop or publishing `@owdproject/*` packages. Blueprint sources live in `packages/core/template-blueprint/`.
 
 ## Getting Started
 
-We recommend cloning the monorepo workspace to develop and build with Open Web Desktop.
+To create a new Open Web Desktop project:
 
+### 1. Create a project
 
-### 1. Clone the repository
-
-Clone the monorepo to your machine:
+Run the initializer command to scaffold your project:
 
 ```bash
-git clone https://github.com/owdproject/client.git
-cd client
+npm create owd@latest my-desktop
+cd my-desktop
 ```
 
 ### 2. Install dependencies
@@ -58,11 +58,13 @@ Or start the control panel (TUI) to manage packages and logs:
 ```bash
 pnpm run desktop
 ```
-*(Press `d` in the control panel to toggle the dev server).*
+*(Press `d` in the control panel to toggle the dev server, `x` to stop).*
+
 
 ## Ecosystem & Extensibility
 
-Open Web Desktop is designed to scale via modular extension packages. You can customize your workspace using three dedicated package types:
+Open Web Desktop is designed to scale via modular extension packages.  
+You can customize your workspace using three dedicated package types:
 
 ### Package Categories
 
@@ -76,7 +78,10 @@ Open Web Desktop is designed to scale via modular extension packages. You can cu
 
 ### Managing Packages
 
-The OWD CLI makes it easy to install, import, and configure packages automatically.
+The CLI makes it easy to install, import, and configure packages automatically.
+
+> [!NOTE]
+> For security reasons, the Control Panel (CP) only displays packages from a whitelist of approved GitHub usernames like *owdproject* and *atproto-os*. Modules from other users will not appear automatically, although this discovery mechanism is planned to be improved in the future.
 
 #### Installing an Application
 To add a new application (e.g., a Todo app):
@@ -99,14 +104,23 @@ pnpm desktop add theme-gnome
 
 ### Advanced CLI Commands
 
-Install packages directly from npm or from custom repository forks:
+You can install packages from various sources, specifying different branches or protocols. Run the CLI with `--help` (e.g. `pnpm desktop add --help`) to discover all available flags and options:
 
 ```bash
+# Show help and all available options for the add command
+pnpm desktop add --help
+
 # Install directly from the npm registry
 pnpm desktop add app-todo --npm
 
 # Clone from a specific GitHub user fork
 pnpm desktop add module-persistence --from github-username
+
+# Clone an official repository in development mode
+pnpm desktop add app-todo --dev
+
+# Install a specific branch from a user fork using SSH protocol
+pnpm desktop add theme-gnome --from github-username --branch feature-branch --protocol ssh
 ```
 
 ### Isolated Package Development
