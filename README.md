@@ -10,7 +10,7 @@
 
 Open Web Desktop (OWD) is an open-source framework built on top of Nuxt.js, used to create web-based operating systems and interactive, window-driven desktop experiences directly inside a web browser.
 
-[Demo](https://atproto-os.pages.dev/) · [Documentation](https://owdproject.org/) · [Support](https://github.com/sponsors/owdproject)
+[Demo](https://atproto-os.pages.dev/) · [Documentation](https://owdproject.github.io/docs/) · [Support](https://github.com/sponsors/owdproject)
 
 ## Features
 

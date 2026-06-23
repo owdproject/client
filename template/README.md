@@ -25,7 +25,7 @@ This project was scaffolded with **Nuxt Desktop** (Open Web Desktop). It is a Nu
 Bootstrap a new project:
 
 ```bash
-npm create owd
+npm create owd@latest
 # or: desktop init my-desktop
 # or: npx nuxi@latest module add @owdproject/core
 ```
