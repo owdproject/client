@@ -1,8 +1,9 @@
 # Dependencies
 node_modules
 
-# Open Web Desktop
+# Open Web Desktop (force a clean slate for new clones)
 desktop.config.ts
+package.json
 
 # Nuxt (desktop app root)
 .output

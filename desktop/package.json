@@ -14,12 +14,6 @@
   },
   "dependencies": {
     "@owdproject/core": "workspace:*",
-    "@owdproject/app-about": "workspace:*",
-    "@owdproject/app-todo": "workspace:*",
-    "@owdproject/theme-nova": "workspace:*",
-    "@owdproject/kit-primevue": "workspace:*",
-    "@owdproject/kit-tailwind": "workspace:*",
-    "@owdproject/module-fs": "workspace:*",
-    "@owdproject/module-persistence": "workspace:*"
+    "@owdproject/cli": "workspace:*"
   }
 }
