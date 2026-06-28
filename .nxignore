@@ -1,2 +1,5 @@
 # Scaffold artifact — not part of the dev monorepo graph (see README).
 template
+
+# Ignore test fixtures
+packages/core/test/fixtures
