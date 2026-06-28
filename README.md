@@ -35,8 +35,7 @@ To create a new Open Web Desktop project:
 Run the initializer command to scaffold your project:
 
 ```bash
-npm create owd@latest my-desktop
-cd my-desktop
+npm create owd@latest
 ```
 
 ### 2. Install dependencies
