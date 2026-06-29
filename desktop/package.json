@@ -1,9 +1,6 @@
 {
   "name": "@owdproject/client",
   "private": true,
-  "nx": {
-    "name": "desktop"
-  },
   "scripts": {
     "build": "nuxt generate",
     "dev": "nuxt dev --host",

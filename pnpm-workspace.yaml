@@ -3,6 +3,7 @@ packages:
   - apps/*
   - '!apps/*/playground'
   - packages/*
+  - '!packages/nx'
   - '!packages/*/playground'
   - themes/*
   - '!themes/*/playground'
@@ -15,14 +16,11 @@ blockExoticSubdeps: false
 
 allowBuilds:
   '@owdproject/*': true
-  '@owdproject/nx': true
   '@parcel/watcher': true
   '@swc/core': true
   better-sqlite3: true
   esbuild: true
-  nx: true
   unrs-resolver: true
   audiobuffer-to-wav: true
   "audiobuffer-to-wav@https://codeload.github.com/torch2424/audiobuffer-to-wav/tar.gz/8878a20c5cc7e457b113dabfb1781ad4178f9c62": true
-
-
+  nx: set this to true or false
