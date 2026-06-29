@@ -26,8 +26,13 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Configure workspace packages for CI
+        run: |
+          echo -e "packages:\n  - packages/core\n  - packages/cli" > pnpm-workspace.yaml
+          cat pnpm-workspace.yaml
+
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --filter '!./desktop'
+        run: pnpm install --no-frozen-lockfile
 
       - name: Prepare Nuxt modules (apps)
         run: pnpm run prepare:modules

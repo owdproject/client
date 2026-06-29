@@ -47,9 +47,19 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
 
+      # Step 4.5: Recreate a minimal pnpm-workspace.yaml to isolate the build to only checked-out packages
+      - name: Configure workspace packages for CI
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo -e "packages:\n  - packages/core\n  - packages/cli\n  - ${{ github.event.client_payload.type }}s/${{ github.event.client_payload.name }}" > pnpm-workspace.yaml
+          else
+            echo -e "packages:\n  - packages/core\n  - packages/cli" > pnpm-workspace.yaml
+          fi
+          cat pnpm-workspace.yaml
+
       # Step 5: Install dependencies (will run postinstall/prepare:stubs automatically)
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --filter '!./desktop'
+        run: pnpm install --no-frozen-lockfile
 
       # Step 6: Configure NPM authentication
       - name: Configure NPM Authentication
