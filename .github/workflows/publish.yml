@@ -28,7 +28,7 @@ jobs:
 
       - name: Configure workspace packages for CI
         run: |
-          echo -e "packages:\n  - packages/core\n  - packages/cli" > pnpm-workspace.yaml
+          echo -e "packages:\n  - packages/core\n  - packages/cli\ncatalog:\n  typescript: ~6.0.3" > pnpm-workspace.yaml
           cat pnpm-workspace.yaml
 
       - name: Install dependencies

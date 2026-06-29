@@ -51,9 +51,9 @@ jobs:
       - name: Configure workspace packages for CI
         run: |
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            echo -e "packages:\n  - packages/core\n  - packages/cli\n  - ${{ github.event.client_payload.type }}s/${{ github.event.client_payload.name }}" > pnpm-workspace.yaml
+            echo -e "packages:\n  - packages/core\n  - packages/cli\n  - ${{ github.event.client_payload.type }}s/${{ github.event.client_payload.name }}\ncatalog:\n  typescript: ~6.0.3" > pnpm-workspace.yaml
           else
-            echo -e "packages:\n  - packages/core\n  - packages/cli" > pnpm-workspace.yaml
+            echo -e "packages:\n  - packages/core\n  - packages/cli\ncatalog:\n  typescript: ~6.0.3" > pnpm-workspace.yaml
           fi
           cat pnpm-workspace.yaml
 
