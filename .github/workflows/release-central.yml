@@ -1,0 +1,83 @@
+name: Centralized Release Manager
+
+on:
+  push:
+    branches:
+      - main
+  repository_dispatch:
+    types:
+      - module_release
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}-${{ github.event.client_payload.name || 'core' }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout Core Repository (owd-client)
+      - name: Checkout Core
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Checkout External Module (if triggered by a repository dispatch)
+      - name: Checkout External Module
+        if: github.event_name == 'repository_dispatch' && github.event.event_type == 'module_release'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.client_payload.repository }}
+          ref: ${{ github.event.client_payload.ref }}
+          path: ${{ github.event.client_payload.type }}s/${{ github.event.client_payload.name }}
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_PAT || github.token }}
+
+      # Step 3: Install PNPM
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.7.0
+
+      # Step 4: Setup Node.js with PNPM cache
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
+
+      # Step 5: Install dependencies (will run postinstall/prepare:stubs automatically)
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Step 6: Configure NPM authentication
+      - name: Configure NPM Authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Step 7: Run changelogen to bump version, generate changelog, tag, and release
+      - name: Run changelogen
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            TARGET_DIR="${{ github.event.client_payload.type }}s/${{ github.event.client_payload.name }}"
+            echo "Running changelogen for module in directory: $TARGET_DIR"
+            npx changelogen --dir="$TARGET_DIR" --release
+          else
+            echo "Running changelogen for OWD Core"
+            npx changelogen --release
+          fi
+
+      # Step 8: Publish packages to NPM registry
+      - name: Publish to NPM
+        run: pnpm -r publish --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
