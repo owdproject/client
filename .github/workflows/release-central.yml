@@ -1,9 +1,6 @@
 name: Centralized Release Manager
 
 on:
-  push:
-    branches:
-      - main
   repository_dispatch:
     types:
       - module_release
@@ -12,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: release-${{ github.ref }}-${{ github.event.client_payload.name || 'core' }}
+  group: release-${{ github.ref }}-${{ github.event.client_payload.name }}
   cancel-in-progress: true
 
 jobs:
@@ -62,21 +59,7 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Step 7: Run changelogen to bump version, generate changelog, tag, and release
-      - name: Run changelogen
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            TARGET_DIR="${{ github.event.client_payload.type }}s/${{ github.event.client_payload.name }}"
-            echo "Running changelogen for module in directory: $TARGET_DIR"
-            npx changelogen --dir="$TARGET_DIR" --release
-          else
-            echo "Running changelogen for OWD Core"
-            npx changelogen --release
-          fi
-
-      # Step 8: Publish packages to NPM registry
+      # Step 7: Publish packages to NPM registry
       - name: Publish to NPM
         run: pnpm -r publish --no-git-checks --access public
         env:

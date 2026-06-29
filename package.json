@@ -28,8 +28,7 @@
     "template:sync": "desktop template",
     "validate:modules": "desktop validate",
     "install-app": "node scripts/install-app.mjs",
-    "release:core:dry-run": "changelogen --dry-run",
-    "release:theme-nova:dry-run": "changelogen --dir=\"themes/theme-nova\" --dry-run"
+    "release:core:dry-run": "changelogen --noAuthors --dry-run"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

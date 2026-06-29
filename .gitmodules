@@ -4,6 +4,3 @@
 [submodule "packages/cli"]
 	path = packages/cli
 	url = ../cli.git
-[submodule "packages/nx"]
-	path = packages/nx
-	url = ../nx.git
