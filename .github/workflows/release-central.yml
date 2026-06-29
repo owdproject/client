@@ -49,7 +49,7 @@ jobs:
 
       # Step 5: Install dependencies (will run postinstall/prepare:stubs automatically)
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --no-frozen-lockfile --filter '!./desktop'
 
       # Step 6: Configure NPM authentication
       - name: Configure NPM Authentication
