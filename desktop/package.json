@@ -11,15 +11,6 @@
   },
   "dependencies": {
     "@owdproject/core": "workspace:*",
-    "@owdproject/cli": "workspace:*",
-    "@owdproject/app-about": "workspace:*",
-    "@owdproject/theme-win95": "workspace:*",
-    "@owdproject/kit-tailwind": "workspace:*",
-    "@owdproject/kit-primevue": "workspace:*",
-    "@owdproject/module-fs": "workspace:*",
-    "@owdproject/module-persistence": "workspace:*",
-    "@owdproject/app-terminal": "workspace:*",
-    "@owdproject/app-todo": "workspace:*",
-    "@owdproject/theme-nova": "workspace:*"
+    "@owdproject/cli": "workspace:*"
   }
 }
