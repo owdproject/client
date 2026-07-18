@@ -1,6 +1,7 @@
 [submodule "packages/core"]
 	path = packages/core
 	url = ../core.git
+	branch = nuxt-desktop
 [submodule "packages/cli"]
 	path = packages/cli
 	url = ../cli.git
