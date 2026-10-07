@@ -16,7 +16,7 @@
     "url": "https://github.com/owdproject"
   },
   "scripts": {
-    "preinstall": "git submodule update --init --recursive || true",
+    "preinstall": "echo 'submodule update skipped on nuxt-desktop branch'",
     "postinstall": "pnpm run prepare:stubs",
     "desktop": "desktop",
     "dev": "pnpm --filter ./desktop run dev",

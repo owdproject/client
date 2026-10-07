@@ -22,6 +22,16 @@
     "@owdproject/app-terminal": "workspace:*",
     "@owdproject/app-todo": "workspace:*",
     "@owdproject/theme-nova": "workspace:*",
-    "@owdproject/theme-gnome": "workspace:*"
+    "@owdproject/theme-gnome": "workspace:*",
+    "@owdproject/app-soundcloud": "workspace:*",
+    "@owdproject/app-dino": "workspace:*",
+    "@owdproject/app-debug": "workspace:*",
+    "@owdproject/app-wasmboy": "workspace:*",
+    "@owdproject/app-youtube": "workspace:*",
+    "@owdproject/app-classic-audioplayer": "workspace:*",
+    "@owdproject/app-twitch-chat": "workspace:*",
+    "@owdproject/app-classic-videoplayer": "workspace:*",
+    "@owdproject/app-slowroads": "workspace:*",
+    "@owdproject/theme-paper": "workspace:*"
   }
 }
