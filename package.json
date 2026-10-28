@@ -28,6 +28,8 @@
     "template:sync": "desktop template",
     "validate:modules": "desktop validate",
     "install-app": "node scripts/install-app.mjs",
+    "sync:ecosystem": "node scripts/sync-ecosystem.mjs",
+    "ecosystem:status": "node scripts/sync-ecosystem.mjs status",
     "release:core:dry-run": "changelogen --noAuthors --dry-run"
   },
   "devDependencies": {
@@ -35,7 +37,7 @@
     "@eslint/js": "^10.0.1",
     "@nuxt/devtools": "^3.2.4",
     "@nuxt/eslint-config": "^1.15.2",
-    "@nuxt/kit": "^4.4.4",
+    "@nuxt/kit": "^4.6.2",
     "@nuxt/ui-templates": "^1.3.4",
     "@owdproject/cli": "workspace:*",
     "@swc-node/register": "~1.11.1",
@@ -54,7 +56,7 @@
     "eslint-plugin-vue": "^10.9.0",
     "jiti": "2.6.1",
     "jsdom": "~29.1.1",
-    "nuxt": "^4.4.4",
+    "nuxt": "^4.6.2",
     "prettier": "^3.8.3",
     "ts-morph": "^25.0.1",
     "tslib": "^2.8.1",

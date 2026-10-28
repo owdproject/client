@@ -1,6 +1,7 @@
 {
   "name": "@owdproject/client",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "nuxt generate",
     "dev": "nuxt dev --host",
@@ -10,13 +11,24 @@
     "desktop": "desktop"
   },
   "dependencies": {
+    "nuxt": "^4.6.2",
+    "nuxt-desktop": "workspace:*",
+    "sanitize.css": "^13.0.0",
+    "xstate": "^5.33.3",
+    "@pinia/nuxt": "^1.0.3",
+    "@nuxt/fonts": "^1.2.0",
+    "@nuxt/icon": "^2.6.1",
+    "@nuxtjs/i18n": "^10.6.0",
+    "@vueuse/nuxt": "^15.0.0",
+    "pinia": "^4.1.0",
     "@owdproject/core": "workspace:*",
     "@owdproject/cli": "workspace:*",
     "@owdproject/app-about": "workspace:*",
     "@owdproject/theme-win95": "workspace:*",
     "@owdproject/kit-tailwind": "workspace:*",
     "@owdproject/module-persistence": "workspace:*",
-    "@owdproject/module-jazz": "workspace:*",
+    "@owdproject/nuxt-persistence-pinia": "workspace:*",
+    "@owdproject/nuxt-jazz": "workspace:*",
     "@owdproject/kit-primevue": "workspace:*",
     "@owdproject/module-fs": "workspace:*",
     "@owdproject/app-terminal": "workspace:*",
