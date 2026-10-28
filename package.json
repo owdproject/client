@@ -16,7 +16,7 @@
     "url": "https://github.com/owdproject"
   },
   "scripts": {
-    "preinstall": "echo 'submodule update skipped on nuxt-desktop branch'",
+    "preinstall": "echo 'submodule updates are managed explicitly'",
     "postinstall": "pnpm run prepare:stubs",
     "desktop": "desktop",
     "dev": "pnpm --filter ./desktop run dev",
@@ -40,7 +40,7 @@
     "@nuxt/eslint-config": "^1.15.2",
     "@nuxt/kit": "^4.6.2",
     "@nuxt/ui-templates": "^1.3.4",
-    "@owdproject/cli": "workspace:*",
+    "@owdproject/cli": "^4.0.0-alpha.3",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "~0.8.1",
     "@swc/core": "~1.15.32",
