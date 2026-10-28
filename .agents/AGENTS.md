@@ -1,3 +1,5 @@
+> **Current v4 rule (supersedes legacy descriptions below):** `nuxt-desktop` is deprecated. No OWD package may depend on or import it. Use `@owdproject/nuxt` for the Nuxt module and Vue shell APIs; `@owdproject/core` is the framework-independent engine. Run `node scripts/check-no-legacy-desktop.mjs` after migration work.
+
 # Open Web Desktop (OWD) — Agent & contributor context
 
 This document describes the **OWD client monorepo**: what it is, how it is organized, and how to extend it. Include `@AGENTS.md` in new sessions so assistants do not need the layout explained from scratch.

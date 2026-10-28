@@ -7,7 +7,6 @@ packages:
   - themes/*
   - '!themes/*/playground'
   - plugins/*
-  - 'nuxt-desktop'
 
 catalog:
   typescript: ~6.0.3
@@ -16,6 +15,7 @@ blockExoticSubdeps: false
 
 allowBuilds:
   '@owdproject/*': true
+  '@dxlliv/*': true
   '@parcel/watcher': true
   '@swc/core': true
   better-sqlite3: true

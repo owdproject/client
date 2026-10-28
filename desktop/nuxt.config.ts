@@ -2,7 +2,7 @@ export default defineNuxtConfig({
   ssr: false,
 
   modules: [
-    'nuxt-desktop'
+    '@owdproject/nuxt'
   ],
 
   i18n: {

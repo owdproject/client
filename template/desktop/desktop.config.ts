@@ -1,4 +1,4 @@
-import { defineDesktopConfig } from 'nuxt-desktop'
+import { defineDesktopConfig } from '@owdproject/nuxt'
 
 export default defineDesktopConfig({
   apps: ['@owdproject/app-about'],

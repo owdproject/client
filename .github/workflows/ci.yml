@@ -28,6 +28,9 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 
+      - name: Check desktop dependency architecture
+        run: node scripts/check-no-legacy-desktop.mjs
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 

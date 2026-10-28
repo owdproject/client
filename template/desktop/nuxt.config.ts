@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     host: '127.0.0.1',
   },
 
-  modules: ['nuxt-desktop'],
+  modules: ['@owdproject/nuxt'],
 
   css: ['./desktop/app/assets/styles/index.scss'],
 

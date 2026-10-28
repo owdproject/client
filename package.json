@@ -30,7 +30,8 @@
     "install-app": "node scripts/install-app.mjs",
     "sync:ecosystem": "node scripts/sync-ecosystem.mjs",
     "ecosystem:status": "node scripts/sync-ecosystem.mjs status",
-    "release:core:dry-run": "changelogen --noAuthors --dry-run"
+    "release:core:dry-run": "changelogen --noAuthors --dry-run",
+    "check:architecture": "node scripts/check-no-legacy-desktop.mjs"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
