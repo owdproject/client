@@ -26,7 +26,6 @@
     "@owdproject/app-about": "workspace:*",
     "@owdproject/theme-win95": "workspace:*",
     "@owdproject/kit-tailwind": "workspace:*",
-    "@owdproject/module-persistence": "workspace:*",
     "@owdproject/nuxt-persistence-pinia": "workspace:*",
     "@owdproject/nuxt-jazz": "workspace:*",
     "@owdproject/kit-primevue": "workspace:*",

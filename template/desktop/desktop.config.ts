@@ -1,4 +1,4 @@
-import { defineDesktopConfig } from '@owdproject/core/kit/authoring'
+import { defineDesktopConfig } from 'nuxt-desktop'
 
 export default defineDesktopConfig({
   apps: ['@owdproject/app-about'],
