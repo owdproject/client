@@ -22,7 +22,7 @@
     "dev": "pnpm --filter ./desktop run dev",
     "generate": "pnpm --filter ./desktop run generate",
     "prepare:stubs": "node scripts/prepare-stubs.mjs",
-    "prepare:modules": "pnpm run prepare:stubs && pnpm -r --filter \"!./packages/module-fs\" --filter \"!./themes/*\" --filter \"!./packages/*\" --filter \"./apps/*\" --if-present run dev:prepare",
+    "prepare:modules": "pnpm run prepare:stubs && pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:apps": "pnpm -r --filter \"./apps/*\" --if-present run dev:prepare",
     "prepare:themes": "pnpm -r --filter \"./themes/*\" --if-present run dev:prepare",
     "template:sync": "desktop template",
