@@ -32,7 +32,7 @@ export function resolveDesktopConfigPath(desktopDir) {
  * Adds a value to a key ('apps', 'modules') or replaces it if key is 'theme'
  * @param {string} configPath Absolute path to desktop.config.ts (or legacy owd.config.ts)
  * @param {'apps' | 'modules' | 'theme'} key Target key in config
- * @param {string} value String value to add (e.g. '@owdproject/app-debug')
+ * @param {string} value String value to add (e.g. '@owdproject/app-nuxt-debug')
  */
 export function addToDesktopConfig(configPath, key, value) {
   const project = new Project();

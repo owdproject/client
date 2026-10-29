@@ -23,7 +23,7 @@ A single Nuxt app (`desktop/`) loads **`@owdproject/core`**, which reads **`desk
 | UI | **Vue 3**, **Nuxt 4** (monorepo desktop is typically SPA: `ssr: false`) |
 | Monorepo | **pnpm** workspaces + **Nx** (`nx run desktop:…`) |
 | State | **Pinia** |
-| Styling | **Tailwind** via `@owdproject/kit-tailwind`; **PrimeVue** via `@owdproject/kit-primevue` (theme installs the kit for its UI stack — core 3.4+ does not) |
+| Styling | **Tailwind** via `@owdproject/kit-nuxt-tailwind`; **PrimeVue** via `@owdproject/kit-nuxt-primevue` (theme installs the kit for its UI stack — core 3.4+ does not) |
 | Icons / fonts | **@nuxt/icon**, **@nuxt/fonts** |
 | i18n | **@nuxtjs/i18n** |
 | Extension packages | **@nuxt/module-builder** → published **`dist/module.mjs`** |
@@ -40,8 +40,8 @@ client/
 │   ├── module-fs/           # Optional ZenFS virtual filesystem
 │   ├── module-docs/         # Optional in-app documentation (Nuxt Content)
 │   ├── module-persistence/  # Optional Pinia persistence (IndexedDB)
-│   ├── kit-primevue/        # Optional locally — PrimeVue + tailwindcss-primeui (PV themes)
-│   ├── kit-tailwind/        # Optional locally — Tailwind content registration (apps/themes)
+│   ├── kit-nuxt-primevue/        # Optional locally — PrimeVue + tailwindcss-primeui (PV themes)
+│   ├── kit-nuxt-tailwind/        # Optional locally — Tailwind content registration (apps/themes)
 │   ├── kit-nuxt-ui/         # Optional external — Nuxt UI stack (no PrimeVue)
 │   └── nx/                  # Nx plugin helpers (submodule)
 ├── apps/                    # Desktop apps (@owdproject/app-*)
@@ -73,7 +73,7 @@ Central Nuxt module and **`desktop`** CLI (`bin/desktop.js`; `owd` is a deprecat
 2. Dynamic import of `desktop.config.ts` from the Nuxt root (`rootDir + '/desktop.config.ts'`). Legacy `owd.config.ts` is still accepted with a console warning. Invalid or missing config **stops** setup.
 3. Merge desktop config into `runtimeConfig.public.desktop` (includes **`coreVersion`** from core’s `package.json`).
 4. **`installModule`** in order: **theme** → **`modules`** → **`apps`**.
-5. Core installs Pinia, fonts, icons, VueUse, i18n, … **Tailwind and PrimeVue are not installed by core** (since 3.4). The active **theme** installs its UI kit (`kit-primevue` for PV themes, or `kit-nuxt-ui` for `@owdproject/theme-nuxt`).
+5. Core installs Pinia, fonts, icons, VueUse, i18n, … **Tailwind and PrimeVue are not installed by core** (since 3.4). The active **theme** installs its UI kit (`kit-nuxt-primevue` for PV themes, or `kit-nuxt-ui` for `@owdproject/theme-nuxt`).
 6. Global core components, client plugins, auto-imports from `composables`, `stores`, `utils` (not `runtime/internal/` — kernel controllers are private).
 
 **`runtime/internal/`** — private kernel (`ApplicationController`, `WindowController`). Not auto-imported; use `defineDesktopApp` and `useApplicationManager` instead.
@@ -91,7 +91,7 @@ Central Nuxt module and **`desktop`** CLI (`bin/desktop.js`; `owd` is a deprecat
 
 | Package | Role |
 |---------|------|
-| `@owdproject/module-fs` | ZenFS mount + explorer composables; enable in `desktop.config.ts` → `modules`. Explorer app: `@owdproject/app-explorer`. |
+| `@owdproject/module-nuxt-fs` | ZenFS mount + explorer composables; enable in `desktop.config.ts` → `modules`. Explorer app: `@owdproject/app-explorer`. |
 | `@owdproject/module-docs` | In-app docs at `/docs` (Nuxt Content). TUI **`[i]`** opens docs when installed. Deprecated alias: `@owdproject/docs`. |
 | `@owdproject/module-persistence` | Pinia persistence via IndexedDB. |
 | `@owdproject/kit-fs` | Neutral explorer UI components (with `module-fs`). |
@@ -111,13 +111,13 @@ Each app is an **`@owdproject/app-*`** Nuxt module:
 
 ### `themes/*` — desktop environments
 
-Nuxt modules (e.g. `@owdproject/theme-nova`, `@owdproject/theme-win95`) that provide layout, chrome, styles, and i18n. They may conditionally load extra modules (e.g. FS explorer integration).
+Nuxt modules (e.g. `@owdproject/theme-nuxt-nova`, `@owdproject/theme-win95`) that provide layout, chrome, styles, and i18n. They may conditionally load extra modules (e.g. FS explorer integration).
 
 **`theme-nova`** is the **reference shell** for app/module playgrounds (Start menu, tray, dock). Smoke test: Start lists apps from the playground’s `desktop.config.ts`.
 
 ### `template/`
 
-Output of **`pnpm desktop template`** (from `template-blueprint/` + monorepo `desktop/` + latest npm versions). Used by **`npm create owd`** / **`desktop init`**. Default starter theme: **`@owdproject/theme-nova`**.
+Output of **`pnpm desktop template`** (from `template-blueprint/` + monorepo `desktop/` + latest npm versions). Used by **`npm create owd`** / **`desktop init`**. Default starter theme: **`@owdproject/theme-nuxt-nova`**.
 
 ---
 
@@ -127,13 +127,13 @@ Full migration checklist: [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agen
 
 | Package | Playground | Base theme | Notes |
 |---------|------------|------------|--------|
-| `@owdproject/app-about` | `apps/app-about/playground` | `theme-nova` | Minimal app reference |
-| `@owdproject/app-wasmboy` | `apps/app-wasmboy/playground` | `theme-nova` | Legacy migration example |
+| `@owdproject/app-nuxt-about` | `apps/app-about/playground` | `theme-nova` | Minimal app reference |
+| `@owdproject/app-nuxt-wasmboy` | `apps/app-wasmboy/playground` | `theme-nova` | Legacy migration example |
 | Other `app-*` | `apps/<app>/playground` | `theme-nova` | Standalone repos often ship GitHub Pages |
 | `@owdproject/module-docs` | `packages/module-docs/playground` | `theme-nova` | Monorepo |
-| `@owdproject/module-fs` | `packages/module-fs/playground` | `theme-nova` + FS demos | |
+| `@owdproject/module-nuxt-fs` | `packages/module-fs/playground` | `theme-nova` + FS demos | |
 | `@owdproject/module-persistence` | `packages/module-persistence/playground` | `theme-nova` + `app-todo` | |
-| `@owdproject/theme-nova` | `themes/theme-nova/playground` | (self) | Reference theme |
+| `@owdproject/theme-nuxt-nova` | `themes/theme-nova/playground` | (self) | Reference theme |
 | `@owdproject/theme-win95` | `themes/theme-win95/playground` | (self) + `app-about` | Retro reference |
 | `@owdproject/core` | **`desktop/`** (no package playground) | `theme-nova` | Monorepo integration |
 
@@ -166,7 +166,7 @@ Canonical file since core **3.2**: **`desktop.config.ts`** next to `nuxt.config.
 
 | Field | Meaning |
 |--------|---------|
-| `theme` | Theme package (default: `@owdproject/theme-nova`) |
+| `theme` | Theme package (default: `@owdproject/theme-nuxt-nova`) |
 | `modules` | Extra Nuxt modules (FS, persistence, docs, …) |
 | `docs` | Options for `@owdproject/module-docs` |
 | `apps` | Desktop apps to load |
@@ -198,7 +198,7 @@ See the full playbook. In brief:
 
 1. `src/module.ts` + `src/runtime/` + `playground/` with `@owdproject/core` and **`theme-nova`**.
 2. Client plugin `name: 'owd-app-<slug>-register'` calling **`defineDesktopApp`**.
-3. **`registerTailwindPath`** from `@owdproject/kit-tailwind/kit/registerTailwindPath` + `"@owdproject/kit-tailwind"` in app **`dependencies`**.
+3. **`registerTailwindPath`** from `@owdproject/kit-nuxt-tailwind/kit/registerTailwindPath` + `"@owdproject/kit-nuxt-tailwind"` in app **`dependencies`**.
 4. Scripts `dev:prepare`, `dev:generate`; register `apps/<pkg>/playground` in `pnpm-workspace.yaml`.
 5. Optional: add to `desktop/desktop.config.ts`; add `pages.yml` for standalone GitHub Pages.
 
@@ -227,37 +227,37 @@ Update this file when conventions change so agents and contributors share one so
 
 ## UI kits & theme stacks (CRITICAL FOR AGENTS)
 
-Do **not** assume every theme installs PrimeVue or that `registerTailwindPath` lives in `kit-primevue`.
+Do **not** assume every theme installs PrimeVue or that `registerTailwindPath` lives in `kit-nuxt-primevue`.
 
 ### Two UI stacks
 
 | Stack | Example theme | Theme installs | PrimeVue auto-import? |
 |-------|---------------|----------------|------------------------|
-| **PrimeVue** | `theme-nova`, `theme-win95`, … | `@owdproject/kit-primevue` | Yes — `<InputText>`, `<Button>`, dialogs, … |
+| **PrimeVue** | `theme-nova`, `theme-win95`, … | `@owdproject/kit-nuxt-primevue` | Yes — `<InputText>`, `<Button>`, dialogs, … |
 | **Nuxt UI** | `@owdproject/theme-nuxt` (optional external repo) | `@owdproject/kit-nuxt-ui` | **No** |
 
-`theme-nuxt`, `kit-nuxt-ui`, and `kit-tailwind` are **optional** packages (not required client skeleton submodules). Install via registry or `desktop add` when needed.
+`theme-nuxt`, `kit-nuxt-ui`, and `kit-nuxt-tailwind` are **optional** packages (not required client skeleton submodules). Install via registry or `desktop add` when needed.
 
 ### Layering: Tailwind vs PrimeVue
 
 | Package | Role |
 |---------|------|
-| **`@owdproject/kit-tailwind`** | `registerTailwindPath` / `registerThemeTailwindPath`, installs `@nuxtjs/tailwindcss`, merges `desktopTailwindContent` globs |
-| **`@owdproject/kit-primevue`** | PrimeVue module, `tailwindcss-primeui`, dialogs, optional explorer UI — **should** wrap/install `kit-tailwind` (today duplicates Tailwind setup; refactor pending) |
+| **`@owdproject/kit-nuxt-tailwind`** | `registerTailwindPath` / `registerThemeTailwindPath`, installs `@nuxtjs/tailwindcss`, merges `desktopTailwindContent` globs |
+| **`@owdproject/kit-nuxt-primevue`** | PrimeVue module, `tailwindcss-primeui`, dialogs, optional explorer UI — **should** wrap/install `kit-nuxt-tailwind` (today duplicates Tailwind setup; refactor pending) |
 
 **Apps with Tailwind utility classes in Vue:**
 
-- Import `registerTailwindPath` from **`@owdproject/kit-tailwind/kit/registerTailwindPath`**
-- Declare **`"@owdproject/kit-tailwind": "workspace:*"`** (or semver) in app **`dependencies`**
+- Import `registerTailwindPath` from **`@owdproject/kit-nuxt-tailwind/kit/registerTailwindPath`**
+- Declare **`"@owdproject/kit-nuxt-tailwind": "workspace:*"`** (or semver) in app **`dependencies`**
 - This is **build-time** for the app module — independent of which theme is active
 
 **Apps using PrimeVue components in templates** (`InputText`, `Button`, …):
 
-- Do **not** add `kit-primevue` to the app for that alone
-- Components resolve at **runtime** only when the theme ran `installModule('@owdproject/kit-primevue')`
+- Do **not** add `kit-nuxt-primevue` to the app for that alone
+- Components resolve at **runtime** only when the theme ran `installModule('@owdproject/kit-nuxt-primevue')`
 - Apps using PrimeVue markup are **incompatible** with `theme-nuxt` unless refactored to Nuxt UI or plain HTML
 
-**Playground with `theme-nova`:** transitively loads `kit-primevue` — do not treat that as proof that all themes provide PrimeVue.
+**Playground with `theme-nova`:** transitively loads `kit-nuxt-primevue` — do not treat that as proof that all themes provide PrimeVue.
 
 ---
 

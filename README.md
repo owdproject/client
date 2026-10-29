@@ -218,7 +218,7 @@ OPTIONS
   <git-url>       Full clone URL
 
 LEGACY (still supported)
-  desktop install-app @owdproject/app-todo
+  desktop install-app @owdproject/app-nuxt-todo
   → prefer: desktop add app-todo
 ```
 

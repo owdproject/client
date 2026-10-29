@@ -8,6 +8,11 @@ packages:
   - '!themes/*/playground'
   - plugins/*
 
+linkWorkspacePackages: true
+preferWorkspacePackages: true
+shamefullyHoist: true
+strictPeerDependencies: false
+
 catalog:
   typescript: ~6.0.3
 

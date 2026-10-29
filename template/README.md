@@ -56,7 +56,7 @@ Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) ta
 For example, to add the To-do app from the control panel: press `s` to start the dev server (`x` to stop), select packages, then press `w` to save, or:
 
 ```bash
-pnpm desktop add @owdproject/app-todo
+pnpm desktop add @owdproject/app-nuxt-todo
 ```
 
 ### 🧩 Install a module
