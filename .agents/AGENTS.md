@@ -46,9 +46,9 @@ client/
 │   ├── owd-module-atproto*/ # @owdproject/nuxt-module-atproto*
 │   ├── owd-kit-nuxt-primevue/  # @owdproject/nuxt-kit-primevue — PrimeVue + tailwindcss-primeui
 │   ├── owd-kit-nuxt-tailwind/  # @owdproject/nuxt-kit-tailwind — Tailwind content registration
-│   ├── owd-kit-nuxt-ui/     # @owdproject/nuxt-kit-ui — Nuxt UI stack (no PrimeVue)
+│   ├── owd-kit-nuxt-ui/     # @owdproject/nuxt-kit-nuxt-ui — Nuxt UI stack (no PrimeVue)
 │   ├── react/               # @owdproject/react — React binding
-│   └── owd-kit-react95/     # @owdproject/react-kit-95
+│   └── owd-kit-react95/     # @owdproject/react-kit-react95
 ├── apps/                    # Desktop apps (@owdproject/nuxt-app-*)
 ├── themes/                  # Desktop themes (@owdproject/nuxt-theme-*)
 ├── plugins/                 # Optional workspace slot for future Nuxt plugins
@@ -238,9 +238,9 @@ Do **not** assume every theme installs PrimeVue or that `registerTailwindPath` l
 | Stack | Example theme | Theme installs | PrimeVue auto-import? |
 |-------|---------------|----------------|------------------------|
 | **PrimeVue** | `theme-nova`, `theme-win95`, … | `@owdproject/nuxt-kit-primevue` | Yes — `<InputText>`, `<Button>`, dialogs, … |
-| **Nuxt UI** | `@owdproject/nuxt-theme-ui` (optional external repo) | `@owdproject/nuxt-kit-ui` | **No** |
+| **Nuxt UI** | `@owdproject/nuxt-theme-ui` (optional external repo) | `@owdproject/nuxt-kit-nuxt-ui` | **No** |
 
-`@owdproject/nuxt-theme-ui`, `@owdproject/nuxt-kit-ui`, and `@owdproject/nuxt-kit-tailwind` are **optional** packages (not required client skeleton submodules). Install via registry or `desktop add` when needed.
+`@owdproject/nuxt-theme-ui`, `@owdproject/nuxt-kit-nuxt-ui`, and `@owdproject/nuxt-kit-tailwind` are **optional** packages (not required client skeleton submodules). Install via registry or `desktop add` when needed.
 
 ### Layering: Tailwind vs PrimeVue
 
