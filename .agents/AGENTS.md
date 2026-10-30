@@ -98,7 +98,7 @@ Central Nuxt module and **`desktop`** CLI (`bin/desktop.js`; `owd` is a deprecat
 |---------|------|
 | `@owdproject/nuxt-module-fs` | ZenFS mount + explorer composables; enable in `desktop.config.ts` → `modules`. Explorer app: `@owdproject/app-explorer`. |
 | `@owdproject/module-docs` | In-app docs at `/docs` (Nuxt Content). TUI **`[i]`** opens docs when installed. Deprecated alias: `@owdproject/docs`. |
-| `@owdproject/module-persistence` | Pinia persistence via IndexedDB. |
+| `@owdproject/nuxt-module-pinia-persistence` | Pinia persistence via IndexedDB. |
 | `@owdproject/kit-fs` | Neutral explorer UI components (with `module-fs`). |
 | `@owdproject/kit-theme` | Neutral shell composables shared across themes. |
 
@@ -308,6 +308,6 @@ optional and backward compatible. Users list extensions by package name in `desk
 ## Workspace & Override Rules (CRITICAL FOR AGENTS)
 
 * **No ad-hoc overrides in `pnpm-workspace.yaml`**: The OWD client repository is designed to be cloned empty of optional extension packages, themes, and apps (containing only `@owdproject/core`, `@owdproject/cli`, and `@owdproject/nx` by default).
-* Do **NOT** add overrides (e.g. forcing `workspace:*` for optional packages like `@owdproject/module-persistence` or other modules/apps/themes) in `pnpm-workspace.yaml` or other core configuration files.
+* Do **NOT** add overrides (e.g. forcing `workspace:*` for optional packages like `@owdproject/nuxt-module-pinia-persistence` or other modules/apps/themes) in `pnpm-workspace.yaml` or other core configuration files.
 * Downstream projects and developers should be able to install and load external/optional packages dynamically without requiring modifications to the client skeleton/workspace files.
 * If a package is being resolved from the npm registry instead of a local path during development, the correct approach is to run `pnpm install` or use the `workspace:` protocol in the specific test/theme `package.json` that requires it, rather than setting up workspace-wide overrides.
