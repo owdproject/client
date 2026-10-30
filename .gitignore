@@ -1,9 +1,5 @@
 # See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# local dev symlink (nuxt-desktop workspace link)
-nuxt-desktop
-
-
 # compiled output
 dist
 tmp
