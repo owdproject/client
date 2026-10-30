@@ -66,7 +66,7 @@ Discover modules by searching the [owd-modules](https://github.com/topics/owd-mo
 For example, to add Pinia persistence backed by IndexedDB (`idb-keyval`):
 
 ```bash
-pnpm desktop add @owdproject/module-persistence
+pnpm desktop add @owdproject/nuxt-module-pinia-persistence
 ```
 
 ### 🖥️ Install a theme
