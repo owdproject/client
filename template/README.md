@@ -56,7 +56,7 @@ Discover apps by searching the [owd-apps](https://github.com/topics/owd-apps) ta
 For example, to add the To-do app from the control panel: press `s` to start the dev server (`x` to stop), select packages, then press `w` to save, or:
 
 ```bash
-pnpm desktop add @owdproject/app-nuxt-todo
+pnpm desktop add @owdproject/nuxt-app-todo
 ```
 
 ### 🧩 Install a module
@@ -77,7 +77,7 @@ Each theme provides a unique look and feel while maintaining consistent function
 Discover themes by searching the [owd-themes](https://github.com/topics/owd-themes) tag on GitHub.
 
 ```bash
-pnpm desktop add @owdproject/theme-gnome
+pnpm desktop add @owdproject/nuxt-theme-gnome
 ```
 
 ## Sponsors

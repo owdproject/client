@@ -2,13 +2,13 @@
   "name": "owd-client",
   "private": true,
   "description": "Open Web Desktop client",
-  "homepage": "https://github.com/dxlliv/client#readme",
+  "homepage": "https://github.com/owdproject/nuxt-desktop#readme",
   "bugs": {
-    "url": "https://github.com/dxlliv/client/issues"
+    "url": "https://github.com/owdproject/nuxt-desktop/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/owdproject/client.git"
+    "url": "git+https://github.com/owdproject/nuxt-desktop.git"
   },
   "license": "MIT",
   "author": {

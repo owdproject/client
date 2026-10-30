@@ -2,13 +2,13 @@
   "name": "owd-client",
   "private": true,
   "description": "Open Web Desktop client",
-  "homepage": "https://github.com/owdproject/client#readme",
+  "homepage": "https://github.com/owdproject/nuxt-desktop#readme",
   "bugs": {
-    "url": "https://github.com/owdproject/client/issues"
+    "url": "https://github.com/owdproject/nuxt-desktop/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/owdproject/client.git"
+    "url": "git+https://github.com/owdproject/nuxt-desktop.git"
   },
   "license": "MIT",
   "author": {
@@ -27,10 +27,10 @@
     "@nuxt/eslint-config": "^1.15.2",
     "@nuxt/kit": "^4.4.4",
     "@nuxt/ui-templates": "^1.3.4",
-    "@owdproject/app-nuxt-about": "^0.1.4",
+    "@owdproject/nuxt-app-about": "^0.1.4",
     "@owdproject/cli": "^0.1.0",
     "@owdproject/core": "^4.0.0-alpha.0",
-    "@owdproject/theme-nuxt-nova": "^0.0.4",
+    "@owdproject/nuxt-theme-nova": "^0.0.4",
     "@swc-node/register": "~1.11.1",
     "@swc/cli": "~0.8.1",
     "@swc/core": "~1.15.32",

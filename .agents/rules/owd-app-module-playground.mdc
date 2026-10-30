@@ -6,12 +6,12 @@ alwaysApply: false
 
 # OWD module playground pattern
 
-When adding or migrating `@owdproject/app-*`, `@owdproject/theme-*`, or optional `packages/module-*` with a demo:
+When adding or migrating `@owdproject/nuxt-app-*`, `@owdproject/nuxt-theme-*`, or optional `@owdproject/nuxt-module-*` with a demo:
 
 1. **Read the full playbook:** `docs/agents/OWD_APP_MODULE_PLAYGROUND.md`
-2. **Copy from references:** `apps/app-about` (minimal app), `apps/app-wasmboy` (legacy migration), `themes/theme-win95` (theme + Pages)
+2. **Copy from references:** `apps/owd-nuxt-app-about` (minimal app), `apps/owd-nuxt-app-wasmboy` (legacy migration), `themes/owd-nuxt-theme-win95` (theme + Pages)
 3. **Required layout:** `src/module.ts` + `src/runtime/` → `dist/module.mjs` via `@nuxt/module-builder`; never commit hand-edited `dist/`
-4. **Playground:** `playground/` with `@owdproject/core`, `desktop.config.ts`, `theme-nova` (apps), `ssr: false`; register path in root `pnpm-workspace.yaml`
+4. **Playground:** `playground/` with `@owdproject/core`, `desktop.config.ts`, `@owdproject/nuxt-theme-nova` (apps), `ssr: false`; register path in root `pnpm-workspace.yaml`
 5. **Scripts:** `dev:prepare`, `dev`, `dev:generate` with `NUXT_APP_BASE_URL=/<repo-slug>/`
 6. **Register plugin:** `name: 'owd-app-*-register'`, client-only `defineDesktopApp`
 7. **Monorepo `desktop/`:** `pnpm install` at repo root runs `prepare:stubs` automatically; no manual stub before `pnpm dev`. Use `dev:prepare` only for an isolated package playground.

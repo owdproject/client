@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/apps/@owdproject/client',
+  cacheDir: '../../node_modules/.vite/apps/@owdproject/nuxt-desktop',
   plugins: [vue()],
   // Uncomment this if you are using workers.
   // worker: {

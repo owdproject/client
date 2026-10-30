@@ -14,6 +14,8 @@ node_modules
 /desktop/certs
 /apps
 /themes
+# Bundled theme submodules shipped with the desktop distribution
+!/themes/nuxt-theme
 /packages/*
 !/packages/core
 !/packages/cli

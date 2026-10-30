@@ -67,11 +67,17 @@ You can customize your workspace using three dedicated package types:
 
 ### Package Categories
 
-| Type | Description | Directory | Discovery Tag |
-| :--- | :--- | :--- | :--- |
-| **Apps** | User-facing desktop application programs | `apps/` | [owd-apps](https://github.com/topics/owd-apps) |
-| **Modules** | Nuxt/Vue plugins and backend integrations | `packages/` | [owd-modules](https://github.com/topics/owd-modules) |
-| **Themes** | Window manager styles and workspace skins | `themes/` | [owd-themes](https://github.com/topics/owd-themes) |
+| Type | Package convention | Description | Directory | Discovery Tag |
+| :--- | :--- | :--- | :--- | :--- |
+| **Apps** | `@owdproject/nuxt-app-*` | User-facing desktop application programs | `apps/` | [owd-apps](https://github.com/topics/owd-apps) |
+| **Modules** | `@owdproject/nuxt-module-*` | Nuxt/Vue plugins and backend integrations | `packages/` | [owd-modules](https://github.com/topics/owd-modules) |
+| **Kits** | `@owdproject/nuxt-kit-*` | UI kits installed by themes | `packages/` | [owd-modules](https://github.com/topics/owd-modules) |
+| **Themes** | `@owdproject/nuxt-theme-*` | Window manager styles and workspace skins | `themes/` | [owd-themes](https://github.com/topics/owd-themes) |
+
+Nuxt extensions are **framework-first**: `<framework>-<kind>-<name>`. React extensions follow the
+same shape (`@owdproject/react-app-*`, `@owdproject/react-kit-*`, `@owdproject/react-theme-*`).
+The engine (`@owdproject/core`), the framework bindings (`@owdproject/nuxt`, `@owdproject/react`, …)
+and the desktop distribution (`@owdproject/nuxt-desktop`) are not extensions.
 
 ---
 
@@ -85,20 +91,20 @@ The CLI makes it easy to install, import, and configure packages automatically.
 #### Installing an Application
 To add a new application (e.g., a Todo app):
 ```bash
-pnpm desktop add app-todo
+pnpm desktop add nuxt-app-todo
 ```
-*This command clones or copies the package into `apps/app-todo` and automatically registers it in the local `desktop/desktop.config.ts` config.*
+*This command clones or copies the package into `apps/nuxt-app-todo` and automatically registers it in the local `desktop/desktop.config.ts` config.*
 
 #### Installing a Module
 To add a module (e.g., Pinia state persistence):
 ```bash
-pnpm desktop add module-persistence
+pnpm desktop add nuxt-module-pinia-persistence
 ```
 
 #### Installing a Theme
 To add a theme (e.g., a GNOME look-and-feel package):
 ```bash
-pnpm desktop add theme-gnome
+pnpm desktop add nuxt-theme-gnome
 ```
 
 ### Advanced CLI Commands
@@ -110,16 +116,16 @@ You can install packages from various sources, specifying different branches or 
 pnpm desktop add --help
 
 # Install directly from the npm registry
-pnpm desktop add app-todo --npm
+pnpm desktop add nuxt-app-todo --npm
 
 # Clone from a specific GitHub user fork
-pnpm desktop add module-persistence --from github-username
+pnpm desktop add nuxt-module-pinia-persistence --from github-username
 
 # Clone an official repository in development mode
-pnpm desktop add app-todo --dev
+pnpm desktop add nuxt-app-todo --dev
 
 # Install a specific branch from a user fork using SSH protocol
-pnpm desktop add theme-gnome --from github-username --branch feature-branch --protocol ssh
+pnpm desktop add nuxt-theme-gnome --from github-username --branch feature-branch --protocol ssh
 ```
 
 ### Isolated Package Development
@@ -127,7 +133,7 @@ pnpm desktop add theme-gnome --from github-username --branch feature-branch --pr
 For developers building reusable packages (e.g., publishable apps or themes in isolation), OWD supports playground builds using `nuxt-module-build`. 
 
 - Learn more about the playground setup in [docs/agents/OWD_APP_MODULE_PLAYGROUND.md](docs/agents/OWD_APP_MODULE_PLAYGROUND.md).
-- Reference examples: [app-about](https://owdproject.github.io/app-about/) and [app-wasmboy](https://owdproject.github.io/app-wasmboy/).
+- Reference examples: [app-about](https://owdproject.github.io/nuxt-app-about/) and [app-wasmboy](https://owdproject.github.io/nuxt-app-wasmboy/).
 
 ## CLI Reference
 
@@ -187,17 +193,17 @@ INSTALL SOURCES (control panel or CLI)
 EXAMPLES
   pnpm desktop            # control panel
   pnpm desktop dev        # monorepo desktop (from repo root)
-  cd apps/app-about && pnpm desktop dev   # app-about playground
+  cd apps/owd-nuxt-app-about && pnpm desktop dev   # about app playground
   pnpm desktop dev --playground           # force playground when cwd is in a module
   desktop init my-desktop # scaffold + pnpm install + control panel
-  desktop add app-todo --npm
-  desktop add app-todo --dev
-  desktop add module-persistence --from dxlliv
+  desktop add nuxt-app-todo --npm
+  desktop add nuxt-app-todo --dev
+  desktop add nuxt-module-pinia-persistence --from dxlliv
 
 KINDS (optional — inferred from the package name)
-  app       app-*     → apps/
-  module    module-*  → packages/  (kit-* and *-template are not listed in the control panel)
-  theme     theme-*   → themes/
+  app       nuxt-app-*    → apps/     (react-app-* for React desktops)
+  module    nuxt-module-* → packages/ (nuxt-kit-*, react-kit-* and *-template are not listed in the control panel)
+  theme     nuxt-theme-*  → themes/   (react-theme-* for React desktops)
 
 OPTIONS
   --playground      Start the module playground dev server (when cwd is inside an @owdproject/* package with playground/)
@@ -218,8 +224,8 @@ OPTIONS
   <git-url>       Full clone URL
 
 LEGACY (still supported)
-  desktop install-app @owdproject/app-nuxt-todo
-  → prefer: desktop add app-todo
+  desktop install-app @owdproject/nuxt-app-todo
+  → prefer: desktop add nuxt-app-todo
 ```
 
 </details>
