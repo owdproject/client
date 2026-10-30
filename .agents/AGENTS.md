@@ -48,7 +48,7 @@ client/
 │   ├── owd-kit-nuxt-tailwind/  # @owdproject/nuxt-kit-tailwind — Tailwind content registration
 │   ├── owd-kit-nuxt-ui/     # @owdproject/nuxt-kit-ui — Nuxt UI stack (no PrimeVue)
 │   ├── react/               # @owdproject/react — React binding
-│   └── owd-kit-react95/     # @owdproject/react-kit-react95
+│   └── owd-kit-react95/     # @owdproject/react-kit-95
 ├── apps/                    # Desktop apps (@owdproject/nuxt-app-*)
 ├── themes/                  # Desktop themes (@owdproject/nuxt-theme-*)
 ├── plugins/                 # Optional workspace slot for future Nuxt plugins
