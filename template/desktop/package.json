@@ -9,10 +9,10 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@owdproject/nuxt-app-about": "^0.1.4",
-    "@owdproject/core": "^4.0.0-alpha.0",
-    "@owdproject/nuxt-theme-nova": "^0.0.4",
+    "@owdproject/nuxt-app-about": "^4.0.0-alpha.3",
+    "@owdproject/core": "^4.0.0-alpha.3",
     "h3": "^2.0.1-rc.22",
-    "@owdproject/nuxt": "^4.0.0-alpha.3"
+    "@owdproject/nuxt": "^4.0.0-alpha.3",
+    "@owdproject/nuxt-theme-paper": "^4.0.0-alpha.3"
   }
 }
