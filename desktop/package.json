@@ -33,7 +33,7 @@
     "@owdproject/nuxt-module-fs": "workspace:*",
     "@owdproject/nuxt-app-terminal": "workspace:*",
     "@owdproject/nuxt-app-todo": "workspace:*",
-    "@owdproject/nuxt-theme-nova": "workspace:*",
+    "@owdproject/nuxt-theme-paper": "workspace:*",
     "@owdproject/nuxt-theme-gnome": "workspace:*",
     "@owdproject/nuxt-app-soundcloud": "workspace:*",
     "@owdproject/nuxt-app-dino": "workspace:*",

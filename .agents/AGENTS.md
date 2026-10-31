@@ -109,20 +109,20 @@ Each app is an **`@owdproject/app-*`** Nuxt module:
 - **`src/module.ts`** — `defineNuxtModule`, Tailwind paths, runtime config.
 - **`src/runtime/plugin.ts`** — typically `defineDesktopApp` on `app:created` (client-only).
 - **`src/runtime/app.config.ts`** — `ApplicationConfig` (id, title, windows, entries, commands).
-- **`playground/`** — isolated Nuxt app for developing the module (`theme-nova` recommended).
+- **`playground/`** — isolated Nuxt app for developing the module (`theme-paper` recommended).
 - Build with **`nuxt-module-build`** → **`dist/module.mjs`**.
 
 **Flow:** `desktop.config.ts` lists the package under **`apps`** → core `installModule` → app plugin → `defineDesktopApp` → entries appear in the shell.
 
 ### `themes/*` — desktop environments
 
-Nuxt modules (e.g. `@owdproject/nuxt-theme-nova`, `@owdproject/theme-win95`) that provide layout, chrome, styles, and i18n. They may conditionally load extra modules (e.g. FS explorer integration).
+Nuxt modules (e.g. `@owdproject/nuxt-theme-paper`, `@owdproject/theme-win95`) that provide layout, chrome, styles, and i18n. They may conditionally load extra modules (e.g. FS explorer integration).
 
-**`theme-nova`** is the **reference shell** for app/module playgrounds (Start menu, tray, dock). Smoke test: Start lists apps from the playground’s `desktop.config.ts`.
+**`theme-paper`** is the **reference shell** for app/module playgrounds (Start menu, tray, dock). Smoke test: Start lists apps from the playground’s `desktop.config.ts`.
 
 ### `template/`
 
-Output of **`pnpm desktop template`** (from `template-blueprint/` + monorepo `desktop/` + latest npm versions). Used by **`npm create owd`** / **`desktop init`**. Default starter theme: **`@owdproject/nuxt-theme-nova`**.
+Output of **`pnpm desktop template`** (from `template-blueprint/` + monorepo `desktop/` + latest npm versions). Used by **`npm create owd`** / **`desktop init`**. Default starter theme: **`@owdproject/nuxt-theme-paper`**.
 
 ---
 
@@ -132,14 +132,14 @@ Full migration checklist: [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agen
 
 | Package | Playground | Base theme | Notes |
 |---------|------------|------------|--------|
-| `@owdproject/nuxt-app-about` | `apps/owd-nuxt-app-about/playground` | `nuxt-theme-nova` | Minimal app reference |
-| `@owdproject/nuxt-app-wasmboy` | `apps/owd-nuxt-app-wasmboy/playground` | `nuxt-theme-nova` | Legacy migration example |
-| Other `nuxt-app-*` | `apps/<pkg>/playground` | `nuxt-theme-nova` | Standalone repos often ship GitHub Pages |
-| `@owdproject/nuxt-module-fs` | `packages/owd-module-fs/playground` | `nuxt-theme-nova` + FS demos | |
-| `@owdproject/nuxt-module-pinia-persistence` | `packages/owd-nuxt-module-persistence/playground` | `nuxt-theme-nova` + `nuxt-app-todo` | |
-| `@owdproject/nuxt-theme-nova` | `themes/owd-nuxt-theme-nova/playground` | (self) | Reference theme |
+| `@owdproject/nuxt-app-about` | `apps/owd-nuxt-app-about/playground` | `nuxt-theme-paper` | Minimal app reference |
+| `@owdproject/nuxt-app-wasmboy` | `apps/owd-nuxt-app-wasmboy/playground` | `nuxt-theme-paper` | Legacy migration example |
+| Other `nuxt-app-*` | `apps/<pkg>/playground` | `nuxt-theme-paper` | Standalone repos often ship GitHub Pages |
+| `@owdproject/nuxt-module-fs` | `packages/owd-module-fs/playground` | `nuxt-theme-paper` + FS demos | |
+| `@owdproject/nuxt-module-pinia-persistence` | `packages/owd-nuxt-module-persistence/playground` | `nuxt-theme-paper` + `nuxt-app-todo` | |
+| `@owdproject/nuxt-theme-paper` | `themes/owd-nuxt-theme-paper/playground` | (self) | Reference theme |
 | `@owdproject/nuxt-theme-win95` | `themes/owd-nuxt-theme-win95/playground` | (self) + `nuxt-app-about` | Retro reference |
-| `@owdproject/core` | **`desktop/`** (no package playground) | `nuxt-theme-nova` | Monorepo integration |
+| `@owdproject/core` | **`desktop/`** (no package playground) | `nuxt-theme-paper` | Monorepo integration |
 
 **Monorepo dev vs publish**
 
@@ -150,7 +150,7 @@ Full migration checklist: [`docs/agents/OWD_APP_MODULE_PLAYGROUND.md`](docs/agen
 | `npm publish` on `@owdproject/*` packages | `prepack` only (full build); never add `prepare` stub on publishable packages |
 | `pnpm run dev:prepare` in a package | Isolated package playground only |
 
-**New app/theme checklist (copy `themes/theme-nova` or `apps/app-about`):**
+**New app/theme checklist (copy `themes/theme-paper` or `apps/app-about`):**
 
 1. `package.json` scripts: `prepack`, `dev`, `dev:prepare`, `dev:generate` — **no** `prepare`.
 2. `exports["."].development` → `./src/module.ts`; `import`/`default` → `./dist/module.mjs`.
@@ -170,7 +170,7 @@ Canonical file since core **3.2**: **`desktop.config.ts`** next to `nuxt.config.
 
 | Field | Meaning |
 |--------|---------|
-| `theme` | Theme package (default: `@owdproject/nuxt-theme-nova`) |
+| `theme` | Theme package (default: `@owdproject/nuxt-theme-paper`) |
 | `modules` | Extra Nuxt modules (FS, persistence, docs, …) |
 | `docs` | Options for `@owdproject/module-docs` |
 | `apps` | Desktop apps to load |
@@ -200,7 +200,7 @@ After changing **module source**, run `dev:prepare` or `prepack` in that package
 
 See the full playbook. In brief:
 
-1. `src/module.ts` + `src/runtime/` + `playground/` with `@owdproject/core` and **`theme-nova`**.
+1. `src/module.ts` + `src/runtime/` + `playground/` with `@owdproject/core` and **`theme-paper`**.
 2. Client plugin `name: 'owd-app-<slug>-register'` calling **`defineDesktopApp`**.
 3. **`registerTailwindPath`** from `@owdproject/nuxt-kit-tailwind/kit/registerTailwindPath` + `"@owdproject/nuxt-kit-tailwind"` in app **`dependencies`**.
 4. Scripts `dev:prepare`, `dev:generate`; register `apps/<pkg>/playground` in `pnpm-workspace.yaml`.
@@ -237,7 +237,7 @@ Do **not** assume every theme installs PrimeVue or that `registerTailwindPath` l
 
 | Stack | Example theme | Theme installs | PrimeVue auto-import? |
 |-------|---------------|----------------|------------------------|
-| **PrimeVue** | `theme-nova`, `theme-win95`, … | `@owdproject/nuxt-kit-primevue` | Yes — `<InputText>`, `<Button>`, dialogs, … |
+| **PrimeVue** | `theme-paper`, `theme-win95`, … | `@owdproject/nuxt-kit-primevue` | Yes — `<InputText>`, `<Button>`, dialogs, … |
 | **Nuxt UI** | `@owdproject/nuxt-theme-ui` (optional external repo) | `@owdproject/nuxt-kit-nuxt-ui` | **No** |
 
 `@owdproject/nuxt-theme-ui`, `@owdproject/nuxt-kit-nuxt-ui`, and `@owdproject/nuxt-kit-tailwind` are **optional** packages (not required client skeleton submodules). Install via registry or `desktop add` when needed.
@@ -261,7 +261,7 @@ Do **not** assume every theme installs PrimeVue or that `registerTailwindPath` l
 - Components resolve at **runtime** only when the theme ran `installModule('@owdproject/nuxt-kit-primevue')`
 - Apps using PrimeVue markup are **incompatible** with `@owdproject/nuxt-theme-ui` unless refactored to Nuxt UI or plain HTML
 
-**Playground with `nuxt-theme-nova`:** transitively loads `nuxt-kit-primevue` — do not treat that as proof that all themes provide PrimeVue.
+**Playground with `nuxt-theme-paper`:** transitively loads `nuxt-kit-primevue` — do not treat that as proof that all themes provide PrimeVue.
 
 ---
 
