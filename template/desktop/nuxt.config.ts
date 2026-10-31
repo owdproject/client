@@ -1,4 +1,3 @@
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
@@ -9,14 +8,10 @@ export default defineNuxtConfig({
 
   modules: ['@owdproject/nuxt'],
 
-  css: ['./desktop/app/assets/styles/index.scss'],
+  css: ['~/assets/styles/index.scss'],
 
   i18n: {
     strategy: 'no_prefix',
-  },
-
-  future: {
-    compatibilityVersion: 4,
   },
 
   imports: {
@@ -25,14 +20,8 @@ export default defineNuxtConfig({
   devtools: {
     enabled: false,
   },
-  typescript: {
-    typeCheck: true,
-    tsConfig: {
-      extends: '../tsconfig.app.json',
-    },
-  },
-  compatibilityDate: '2025-05-13',
-  vite: {
-    plugins: [nxViteTsPaths()],
+  compatibilityDate: '2026-05-31',
+  experimental: {
+    viteEnvironmentApi: true,
   },
 })
