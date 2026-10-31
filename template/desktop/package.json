@@ -10,12 +10,12 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@owdproject/nuxt-app-about": "^4.0.0-alpha.3",
     "@owdproject/core": "^4.0.0-alpha.3",
-    "h3": "^2.0.1-rc.22",
     "@owdproject/nuxt": "^4.0.0-alpha.3",
+    "@owdproject/nuxt-app-about": "^4.0.0-alpha.3",
     "@owdproject/nuxt-theme-paper": "^4.0.0-alpha.3",
+    "h3": "^2.0.8",
     "primevue": "^4.5.5",
-    "vue-i18n": "^11.0.0"
+    "vue-i18n": "^11.4.16"
   }
 }
